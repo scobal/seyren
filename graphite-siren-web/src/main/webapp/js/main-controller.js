@@ -1,4 +1,4 @@
-/*global ChecksController,angular*/
+/*global ChecksController,CheckController,angular*/
 
 function MainController($xhr, $route, $location) {
     this.$xhr = $xhr;
@@ -9,6 +9,11 @@ function MainController($xhr, $route, $location) {
     this.$route.when('/checks', {
         controller: ChecksController,
         template: 'html/checks.html'
+    });
+    
+    this.$route.when('/checks/:id', {
+        controller: CheckController,
+        template: 'html/check.html'
     });
     
     this.$route.otherwise({

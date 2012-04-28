@@ -5,7 +5,9 @@ import java.util.List;
 public class Check {
 
 	private String id;
+	private String target;
 	private List<Alert> alerts;
+	private List<Subscription> subscriptions;
 	
 	public String getId() {
 		return id;
@@ -20,12 +22,43 @@ public class Check {
 		return this;
 	}
 
+	public String getTarget() {
+		return target;
+	}
+
+	public void setTarget(String target) {
+		this.target = target;
+	}
+	
+	public Check withTarget(String target) {
+		setTarget(target);
+		return this;
+	}
+
 	public List<Alert> getAlerts() {
 		return alerts;
 	}
 
 	public void setAlerts(List<Alert> alerts) {
 		this.alerts = alerts;
+	}
+	
+	public Check withAlerts(List<Alert> alerts) {
+		setAlerts(alerts);
+		return this;
+	}
+	
+	public List<Subscription> getSubscriptions() {
+		return subscriptions;
+	}
+
+	public void setSubscriptions(List<Subscription> subscriptions) {
+		this.subscriptions = subscriptions;
+	}
+	
+	public Check withSubscriptions(List<Subscription> subscriptions) {
+		setSubscriptions(subscriptions);
+		return this;
 	}
 	
 }

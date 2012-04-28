@@ -15,6 +15,11 @@ public class Alert {
 		this.id = id;
 	}
 	
+	public Alert withId(String id) {
+		setId(id);
+		return this;
+	}
+	
 	public DateTime getTimestamp() {
 		return timestamp;
 	}
@@ -23,4 +28,9 @@ public class Alert {
 		this.timestamp = timestamp;
 	}
 	
+	public Alert withTimestamp(DateTime timestamp) {
+		setTimestamp(timestamp);
+		return this;
+	}
+
 }
