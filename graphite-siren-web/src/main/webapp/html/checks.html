@@ -4,7 +4,6 @@
         <table class="table table-bordered table-striped" ng:show="checks">
             <thead>
                 <tr>
-                    <th>Id</th>
                     <th>Name</th>
                     <th>Target</th>
                     <th>Warn</th>
@@ -13,7 +12,6 @@
             </thead>
             <tbody>
                 <tr ng:repeat="check in checks" ng:click="selectCheck(check.id)" style="cursor: pointer;">
-                    <td>{{ check.id }}</td>
                     <td>{{ check.name }}</td>
                     <td>{{ check.target }}</td>
                     <td>{{ check.warn }}</td>

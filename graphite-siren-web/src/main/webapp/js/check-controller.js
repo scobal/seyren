@@ -2,6 +2,7 @@
 
 function CheckController() {
     this.$xhr.defaults.headers.post['Content-Type'] = 'application/json';
+    this.$xhr.defaults.headers.put['Content-Type'] = 'application/json';
     this.id = this.$route.current.params.id;
 }
 
@@ -29,6 +30,18 @@ CheckController.prototype = {
     
     deleteCheckFailure : function (code, response) {
         console.log('Deleting check failed');
+    },
+    
+    saveCheck : function () {
+//    	this.$xhr('PUT', this.graphiteSirenBaseUrl + '/api/checks/' + this.id, this.check, this.saveCheckSuccess, this.saveCheckFailure);
+    },
+    
+    saveCheckSuccess : function (code, response) {
+    	this.loadCheck();
+    },
+    
+    saveCheckFailure : function (code, response) {
+        console.log('Saving check failed');
     },
     
     createSubscription : function () {
