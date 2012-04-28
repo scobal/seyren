@@ -4,6 +4,6 @@ import com.graphite.siren.core.domain.Alert;
 
 public interface AlertsStore {
 
-	Alert createAlert(String checkId);
+	Alert createAlert(String checkId, Alert alert);
 	
 }

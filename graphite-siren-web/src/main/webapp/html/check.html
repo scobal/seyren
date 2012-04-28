@@ -11,21 +11,57 @@
         </div>
     </div>
     <div class="row-fluid">
-        <div class="span3">Show graphite graph of target here</div>
-        <div class="span3">Target: {{ check.target }}</div>
+        <div class="span6">
+            <img src="http://dyn.com/wp-content/uploads/Graph.png"></img>
+        </div>
+        <div class="span6">
+            <h2>Subscriptions</h2>
+            <form ng:submit="createSubscription()" class="well form-inline">
+                <fieldset>
+                    <label class="control-label" for="newsubscription.target">Target</label>
+                    <input id="newsubscription.target" class="input-xlarge" name="newsubscription.target" type="text" />
+                    <label class="control-label" for="newsubscription.type">Type</label>
+                    <select id="newsubscription.type" class="input-medium" name="newsubscription.type" >
+                        <option value="EMAIL">Email</option>
+                        <option value="NAGIOS">Nagios</option>
+                        <option value="SMS">Sms</option>
+                    </select>
+                    <button type="submit" class="btn btn-primary" >Add</button>
+                </fieldset>
+            </form>
+            <table class="table table-bordered table-striped" ng:show="check.subscriptions">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Target</th>
+                        <th>Type</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng:repeat="subscription in check.subscriptions">
+                        <td>{{ subscription.id }}</td>
+                        <td>{{ subscription.target }}</td>
+                        <td>{{ subscription.type }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
-    <table class="table table-bordered table-striped" ng:show="check.alerts">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Timestamp</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr ng:repeat="alert in check.alerts">
-                <td>{{ alert.id }}</td>
-                <td>{{ alert.timestamp | date:'mediumDate' }}</td>
-            </tr>
-        </tbody>
-    </table>
+    <div class="row-fluid">
+        <h2>Alerts</h2>
+        <table class="table table-bordered table-striped" ng:show="check.alerts">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Timestamp</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng:repeat="alert in check.alerts">
+                    <td>{{ alert.id }}</td>
+                    <td>{{ alert.timestamp | date:'mediumDate' }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </div>

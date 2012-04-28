@@ -5,6 +5,7 @@ import java.util.List;
 public class Check {
 
 	private String id;
+	private String name;
 	private String target;
 	private List<Alert> alerts;
 	private List<Subscription> subscriptions;
@@ -19,6 +20,19 @@ public class Check {
 	
 	public Check withId(String id) {
 		setId(id);
+		return this;
+	}
+	
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	public Check withName(String name) {
+		setName(name);
 		return this;
 	}
 

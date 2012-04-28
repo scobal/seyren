@@ -1,6 +1,7 @@
 /*global console*/
 
 function CheckController() {
+    this.$xhr.defaults.headers.post['Content-Type'] = 'application/json';
     this.id = this.$route.current.params.id;
 }
 
@@ -28,6 +29,22 @@ CheckController.prototype = {
     
     deleteCheckFailure : function (code, response) {
         console.log('Deleting check failed');
+    },
+    
+    createSubscription : function () {
+        var newsubscription = {
+                target : this.newsubscription.target,
+                type : this.newsubscription.type
+                };
+        this.$xhr('POST', this.graphiteSirenBaseUrl + '/api/checks/' + this.id + '/subscriptions', newsubscription, this.createSubscriptionSuccess, this.createSubscriptionFailure);
+    },
+    
+    createSubscriptionSuccess : function (code, response) {
+        this.loadCheck();
+    },
+    
+    createSubscriptionFailure : function (code, response) {
+        console.log('Creating subscription failed');
     }
     
 };

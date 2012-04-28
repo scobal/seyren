@@ -20,6 +20,7 @@ public class MongoMapper {
 
 	public Check checkFrom(DBObject dbo) {
 		String id = dbo.get("_id").toString();
+		String name = getString(dbo, "name");
 		String target = getString(dbo, "target");
 		
 		List<Alert> alerts = new ArrayList<Alert>();
@@ -35,6 +36,7 @@ public class MongoMapper {
 		}
 
 		return new Check().withId(id)
+				.withName(name)
 				.withTarget(target)
 				.withAlerts(alerts)
 				.withSubscriptions(subscriptions);
@@ -76,6 +78,7 @@ public class MongoMapper {
 	private Map propertiesToMap(Check check) {
 		Map map = new HashMap();
 		map.put("_id", check.getId());
+		map.put("name", check.getName());
 		map.put("target", check.getTarget());
 		return map;
 	}
