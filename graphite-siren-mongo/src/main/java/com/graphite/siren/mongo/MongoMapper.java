@@ -22,6 +22,8 @@ public class MongoMapper {
 		String id = dbo.get("_id").toString();
 		String name = getString(dbo, "name");
 		String target = getString(dbo, "target");
+		String warn = getString(dbo, "warn");
+		String error = getString(dbo, "error");
 		
 		List<Alert> alerts = new ArrayList<Alert>();
 		BasicDBList list = getBasicDBList(dbo, "alerts");
@@ -38,6 +40,8 @@ public class MongoMapper {
 		return new Check().withId(id)
 				.withName(name)
 				.withTarget(target)
+				.withWarn(warn)
+				.withError(error)
 				.withAlerts(alerts)
 				.withSubscriptions(subscriptions);
 	}
@@ -80,6 +84,8 @@ public class MongoMapper {
 		map.put("_id", check.getId());
 		map.put("name", check.getName());
 		map.put("target", check.getTarget());
+		map.put("warn", check.getWarn());
+		map.put("error", check.getError());
 		return map;
 	}
 	

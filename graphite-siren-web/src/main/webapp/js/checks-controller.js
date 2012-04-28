@@ -24,7 +24,14 @@ ChecksController.prototype = {
     },
     
     createCheck : function () {
-        this.$xhr('POST', this.graphiteSirenBaseUrl + '/api/checks', {  }, this.createCheckSuccess, this.createCheckFailure);
+        var check = {
+                name : this.newcheck.name,
+                target : this.newcheck.target,
+                warn : this.newcheck.warn,
+                error : this.newcheck.error
+                };
+        
+        this.$xhr('POST', this.graphiteSirenBaseUrl + '/api/checks', check, this.createCheckSuccess, this.createCheckFailure);
     },
     
     createCheckSuccess : function (code, response) {

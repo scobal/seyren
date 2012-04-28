@@ -1,5 +1,6 @@
 package com.graphite.siren.core.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Check {
@@ -7,8 +8,10 @@ public class Check {
 	private String id;
 	private String name;
 	private String target;
-	private List<Alert> alerts;
-	private List<Subscription> subscriptions;
+	private String warn;
+	private String error;
+	private List<Alert> alerts = new ArrayList<Alert>();
+	private List<Subscription> subscriptions = new ArrayList<Subscription>();
 	
 	public String getId() {
 		return id;
@@ -46,6 +49,32 @@ public class Check {
 	
 	public Check withTarget(String target) {
 		setTarget(target);
+		return this;
+	}
+
+	public String getWarn() {
+		return warn;
+	}
+
+	public void setWarn(String warn) {
+		this.warn = warn;
+	}
+	
+	public Check withWarn(String warn) {
+		setWarn(warn);
+		return this;
+	}
+
+	public String getError() {
+		return error;
+	}
+
+	public void setError(String error) {
+		this.error = error;
+	}
+	
+	public Check withError(String error) {
+		setError(error);
 		return this;
 	}
 

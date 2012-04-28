@@ -32,11 +32,12 @@ CheckController.prototype = {
     },
     
     createSubscription : function () {
-        var newsubscription = {
+        var subscription = {
                 target : this.newsubscription.target,
                 type : this.newsubscription.type
                 };
-        this.$xhr('POST', this.graphiteSirenBaseUrl + '/api/checks/' + this.id + '/subscriptions', newsubscription, this.createSubscriptionSuccess, this.createSubscriptionFailure);
+        
+        this.$xhr('POST', this.graphiteSirenBaseUrl + '/api/checks/' + this.id + '/subscriptions', subscription, this.createSubscriptionSuccess, this.createSubscriptionFailure);
     },
     
     createSubscriptionSuccess : function (code, response) {
