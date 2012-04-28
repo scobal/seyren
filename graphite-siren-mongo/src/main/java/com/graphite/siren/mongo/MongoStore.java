@@ -7,7 +7,9 @@ import javax.inject.Named;
 
 import org.bson.types.ObjectId;
 
+import com.graphite.siren.core.domain.Alert;
 import com.graphite.siren.core.domain.Check;
+import com.graphite.siren.core.store.AlertsStore;
 import com.graphite.siren.core.store.ChecksStore;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
@@ -16,13 +18,13 @@ import com.mongodb.DBObject;
 import com.mongodb.MongoURI;
 
 @Named
-public class MongoChecksStore implements ChecksStore {
+public class MongoStore implements ChecksStore, AlertsStore {
 
 	private static final String DEFAULT_MONGO_URL = "mongodb://localhost:27017/graphite-siren";
 	private MongoMapper mapper = new MongoMapper();
 	private DB mongo;
 
-	public MongoChecksStore() {
+	public MongoStore() {
 		try {
 			MongoURI mongoUri = new MongoURI(getMongoUri());
 			DB mongo = mongoUri.connectDB();
@@ -43,7 +45,7 @@ public class MongoChecksStore implements ChecksStore {
 		return uri;
 	}
 
-	public MongoChecksStore(DB mongo) {
+	public MongoStore(DB mongo) {
 		this.mongo = mongo;
 	}
 	
@@ -85,6 +87,11 @@ public class MongoChecksStore implements ChecksStore {
 	public Check saveCheck(Check check) {
 		getChecksCollection().save(mapper.checkToDBObject(check));
 		return check;
+	}
+
+	@Override
+	public Alert createAlert(String checkId) {
+		return null;
 	}
 
 }

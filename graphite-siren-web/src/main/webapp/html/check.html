@@ -18,11 +18,13 @@
         <thead>
             <tr>
                 <th>Id</th>
+                <th>Timestamp</th>
             </tr>
         </thead>
         <tbody>
             <tr ng:repeat="alert in check.alerts">
                 <td>{{ alert.id }}</td>
+                <td>{{ alert.timestamp | date:'mediumDate' }}</td>
             </tr>
         </tbody>
     </table>
