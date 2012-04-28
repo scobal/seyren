@@ -87,8 +87,16 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
 
 	@Override
 	public Check saveCheck(Check check) {
-		getChecksCollection().save(mapper.checkToDBObject(check));
+		DBObject db = basicDBObjectById(check.getId());
+		getChecksCollection().update(db, basicDBObjectWithSet("name", check.getName()));
+		getChecksCollection().update(db, basicDBObjectWithSet("target", check.getTarget()));
+		getChecksCollection().update(db, basicDBObjectWithSet("warn", check.getWarn()));
+		getChecksCollection().update(db, basicDBObjectWithSet("error", check.getError()));
 		return check;
+	}
+
+	private BasicDBObject basicDBObjectWithSet(String key, Object value) {
+		return new BasicDBObject("$set", new BasicDBObject(key, value));
 	}
 
 	@Override

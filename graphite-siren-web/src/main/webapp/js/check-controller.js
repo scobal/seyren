@@ -33,11 +33,11 @@ CheckController.prototype = {
     },
     
     saveCheck : function () {
-//    	this.$xhr('PUT', this.graphiteSirenBaseUrl + '/api/checks/' + this.id, this.check, this.saveCheckSuccess, this.saveCheckFailure);
+        this.$xhr('PUT', this.graphiteSirenBaseUrl + '/api/checks/' + this.id, this.check, this.saveCheckSuccess, this.saveCheckFailure);
     },
     
     saveCheckSuccess : function (code, response) {
-    	this.loadCheck();
+        this.loadCheck();
     },
     
     saveCheckFailure : function (code, response) {
