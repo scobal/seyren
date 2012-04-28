@@ -9,6 +9,7 @@ import java.util.Map;
 import org.joda.time.DateTime;
 
 import com.graphite.siren.core.domain.Alert;
+import com.graphite.siren.core.domain.AlertType;
 import com.graphite.siren.core.domain.Check;
 import com.graphite.siren.core.domain.Subscription;
 import com.graphite.siren.core.domain.SubscriptionType;
@@ -46,7 +47,7 @@ public class MongoMapper {
 				.withSubscriptions(subscriptions);
 	}
 
-	private Subscription subscriptionFrom(DBObject dbo) {
+	public Subscription subscriptionFrom(DBObject dbo) {
 		String id = dbo.get("_id").toString();
 		String target = getString(dbo, "target");
 		SubscriptionType type = SubscriptionType.valueOf(getString(dbo, "type"));
@@ -59,10 +60,22 @@ public class MongoMapper {
 
 	public Alert alertFrom(DBObject dbo) {
 		String id = dbo.get("_id").toString();
+		String value = getString(dbo, "value");
+		String target = getString(dbo, "target");
+		String warn = getString(dbo, "warn");
+		String error = getString(dbo, "error");
+		AlertType fromType = AlertType.valueOf(getString(dbo, "fromType"));
+		AlertType toType = AlertType.valueOf(getString(dbo, "toType"));
 		DateTime timestamp = getDateTime(dbo, "timestamp");
 		
 		return new Alert()
 				.withId(id)
+				.withValue(value)
+				.withTarget(target)
+				.withWarn(warn)
+				.withError(error)
+				.withFromType(fromType)
+				.withToType(toType)
 				.withTimestamp(timestamp);
 	}
 
@@ -102,6 +115,12 @@ public class MongoMapper {
 	private Map propertiesToMap(Alert alert) {
 		Map map = new HashMap();
 		map.put("_id", alert.getId());
+		map.put("value", alert.getValue());
+		map.put("target", alert.getTarget());
+		map.put("warn", alert.getWarn());
+		map.put("error", alert.getError());
+		map.put("fromType", alert.getFromType().toString());
+		map.put("toType", alert.getToType().toString());
 		map.put("timestamp", new Date(alert.getTimestamp().getMillis()));
 		return map;
 	}

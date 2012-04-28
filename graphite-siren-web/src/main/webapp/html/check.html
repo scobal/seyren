@@ -10,7 +10,6 @@
     <div class="row-fluid">
         <div class="span7">
             <h2>Details</h2>
-            <img src="http://dyn.com/wp-content/uploads/Graph.png" width="400" />
             <form ng:submit="saveCheck()" class="form-horizontal">
                 <fieldset>
                     <div class="control-group">
@@ -84,14 +83,22 @@
         <table class="table table-bordered table-striped" ng:show="check.alerts">
             <thead>
                 <tr>
-                    <th>Id</th>
                     <th>Timestamp</th>
+                    <th>Value</th>
+                    <th>Warn level</th>
+                    <th>Error level</th>
+                    <th>From</th>
+                    <th>To</th>
                 </tr>
             </thead>
             <tbody>
                 <tr ng:repeat="alert in check.alerts">
-                    <td>{{ alert.id }}</td>
                     <td>{{ alert.timestamp | date:'mediumDate' }}</td>
+                    <td>{{ alert.value }}</td>
+                    <td>{{ alert.warn }}</td>
+                    <td>{{ alert.error }}</td>
+                    <td>{{ alert.fromType }}</td>
+                    <td>{{ alert.toType }}</td>
                 </tr>
             </tbody>
         </table>

@@ -1,5 +1,11 @@
 package com.graphite.siren.core.domain;
 
+/**
+ * This class represents something wanting to be notified of an alert
+ * 
+ * @author mark
+ *
+ */
 public class Subscription {
 
 	private String id;
