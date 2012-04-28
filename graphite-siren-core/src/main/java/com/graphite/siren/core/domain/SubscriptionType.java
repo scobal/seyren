@@ -2,6 +2,6 @@ package com.graphite.siren.core.domain;
 
 public enum SubscriptionType {
 	
-	EMAIL, SMS, NAGIOS, WEB
+	EMAIL, NAGIOS, QUIET, SMS 
 
 }

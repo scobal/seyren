@@ -87,21 +87,21 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
 
 	@Override
 	public Check saveCheck(Check check) {
-		DBObject db = basicDBObjectById(check.getId());
-		getChecksCollection().update(db, basicDBObjectWithSet("name", check.getName()));
-		getChecksCollection().update(db, basicDBObjectWithSet("target", check.getTarget()));
-		getChecksCollection().update(db, basicDBObjectWithSet("warn", check.getWarn()));
-		getChecksCollection().update(db, basicDBObjectWithSet("error", check.getError()));
+		DBObject dbo = basicDBObjectById(check.getId());
+		getChecksCollection().update(dbo, basicDBObjectWithSet("name", check.getName()));
+		getChecksCollection().update(dbo, basicDBObjectWithSet("target", check.getTarget()));
+		getChecksCollection().update(dbo, basicDBObjectWithSet("warn", check.getWarn()));
+		getChecksCollection().update(dbo, basicDBObjectWithSet("error", check.getError()));
 		return check;
-	}
-
-	private BasicDBObject basicDBObjectWithSet(String key, Object value) {
-		return new BasicDBObject("$set", new BasicDBObject(key, value));
 	}
 
 	@Override
 	public Alert createAlert(String checkId, Alert alert) {
-		return null;
+		alert.setId(ObjectId.get().toString());
+		DBObject check = basicDBObjectById(checkId);
+		DBObject query = new BasicDBObject("$push", new BasicDBObject("alerts", mapper.alertToDBObject(alert)));
+		getChecksCollection().update(check, query);
+		return alert;
 	}
 
 	@Override
@@ -113,8 +113,12 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
 		return subscription;
 	}
 	
-	public DBObject basicDBObjectById(String id) {
+	private DBObject basicDBObjectById(String id) {
 	    return new BasicDBObject("_id", id);
+	}
+	
+	private BasicDBObject basicDBObjectWithSet(String key, Object value) {
+		return new BasicDBObject("$set", new BasicDBObject(key, value));
 	}
 
 }
