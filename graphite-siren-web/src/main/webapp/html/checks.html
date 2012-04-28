@@ -1,0 +1,32 @@
+<h1>Checks</h1>
+<div class="row-fluid" ng:init="loadChecks">
+    <div class="span7">
+        <table class="table table-bordered table-striped" ng:show="checks">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng:repeat="check in checks" ng:click="selectCheck(check.id)" style="cursor: pointer;">
+                    <td>{{ check.id }}</td>
+                </tr>
+            </tbody>
+        </table>
+        <p ng:hide="checks">We've got no checks. Why not create one?</p>
+    </div>
+    <div class="span5">
+        <form ng:submit="createCheck()" class="well form-horizontal">
+            <fieldset>
+                <legend>Create check</legend>
+                <div class="control-group">
+                    <div class="controls">
+                        <button type="submit" class="btn btn-primary" >
+                            Create check
+                        </button>
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+</div>
