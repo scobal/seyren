@@ -5,6 +5,7 @@ import javax.inject.Named;
 
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import com.graphite.siren.core.exception.NotificationFailedException;
 import com.graphite.siren.core.service.NotificationService;
@@ -14,9 +15,13 @@ public class EmailService implements NotificationService {
 
     private final MailSender mailSender;
 
-    @Inject
-    public EmailService(MailSender mailSender) {
-        this.mailSender = mailSender;
+    public EmailService() {
+        JavaMailSenderImpl javaMailSender = new JavaMailSenderImpl();
+        javaMailSender.setHost("localhost");
+        javaMailSender.setPort(25);
+        javaMailSender.setProtocol("smtp");
+
+        this.mailSender = javaMailSender;
     }
 
     @Override
