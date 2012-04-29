@@ -1,5 +1,9 @@
 package com.graphite.siren.core.domain;
 
+import com.graphite.siren.core.service.NotificationService;
+import com.graphite.siren.core.value.Email;
+import com.graphite.siren.core.value.EmailAddress;
+
 /**
  * This class represents something wanting to be notified of an alert
  * 
@@ -50,5 +54,19 @@ public class Subscription {
 		setType(type);
 		return this;
 	}
-	
+
+    /**
+     * Report on this alert
+     * @param alert
+     * @param notificationService
+     */
+    public void report(Alert alert, NotificationService notificationService) {
+        if (type.equals(SubscriptionType.EMAIL)) {
+            notificationService.sendNotification(
+                    new Email(new EmailAddress(this.target),
+                            new EmailAddress("alerts@graphite-siren"),
+                            alert.toString(),
+                            "Alert from graphite-siren"));
+        }
+    }
 }

@@ -1,23 +1,29 @@
 package com.graphite.siren.core.checker;
 
+import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.graphite.siren.core.domain.Alert;
 import com.graphite.siren.core.domain.AlertType;
 import com.graphite.siren.core.domain.Check;
+import com.graphite.siren.core.service.NotificationService;
 
 @Named
 public class GraphiteTargetChecker implements TargetChecker {
 
 	private HttpClient client;
+    private NotificationService notificationService;
 
-	public GraphiteTargetChecker() {
+    @Inject
+	public GraphiteTargetChecker(NotificationService notificationService) {
 		client = new HttpClient(new MultiThreadedHttpConnectionManager());
+        this.notificationService = notificationService;
 	}
 
 	@Override
@@ -28,7 +34,10 @@ public class GraphiteTargetChecker implements TargetChecker {
 			Float value = Float.valueOf(get.getResponseBodyAsString().trim());
 			
 			if (isAboveErrorThreshold(check, value)) {
-				return createAlert(check, value, AlertType.ERROR);
+                Alert alert = createAlert(check, value, AlertType.ERROR);
+                check.report(alert, notificationService);
+
+                return alert;
 			}
 			if (isAboveWarnThreshold(check, value)) {
 				return createAlert(check, value, AlertType.WARN);

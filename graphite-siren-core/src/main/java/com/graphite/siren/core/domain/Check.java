@@ -3,6 +3,8 @@ package com.graphite.siren.core.domain;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.graphite.siren.core.service.NotificationService;
+
 /**
  * This class represents a graphite target that needs to be monitored.
  * 
@@ -125,5 +127,16 @@ public class Check {
 		setSubscriptions(subscriptions);
 		return this;
 	}
-	
+
+    /**
+     * Report to interested subscribers that an alert has fired
+     * @param alert The alert
+     * @param notificationService
+     */
+    public void report(Alert alert, NotificationService notificationService) {
+        for (Subscription s : subscriptions) {
+            s.report(alert, notificationService);
+        }
+
+    }
 }

@@ -22,7 +22,8 @@
 		<module>graphite-siren-mongo</module>
 		<module>graphite-siren-core</module>
 		<module>graphite-siren-web</module>
-	</modules>
+        <module>graphite-siren-services</module>
+    </modules>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -154,6 +155,11 @@
 				<artifactId>joda-time</artifactId>
 				<version>${joda-time.version}</version>
 			</dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-email</artifactId>
+                <version>1.2</version>
+            </dependency>
 			<dependency>
 				<groupId>org.codehaus.jackson</groupId>
 				<artifactId>jackson-core-asl</artifactId>
