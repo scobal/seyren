@@ -1,19 +1,19 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>graphite-siren-api</artifactId>
-    <name>Graphite Siren API</name>
+    <artifactId>seyren-api</artifactId>
+    <name>Seyren API</name>
 
     <parent>
-        <groupId>com.graphite.siren</groupId>
-        <artifactId>graphite-siren-parent</artifactId>
+        <groupId>com.seyren</groupId>
+        <artifactId>seyren-parent</artifactId>
         <version>0.1-SNAPSHOT</version>
     </parent>
     
     <dependencies>
    		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>graphite-siren-core</artifactId>
+			<artifactId>seyren-core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>

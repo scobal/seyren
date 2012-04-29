@@ -1,19 +1,19 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>graphite-siren-acceptance-tests</artifactId>
-    <name>Graphite Siren Acceptance Tests</name>
+    <artifactId>seyren-acceptance-tests</artifactId>
+    <name>Seyren Acceptance Tests</name>
 
     <parent>
-        <groupId>com.graphite.siren</groupId>
-        <artifactId>graphite-siren-parent</artifactId>
+        <groupId>com.seyren</groupId>
+        <artifactId>seyren-parent</artifactId>
         <version>0.1-SNAPSHOT</version>
     </parent>
 
     <properties>
-        <graphite-siren.host>localhost</graphite-siren.host>
-        <graphite-siren.port>8080</graphite-siren.port>
-        <graphite-siren.contextRoot>graphite-siren</graphite-siren.contextRoot>
+        <seyren.host>localhost</seyren.host>
+        <seyren.port>8080</seyren.port>
+        <seyren.contextRoot>seyren</seyren.contextRoot>
 
         <jetty.daemon>true</jetty.daemon>
         <jetty.skip>false</jetty.skip>
@@ -26,7 +26,7 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>graphite-siren-web</artifactId>
+            <artifactId>seyren-web</artifactId>
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
@@ -64,9 +64,9 @@
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <configuration>
                     <systemPropertyVariables>
-                        <graphite-siren.host>${graphite-siren.host}</graphite-siren.host>
-                        <graphite-siren.port>${graphite-siren.port}</graphite-siren.port>
-                        <graphite-siren.contextRoot>${graphite-siren.contextRoot}</graphite-siren.contextRoot>
+                        <seyren.host>${seyren.host}</seyren.host>
+                        <seyren.port>${seyren.port}</seyren.port>
+                        <seyren.contextRoot>${seyren.contextRoot}</seyren.contextRoot>
 
                         <email.host>${email.host}</email.host>
                         <email.port>${email.port}</email.port>
@@ -107,9 +107,9 @@
                     <skip>${jetty.skip}</skip>
                     <scanIntervalSeconds>1</scanIntervalSeconds>
                     <webApp>
-                        <contextPath>/graphite-siren</contextPath>
+                        <contextPath>/seyren</contextPath>
                         <baseResource implementation="org.eclipse.jetty.util.resource.ResourceCollection">
-                            <resourcesAsCSV>${project.basedir}/../graphite-siren-web/src/main/webapp</resourcesAsCSV>
+                            <resourcesAsCSV>${project.basedir}/../seyren-web/src/main/webapp</resourcesAsCSV>
                         </baseResource>
                     </webApp>
                     <stopPort>9966</stopPort>

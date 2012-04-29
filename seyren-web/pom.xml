@@ -1,31 +1,31 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>graphite-siren-web</artifactId>
-    <name>Graphite Siren Web</name>
+    <artifactId>seyren-web</artifactId>
+    <name>Seyren Web</name>
     <packaging>war</packaging>
     
     <parent>
-        <groupId>com.graphite.siren</groupId>
-        <artifactId>graphite-siren-parent</artifactId>
+        <groupId>com.seyren</groupId>
+        <artifactId>seyren-parent</artifactId>
         <version>0.1-SNAPSHOT</version>
     </parent>
 
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>graphite-siren-api</artifactId>
+            <artifactId>seyren-api</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>graphite-siren-mongo</artifactId>
+            <artifactId>seyren-mongo</artifactId>
             <version>${project.version}</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>graphite-siren-services</artifactId>
+            <artifactId>seyren-services</artifactId>
             <version>${project.version}</version>
             <scope>runtime</scope>
         </dependency>

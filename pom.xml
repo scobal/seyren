@@ -3,26 +3,26 @@
 
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.graphite.siren</groupId>
-	<artifactId>graphite-siren-parent</artifactId>
+	<groupId>com.seyren</groupId>
+	<artifactId>seyren-parent</artifactId>
 	<version>0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
-	<name>Graphite Siren</name>
+	<name>Seyren</name>
 
 	<scm>
-		<connection>scm:git:git@github.com:scobal/graphite-siren.git</connection>
-		<developerConnection>scm:git:git@github.com:scobal/graphite-siren.git</developerConnection>
-		<url>git@github.com:scobal/graphite-siren.git</url>
+		<connection>scm:git:git@github.com:scobal/seyren.git</connection>
+		<developerConnection>scm:git:git@github.com:scobal/seyren.git</developerConnection>
+		<url>git@github.com:scobal/seyren.git</url>
 	</scm>
 
 	<modules>
-		<module>graphite-siren-acceptance-tests</module>
-		<module>graphite-siren-api</module>
-		<module>graphite-siren-mongo</module>
-		<module>graphite-siren-core</module>
-		<module>graphite-siren-web</module>
-        <module>graphite-siren-services</module>
+		<module>seyren-acceptance-tests</module>
+		<module>seyren-api</module>
+		<module>seyren-mongo</module>
+		<module>seyren-core</module>
+		<module>seyren-web</module>
+        <module>seyren-services</module>
     </modules>
 
 	<properties>

@@ -9,7 +9,7 @@ public final class GraphiteSirenDriver {
 
 	private static final String DEFAULT_HOST = "localhost";
 	private static final String DEFAULT_PORT = "8080";
-	private static final String DEFAULT_CONTEXT_ROOT = "graphite-siren";
+	private static final String DEFAULT_CONTEXT_ROOT = "seyren";
     private static final int DEFAULT_REST_DRIVER_PORT = 8081;
 
 	public static Url checks() {
@@ -25,15 +25,15 @@ public final class GraphiteSirenDriver {
     }
 	
 	private static String host() {
-		return System.getProperty("graphite-siren.host", DEFAULT_HOST);
+		return System.getProperty("seyren.host", DEFAULT_HOST);
 	}
 
 	private static String port() {
-		return System.getProperty("graphite-siren.port", DEFAULT_PORT);
+		return System.getProperty("seyren.port", DEFAULT_PORT);
 	}
 
 	private static String contextRoot() {
-		return System.getProperty("graphite-siren.contextRoot", DEFAULT_CONTEXT_ROOT);
+		return System.getProperty("seyren.contextRoot", DEFAULT_CONTEXT_ROOT);
 	}
 	
 }

@@ -2,12 +2,12 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>graphite-siren-core</artifactId>
-	<name>Graphite Siren Core</name>
+	<artifactId>seyren-core</artifactId>
+	<name>Seyren Core</name>
 
 	<parent>
-		<groupId>com.graphite.siren</groupId>
-		<artifactId>graphite-siren-parent</artifactId>
+		<groupId>com.seyren</groupId>
+		<artifactId>seyren-parent</artifactId>
 		<version>0.1-SNAPSHOT</version>
 	</parent>
 
@@ -28,8 +28,6 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
 		</dependency>
-
-
 	</dependencies>
 
 	<build>
