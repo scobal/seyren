@@ -61,12 +61,6 @@ public class Subscription {
      * @param notificationService
      */
     public void report(Alert alert, NotificationService notificationService) {
-        if (type.equals(SubscriptionType.EMAIL)) {
-            notificationService.sendNotification(
-                    new Email(new EmailAddress(this.target),
-                            new EmailAddress("alerts@graphite-siren"),
-                            alert.toString(),
-                            "Alert from graphite-siren"));
-        }
+
     }
 }

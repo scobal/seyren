@@ -11,6 +11,7 @@ import org.joda.time.DateTime;
 import com.graphite.siren.core.domain.Alert;
 import com.graphite.siren.core.domain.AlertType;
 import com.graphite.siren.core.domain.Check;
+import com.graphite.siren.core.domain.EmailSubscription;
 import com.graphite.siren.core.domain.Subscription;
 import com.graphite.siren.core.domain.SubscriptionType;
 import com.mongodb.BasicDBList;
@@ -53,7 +54,14 @@ public class MongoMapper {
 		String id = dbo.get("_id").toString();
 		String target = getString(dbo, "target");
 		SubscriptionType type = SubscriptionType.valueOf(getString(dbo, "type"));
-		
+
+        if (type.equals(SubscriptionType.EMAIL)) {
+            return new EmailSubscription()
+                    .withId(id)
+                    .withTarget(target)
+                    .withType(type);
+        }
+
 		return new Subscription()
 				.withId(id)
 				.withTarget(target)

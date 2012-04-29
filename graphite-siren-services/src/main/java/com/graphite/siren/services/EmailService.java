@@ -1,10 +1,10 @@
 package com.graphite.siren.services;
 
+import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.apache.commons.mail.Email;
-import org.apache.commons.mail.EmailException;
-import org.apache.commons.mail.SimpleEmail;
+import org.springframework.mail.MailSender;
+import org.springframework.mail.SimpleMailMessage;
 
 import com.graphite.siren.core.exception.NotificationFailedException;
 import com.graphite.siren.core.service.NotificationService;
@@ -12,29 +12,33 @@ import com.graphite.siren.core.service.NotificationService;
 @Named
 public class EmailService implements NotificationService {
 
+    private final MailSender mailSender;
+
+    @Inject
+    public EmailService(MailSender mailSender) {
+        this.mailSender = mailSender;
+    }
+
     @Override
     public void sendNotification(com.graphite.siren.core.value.Email email) {
 
         try {
-            createEmail(email.getFrom().getAddress(), email.getTo().getAddress(), email.getMessage(), email.getSubject());
+            SimpleMailMessage mailMessage = createEmail(email.getFrom().getAddress(), email.getTo().getAddress(), email.getMessage(), email.getSubject());
+            mailSender.send(mailMessage);
 
-        } catch (EmailException e) {
-            throw new NotificationFailedException("Failed to send notification", e);
+        } catch (Exception e) {
+            throw new NotificationFailedException("Failed to send notification to " + email.getTo().getAddress(), e);
         }
     }
 
-    Email createEmail(String from, String to, String message, String subject) throws EmailException{
-        Email apacheEmail = new SimpleEmail();
+    SimpleMailMessage createEmail(String from, String to, String message, String subject) {
 
-        apacheEmail.setHostName("localhost");
-        apacheEmail.setSocketConnectionTimeout(500);
-        apacheEmail.setSmtpPort(1125);
-        apacheEmail.setFrom(from);
-        apacheEmail.setSubject(subject);
-        apacheEmail.setMsg(message);
-        apacheEmail.addTo(to);
-        apacheEmail.send();
+        SimpleMailMessage mail = new SimpleMailMessage();
+        mail.setTo(to);
+        mail.setFrom(from);
+        mail.setText(message);
+        mail.setSubject(subject);
 
-        return apacheEmail;
+        return mail;
     }
 }

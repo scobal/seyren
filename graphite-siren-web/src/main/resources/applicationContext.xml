@@ -10,4 +10,15 @@
         
         <task:annotation-driven />
 
+        <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+            <property name="host" value="localhost"/>
+            <property name="port" value="25"/>
+            <property name="javaMailProperties">
+                <props>
+                    <!-- Use SMTP transport protocol -->
+                    <prop key="mail.transport.protocol">smtp</prop>
+                    <!--<prop key="mail.debug">true</prop>-->
+                </props>
+            </property>
+        </bean>
 </beans>
