@@ -15,13 +15,10 @@ public class EmailService implements NotificationService {
 
     private final MailSender mailSender;
 
-    public EmailService() {
-        JavaMailSenderImpl javaMailSender = new JavaMailSenderImpl();
-        javaMailSender.setHost("localhost");
-        javaMailSender.setPort(25);
-        javaMailSender.setProtocol("smtp");
+    @Inject
+    public EmailService(MailSender mailSender) {
 
-        this.mailSender = javaMailSender;
+        this.mailSender = mailSender;
     }
 
     @Override
