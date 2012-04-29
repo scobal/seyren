@@ -25,6 +25,7 @@ public class MongoMapper {
 		String target = getString(dbo, "target");
 		String warn = getString(dbo, "warn");
 		String error = getString(dbo, "error");
+		boolean enabled = getBoolean(dbo, "enabled");
 		
 		List<Alert> alerts = new ArrayList<Alert>();
 		BasicDBList list = getBasicDBList(dbo, "alerts");
@@ -43,6 +44,7 @@ public class MongoMapper {
 				.withTarget(target)
 				.withWarn(warn)
 				.withError(error)
+				.withEnabled(enabled)
 				.withAlerts(alerts)
 				.withSubscriptions(subscriptions);
 	}
@@ -99,6 +101,7 @@ public class MongoMapper {
 		map.put("target", check.getTarget());
 		map.put("warn", check.getWarn());
 		map.put("error", check.getError());
+		map.put("enabled", check.isEnabled());
 		return map;
 	}
 	
@@ -125,6 +128,10 @@ public class MongoMapper {
 		return map;
 	}
 
+	private boolean getBoolean(DBObject dbo, String key) {
+		return (Boolean) dbo.get(key);
+	}
+	
 	private DateTime getDateTime(DBObject dbo, String key) {
 		Date date = (Date)dbo.get(key);
 		if (date != null) {

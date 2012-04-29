@@ -1,7 +1,8 @@
 <h1>Checks</h1>
 <div class="row-fluid" ng:init="loadChecks()">
     <div class="span7">
-        <table class="table table-bordered table-striped" ng:show="checks">
+        <table class="table table-bordered table-striped"
+            ng:show="checks">
             <thead>
                 <tr>
                     <th>Name</th>
@@ -11,7 +12,9 @@
                 </tr>
             </thead>
             <tbody>
-                <tr ng:repeat="check in checks" ng:click="selectCheck(check.id)" style="cursor: pointer;">
+                <tr ng:repeat="check in checks"
+                    ng:click="selectCheck(check.id)"
+                    style="cursor: pointer;">
                     <td>{{ check.name }}</td>
                     <td>{{ check.target }}</td>
                     <td>{{ check.warn }}</td>
@@ -24,36 +27,47 @@
     <div class="span5">
         <form ng:submit="createCheck()" class="well form-horizontal">
             <fieldset>
-                <legend>Create check</legend>                
+                <legend>Create check</legend>
                 <div class="control-group">
                     <label class="control-label" for="newcheck.name">Name</label>
                     <div class="controls">
-                        <input id="newcheck.name" class="input-xlarge" name="newcheck.name" type="text" />
+                        <input id="newcheck.name" class="input-xlarge"
+                            name="newcheck.name" type="text" />
                     </div>
-                </div>                
+                </div>
                 <div class="control-group">
                     <label class="control-label" for="newcheck.target">Target</label>
                     <div class="controls">
-                        <input id="newcheck.target" class="input-xlarge" name="newcheck.target" type="text" />
+                        <input id="newcheck.target" class="input-xlarge"
+                            name="newcheck.target" type="text" />
                     </div>
-                </div>                
+                </div>
                 <div class="control-group">
-                    <label class="control-label" for="newcheck.warn">Warn level</label>
+                    <label class="control-label" for="newcheck.warn">Warn
+                        level</label>
                     <div class="controls">
-                        <input id="newcheck.warn" class="input-small" name="newcheck.warn" type="text" />
+                        <input id="newcheck.warn" class="input-small"
+                            name="newcheck.warn" type="text" />
                     </div>
-                </div>                
+                </div>
                 <div class="control-group">
-                    <label class="control-label" for="newcheck.error">Error level</label>
+                    <label class="control-label" for="newcheck.error">Error
+                        level</label>
                     <div class="controls">
-                        <input id="newcheck.error" class="input-small" name="newcheck.error" type="text" />
+                        <input id="newcheck.error" class="input-small"
+                            name="newcheck.error" type="text" />
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="newcheck.enabled">Enabled</label>
+                    <div class="controls">
+                        <input id="newcheck.enabled" class="input-medium" name="newcheck.enabled" type="checkbox" checked="checked">
                     </div>
                 </div>
                 <div class="control-group">
                     <div class="controls">
-                        <button type="submit" class="btn btn-primary" >
-                            Create check
-                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            Create check</button>
                     </div>
                 </div>
             </fieldset>

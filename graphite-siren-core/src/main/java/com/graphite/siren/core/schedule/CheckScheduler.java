@@ -31,13 +31,15 @@ public class CheckScheduler {
 	public void performChecks() {
 		List<Check> checks = checksStore.getChecks();
 		for (Check check : checks) {
-			try {
-				Alert alert = checker.check(check);
-				if (alert != null) {
-					alertsStore.createAlert(check.getId(), alert);
+			if (check.isEnabled()) {
+				try {
+					Alert alert = checker.check(check);
+					if (alert != null) {
+						alertsStore.createAlert(check.getId(), alert);
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
-			} catch (Exception e) {
-				e.printStackTrace();
 			}
 
 			// (optional) notify subscribers

@@ -37,6 +37,12 @@
                         </div>
                     </div>
                     <div class="control-group">
+                        <label class="control-label" for="check.enabled">Enabled</label>
+                        <div class="controls">
+                            <input id="check.enabled" class="input-medium" name="check.enabled" type="checkbox">
+                        </div>
+                    </div>
+                    <div class="control-group">
                         <div class="controls">
                             <button type="submit" class="btn btn-primary" >
                                 Save check
@@ -93,7 +99,7 @@
             </thead>
             <tbody>
                 <tr ng:repeat="alert in check.alerts">
-                    <td>{{ alert.timestamp | date:'mediumDate' }}</td>
+                    <td>{{ alert.timestamp | date: 'yyyy-MM-dd HH:mm:ss' }}</td>
                     <td>{{ alert.value }}</td>
                     <td>{{ alert.warn }}</td>
                     <td>{{ alert.error }}</td>

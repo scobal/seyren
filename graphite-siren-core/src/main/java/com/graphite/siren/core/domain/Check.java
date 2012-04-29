@@ -18,6 +18,7 @@ public class Check {
 	private String target;
 	private String warn;
 	private String error;
+	private boolean enabled;
 	private List<Alert> alerts = new ArrayList<Alert>();
 	private List<Subscription> subscriptions = new ArrayList<Subscription>();
 	
@@ -83,6 +84,19 @@ public class Check {
 	
 	public Check withError(String error) {
 		setError(error);
+		return this;
+	}
+
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
+	
+	public Check withEnabled(boolean enabled) {
+		setEnabled(enabled);
 		return this;
 	}
 

@@ -28,7 +28,8 @@ ChecksController.prototype = {
                 name : this.newcheck.name,
                 target : this.newcheck.target,
                 warn : this.newcheck.warn,
-                error : this.newcheck.error
+                error : this.newcheck.error,
+                enabled : this.newcheck.enabled
                 };
         
         this.$xhr('POST', this.graphiteSirenBaseUrl + '/api/checks', check, this.createCheckSuccess, this.createCheckFailure);
