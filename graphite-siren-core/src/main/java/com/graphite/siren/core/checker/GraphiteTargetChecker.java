@@ -25,20 +25,30 @@ public class GraphiteTargetChecker implements TargetChecker {
 		GetMethod get = new GetMethod(check.getTarget());
 		try {
 			client.executeMethod(get);
-			Integer value = Integer.valueOf(get.getResponseBodyAsString().trim());
-			if (value >= Integer.valueOf(check.getError())) {
+			Float value = Float.valueOf(get.getResponseBodyAsString().trim());
+			
+			if (isAboveErrorThreshold(check, value)) {
 				return createAlert(check, value, AlertType.ERROR);
 			}
-			if (value >= Integer.valueOf(check.getWarn())) {
+			if (isAboveWarnThreshold(check, value)) {
 				return createAlert(check, value, AlertType.WARN);
 			}
+			
 			return null;
 		} finally {
 			get.releaseConnection();
 		}
 	}
 
-	private Alert createAlert(Check check, Integer value, AlertType type) {
+	private boolean isAboveWarnThreshold(Check check, Float value) {
+		return value >= Float.valueOf(check.getWarn());
+	}
+
+	private boolean isAboveErrorThreshold(Check check, Float value) {
+		return value >= Float.valueOf(check.getError());
+	}
+
+	private Alert createAlert(Check check, Float value, AlertType type) {
 		return new Alert()
 			.withValue(value.toString())
 			.withWarn(check.getWarn())
