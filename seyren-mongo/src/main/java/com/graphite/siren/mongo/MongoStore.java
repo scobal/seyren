@@ -22,7 +22,7 @@ import com.mongodb.MongoURI;
 @Named
 public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore {
 
-	private static final String DEFAULT_MONGO_URL = "mongodb://localhost:27017/graphite-siren";
+	private static final String DEFAULT_MONGO_URL = "mongodb://localhost:27017/seyren";
 	private MongoMapper mapper = new MongoMapper();
 	private DB mongo;
 

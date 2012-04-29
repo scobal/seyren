@@ -12,9 +12,9 @@ public class EmailSubscription extends Subscription {
     public void report(Alert alert, NotificationService notificationService) {
         notificationService.sendNotification(
                 new Email(new EmailAddress(getTarget()),
-                        new EmailAddress("alerts@graphite-siren"),
+                        new EmailAddress("alerts@seyren"),
                         alert.toString(),
-                        "Alert from graphite-siren"));
+                        "Alert from seyren"));
 
     }
 }
