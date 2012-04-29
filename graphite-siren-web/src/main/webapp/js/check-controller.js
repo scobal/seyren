@@ -54,6 +54,7 @@ CheckController.prototype = {
     },
     
     createSubscriptionSuccess : function (code, response) {
+    	this.newsubscription.target = '';
         this.loadCheck();
     },
     
