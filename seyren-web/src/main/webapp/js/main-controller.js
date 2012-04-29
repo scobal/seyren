@@ -4,7 +4,7 @@ function MainController($xhr, $route, $location) {
     this.$xhr = $xhr;
     this.$route = $route;
     this.$location = $location;
-    this.graphiteSirenBaseUrl = '.';
+    this.seyrenBaseUrl = '.';
     
     this.$route.when('/checks', {
         controller: ChecksController,

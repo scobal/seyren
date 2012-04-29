@@ -9,7 +9,7 @@ function CheckController() {
 CheckController.prototype = {
     
     loadCheck : function () {
-        this.$xhr('GET', this.graphiteSirenBaseUrl + '/api/checks/' + this.id, this.loadCheckSuccess, this.loadCheckFailure);
+        this.$xhr('GET', this.seyrenBaseUrl + '/api/checks/' + this.id, this.loadCheckSuccess, this.loadCheckFailure);
     },
     
     loadCheckSuccess : function (code, response) {
@@ -21,7 +21,7 @@ CheckController.prototype = {
     },
     
     deleteCheck : function () {
-        this.$xhr('DELETE', this.graphiteSirenBaseUrl + '/api/checks/' + this.id, this.deleteCheckSuccess, this.deleteCheckFailure);
+        this.$xhr('DELETE', this.seyrenBaseUrl + '/api/checks/' + this.id, this.deleteCheckSuccess, this.deleteCheckFailure);
     },
     
     deleteCheckSuccess : function (code, response) {
@@ -33,7 +33,7 @@ CheckController.prototype = {
     },
     
     saveCheck : function () {
-        this.$xhr('PUT', this.graphiteSirenBaseUrl + '/api/checks/' + this.id, this.check, this.saveCheckSuccess, this.saveCheckFailure);
+        this.$xhr('PUT', this.seyrenBaseUrl + '/api/checks/' + this.id, this.check, this.saveCheckSuccess, this.saveCheckFailure);
     },
     
     saveCheckSuccess : function (code, response) {
@@ -50,7 +50,7 @@ CheckController.prototype = {
                 type : this.newsubscription.type
                 };
         
-        this.$xhr('POST', this.graphiteSirenBaseUrl + '/api/checks/' + this.id + '/subscriptions', subscription, this.createSubscriptionSuccess, this.createSubscriptionFailure);
+        this.$xhr('POST', this.seyrenBaseUrl + '/api/checks/' + this.id + '/subscriptions', subscription, this.createSubscriptionSuccess, this.createSubscriptionFailure);
     },
     
     createSubscriptionSuccess : function (code, response) {

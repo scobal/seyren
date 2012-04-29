@@ -8,7 +8,7 @@ function ChecksController() {
 ChecksController.prototype = {
     
     loadChecks : function () {
-        this.$xhr('GET', this.graphiteSirenBaseUrl + '/api/checks', this.loadChecksSuccess, this.loadChecksFailure);
+        this.$xhr('GET', this.seyrenBaseUrl + '/api/checks', this.loadChecksSuccess, this.loadChecksFailure);
     },
     
     loadChecksSuccess : function (code, response) {
@@ -32,7 +32,7 @@ ChecksController.prototype = {
                 enabled : this.newcheck.enabled
                 };
         
-        this.$xhr('POST', this.graphiteSirenBaseUrl + '/api/checks', check, this.createCheckSuccess, this.createCheckFailure);
+        this.$xhr('POST', this.seyrenBaseUrl + '/api/checks', check, this.createCheckSuccess, this.createCheckFailure);
     },
     
     createCheckSuccess : function (code, response) {
