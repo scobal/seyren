@@ -8,7 +8,7 @@
         </div>
     </div>
     <div class="row-fluid">
-        <div class="span7">
+        <div class="span3">
             <h2>Details</h2>
             <form ng:submit="saveCheck()" class="form-horizontal">
                 <fieldset>
@@ -51,6 +51,11 @@
                     </div>
                 </fieldset>
             </form>
+        </div>
+        <div class="span4">           
+            2 hours<img ng:src="http://graphite.int.ent.nokia.com/render?from=-2hours&until=now&target={{check.target}}&height=110&width=600&hideLegend=true&areaMode=all" />            
+            2 days<img ng:src="http://graphite.int.ent.nokia.com/render?from=-2days&until=now&target={{check.target}}&height=110&width=600&hideLegend=true&areaMode=all" />        
+            2 weeks<img ng:src="http://graphite.int.ent.nokia.com/render?from=-2weeks&until=now&target={{check.target}}&height=110&width=600&hideLegend=true&areaMode=all" />    
         </div>
         <div class="span5">
             <h2>Subscriptions</h2>
