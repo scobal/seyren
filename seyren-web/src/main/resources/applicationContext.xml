@@ -9,4 +9,10 @@
         <context:component-scan base-package="com.seyren" />
         
         <task:annotation-driven />
+        
+        <bean class="com.seyren.core.value.GraphiteConfig">
+               <constructor-arg value="http://graphite.int.ent.nokia.com" />
+               <constructor-arg value="/render?from=-5minutes&amp;until=now&amp;uniq=%s&amp;format=json&amp;target=%s" />
+        </bean>
+        
 </beans>
