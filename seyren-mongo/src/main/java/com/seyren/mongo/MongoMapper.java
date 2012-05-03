@@ -54,18 +54,32 @@ public class MongoMapper {
 		String id = dbo.get("_id").toString();
 		String target = getString(dbo, "target");
 		SubscriptionType type = SubscriptionType.valueOf(getString(dbo, "type"));
+		boolean su = getBoolean(dbo, "su");
+		boolean mo = getBoolean(dbo, "mo");
+		boolean tu = getBoolean(dbo, "tu");
+		boolean we = getBoolean(dbo, "we");
+		boolean th = getBoolean(dbo, "th");
+		boolean fr = getBoolean(dbo, "fr");
+		boolean sa = getBoolean(dbo, "sa");
 
+		Subscription result;
         if (type.equals(SubscriptionType.EMAIL)) {
-            return new EmailSubscription()
-                    .withId(id)
-                    .withTarget(target)
-                    .withType(type);
+            result = new EmailSubscription();
+        } else {
+        	result = new Subscription();
         }
 
-		return new Subscription()
+		return result
 				.withId(id)
 				.withTarget(target)
-				.withType(type);
+				.withType(type)
+				.withSu(su)
+				.withMo(mo)
+				.withTu(tu)
+				.withWe(we)
+				.withTh(th)
+				.withFr(fr)
+				.withSa(sa);
 	}
 
 	public Alert alertFrom(DBObject dbo) {
@@ -119,6 +133,13 @@ public class MongoMapper {
 		map.put("_id", subscription.getId());
 		map.put("target", subscription.getTarget());
 		map.put("type", subscription.getType().toString());
+		map.put("su", subscription.isSu());
+		map.put("mo", subscription.isMo());
+		map.put("tu", subscription.isTu());
+		map.put("we", subscription.isWe());
+		map.put("th", subscription.isTh());
+		map.put("fr", subscription.isFr());
+		map.put("sa", subscription.isSa());
 		return map;
 	}
 	

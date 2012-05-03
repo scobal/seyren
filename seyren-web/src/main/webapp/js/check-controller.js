@@ -47,7 +47,14 @@ CheckController.prototype = {
     createSubscription : function () {
         var subscription = {
                 target : this.newsubscription.target,
-                type : this.newsubscription.type
+                type : this.newsubscription.type,
+                su : this.newsubscription.su,
+                mo : this.newsubscription.mo,
+                tu : this.newsubscription.tu,
+                we : this.newsubscription.we,
+                th : this.newsubscription.th,
+                fr : this.newsubscription.fr,
+                sa : this.newsubscription.sa
                 };
         
         this.$xhr('POST', this.seyrenBaseUrl + '/api/checks/' + this.id + '/subscriptions', subscription, this.createSubscriptionSuccess, this.createSubscriptionFailure);
