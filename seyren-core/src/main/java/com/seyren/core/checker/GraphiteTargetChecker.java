@@ -64,11 +64,11 @@ public class GraphiteTargetChecker implements TargetChecker {
 	private Alert createAlert(Check check, Float value) {
 		AlertType currentState = getCurrentState(check);
 
-		if (isAboveErrorThreshold(check, value)) {
+		if (check.isBeyondErrorThreshold(value)) {
 			
 			return alert(check, value, currentState, AlertType.ERROR);
 
-		} else if (isAboveWarnThreshold(check, value)) {
+		} else if (check.isBeyondWarnThreshold(value)) {
 			
 			return alert(check, value, currentState, AlertType.WARN);
 
@@ -100,14 +100,6 @@ public class GraphiteTargetChecker implements TargetChecker {
 		}
 
 		throw new Exception("Could not find a valid datapoint for uri: " + get);
-	}
-
-	private boolean isAboveWarnThreshold(Check check, Float value) {
-		return value >= Float.valueOf(check.getWarn());
-	}
-
-	private boolean isAboveErrorThreshold(Check check, Float value) {
-		return value >= Float.valueOf(check.getError());
 	}
 
 	private Alert alert(Check check, Float value, AlertType from, AlertType to) {

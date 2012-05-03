@@ -140,4 +140,22 @@ public class Check {
         	} 
         }
     }
+    
+	public boolean isBeyondWarnThreshold(Float value) {
+		if (isTheValueBeingHighBad()) {
+			return value >= Float.valueOf(getWarn());
+		}
+		return value <= Float.valueOf(getWarn());
+	}
+
+	public boolean isBeyondErrorThreshold(Float value) {
+		if (isTheValueBeingHighBad()) {
+			return value >= Float.valueOf(getError());
+		}
+		return value <= Float.valueOf(getError());
+	}
+	
+	private boolean isTheValueBeingHighBad() {
+		return Float.valueOf(getWarn()) <= Float.valueOf(getError());
+	}
 }
