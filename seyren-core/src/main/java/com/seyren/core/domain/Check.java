@@ -133,10 +133,11 @@ public class Check {
      * @param alert The alert
      * @param notificationService
      */
-    public void report(Alert alert, NotificationService notificationService) {
-        for (Subscription s : subscriptions) {
-            s.report(alert, notificationService);
+    public void notify(Alert alert, NotificationService notificationService) {
+        for (Subscription subscription : subscriptions) {
+        	if (subscription.shouldNotify(alert)) {
+        		subscription.notify(alert, notificationService);
+        	} 
         }
-
     }
 }

@@ -9,7 +9,7 @@ public class EmailSubscription extends Subscription {
     /** @{inheritDoc}
      */
     @Override
-    public void report(Alert alert, NotificationService notificationService) {
+    public void notify(Alert alert, NotificationService notificationService) {
         notificationService.sendNotification(
                 new Email(new EmailAddress(getTarget()),
                         new EmailAddress("alerts@seyren"),

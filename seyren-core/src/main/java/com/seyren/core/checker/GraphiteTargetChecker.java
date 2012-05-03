@@ -50,7 +50,7 @@ public class GraphiteTargetChecker implements TargetChecker {
 
 			// Only notify if the alert has changed state
 			if (alert.getFromType() != alert.getToType()) {
-				check.report(alert, notificationService);
+				check.notify(alert, notificationService);
 			}
 
 			return alert;

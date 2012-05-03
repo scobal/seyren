@@ -150,7 +150,19 @@ public class Subscription {
      * @param alert
      * @param notificationService
      */
-    public void report(Alert alert, NotificationService notificationService) {
+    public void notify(Alert alert, NotificationService notificationService) {
 
     }
+
+	public boolean shouldNotify(Alert alert) {
+    	int day = alert.getTimestamp().getDayOfWeek();
+		if (day == 1 && isMo()) return true;
+		if (day == 2 && isTu()) return true;
+		if (day == 3 && isWe()) return true;
+		if (day == 4 && isTh()) return true;
+		if (day == 5 && isFr()) return true;
+		if (day == 6 && isSa()) return true;
+		if (day == 7 && isSu()) return true;
+		return false;
+	}
 }
