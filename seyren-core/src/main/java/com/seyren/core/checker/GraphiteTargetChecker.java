@@ -38,7 +38,7 @@ public class GraphiteTargetChecker implements TargetChecker {
 		try {
 
 			client.executeMethod(get);
-			Float value = getValue(get);
+			Double value = getValue(get);
 
 			// Always create an alert
 			Alert alert = createAlert(check, value);
@@ -61,7 +61,7 @@ public class GraphiteTargetChecker implements TargetChecker {
 		}
 	}
 
-	private Alert createAlert(Check check, Float value) {
+	private Alert createAlert(Check check, Double value) {
 		AlertType currentState = getCurrentState(check);
 
 		if (check.isBeyondErrorThreshold(value)) {
@@ -87,7 +87,7 @@ public class GraphiteTargetChecker implements TargetChecker {
 		return fromType;
 	}
 
-	private Float getValue(GetMethod get) throws Exception {
+	private Double getValue(GetMethod get) throws Exception {
 		JsonNode tree = new ObjectMapper().readTree(get.getResponseBodyAsString());
 		JsonNode points = tree.get(0).get("datapoints");
 
@@ -95,16 +95,16 @@ public class GraphiteTargetChecker implements TargetChecker {
 		for (int i = points.size() - 1; i >= 0; i--) {
 			String value = points.get(i).get(0).asText();
 			if (!value.equals("null")) {
-				return Float.valueOf(value);
+				return Double.valueOf(value);
 			}
 		}
 
 		throw new Exception("Could not find a valid datapoint for uri: " + get);
 	}
 
-	private Alert alert(Check check, Float value, AlertType from, AlertType to) {
+	private Alert alert(Check check, Double value, AlertType from, AlertType to) {
 		return new Alert()
-				.withValue(value.toString())
+				.withValue(value)
 				.withWarn(check.getWarn())
 				.withError(check.getError())
 				.withFromType(from)

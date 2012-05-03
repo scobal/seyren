@@ -24,8 +24,8 @@ public class MongoMapper {
 		String id = dbo.get("_id").toString();
 		String name = getString(dbo, "name");
 		String target = getString(dbo, "target");
-		String warn = getString(dbo, "warn");
-		String error = getString(dbo, "error");
+		Double warn = getDouble(dbo, "warn");
+		Double error = getDouble(dbo, "error");
 		boolean enabled = getBoolean(dbo, "enabled");
 		
 		List<Alert> alerts = new ArrayList<Alert>();
@@ -84,10 +84,10 @@ public class MongoMapper {
 
 	public Alert alertFrom(DBObject dbo) {
 		String id = dbo.get("_id").toString();
-		String value = getString(dbo, "value");
+		Double value = getDouble(dbo, "value");
 		String target = getString(dbo, "target");
-		String warn = getString(dbo, "warn");
-		String error = getString(dbo, "error");
+		Double warn = getDouble(dbo, "warn");
+		Double error = getDouble(dbo, "error");
 		AlertType fromType = AlertType.valueOf(getString(dbo, "fromType"));
 		AlertType toType = AlertType.valueOf(getString(dbo, "toType"));
 		DateTime timestamp = getDateTime(dbo, "timestamp");
@@ -171,6 +171,10 @@ public class MongoMapper {
 	
 	private String getString(DBObject dbo, String key) {
 		return (String) dbo.get(key);
+	}
+	
+	private Double getDouble(DBObject dbo, String key) {
+		return (Double) dbo.get(key);
 	}
 	
 	private BasicDBList getBasicDBList(DBObject dbo, String key) {

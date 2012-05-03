@@ -14,10 +14,10 @@ import org.joda.time.DateTime;
 public class Alert {
 
 	private String id;
-	private String value;
+	private Double value;
 	private String target;
-	private String warn;
-	private String error;
+	private Double warn;
+	private Double error;
 	private AlertType fromType;
 	private AlertType toType;
 	private DateTime timestamp;
@@ -35,15 +35,15 @@ public class Alert {
 		return this;
 	}
 	
-	public String getValue() {
+	public Double getValue() {
 		return value;
 	}
 
-	public void setValue(String value) {
+	public void setValue(Double value) {
 		this.value = value;
 	}
 	
-	public Alert withValue(String value) {
+	public Alert withValue(Double value) {
 		setValue(value);
 		return this;
 	}
@@ -61,28 +61,28 @@ public class Alert {
 		return this;
 	}
 
-	public String getWarn() {
+	public Double getWarn() {
 		return warn;
 	}
 
-	public void setWarn(String warn) {
+	public void setWarn(Double warn) {
 		this.warn = warn;
 	}
 	
-	public Alert withWarn(String warn) {
+	public Alert withWarn(Double warn) {
 		setWarn(warn);
 		return this;
 	}
 
-	public String getError() {
+	public Double getError() {
 		return error;
 	}
 
-	public void setError(String error) {
+	public void setError(Double error) {
 		this.error = error;
 	}
 	
-	public Alert withError(String error) {
+	public Alert withError(Double error) {
 		setError(error);
 		return this;
 	}

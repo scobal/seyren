@@ -18,8 +18,8 @@ public class Check {
 	private String id;
 	private String name;
 	private String target;
-	private String warn;
-	private String error;
+	private Double warn;
+	private Double error;
 	private boolean enabled;
 	private List<Alert> alerts = new ArrayList<Alert>();
 	private List<Subscription> subscriptions = new ArrayList<Subscription>();
@@ -63,28 +63,28 @@ public class Check {
 		return this;
 	}
 
-	public String getWarn() {
+	public Double getWarn() {
 		return warn;
 	}
 
-	public void setWarn(String warn) {
+	public void setWarn(Double warn) {
 		this.warn = warn;
 	}
 	
-	public Check withWarn(String warn) {
+	public Check withWarn(Double warn) {
 		setWarn(warn);
 		return this;
 	}
 
-	public String getError() {
+	public Double getError() {
 		return error;
 	}
 
-	public void setError(String error) {
+	public void setError(Double error) {
 		this.error = error;
 	}
 	
-	public Check withError(String error) {
+	public Check withError(Double error) {
 		setError(error);
 		return this;
 	}
@@ -141,21 +141,21 @@ public class Check {
         }
     }
     
-	public boolean isBeyondWarnThreshold(Float value) {
+	public boolean isBeyondWarnThreshold(Double value) {
 		if (isTheValueBeingHighBad()) {
-			return value >= Float.valueOf(getWarn());
+			return value >= getWarn();
 		}
-		return value <= Float.valueOf(getWarn());
+		return value <= getWarn();
 	}
 
-	public boolean isBeyondErrorThreshold(Float value) {
+	public boolean isBeyondErrorThreshold(Double value) {
 		if (isTheValueBeingHighBad()) {
-			return value >= Float.valueOf(getError());
+			return value >= getError();
 		}
-		return value <= Float.valueOf(getError());
+		return value <= getError();
 	}
 	
 	private boolean isTheValueBeingHighBad() {
-		return Float.valueOf(getWarn()) <= Float.valueOf(getError());
+		return getWarn() <= getError();
 	}
 }

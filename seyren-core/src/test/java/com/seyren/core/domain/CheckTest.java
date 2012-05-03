@@ -9,34 +9,34 @@ public class CheckTest {
 
 	@Test
 	public void testIsBeyondWarnThresholdWhenHigherIsBad() {
-		Check check = new Check().withWarn("10").withError("20");
-		assertThat(check.isBeyondWarnThreshold(9f), is(equalTo(false)));
-		assertThat(check.isBeyondWarnThreshold(10f), is(equalTo(true)));
-		assertThat(check.isBeyondWarnThreshold(11f), is(equalTo(true)));
+		Check check = new Check().withWarn(10d).withError(20d);
+		assertThat(check.isBeyondWarnThreshold(9d), is(equalTo(false)));
+		assertThat(check.isBeyondWarnThreshold(10d), is(equalTo(true)));
+		assertThat(check.isBeyondWarnThreshold(11d), is(equalTo(true)));
 	}
 	
 	@Test
 	public void testIsBeyondWarnThresholdWhenLowerIsBad() {
-		Check check = new Check().withWarn("10").withError("0");
-		assertThat(check.isBeyondWarnThreshold(9f), is(equalTo(true)));
-		assertThat(check.isBeyondWarnThreshold(10f), is(equalTo(true)));
-		assertThat(check.isBeyondWarnThreshold(11f), is(equalTo(false)));
+		Check check = new Check().withWarn(10d).withError(0d);
+		assertThat(check.isBeyondWarnThreshold(9d), is(equalTo(true)));
+		assertThat(check.isBeyondWarnThreshold(10d), is(equalTo(true)));
+		assertThat(check.isBeyondWarnThreshold(11d), is(equalTo(false)));
 	}
 	
 	@Test
 	public void testIsBeyondErrorThresholdWhenHigherIsBad() {
-		Check check = new Check().withWarn("10").withError("20");
-		assertThat(check.isBeyondErrorThreshold(19f), is(equalTo(false)));
-		assertThat(check.isBeyondErrorThreshold(20f), is(equalTo(true)));
-		assertThat(check.isBeyondErrorThreshold(21f), is(equalTo(true)));
+		Check check = new Check().withWarn(10d).withError(20d);
+		assertThat(check.isBeyondErrorThreshold(19d), is(equalTo(false)));
+		assertThat(check.isBeyondErrorThreshold(20d), is(equalTo(true)));
+		assertThat(check.isBeyondErrorThreshold(21d), is(equalTo(true)));
 	}
 	
 	@Test
 	public void testIsBeyondErrorThresholdWhenLowerIsBad() {
-		Check check = new Check().withWarn("10").withError("5");
-		assertThat(check.isBeyondErrorThreshold(4f), is(equalTo(true)));
-		assertThat(check.isBeyondErrorThreshold(5f), is(equalTo(true)));
-		assertThat(check.isBeyondErrorThreshold(6f), is(equalTo(false)));
+		Check check = new Check().withWarn(10d).withError(5d);
+		assertThat(check.isBeyondErrorThreshold(4d), is(equalTo(true)));
+		assertThat(check.isBeyondErrorThreshold(5d), is(equalTo(true)));
+		assertThat(check.isBeyondErrorThreshold(6d), is(equalTo(false)));
 	}
 	
 }
