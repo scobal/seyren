@@ -62,29 +62,17 @@ public class GraphiteTargetChecker implements TargetChecker {
 	}
 
 	private Alert createAlert(Check check, Double value) {
-		AlertType currentState = getCurrentState(check);
+		AlertType currentState = check.getState();
+		AlertType newState = AlertType.OK;
 
 		if (check.isBeyondErrorThreshold(value)) {
-			
-			return alert(check, value, currentState, AlertType.ERROR);
-
+			newState = AlertType.ERROR;
 		} else if (check.isBeyondWarnThreshold(value)) {
-			
-			return alert(check, value, currentState, AlertType.WARN);
-
-		} else {
-			
-			return alert(check, value, currentState, AlertType.OK);
-			
+			newState = AlertType.WARN;
 		}
-	}
-
-	private AlertType getCurrentState(Check check) {
-		AlertType fromType = AlertType.OK;
-		if (check.getAlerts().size() > 0) {
-			fromType = check.getAlerts().get(check.getAlerts().size() - 1).getToType();
-		}
-		return fromType;
+		
+		check.setState(newState);
+		return createAlert(check, value, currentState, newState);
 	}
 
 	private Double getValue(GetMethod get) throws Exception {
@@ -102,9 +90,10 @@ public class GraphiteTargetChecker implements TargetChecker {
 		throw new Exception("Could not find a valid datapoint for uri: " + get);
 	}
 
-	private Alert alert(Check check, Double value, AlertType from, AlertType to) {
+	private Alert createAlert(Check check, Double value, AlertType from, AlertType to) {
 		return new Alert()
 				.withValue(value)
+				.withTarget(check.getTarget())
 				.withWarn(check.getWarn())
 				.withError(check.getError())
 				.withFromType(from)

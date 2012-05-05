@@ -14,6 +14,7 @@ import org.joda.time.DateTime;
 public class Alert {
 
 	private String id;
+	private String checkId;
 	private Double value;
 	private String target;
 	private Double warn;
@@ -32,6 +33,19 @@ public class Alert {
 	
 	public Alert withId(String id) {
 		setId(id);
+		return this;
+	}
+	
+	public String getCheckId() {
+		return checkId;
+	}
+	
+	public void setCheckId(String checkId) {
+		this.checkId = checkId;
+	}
+	
+	public Alert withCheckId(String checkId) {
+		setCheckId(checkId);
 		return this;
 	}
 	

@@ -9,6 +9,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import com.seyren.api.jaxrs.ChecksResource;
+import com.seyren.core.domain.AlertType;
 import com.seyren.core.domain.Check;
 import com.seyren.core.store.ChecksStore;
 
@@ -29,6 +30,7 @@ public class ChecksBean implements ChecksResource {
 
 	@Override
 	public Response createCheck(Check check) {
+		check.setState(AlertType.OK);
 		Check stored = checksStore.createCheck(check);
 		return Response.created(uri(stored.getId())).build();
 	}

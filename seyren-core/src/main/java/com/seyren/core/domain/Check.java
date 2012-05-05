@@ -21,7 +21,7 @@ public class Check {
 	private Double warn;
 	private Double error;
 	private boolean enabled;
-	private List<Alert> alerts = new ArrayList<Alert>();
+	private AlertType state;
 	private List<Subscription> subscriptions = new ArrayList<Subscription>();
 	
 	public String getId() {
@@ -101,20 +101,20 @@ public class Check {
 		setEnabled(enabled);
 		return this;
 	}
-
-	public List<Alert> getAlerts() {
-		return alerts;
+	
+	public AlertType getState() {
+		return state;
 	}
 
-	public void setAlerts(List<Alert> alerts) {
-		this.alerts = alerts;
+	public void setState(AlertType state) {
+		this.state = state;
 	}
 	
-	public Check withAlerts(List<Alert> alerts) {
-		setAlerts(alerts);
+	public Check withState(AlertType state) {
+		setState(state);
 		return this;
 	}
-	
+
 	public List<Subscription> getSubscriptions() {
 		return subscriptions;
 	}

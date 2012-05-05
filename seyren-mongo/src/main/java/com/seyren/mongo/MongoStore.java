@@ -10,6 +10,7 @@ import org.bson.types.ObjectId;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoURI;
 import com.seyren.core.domain.Alert;
@@ -53,6 +54,10 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
 	
 	private DBCollection getChecksCollection() {
 		return mongo.getCollection("checks");
+	}
+	
+	private DBCollection getAlertsCollection() {
+		return mongo.getCollection("alerts");
 	}
 	
 	@Override
@@ -99,10 +104,19 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
 	@Override
 	public Alert createAlert(String checkId, Alert alert) {
 		alert.setId(ObjectId.get().toString());
-		DBObject check = basicDBObjectById(checkId);
-		DBObject query = new BasicDBObject("$push", new BasicDBObject("alerts", mapper.alertToDBObject(alert)));
-		getChecksCollection().update(check, query);
+		alert.setCheckId(checkId);
+		getAlertsCollection().insert(mapper.alertToDBObject(alert));
 		return alert;
+	}
+	
+	@Override
+	public List<Alert> getAlerts(String checkId) {
+		DBCursor dbc = getAlertsCollection().find(new BasicDBObject("checkId", checkId));
+		List<Alert> alerts = new ArrayList<Alert>();
+		for (DBObject dbo : dbc.toArray()) {
+			alerts.add(mapper.alertFrom(dbo));
+		}
+		return alerts;
 	}
 
 	@Override

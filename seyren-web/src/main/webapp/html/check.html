@@ -137,9 +137,9 @@
             </form>
         </div>
     </div>
-    <div class="row-fluid">
+    <div class="row-fluid" ng:init="loadAlerts()">
         <h2>Alerts</h2>
-        <table class="table table-bordered table-striped" ng:show="check.alerts">
+        <table class="table table-bordered table-striped" ng:show="alerts">
             <thead>
                 <tr>
                     <th>Timestamp</th>
@@ -151,7 +151,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr ng:repeat="alert in check.alerts">
+                <tr ng:repeat="alert in alerts">
                     <td>{{ alert.timestamp | date: 'yyyy-MM-dd HH:mm:ss' }}</td>
                     <td>{{ alert.value }}</td>
                     <td>{{ alert.warn }}</td>

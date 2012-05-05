@@ -20,6 +20,18 @@ CheckController.prototype = {
         console.log('Loading check failed');
     },
     
+    loadAlerts : function () {
+        this.$xhr('GET', this.seyrenBaseUrl + '/api/checks/' + this.id + '/alerts', this.loadAlertsSuccess, this.loadAlertsFailure);
+    },
+    
+    loadAlertsSuccess : function (code, response) {
+        this.alerts = response;
+    },
+    
+    loadAlertsFailure : function (code, response) {
+        console.log('Loading alerts failed');
+    },
+    
     deleteCheck : function () {
         this.$xhr('DELETE', this.seyrenBaseUrl + '/api/checks/' + this.id, this.deleteCheckSuccess, this.deleteCheckFailure);
     },

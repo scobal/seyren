@@ -27,15 +27,10 @@ public class MongoMapper {
 		Double warn = getDouble(dbo, "warn");
 		Double error = getDouble(dbo, "error");
 		boolean enabled = getBoolean(dbo, "enabled");
-		
-		List<Alert> alerts = new ArrayList<Alert>();
-		BasicDBList list = getBasicDBList(dbo, "alerts");
-		for (Object o : list) {
-			alerts.add(alertFrom((DBObject) o));
-		}
+		AlertType state = AlertType.valueOf(getString(dbo, "state"));
 		
 		List<Subscription> subscriptions = new ArrayList<Subscription>();
-		list = getBasicDBList(dbo, "subscriptions");
+		BasicDBList list = getBasicDBList(dbo, "subscriptions");
 		for (Object o : list) {
 			subscriptions.add(subscriptionFrom((DBObject) o));
 		}
@@ -46,7 +41,7 @@ public class MongoMapper {
 				.withWarn(warn)
 				.withError(error)
 				.withEnabled(enabled)
-				.withAlerts(alerts)
+				.withState(state)
 				.withSubscriptions(subscriptions);
 	}
 
@@ -84,6 +79,7 @@ public class MongoMapper {
 
 	public Alert alertFrom(DBObject dbo) {
 		String id = dbo.get("_id").toString();
+		String checkId = getString(dbo, "checkId");
 		Double value = getDouble(dbo, "value");
 		String target = getString(dbo, "target");
 		Double warn = getDouble(dbo, "warn");
@@ -94,6 +90,7 @@ public class MongoMapper {
 		
 		return new Alert()
 				.withId(id)
+				.withCheckId(checkId)
 				.withValue(value)
 				.withTarget(target)
 				.withWarn(warn)
@@ -124,6 +121,7 @@ public class MongoMapper {
 		map.put("warn", check.getWarn());
 		map.put("error", check.getError());
 		map.put("enabled", check.isEnabled());
+		map.put("state", check.getState().toString());
 		return map;
 	}
 	
@@ -147,6 +145,7 @@ public class MongoMapper {
 	private Map propertiesToMap(Alert alert) {
 		Map map = new HashMap();
 		map.put("_id", alert.getId());
+		map.put("checkId", alert.getCheckId());
 		map.put("value", alert.getValue());
 		map.put("target", alert.getTarget());
 		map.put("warn", alert.getWarn());
