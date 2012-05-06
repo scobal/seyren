@@ -1,4 +1,4 @@
-package com.seyren.core.checker;
+package com.seyren.core.service.checker;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -14,8 +14,8 @@ import com.seyren.core.domain.Alert;
 import com.seyren.core.domain.AlertType;
 import com.seyren.core.domain.Check;
 import com.seyren.core.domain.Subscription;
-import com.seyren.core.service.NotificationService;
-import com.seyren.core.value.GraphiteConfig;
+import com.seyren.core.service.notification.NotificationService;
+import com.seyren.core.util.graphite.GraphiteConfig;
 
 @Named
 public class GraphiteTargetChecker implements TargetChecker {

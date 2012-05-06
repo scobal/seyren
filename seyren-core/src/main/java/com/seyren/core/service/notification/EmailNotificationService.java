@@ -1,4 +1,4 @@
-package com.seyren.core.service;
+package com.seyren.core.service.notification;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -10,8 +10,8 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import com.seyren.core.domain.Alert;
 import com.seyren.core.domain.Check;
 import com.seyren.core.exception.NotificationFailedException;
-import com.seyren.core.value.Email;
-import com.seyren.core.value.EmailAddress;
+import com.seyren.core.util.email.Email;
+import com.seyren.core.util.email.EmailAddress;
 
 @Named
 public class EmailNotificationService implements NotificationService {

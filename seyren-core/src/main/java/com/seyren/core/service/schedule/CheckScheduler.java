@@ -1,4 +1,4 @@
-package com.seyren.core.schedule;
+package com.seyren.core.service.schedule;
 
 import java.util.List;
 
@@ -7,9 +7,9 @@ import javax.inject.Named;
 
 import org.springframework.scheduling.annotation.Scheduled;
 
-import com.seyren.core.checker.TargetChecker;
 import com.seyren.core.domain.Alert;
 import com.seyren.core.domain.Check;
+import com.seyren.core.service.checker.TargetChecker;
 import com.seyren.core.store.AlertsStore;
 import com.seyren.core.store.ChecksStore;
 

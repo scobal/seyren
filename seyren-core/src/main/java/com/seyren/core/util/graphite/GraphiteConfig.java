@@ -1,4 +1,4 @@
-package com.seyren.core.value;
+package com.seyren.core.util.graphite;
 
 
 public class GraphiteConfig {

@@ -4,8 +4,8 @@ import org.codehaus.jackson.map.annotate.JsonDeserialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.joda.time.LocalTime;
 
-import com.seyren.core.util.LocalTimeDeserializer;
-import com.seyren.core.util.LocalTimeSerializer;
+import com.seyren.core.util.datetime.LocalTimeDeserializer;
+import com.seyren.core.util.datetime.LocalTimeSerializer;
 
 /**
  * This class represents something wanting to be notified of an alert

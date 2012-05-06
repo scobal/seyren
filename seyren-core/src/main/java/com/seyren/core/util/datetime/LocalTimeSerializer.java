@@ -1,4 +1,4 @@
-package com.seyren.core.util;
+package com.seyren.core.util.datetime;
 
 import java.io.IOException;
 

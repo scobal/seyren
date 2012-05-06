@@ -1,4 +1,4 @@
-package com.seyren.core.service;
+package com.seyren.core.service.notification;
 
 import com.seyren.core.domain.Alert;
 import com.seyren.core.domain.Check;
