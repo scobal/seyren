@@ -1,6 +1,12 @@
 package com.seyren.core.domain;
 
+import org.codehaus.jackson.map.annotate.JsonDeserialize;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+import org.joda.time.LocalTime;
+
 import com.seyren.core.service.NotificationService;
+import com.seyren.core.util.LocalTimeDeserializer;
+import com.seyren.core.util.LocalTimeSerializer;
 
 /**
  * This class represents something wanting to be notified of an alert
@@ -14,6 +20,8 @@ public class Subscription {
 	private String target;
 	private SubscriptionType type;
 	private boolean su, mo, tu, we, th, fr, sa;
+	private LocalTime fromTime;
+	private LocalTime toTime;
 	
 	public String getId() {
 		return id;
@@ -145,7 +153,37 @@ public class Subscription {
 		return this;
 	}
 
-    /**
+	@JsonSerialize(using = LocalTimeSerializer.class)
+    public LocalTime getFromTime() {
+		return fromTime;
+	}
+
+	@JsonDeserialize(using = LocalTimeDeserializer.class)
+	public void setFromTime(LocalTime fromTime) {
+		this.fromTime = fromTime;
+	}
+	
+	public Subscription withFromTime(LocalTime fromTime) {
+		setFromTime(fromTime);
+		return this;
+	}
+
+	@JsonSerialize(using = LocalTimeSerializer.class)
+	public LocalTime getToTime() {
+		return toTime;
+	}
+
+	@JsonDeserialize(using = LocalTimeDeserializer.class)
+	public void setToTime(LocalTime toTime) {
+		this.toTime = toTime;
+	}
+	
+	public Subscription withToTime(LocalTime toTime) {
+		setToTime(toTime);
+		return this;
+	}
+
+	/**
      * Report on this alert
      * @param alert
      * @param notificationService
@@ -155,6 +193,15 @@ public class Subscription {
     }
 
 	public boolean shouldNotify(Alert alert) {
+		return isCorrectDayOfWeek(alert) && isCorrectHourOfDay(alert);
+	}
+
+	private boolean isCorrectHourOfDay(Alert alert) {
+		LocalTime alertTime = new LocalTime(alert.getTimestamp().getHourOfDay(), alert.getTimestamp().getMinuteOfHour());
+		return alertTime.isAfter(getFromTime()) && alertTime.isBefore(getToTime());
+	}
+
+	private boolean isCorrectDayOfWeek(Alert alert) {
     	int day = alert.getTimestamp().getDayOfWeek();
 		if (day == 1 && isMo()) return true;
 		if (day == 2 && isTu()) return true;

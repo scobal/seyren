@@ -66,6 +66,7 @@
                         <th>Target</th>
                         <th>Type</th>
                         <th>Days</th>
+                        <th>Time</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -81,6 +82,7 @@
                             <span ng:show="subscription.fr">Fr </span>
                             <span ng:show="subscription.sa">Sa </span>
                         </td>
+                        <td>{{ subscription.fromTime}} to {{ subscription.toTime }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -125,6 +127,14 @@
                             <label class="checkbox inline">
                                 <input id="newsubscription.sa" class="input-medium" name="newsubscription.sa" type="checkbox" checked="checked">Sa
                             </label>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="newsubscription.fromTime">From</label>
+                        <div class="controls">
+                            <input id="newsubscription.fromTime" class="input-small" name="newsubscription.fromTime" type="text" value="0000">
+                            &nbsp;to&nbsp;
+                            <input id="newsubscription.toTime" class="input-small" name="newsubscription.toTime" type="text" value="2359">
                         </div>
                     </div>
                     <div class="control-group">

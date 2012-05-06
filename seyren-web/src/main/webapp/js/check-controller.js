@@ -66,7 +66,9 @@ CheckController.prototype = {
                 we : this.newsubscription.we,
                 th : this.newsubscription.th,
                 fr : this.newsubscription.fr,
-                sa : this.newsubscription.sa
+                sa : this.newsubscription.sa,
+                fromTime : this.newsubscription.fromTime,
+                toTime : this.newsubscription.toTime
                 };
         
         this.$xhr('POST', this.seyrenBaseUrl + '/api/checks/' + this.id + '/subscriptions', subscription, this.createSubscriptionSuccess, this.createSubscriptionFailure);

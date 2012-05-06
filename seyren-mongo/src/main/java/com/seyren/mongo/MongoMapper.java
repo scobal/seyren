@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalTime;
 
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
@@ -44,6 +45,10 @@ public class MongoMapper {
 				.withState(state)
 				.withSubscriptions(subscriptions);
 	}
+	
+	public static void main(String [] args) {
+		System.out.println(new LocalTime());
+	}
 
 	public Subscription subscriptionFrom(DBObject dbo) {
 		String id = dbo.get("_id").toString();
@@ -56,6 +61,8 @@ public class MongoMapper {
 		boolean th = getBoolean(dbo, "th");
 		boolean fr = getBoolean(dbo, "fr");
 		boolean sa = getBoolean(dbo, "sa");
+		LocalTime fromTime = getLocalTime(dbo, "fromHour", "fromMin");
+		LocalTime toTime = getLocalTime(dbo, "toHour", "toMin");
 
 		Subscription result;
         if (type.equals(SubscriptionType.EMAIL)) {
@@ -74,7 +81,9 @@ public class MongoMapper {
 				.withWe(we)
 				.withTh(th)
 				.withFr(fr)
-				.withSa(sa);
+				.withSa(sa)
+				.withFromTime(fromTime)
+				.withToTime(toTime);
 	}
 
 	public Alert alertFrom(DBObject dbo) {
@@ -138,6 +147,10 @@ public class MongoMapper {
 		map.put("th", subscription.isTh());
 		map.put("fr", subscription.isFr());
 		map.put("sa", subscription.isSa());
+		map.put("fromHour", subscription.getFromTime().getHourOfDay());
+		map.put("fromMin", subscription.getFromTime().getMinuteOfHour());
+		map.put("toHour", subscription.getToTime().getHourOfDay());
+		map.put("toMin", subscription.getToTime().getMinuteOfHour());
 		return map;
 	}
 	
@@ -168,12 +181,20 @@ public class MongoMapper {
 		return null;
 	}
 	
+	private LocalTime getLocalTime(DBObject dbo, String hourKey, String minKey) {
+		return new LocalTime(getInteger(dbo, hourKey), getInteger(dbo, minKey));
+	}
+	
 	private String getString(DBObject dbo, String key) {
 		return (String) dbo.get(key);
 	}
 	
 	private Double getDouble(DBObject dbo, String key) {
 		return (Double) dbo.get(key);
+	}
+	
+	private Integer getInteger(DBObject dbo, String key) {
+		return (Integer) dbo.get(key);
 	}
 	
 	private BasicDBList getBasicDBList(DBObject dbo, String key) {
