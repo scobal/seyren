@@ -71,7 +71,6 @@ public class GraphiteTargetChecker implements TargetChecker {
 			newState = AlertType.WARN;
 		}
 		
-		check.setState(newState);
 		return createAlert(check, value, currentState, newState);
 	}
 

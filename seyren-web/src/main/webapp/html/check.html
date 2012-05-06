@@ -2,14 +2,14 @@
     <div class="row-fluid">
         <div class="span12">
             <div class="pull-right">
-                <button type="submit" class="btn btn-danger"
-                    ng:click="deleteCheck()">Delete check</button>
+                <button type="submit" class="btn btn-danger" ng:click="deleteCheck()">Delete check</button>
             </div>
         </div>
     </div>
     <div class="row-fluid">
         <div class="span3">
             <h2>Details</h2>
+            <h3>{{check.state}}</h3>
             <form ng:submit="saveCheck()" class="form-horizontal">
                 <fieldset>
                     <div class="control-group">
@@ -143,6 +143,7 @@
             <thead>
                 <tr>
                     <th>Timestamp</th>
+                    <th>Target</th>
                     <th>Value</th>
                     <th>Warn level</th>
                     <th>Error level</th>
@@ -153,6 +154,7 @@
             <tbody>
                 <tr ng:repeat="alert in alerts">
                     <td>{{ alert.timestamp | date: 'yyyy-MM-dd HH:mm:ss' }}</td>
+                    <td>{{ alert.target }}</td>
                     <td>{{ alert.value }}</td>
                     <td>{{ alert.warn }}</td>
                     <td>{{ alert.error }}</td>

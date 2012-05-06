@@ -98,6 +98,7 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
 		getChecksCollection().update(dbo, basicDBObjectWithSet("warn", check.getWarn()));
 		getChecksCollection().update(dbo, basicDBObjectWithSet("error", check.getError()));
 		getChecksCollection().update(dbo, basicDBObjectWithSet("enabled", check.isEnabled()));
+		getChecksCollection().update(dbo, basicDBObjectWithSet("state", check.getState().toString()));
 		return check;
 	}
 

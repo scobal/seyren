@@ -36,15 +36,14 @@ public class CheckScheduler {
 					Alert alert = checker.check(check);
 					if (alert != null) {
 						alertsStore.createAlert(check.getId(), alert);
+						check.setState(alert.getToType());
+						checksStore.saveCheck(check);
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
-
-			// (optional) notify subscribers
 		}
-		// TODO: multithread this bad boy
 	}
 	
 }
