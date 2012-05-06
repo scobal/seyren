@@ -35,7 +35,9 @@ public class ChecksBean implements ChecksResource {
 
 	@Override
 	public Response createCheck(Check check) {
-		check.setState(AlertType.OK);
+		if (check.getState() == null) {
+			check.setState(AlertType.OK);
+		}
 		Check stored = checksStore.createCheck(check);
 		return Response.created(uri(stored.getId())).build();
 	}
@@ -68,7 +70,7 @@ public class ChecksBean implements ChecksResource {
 	private Set<String> getStates(String states) {
 		Set<String> result = new HashSet<String>();
 		for (String state : states.split(",")) {
-			result.add(state);
+			result.add(state.toUpperCase());
 		}
 		return result;
 	}

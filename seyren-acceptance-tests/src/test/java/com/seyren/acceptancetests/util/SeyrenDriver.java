@@ -15,6 +15,10 @@ public final class SeyrenDriver {
 	public static Url checks() {
 		return baseUri().withPath("checks");
 	}
+	
+	public static Url alerts(String checkId) {
+		return checks().withPath("/" + checkId + "/alerts");
+	}
     
 	private static Url baseUri() {
 		return new Url("http://" + host() + ":" + port() + "/" + contextRoot()).withPath("api");
