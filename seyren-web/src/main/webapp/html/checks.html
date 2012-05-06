@@ -7,8 +7,10 @@
                 <tr>
                     <th>Name</th>
                     <th>Target</th>
+                    <th>State</th>
                     <th>Warn</th>
                     <th>Error</th>
+                    <th>Enabled</th>
                 </tr>
             </thead>
             <tbody>
@@ -17,8 +19,10 @@
                     style="cursor: pointer;">
                     <td>{{ check.name }}</td>
                     <td>{{ check.target }}</td>
+                    <td>{{ check.state }}</td>
                     <td>{{ check.warn }}</td>
                     <td>{{ check.error }}</td>
+                    <td>{{ check.enabled }}</td>
                 </tr>
             </tbody>
         </table>

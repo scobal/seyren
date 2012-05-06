@@ -1,4 +1,4 @@
-/*global ChecksController,CheckController,angular*/
+/*global ChecksController,CheckController,HomeController,angular*/
 
 function MainController($xhr, $route, $location) {
     this.$xhr = $xhr;
@@ -16,7 +16,8 @@ function MainController($xhr, $route, $location) {
         template: 'html/check.html'
     });
     
-    this.$route.otherwise({
+    this.$route.otherwise( {
+        controller: HomeController,
         template: 'html/home.html'
     });
     

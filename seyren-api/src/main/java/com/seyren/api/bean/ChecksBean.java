@@ -2,6 +2,8 @@ package com.seyren.api.bean;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -24,7 +26,10 @@ public class ChecksBean implements ChecksResource {
 	}
 	
 	@Override
-	public Response getChecks() {
+	public Response getChecks(String states) {
+		if (states != null) {
+			return Response.ok(checksStore.getChecksByState(getStates(states))).build();
+		}
 		return Response.ok(checksStore.getChecks()).build();
 	}
 
@@ -60,6 +65,14 @@ public class ChecksBean implements ChecksResource {
 		return Response.noContent().build();
 	}
 	
+	private Set<String> getStates(String states) {
+		Set<String> result = new HashSet<String>();
+		for (String state : states.split(",")) {
+			result.add(state);
+		}
+		return result;
+	}
+
 	private URI uri(String checkId) {
 		try {
 			return new URI("checks/" + checkId);

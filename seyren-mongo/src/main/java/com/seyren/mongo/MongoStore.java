@@ -2,6 +2,7 @@ package com.seyren.mongo;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Named;
 
@@ -64,6 +65,16 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
 	public List<Check> getChecks() {
 		List<Check> result =  new ArrayList<Check>();
 		for (DBObject dbo : getChecksCollection().find().toArray()) {
+			result.add(mapper.checkFrom(dbo));
+		}
+		return result;
+	}
+	
+	@Override
+	public List<Check> getChecksByState(Set<String> states) {
+		List<Check> result =  new ArrayList<Check>();
+		DBCursor dbc = getChecksCollection().find(new BasicDBObject("state", new BasicDBObject("$in", states.toArray())));
+		for (DBObject dbo : dbc.toArray()) {
 			result.add(mapper.checkFrom(dbo));
 		}
 		return result;
