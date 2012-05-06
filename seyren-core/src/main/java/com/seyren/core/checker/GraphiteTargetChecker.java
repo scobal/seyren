@@ -13,6 +13,7 @@ import org.joda.time.DateTime;
 import com.seyren.core.domain.Alert;
 import com.seyren.core.domain.AlertType;
 import com.seyren.core.domain.Check;
+import com.seyren.core.domain.Subscription;
 import com.seyren.core.service.NotificationService;
 import com.seyren.core.value.GraphiteConfig;
 
@@ -50,7 +51,11 @@ public class GraphiteTargetChecker implements TargetChecker {
 
 			// Only notify if the alert has changed state
 			if (alert.getFromType() != alert.getToType()) {
-				check.notify(alert, notificationService);
+		        for (Subscription subscription : check.getSubscriptions()) {
+		        	if (subscription.shouldNotify(alert)) {
+		        		notificationService.sendNotification(check, alert);
+		        	} 
+		        }
 			}
 
 			return alert;

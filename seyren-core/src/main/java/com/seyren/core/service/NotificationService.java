@@ -1,8 +1,10 @@
 package com.seyren.core.service;
 
+import com.seyren.core.domain.Alert;
+import com.seyren.core.domain.Check;
 import com.seyren.core.exception.NotificationFailedException;
-import com.seyren.core.value.Email;
 
 public interface NotificationService {
-    void sendNotification(Email email) throws NotificationFailedException;
+	
+    void sendNotification(Check check, Alert alert) throws NotificationFailedException;
 }

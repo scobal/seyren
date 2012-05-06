@@ -3,8 +3,6 @@ package com.seyren.core.domain;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.seyren.core.service.NotificationService;
-
 /**
  * This class represents a graphite target that needs to be monitored.
  * 
@@ -128,19 +126,6 @@ public class Check {
 		return this;
 	}
 
-    /**
-     * Report to interested subscribers that an alert has fired
-     * @param alert The alert
-     * @param notificationService
-     */
-    public void notify(Alert alert, NotificationService notificationService) {
-        for (Subscription subscription : subscriptions) {
-        	if (subscription.shouldNotify(alert)) {
-        		subscription.notify(alert, notificationService);
-        	} 
-        }
-    }
-    
 	public boolean isBeyondWarnThreshold(Double value) {
 		if (isTheValueBeingHighBad()) {
 			return value >= getWarn();

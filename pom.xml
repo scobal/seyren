@@ -22,8 +22,7 @@
 		<module>seyren-mongo</module>
 		<module>seyren-core</module>
 		<module>seyren-web</module>
-        <module>seyren-services</module>
-    </modules>
+        </modules>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

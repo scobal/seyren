@@ -15,7 +15,6 @@ import com.mongodb.DBObject;
 import com.seyren.core.domain.Alert;
 import com.seyren.core.domain.AlertType;
 import com.seyren.core.domain.Check;
-import com.seyren.core.domain.EmailSubscription;
 import com.seyren.core.domain.Subscription;
 import com.seyren.core.domain.SubscriptionType;
 
@@ -46,10 +45,6 @@ public class MongoMapper {
 				.withSubscriptions(subscriptions);
 	}
 	
-	public static void main(String [] args) {
-		System.out.println(new LocalTime());
-	}
-
 	public Subscription subscriptionFrom(DBObject dbo) {
 		String id = dbo.get("_id").toString();
 		String target = getString(dbo, "target");
@@ -64,14 +59,7 @@ public class MongoMapper {
 		LocalTime fromTime = getLocalTime(dbo, "fromHour", "fromMin");
 		LocalTime toTime = getLocalTime(dbo, "toHour", "toMin");
 
-		Subscription result;
-        if (type.equals(SubscriptionType.EMAIL)) {
-            result = new EmailSubscription();
-        } else {
-        	result = new Subscription();
-        }
-
-		return result
+		return new Subscription()
 				.withId(id)
 				.withTarget(target)
 				.withType(type)

@@ -1,4 +1,4 @@
-package com.seyren.services;
+package com.seyren.core.util;
 
 import javax.inject.Named;
 

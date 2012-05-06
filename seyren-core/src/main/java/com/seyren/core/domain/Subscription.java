@@ -4,7 +4,6 @@ import org.codehaus.jackson.map.annotate.JsonDeserialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.joda.time.LocalTime;
 
-import com.seyren.core.service.NotificationService;
 import com.seyren.core.util.LocalTimeDeserializer;
 import com.seyren.core.util.LocalTimeSerializer;
 
@@ -182,15 +181,6 @@ public class Subscription {
 		setToTime(toTime);
 		return this;
 	}
-
-	/**
-     * Report on this alert
-     * @param alert
-     * @param notificationService
-     */
-    public void notify(Alert alert, NotificationService notificationService) {
-
-    }
 
 	public boolean shouldNotify(Alert alert) {
 		return isCorrectDayOfWeek(alert) && isCorrectHourOfDay(alert);
