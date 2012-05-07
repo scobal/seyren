@@ -1,6 +1,11 @@
 /*global console*/
 
 function HomeController() {
+    
+    this.pollAlertsInSeconds = 5;
+    this.secondsToUpdateAlerts = this.pollAlertsInSeconds;
+    this.$defer(this.countdownToRefresh, 1000);
+    
 }
 
 HomeController.prototype = {
@@ -31,6 +36,16 @@ HomeController.prototype = {
     
     selectCheck : function (id) {
         this.$location.updateHash('/checks/' + id);
+    },
+    
+    countdownToRefresh : function() {
+        this.secondsToUpdateAlerts--;
+        if (this.secondsToUpdateAlerts <= 0) {
+            this.secondsToUpdateAlerts = this.pollAlertsInSeconds;
+            this.loadErrorChecks();
+            this.loadWarnChecks();
+        } 
+        this.$defer(this.countdownToRefresh, 1000);
     }
 
 };
