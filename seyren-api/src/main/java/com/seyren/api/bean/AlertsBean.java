@@ -1,6 +1,5 @@
 package com.seyren.api.bean;
 
-import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -22,9 +21,11 @@ public class AlertsBean implements AlertsResource {
 	}
 	
 	@Override
-	public Response getAlerts(String checkId) {
-		List<Alert> alerts = alertsStore.getAlerts(checkId);
-		Collections.reverse(alerts);
+	public Response getAlerts(String checkId, int start, int items) {
+		if (start < 0 || items < 0) {
+			return Response.status(400).build();
+		}
+		List<Alert> alerts = alertsStore.getAlerts(checkId, start, items);
 		return Response.ok(alerts).build();
 	}
 

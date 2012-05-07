@@ -1,6 +1,7 @@
 package com.seyren.mongo;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -122,13 +123,14 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
 	}
 	
 	@Override
-	public List<Alert> getAlerts(String checkId) {
+	public List<Alert> getAlerts(String checkId, int start, int items) {
 		DBCursor dbc = getAlertsCollection().find(new BasicDBObject("checkId", checkId));
 		List<Alert> alerts = new ArrayList<Alert>();
 		for (DBObject dbo : dbc.toArray()) {
 			alerts.add(mapper.alertFrom(dbo));
 		}
-		return alerts;
+		Collections.reverse(alerts);
+		return alerts.subList(start, start + items);
 	}
 
 	@Override
