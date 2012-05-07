@@ -8,9 +8,10 @@
 export GRAPHITE_URL=http://graphite.foohost.com:80
 mvn clean package
 java -jar seyren-web/target/dependency/jetty-runner.jar seyren-web/target/*.war
+open http://localhost:8080/seyren
 ```
 
-###Environment variables
+###Available environment variables
 * GRAPHITE_URL - The location of your graphite server. Default: `http://localhost:80`
 * SMTP_HOST - The smtp server to send email notifications from. Default: `localhost`
 * SMTP_PORT - The smtp server port. Default: `25`

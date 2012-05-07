@@ -11,7 +11,6 @@ import com.seyren.core.domain.Check;
 import com.seyren.core.domain.Subscription;
 import com.seyren.core.exception.NotificationFailedException;
 import com.seyren.core.util.email.Email;
-import com.seyren.core.util.email.EmailAddress;
 
 @Named
 public class EmailNotificationService implements NotificationService {
@@ -27,17 +26,17 @@ public class EmailNotificationService implements NotificationService {
     public void sendNotification(Check check, Subscription subscription, Alert alert) {
     	
     	Email email = new Email()
-    				.withTo(new EmailAddress(subscription.getTarget()))
-    				.withFrom(new EmailAddress("alerts@seyren"))
+    				.withTo(subscription.getTarget())
+    				.withFrom("alerts@seyren")
     				.withSubject(alert.getTarget())
     				.withMessage("Alert from seyren");
 
         try {
-            SimpleMailMessage mailMessage = createEmail(email.getFrom().getAddress(), email.getTo().getAddress(), email.getMessage(), email.getSubject());
+            SimpleMailMessage mailMessage = createEmail(email.getFrom(), email.getTo(), email.getMessage(), email.getSubject());
             mailSender.send(mailMessage);
 
         } catch (Exception e) {
-            throw new NotificationFailedException("Failed to send notification to " + email.getTo().getAddress(), e);
+            throw new NotificationFailedException("Failed to send notification to " + email.getTo(), e);
         }
     }
 
