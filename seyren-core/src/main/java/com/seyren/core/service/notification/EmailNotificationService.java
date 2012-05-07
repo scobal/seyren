@@ -5,10 +5,10 @@ import javax.inject.Named;
 
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import com.seyren.core.domain.Alert;
 import com.seyren.core.domain.Check;
+import com.seyren.core.domain.Subscription;
 import com.seyren.core.exception.NotificationFailedException;
 import com.seyren.core.util.email.Email;
 import com.seyren.core.util.email.EmailAddress;
@@ -25,11 +25,11 @@ public class EmailNotificationService implements NotificationService {
     }
 
     @Override
-    public void sendNotification(Check check, Alert alert) {
+    public void sendNotification(Check check, Subscription subscription, Alert alert) {
     	
-    	Email email = new Email(new EmailAddress(alert.getTarget()),
+    	Email email = new Email(new EmailAddress(subscription.getTarget()),
                 new EmailAddress("alerts@seyren"),
-                alert.toString(),
+                alert.getTarget(),
                 "Alert from seyren");
 
         try {

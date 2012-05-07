@@ -53,7 +53,7 @@ public class GraphiteTargetChecker implements TargetChecker {
 			if (alert.getFromType() != alert.getToType()) {
 		        for (Subscription subscription : check.getSubscriptions()) {
 		        	if (subscription.shouldNotify(alert)) {
-		        		notificationService.sendNotification(check, alert);
+		        		notificationService.sendNotification(check, subscription, alert);
 		        	} 
 		        }
 			}
