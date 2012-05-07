@@ -7,6 +7,10 @@ function CheckController() {
     
     this.alertStartIndex = 0;
     this.alertItemsPerPage = 10;
+    
+    this.pollAlertsInSeconds = 5;
+    this.secondsToUpdateAlerts = this.pollAlertsInSeconds;
+    this.$defer(this.countdownToRefresh, 1000);
 }
 
 CheckController.prototype = {
@@ -130,6 +134,15 @@ CheckController.prototype = {
         }
         this.alertStartIndex -= this.alertItemsPerPage;
         this.loadAlerts();
+    },
+    
+    countdownToRefresh : function() {
+        this.secondsToUpdateAlerts--;
+        if (this.secondsToUpdateAlerts <= 0) {
+            this.secondsToUpdateAlerts = this.pollAlertsInSeconds;
+            this.loadAlerts();
+        } 
+        this.$defer(this.countdownToRefresh, 1000);
     }
     
 };
