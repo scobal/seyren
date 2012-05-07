@@ -12,9 +12,9 @@ open http://localhost:8080/seyren
 ```
 
 ###Available environment variables
-* GRAPHITE_URL - The location of your graphite server. Default: `http://localhost:80`
-* SMTP_HOST - The smtp server to send email notifications from. Default: `localhost`
-* SMTP_PORT - The smtp server port. Default: `25`
+* `GRAPHITE_URL` - The location of your graphite server. Default: `http://localhost:80`
+* `SMTP_HOST` - The smtp server to send email notifications from. Default: `localhost`
+* `SMTP_PORT` - The smtp server port. Default: `25`
 
 ##Development
 
