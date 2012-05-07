@@ -42,40 +42,54 @@ public class CheckScheduler {
 	public void performChecks() {
 	    List<Check> checks = checksStore.getChecks();
 		for (final Check check : checks) {
-		    executor.execute(new Runnable() {
-                @Override
-                public void run() {
-                    if (check.isEnabled()) {
+		    executor.execute(new CheckRunner(check));
+		}
+	}
+	
+	private class CheckRunner implements Runnable {
+	    
+	    private final Check check;
+	    
+	    public CheckRunner(Check check) {
+	        this.check = check;
+	    }
+	    
+	    @Override
+	    public final void run() {
+	        if (check.isEnabled()) {
+                try {
+                    Alert alert = checker.check(check);
+                    
+                    if (alert.isStillOk()) {
+                        return;
+                    }
+                    
+                    alertsStore.createAlert(check.getId(), alert);
+                    check.setState(alert.getToType());
+                    checksStore.saveCheck(check);
+                    
+                    // Only notify if the alert has changed state
+                    if (!alert.hasStateChanged()) {
+                        return;
+                    }
+                    
+                    for (Subscription subscription : check.getSubscriptions()) {
+                        if (!subscription.shouldNotify(alert)) {
+                            continue;
+                        }
+                        
                         try {
-                            Alert alert = checker.check(check);
-                            
-                            if (alert.isStillOk()) {
-                                return;
-                            }
-                            
-                            alertsStore.createAlert(check.getId(), alert);
-                            check.setState(alert.getToType());
-                            checksStore.saveCheck(check);
-                            
-                            // Only notify if the alert has changed state
-                            if (alert.hasStateChanged()) {
-                                for (Subscription subscription : check.getSubscriptions()) {
-                                    if (subscription.shouldNotify(alert)) {
-                                        try {
-                                            notificationService.sendNotification(check, subscription, alert);
-                                        } catch (Exception e) {
-                                            LOGGER.warn(subscription.getTarget() + " failed", e);
-                                        }
-                                    } 
-                                }
-                            }
+                            notificationService.sendNotification(check, subscription, alert);
                         } catch (Exception e) {
-                            LOGGER.warn(check.getName() + " failed", e);
+                            LOGGER.warn(subscription.getTarget() + " failed", e);
                         }
                     }
+                } catch (Exception e) {
+                    LOGGER.warn(check.getName() + " failed", e);
                 }
-            });
-		}
+            }
+	    }
+	    
 	}
 	
 }
