@@ -3,6 +3,7 @@ package com.seyren.api.jaxrs;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
@@ -16,6 +17,10 @@ public interface SubscriptionsResource {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	Response createSubscription(@PathParam("checkId") String checkId, Subscription subscription);
+	
+	@PUT
+    @Path("/{subscriptionId}")
+    Response updateSubscription(@PathParam("checkId") String checkId, Subscription subscription);
 	
 	@DELETE
 	@Path("/{subscriptionId}")

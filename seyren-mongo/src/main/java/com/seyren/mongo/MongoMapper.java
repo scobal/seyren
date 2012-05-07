@@ -58,6 +58,7 @@ public class MongoMapper {
 		boolean sa = getBoolean(dbo, "sa");
 		LocalTime fromTime = getLocalTime(dbo, "fromHour", "fromMin");
 		LocalTime toTime = getLocalTime(dbo, "toHour", "toMin");
+		boolean enabled = getBoolean(dbo, "enabled");
 
 		return new Subscription()
 				.withId(id)
@@ -71,7 +72,8 @@ public class MongoMapper {
 				.withFr(fr)
 				.withSa(sa)
 				.withFromTime(fromTime)
-				.withToTime(toTime);
+				.withToTime(toTime)
+				.withEnabled(enabled);
 	}
 
 	public Alert alertFrom(DBObject dbo) {
@@ -139,6 +141,7 @@ public class MongoMapper {
 		map.put("fromMin", subscription.getFromTime().getMinuteOfHour());
 		map.put("toHour", subscription.getToTime().getHourOfDay());
 		map.put("toMin", subscription.getToTime().getMinuteOfHour());
+		map.put("enabled", subscription.isEnabled());
 		return map;
 	}
 	

@@ -26,6 +26,12 @@ public class SubscriptionsBean implements SubscriptionsResource {
 		Subscription stored = subscriptionsStore.createSubscription(checkId, subscription);
 		return Response.created(uri(checkId, stored.getId())).build();
 	}
+    
+    @Override
+    public Response updateSubscription(String checkId, Subscription subscription) {
+        subscriptionsStore.updateSubscription(checkId, subscription);
+        return Response.noContent().build();
+    }
 
 	@Override
 	public Response deleteSubscription(String checkId, String subscriptionId) {

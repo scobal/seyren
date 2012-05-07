@@ -21,6 +21,7 @@ public class Subscription {
 	private boolean su, mo, tu, we, th, fr, sa;
 	private LocalTime fromTime;
 	private LocalTime toTime;
+	private boolean enabled;
 	
 	public String getId() {
 		return id;
@@ -180,6 +181,19 @@ public class Subscription {
 	public Subscription withToTime(LocalTime toTime) {
 		setToTime(toTime);
 		return this;
+	}
+	
+	public boolean isEnabled() {
+	    return enabled;
+	}
+	
+	public void setEnabled(boolean enabled) {
+	    this.enabled = enabled;
+	}
+	
+	public Subscription withEnabled(boolean enabled) {
+	    setEnabled(enabled);
+	    return this;
 	}
 
 	public boolean shouldNotify(Alert alert) {

@@ -1,5 +1,7 @@
 package com.seyren.mongo;
 
+import static com.seyren.mongo.NiceDBObject.*;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -103,14 +105,20 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
 
 	@Override
 	public Check saveCheck(Check check) {
-		DBObject dbo = basicDBObjectById(check.getId());
-		getChecksCollection().update(dbo, basicDBObjectWithSet("name", check.getName()));
-		getChecksCollection().update(dbo, basicDBObjectWithSet("target", check.getTarget()));
-		getChecksCollection().update(dbo, basicDBObjectWithSet("warn", check.getWarn()));
-		getChecksCollection().update(dbo, basicDBObjectWithSet("error", check.getError()));
-		getChecksCollection().update(dbo, basicDBObjectWithSet("enabled", check.isEnabled()));
-		getChecksCollection().update(dbo, basicDBObjectWithSet("state", check.getState().toString()));
-		return check;
+	    DBObject findObject = forId(check.getId());
+	    
+	    DBObject updateObject = object("name", check.getName())
+    	    .with("target", check.getTarget())
+    	    .with("warn", check.getWarn())
+    	    .with("error", check.getError())
+    	    .with("enabled", check.isEnabled())
+    	    .with("state", check.getState().toString());
+	    
+	    DBObject setObject = object("$set", updateObject);
+    
+        getChecksCollection().update(findObject, setObject);
+	    
+	    return check;
 	}
 
 	@Override
@@ -147,12 +155,17 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
 		getChecksCollection().update(check, subscription);
 	}
 	
+	@Override
+	public void updateSubscription(String checkId, Subscription subscription) {
+	    DBObject subscriptionObject = mapper.subscriptionToDBObject(subscription);
+	    DBObject subscriptionFindObject = forId(subscription.getId());
+	    DBObject checkFindObject = forId(checkId).with("subscriptions", object("$elemMatch", subscriptionFindObject));
+	    DBObject updateObject = object("$set", object("subscriptions.$", subscriptionObject));
+	    getChecksCollection().update(checkFindObject, updateObject);
+	}
+	
 	private DBObject basicDBObjectById(String id) {
 	    return new BasicDBObject("_id", id);
 	}
 	
-	private BasicDBObject basicDBObjectWithSet(String key, Object value) {
-		return new BasicDBObject("$set", new BasicDBObject(key, value));
-	}
-
 }
