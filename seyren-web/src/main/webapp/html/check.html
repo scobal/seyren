@@ -67,6 +67,7 @@
                         <th>Type</th>
                         <th>Days</th>
                         <th>Time</th>
+                        <th>&nbsp;</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -83,6 +84,9 @@
                             <span ng:show="subscription.sa">Sa </span>
                         </td>
                         <td>{{ subscription.fromTime}} to {{ subscription.toTime }}</td>
+                        <td>
+                            <button type="submit" class="btn btn-danger btn-mini" ng:click="deleteSubscription(subscription.id)">Delete</button>
+                        </td>
                     </tr>
                 </tbody>
             </table>
