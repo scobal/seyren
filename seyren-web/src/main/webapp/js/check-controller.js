@@ -99,6 +99,9 @@ CheckController.prototype = {
     },
     
     loadOlderAlerts : function () {
+        if (this.alerts.length !== this.alertItemsPerPage) {
+            return;
+        }
         this.alertStartIndex += this.alertItemsPerPage;
         this.loadAlerts();
     },

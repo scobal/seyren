@@ -130,7 +130,14 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
 			alerts.add(mapper.alertFrom(dbo));
 		}
 		Collections.reverse(alerts);
-		return alerts.subList(start, start + items);
+		int end = start + items;
+		if (end >= alerts.size()) {
+			end = alerts.size() - 1;
+		}
+		if (start >= alerts.size()) {
+			start = alerts.size() - 1;
+		}
+		return alerts.subList(start, end);
 	}
 
 	@Override
