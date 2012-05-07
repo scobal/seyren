@@ -1,9 +1,10 @@
 /*global ChecksController,CheckController,HomeController,angular*/
 
-function MainController($xhr, $route, $location) {
+function MainController($xhr, $route, $location, $defer) {
     this.$xhr = $xhr;
     this.$route = $route;
     this.$location = $location;
+    this.$defer = $defer;
     this.seyrenBaseUrl = '.';
     
     this.$route.when('/checks', {
@@ -27,4 +28,4 @@ function MainController($xhr, $route, $location) {
 MainController.prototype = {
 };
 
-MainController.$inject = ['$xhr', '$route', '$location'];
+MainController.$inject = ['$xhr', '$route', '$location', '$defer'];
