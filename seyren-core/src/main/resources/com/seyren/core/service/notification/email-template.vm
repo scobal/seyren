@@ -1,0 +1,21 @@
+<html>
+<body>
+<h3>$CHECK_NAME from $ALERT_FROMTYPE to $ALERT_TOTYPE</h3>
+
+<table>
+    <tr>
+        <td>Current value:</td><td>$ALERT_VALUE</td>
+    </tr>
+    <tr>
+        <td>Warn level:</td><td>$ALERT_WARN</td>
+    </tr>
+    <tr>
+        <td>Error level:</td><td>$ALERT_ERROR</td>
+    </tr>
+</table>
+
+<br/>
+<div>Run at $ALERT_TIMESTAMP</div>
+
+</body>
+</html>

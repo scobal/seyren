@@ -18,9 +18,6 @@
         <jetty.daemon>true</jetty.daemon>
         <jetty.skip>false</jetty.skip>
 
-        <email.host>localhost</email.host>
-        <email.port>25</email.port>
-        <email.protocol>smtp</email.protocol>
     </properties>
 
     <dependencies>
@@ -67,10 +64,6 @@
                         <seyren.host>${seyren.host}</seyren.host>
                         <seyren.port>${seyren.port}</seyren.port>
                         <seyren.contextRoot>${seyren.contextRoot}</seyren.contextRoot>
-
-                        <email.host>${email.host}</email.host>
-                        <email.port>${email.port}</email.port>
-                        <email.protocol>${email.protocol}</email.protocol>
                     </systemPropertyVariables>
                     <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
                     <includes>
@@ -114,22 +107,6 @@
                     </webApp>
                     <stopPort>9966</stopPort>
                     <stopKey>foo</stopKey>
-                    <systemProperties>
-                        <systemProperty>
-                            <name>email.host</name>
-                            <value>${email.host}</value>
-                        </systemProperty>
-                        <systemProperty>
-                            <name>email.port</name>
-                            <value>${email.port}</value>
-                        </systemProperty>
-                        <systemProperty>
-                            <name>email.protocol</name>
-                            <value>${email.protocol}</value>
-                        </systemProperty>
-
-                    </systemProperties>
-
                 </configuration>
                 <executions>
                     <execution>

@@ -31,20 +31,16 @@ public class GraphiteTargetChecker implements TargetChecker {
 
 	@Override
 	public Alert check(Check check) throws Exception {
-	    
 		GetMethod get = new GetMethod(String.format(GRAPHITE_TARGET_PATH_FORMAT, graphiteConfig.getBaseUrl(), new DateTime().getMillis(), check.getTarget()));
 
 		try {
-
 			client.executeMethod(get);
 			Double value = getValue(get);
-
 			return createAlert(check, value);
-
 		} finally {
-
 			get.releaseConnection();
 		}
+		
 	}
 
 	private Alert createAlert(Check check, Double value) {
