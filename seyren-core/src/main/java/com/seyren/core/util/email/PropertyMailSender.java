@@ -12,18 +12,13 @@ public class PropertyMailSender extends JavaMailSenderImpl {
     public static final String DEFAULT_EMAIL_PROTOCOL = "smtp";
 
     public PropertyMailSender() {
-
-        this.setHost(getPropertyOrDefault("email.host", DEFAULT_EMAIL_HOST));
-        this.setPort(Integer.parseInt(getPropertyOrDefault("email.port", DEFAULT_EMAIL_PORT)));
-        this.setProtocol(getPropertyOrDefault("email.protocol", DEFAULT_EMAIL_PROTOCOL));
+        setHost(getPropertyOrDefault("email.host", DEFAULT_EMAIL_HOST));
+        setPort(Integer.parseInt(getPropertyOrDefault("email.port", DEFAULT_EMAIL_PORT)));
+        setProtocol(getPropertyOrDefault("email.protocol", DEFAULT_EMAIL_PROTOCOL));
     }
 
     private String getPropertyOrDefault(String property, String defaultvalue) {
-        String systemProperty = System.getProperty(property);
-        if (systemProperty == null)
-            return defaultvalue;
-
-        return systemProperty;
+    	return System.getProperty(property, defaultvalue);
     }
 
 }

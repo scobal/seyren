@@ -20,7 +20,6 @@ public class EmailNotificationService implements NotificationService {
 
     @Inject
     public EmailNotificationService(MailSender mailSender) {
-
         this.mailSender = mailSender;
     }
 
@@ -41,7 +40,7 @@ public class EmailNotificationService implements NotificationService {
         }
     }
 
-    SimpleMailMessage createEmail(String from, String to, String message, String subject) {
+    private SimpleMailMessage createEmail(String from, String to, String message, String subject) {
 
         SimpleMailMessage mail = new SimpleMailMessage();
         mail.setTo(to);
