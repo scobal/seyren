@@ -7,14 +7,13 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 @Named
 public class SeyrenMailSender extends JavaMailSenderImpl {
 
-    public static final String DEFAULT_EMAIL_HOST = "localhost";
-    public static final String DEFAULT_EMAIL_PORT = "25";
-    public static final String DEFAULT_EMAIL_PROTOCOL = "smtp";
+    public static final String DEFAULT_SMTP_HOST = "localhost";
+    public static final String DEFAULT_SMTP_PORT = "25";
 
     public SeyrenMailSender() {
-        setHost(getPropertyOrDefault("email.host", DEFAULT_EMAIL_HOST));
-        setPort(Integer.parseInt(getPropertyOrDefault("email.port", DEFAULT_EMAIL_PORT)));
-        setProtocol(getPropertyOrDefault("email.protocol", DEFAULT_EMAIL_PROTOCOL));
+        setHost(getPropertyOrDefault("SMTP_HOST", DEFAULT_SMTP_HOST));
+        setPort(Integer.parseInt(getPropertyOrDefault("SMTP_PORT", DEFAULT_SMTP_PORT)));
+        setProtocol("smtp");
     }
 
     private String getPropertyOrDefault(String property, String defaultvalue) {
