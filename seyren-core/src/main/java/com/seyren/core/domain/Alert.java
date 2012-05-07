@@ -140,4 +140,12 @@ public class Alert {
 		return this;
 	}
 
+    public boolean hasStateChanged() {
+        return fromType != toType;
+    }
+
+    public boolean isStillOk() {
+        return fromType == AlertType.OK && toType == AlertType.OK;
+    }
+
 }

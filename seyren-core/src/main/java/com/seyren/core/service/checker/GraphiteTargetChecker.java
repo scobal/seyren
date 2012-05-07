@@ -13,21 +13,17 @@ import org.joda.time.DateTime;
 import com.seyren.core.domain.Alert;
 import com.seyren.core.domain.AlertType;
 import com.seyren.core.domain.Check;
-import com.seyren.core.domain.Subscription;
-import com.seyren.core.service.notification.NotificationService;
 import com.seyren.core.util.graphite.GraphiteConfig;
 
 @Named
 public class GraphiteTargetChecker implements TargetChecker {
 
 	private HttpClient client;
-	private NotificationService notificationService;
 	private final GraphiteConfig graphiteConfig;
 
 	@Inject
-	public GraphiteTargetChecker(NotificationService notificationService, GraphiteConfig graphiteConfig) {
+	public GraphiteTargetChecker(GraphiteConfig graphiteConfig) {
 		client = new HttpClient(new MultiThreadedHttpConnectionManager());
-		this.notificationService = notificationService;
 		this.graphiteConfig = graphiteConfig;
 	}
 
@@ -41,24 +37,7 @@ public class GraphiteTargetChecker implements TargetChecker {
 			client.executeMethod(get);
 			Double value = getValue(get);
 
-			// Always create an alert
-			Alert alert = createAlert(check, value);
-
-			// Is the alert all OK
-			if (alert.getFromType() == AlertType.OK && alert.getToType() == AlertType.OK) {
-				return null;
-			}
-
-			// Only notify if the alert has changed state
-			if (alert.getFromType() != alert.getToType()) {
-		        for (Subscription subscription : check.getSubscriptions()) {
-		        	if (subscription.shouldNotify(alert)) {
-		        		notificationService.sendNotification(check, alert);
-		        	} 
-		        }
-			}
-
-			return alert;
+			return createAlert(check, value);
 
 		} finally {
 
