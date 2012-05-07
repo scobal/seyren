@@ -1,32 +1,62 @@
 package com.seyren.core.util.email;
 
 public class Email {
-    private final EmailAddress to;
-    private final EmailAddress from;
 
-    public EmailAddress getTo() {
-        return to;
-    }
+	private EmailAddress to;
+	private EmailAddress from;
+	private String message;
+	private String subject;
 
-    public EmailAddress getFrom() {
-        return from;
-    }
+	public EmailAddress getTo() {
+		return to;
+	}
 
-    public String getMessage() {
-        return message;
-    }
+	public void setTo(EmailAddress to) {
+		this.to = to;
+	}
+	
+	public Email withTo(EmailAddress to) {
+		setTo(to);
+		return this;
+	}
 
-    public String getSubject() {
-        return subject;
-    }
+	public EmailAddress getFrom() {
+		return from;
+	}
 
-    private final String message;
-    private final String subject;
+	public void setFrom(EmailAddress from) {
+		this.from = from;
+	}
+	
+	public Email withFrom(EmailAddress from) {
+		setFrom(from);
+		return this;
+	}
 
-    public Email(EmailAddress to, EmailAddress from, String message, String subject) {
-        this.to = to;
-        this.from = from;
-        this.message = message;
-        this.subject = subject;
-    }
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
+	}
+	
+	public Email withMessage(String message) {
+		setMessage(message);
+		return this;
+	}
+
+	public String getSubject() {
+		return subject;
+	}
+
+	public void setSubject(String subject) {
+		this.subject = subject;
+	}
+	
+	public Email withSubject(String subject) {
+		setSubject(subject);
+		return this;
+	}
+
 }

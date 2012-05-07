@@ -26,10 +26,11 @@ public class EmailNotificationService implements NotificationService {
     @Override
     public void sendNotification(Check check, Subscription subscription, Alert alert) {
     	
-    	Email email = new Email(new EmailAddress(subscription.getTarget()),
-                new EmailAddress("alerts@seyren"),
-                alert.getTarget(),
-                "Alert from seyren");
+    	Email email = new Email()
+    				.withTo(new EmailAddress(subscription.getTarget()))
+    				.withFrom(new EmailAddress("alerts@seyren"))
+    				.withSubject(alert.getTarget())
+    				.withMessage("Alert from seyren");
 
         try {
             SimpleMailMessage mailMessage = createEmail(email.getFrom().getAddress(), email.getTo().getAddress(), email.getMessage(), email.getSubject());
