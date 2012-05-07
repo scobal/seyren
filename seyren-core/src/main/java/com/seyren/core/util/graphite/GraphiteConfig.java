@@ -1,26 +1,28 @@
 package com.seyren.core.util.graphite;
 
+import static org.apache.commons.lang.StringUtils.*;
 
+import javax.inject.Named;
+
+@Named
 public class GraphiteConfig {
 	
-	private final String host;
-	private final String path;
+	private final String baseUrl;
 
-	public GraphiteConfig(String host, String path) {
-		this.host = host;
-		this.path = path;
+	public GraphiteConfig() {
+		this.baseUrl = stripEnd(environmentOrDefault("GRAPHITE_URL", "http://localhost:80"), "/");
 	}
 
-	public String getHost() {
-		return host;
-	}
-
-	public String getPath() {
-		return path;
+	public String getBaseUrl() {
+		return baseUrl;
 	}
 	
-	public String getUri() {
-		return getHost() + getPath();
+	private static String environmentOrDefault(String propertyName, String defaultValue) {
+	    String value = System.getenv(propertyName);
+	    if (isEmpty(value)) {
+	        return defaultValue;
+	    }
+	    return value;
 	}
 	
 }

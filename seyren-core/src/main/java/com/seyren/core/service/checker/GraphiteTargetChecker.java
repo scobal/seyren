@@ -17,6 +17,8 @@ import com.seyren.core.util.graphite.GraphiteConfig;
 
 @Named
 public class GraphiteTargetChecker implements TargetChecker {
+    
+    private static final String GRAPHITE_TARGET_PATH_FORMAT = "%s/render?from=-5minutes&amp;until=now&amp;uniq=%s&amp;format=json&amp;target=%s";
 
 	private HttpClient client;
 	private final GraphiteConfig graphiteConfig;
@@ -29,8 +31,8 @@ public class GraphiteTargetChecker implements TargetChecker {
 
 	@Override
 	public Alert check(Check check) throws Exception {
-
-		GetMethod get = new GetMethod(String.format(graphiteConfig.getUri(), new DateTime().getMillis(), check.getTarget()));
+	    
+		GetMethod get = new GetMethod(String.format(GRAPHITE_TARGET_PATH_FORMAT, graphiteConfig.getBaseUrl(), new DateTime().getMillis(), check.getTarget()));
 
 		try {
 
