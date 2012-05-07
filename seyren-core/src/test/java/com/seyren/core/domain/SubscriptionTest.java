@@ -11,7 +11,7 @@ public class SubscriptionTest {
 
 	@Test
 	public void testShouldNotify() {
-		Subscription sub = new Subscription().withFromTime(localTime("1000")).withToTime(localTime("1100")).withSu(true);
+		Subscription sub = new Subscription().withEnabled(true).withFromTime(localTime("1000")).withToTime(localTime("1100")).withSu(true);
 		Alert alert = new Alert().withTimestamp(dateTime("1030"));
 		assertThat(sub.shouldNotify(alert), is(equalTo(true)));
 	}
@@ -35,6 +35,13 @@ public class SubscriptionTest {
 		Subscription sub = new Subscription();
 		Alert alert = new Alert().withTimestamp(dateTime("1015"));
 		assertThat(sub.shouldNotify(alert), is(equalTo(false)));
+	}
+	
+	@Test
+	public void shouldNotNotifyWhenNotEnabled() {
+	    Subscription sub = new Subscription().withEnabled(false);
+	    Alert alert = new Alert().withTimestamp(dateTime("1015"));
+	    assertThat(sub.shouldNotify(alert), is(equalTo(false)));
 	}
 
 	private DateTime dateTime(String time) {

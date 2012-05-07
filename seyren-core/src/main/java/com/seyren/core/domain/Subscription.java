@@ -197,7 +197,7 @@ public class Subscription {
 	}
 
 	public boolean shouldNotify(Alert alert) {
-		return isCorrectDayOfWeek(alert) && isCorrectHourOfDay(alert);
+		return isEnabled() && isCorrectDayOfWeek(alert) && isCorrectHourOfDay(alert);
 	}
 
 	private boolean isCorrectHourOfDay(Alert alert) {
