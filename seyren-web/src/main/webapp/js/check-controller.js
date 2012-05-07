@@ -65,18 +65,19 @@ CheckController.prototype = {
     
     createSubscription : function () {
         var subscription = {
-                target : this.newsubscription.target,
-                type : this.newsubscription.type,
-                su : this.newsubscription.su,
-                mo : this.newsubscription.mo,
-                tu : this.newsubscription.tu,
-                we : this.newsubscription.we,
-                th : this.newsubscription.th,
-                fr : this.newsubscription.fr,
-                sa : this.newsubscription.sa,
-                fromTime : this.newsubscription.fromTime,
-                toTime : this.newsubscription.toTime
-                };
+            target : this.newsubscription.target,
+            type : this.newsubscription.type,
+            su : this.newsubscription.su,
+            mo : this.newsubscription.mo,
+            tu : this.newsubscription.tu,
+            we : this.newsubscription.we,
+            th : this.newsubscription.th,
+            fr : this.newsubscription.fr,
+            sa : this.newsubscription.sa,
+            fromTime : this.newsubscription.fromTime,
+            toTime : this.newsubscription.toTime,
+            enabled : true
+        };
         
         this.$xhr('POST', this.seyrenBaseUrl + '/api/checks/' + this.id + '/subscriptions', subscription, this.createSubscriptionSuccess, this.createSubscriptionFailure);
     },
@@ -88,6 +89,23 @@ CheckController.prototype = {
     
     createSubscriptionFailure : function (code, response) {
         console.log('Creating subscription failed');
+    },
+    
+    swapEnabled : function (subscription) {
+        subscription.enabled = !subscription.enabled;
+        this.updateSubscription(subscription);
+    },
+    
+    updateSubscription : function (subscription) {
+        this.$xhr('PUT', this.seyrenBaseUrl + '/api/checks/' + this.id + '/subscriptions/' + subscription.id, subscription, this.updateSubscriptionSuccess, this.updateSubscriptionFailure);
+    },
+    
+    updateSubscriptionSuccess : function (code, response) {
+        this.loadCheck();
+    },
+    
+    updateSubscriptionFailure : function (code, response) {
+        console.log('Updating subscription failed');
     },
     
     deleteSubscription : function (subscriptionId) {

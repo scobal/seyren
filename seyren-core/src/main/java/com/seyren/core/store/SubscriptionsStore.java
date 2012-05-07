@@ -8,4 +8,6 @@ public interface SubscriptionsStore {
 
 	void deleteSubscription(String checkId, String subscriptionId);
 	
+	void updateSubscription(String checkId, Subscription subscription);
+	
 }
