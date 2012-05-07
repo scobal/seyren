@@ -137,6 +137,9 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
 		for (DBObject dbo : dbc.toArray()) {
 			alerts.add(mapper.alertFrom(dbo));
 		}
+		if (alerts.size() == 0) {
+		    return alerts;
+		}
 		Collections.reverse(alerts);
 		int end = start + items;
 		if (end >= alerts.size()) {
