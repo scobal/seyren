@@ -62,7 +62,7 @@ public class CheckScheduler {
                                 for (Subscription subscription : check.getSubscriptions()) {
                                     if (subscription.shouldNotify(alert)) {
                                         try {
-                                            notificationService.sendNotification(check, alert);
+                                            notificationService.sendNotification(check, subscription, alert);
                                         } catch (Exception e) {
                                             LOGGER.warn(subscription.getTarget() + " failed", e);
                                         }

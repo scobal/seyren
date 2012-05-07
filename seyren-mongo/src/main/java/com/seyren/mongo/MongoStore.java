@@ -91,7 +91,7 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
 
 	@Override
 	public void deleteCheck(String checkId) {
-		getChecksCollection().remove(new BasicDBObject("_id", checkId));
+		getChecksCollection().remove(basicDBObjectById(checkId));
 	}
 
 	@Override
@@ -138,6 +138,13 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
 		DBObject query = new BasicDBObject("$push", new BasicDBObject("subscriptions", mapper.subscriptionToDBObject(subscription)));
 		getChecksCollection().update(check, query);
 		return subscription;
+	}
+	
+	@Override
+	public void deleteSubscription(String checkId, String subscriptionId) {
+		DBObject check = basicDBObjectById(checkId);
+		BasicDBObject subscription = new BasicDBObject("$pull", new BasicDBObject("subscriptions", basicDBObjectById(subscriptionId)));
+		getChecksCollection().update(check, subscription);
 	}
 	
 	private DBObject basicDBObjectById(String id) {

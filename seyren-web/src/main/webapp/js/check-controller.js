@@ -81,6 +81,18 @@ CheckController.prototype = {
     
     createSubscriptionFailure : function (code, response) {
         console.log('Creating subscription failed');
+    },
+    
+    deleteSubscription : function (subscriptionId) {
+        this.$xhr('DELETE', this.seyrenBaseUrl + '/api/checks/' + this.id + '/subscriptions/' + subscriptionId, this.deleteSubscriptionSuccess, this.deleteSubscriptionFailure);
+    },
+    
+    deleteSubscriptionSuccess : function (code, response) {
+        this.loadCheck();
+    },
+    
+    deleteSubscriptionFailure : function (code, response) {
+        console.log('Deleting subscription failed');
     }
     
 };

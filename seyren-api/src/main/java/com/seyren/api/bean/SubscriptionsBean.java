@@ -27,6 +27,12 @@ public class SubscriptionsBean implements SubscriptionsResource {
 		return Response.created(uri(checkId, stored.getId())).build();
 	}
 
+	@Override
+	public Response deleteSubscription(String checkId, String subscriptionId) {
+		subscriptionsStore.deleteSubscription(checkId, subscriptionId);
+		return Response.noContent().build();
+	}
+	
 	private URI uri(String checkId, String subscriptionId) {
 		try {
 			return new URI("checks/" + checkId + "/subscriptions/" + subscriptionId);
@@ -34,4 +40,5 @@ public class SubscriptionsBean implements SubscriptionsResource {
 			throw new RuntimeException(e);
 		}
 	}
+
 }
