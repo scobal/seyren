@@ -5,7 +5,6 @@ import javax.inject.Named;
 
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import com.seyren.core.domain.Alert;
 import com.seyren.core.domain.Check;

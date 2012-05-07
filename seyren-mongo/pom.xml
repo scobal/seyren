@@ -9,18 +9,18 @@
         <artifactId>seyren-parent</artifactId>
         <version>0.1-SNAPSHOT</version>
     </parent>
-    
+
     <properties>
-    
+
     </properties>
-    
+
     <dependencies>
-    
-   		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>seyren-core</artifactId>
-			<version>${project.version}</version>
-		</dependency>
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>seyren-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit-dep</artifactId>
@@ -36,15 +36,15 @@
             <artifactId>hamcrest-library</artifactId>
             <scope>test</scope>
         </dependency>
-		<dependency>
-		    <groupId>org.mongodb</groupId>
-		    <artifactId>mongo-java-driver</artifactId>
-		</dependency>
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongo-java-driver</artifactId>
+        </dependency>
 
     </dependencies>
 
     <build>
-    
+
     </build>
 
 </project>
