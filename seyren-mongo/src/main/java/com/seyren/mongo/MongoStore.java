@@ -3,6 +3,7 @@ package com.seyren.mongo;
 import static com.seyren.mongo.NiceDBObject.*;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -130,13 +131,21 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
 	}
 	
 	@Override
-	public List<Alert> getAlerts(String checkId) {
+	public List<Alert> getAlerts(String checkId, int start, int items) {
 		DBCursor dbc = getAlertsCollection().find(new BasicDBObject("checkId", checkId));
 		List<Alert> alerts = new ArrayList<Alert>();
 		for (DBObject dbo : dbc.toArray()) {
 			alerts.add(mapper.alertFrom(dbo));
 		}
-		return alerts;
+		Collections.reverse(alerts);
+		int end = start + items;
+		if (end >= alerts.size()) {
+			end = alerts.size() - 1;
+		}
+		if (start >= alerts.size()) {
+			start = alerts.size() - 1;
+		}
+		return alerts.subList(start, end);
 	}
 
 	@Override

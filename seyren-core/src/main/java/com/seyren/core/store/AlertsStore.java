@@ -8,6 +8,6 @@ public interface AlertsStore {
 	
 	Alert createAlert(String checkId, Alert alert);
 	
-	List<Alert> getAlerts(String checkId);
+	List<Alert> getAlerts(String checkId, int start, int items);
 	
 }

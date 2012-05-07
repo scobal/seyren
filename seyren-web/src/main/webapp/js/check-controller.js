@@ -4,6 +4,9 @@ function CheckController() {
     this.$xhr.defaults.headers.post['Content-Type'] = 'application/json';
     this.$xhr.defaults.headers.put['Content-Type'] = 'application/json';
     this.id = this.$route.current.params.id;
+    
+    this.alertStartIndex = 0;
+    this.alertItemsPerPage = 10;
 }
 
 CheckController.prototype = {
@@ -21,7 +24,7 @@ CheckController.prototype = {
     },
     
     loadAlerts : function () {
-        this.$xhr('GET', this.seyrenBaseUrl + '/api/checks/' + this.id + '/alerts', this.loadAlertsSuccess, this.loadAlertsFailure);
+        this.$xhr('GET', this.seyrenBaseUrl + '/api/checks/' + this.id + '/alerts?start=' + this.alertStartIndex + '&items=' + this.alertItemsPerPage, this.loadAlertsSuccess, this.loadAlertsFailure);
     },
     
     loadAlertsSuccess : function (code, response) {
@@ -111,6 +114,22 @@ CheckController.prototype = {
     
     deleteSubscriptionFailure : function (code, response) {
         console.log('Deleting subscription failed');
+    },
+    
+    loadOlderAlerts : function () {
+        if (this.alerts.length !== this.alertItemsPerPage) {
+            return;
+        }
+        this.alertStartIndex += this.alertItemsPerPage;
+        this.loadAlerts();
+    },
+    
+    loadNewerAlerts : function () {
+        if (this.alertStartIndex === 0) {
+            return;
+        }
+        this.alertStartIndex -= this.alertItemsPerPage;
+        this.loadAlerts();
     }
     
 };

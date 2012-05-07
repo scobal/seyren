@@ -2,33 +2,33 @@ package com.seyren.core.util.email;
 
 public class Email {
 
-	private EmailAddress to;
-	private EmailAddress from;
+	private String to;
+	private String from;
 	private String message;
 	private String subject;
 
-	public EmailAddress getTo() {
+	public String getTo() {
 		return to;
 	}
 
-	public void setTo(EmailAddress to) {
+	public void setTo(String to) {
 		this.to = to;
 	}
 	
-	public Email withTo(EmailAddress to) {
+	public Email withTo(String to) {
 		setTo(to);
 		return this;
 	}
 
-	public EmailAddress getFrom() {
+	public String getFrom() {
 		return from;
 	}
 
-	public void setFrom(EmailAddress from) {
+	public void setFrom(String from) {
 		this.from = from;
 	}
 	
-	public Email withFrom(EmailAddress from) {
+	public Email withFrom(String from) {
 		setFrom(from);
 		return this;
 	}
