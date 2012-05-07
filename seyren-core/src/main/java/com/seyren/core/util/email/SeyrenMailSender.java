@@ -5,13 +5,13 @@ import javax.inject.Named;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 @Named
-public class PropertyMailSender extends JavaMailSenderImpl {
+public class SeyrenMailSender extends JavaMailSenderImpl {
 
     public static final String DEFAULT_EMAIL_HOST = "localhost";
     public static final String DEFAULT_EMAIL_PORT = "25";
     public static final String DEFAULT_EMAIL_PROTOCOL = "smtp";
 
-    public PropertyMailSender() {
+    public SeyrenMailSender() {
         setHost(getPropertyOrDefault("email.host", DEFAULT_EMAIL_HOST));
         setPort(Integer.parseInt(getPropertyOrDefault("email.port", DEFAULT_EMAIL_PORT)));
         setProtocol(getPropertyOrDefault("email.protocol", DEFAULT_EMAIL_PROTOCOL));
