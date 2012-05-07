@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * This class represents a graphite target that needs to be monitored.
  * 
- * It stores historical alerts and current subscriptions
+ * It stores current subscriptions
  * 
  * @author mark
  *
