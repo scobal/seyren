@@ -1,4 +1,4 @@
-package com.seyren.acceptancetests.checks;
+package com.seyren.acceptancetests.alerts;
 
 import static com.github.restdriver.serverdriver.Matchers.*;
 import static com.github.restdriver.serverdriver.RestServerDriver.*;
@@ -10,7 +10,7 @@ import org.junit.Test;
 
 import com.github.restdriver.serverdriver.http.response.Response;
 
-public class AlertsTest {
+public class AlertsAT {
 
 	@Test
 	public void testGetAlertsReturnsOk() {
