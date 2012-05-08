@@ -45,7 +45,7 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
 	}
 	
 	private String getMongoUri() {
-		String uri = System.getenv("MONGOHQ_URL");
+		String uri = System.getenv("MONGO_URL");
 		if (uri == null) {
 			uri = DEFAULT_MONGO_URL;
 		}
