@@ -1,6 +1,7 @@
 /*global console*/
 
 function HomeController() {
+    this.$xhr.defaults.headers.put['Content-Type'] = 'application/json';
     
     this.pollAlertsInSeconds = 5;
     this.secondsToUpdateAlerts = this.pollAlertsInSeconds;
@@ -46,6 +47,24 @@ HomeController.prototype = {
             this.loadWarnChecks();
         } 
         this.$defer(this.countdownToRefresh, 1000);
+    },
+    
+    saveCheck : function (check) {
+        this.$xhr('PUT', this.seyrenBaseUrl + '/api/checks/' + check.id, check, this.saveCheckSuccess, this.saveCheckFailure);
+    },
+    
+    saveCheckSuccess : function (code, response) {
+        this.loadErrorChecks();
+        this.loadWarnChecks();
+    },
+    
+    saveCheckFailure : function (code, response) {
+        console.log('Saving check failed');
+    },
+    
+    swapEnabled : function (check) {
+        check.enabled = !check.enabled;
+        this.saveCheck(check);
     }
 
 };

@@ -14,15 +14,13 @@
                 </tr>
             </thead>
             <tbody>
-                <tr ng:repeat="check in checks"
-                    ng:click="selectCheck(check.id)"
-                    style="cursor: pointer;">
+                <tr ng:repeat="check in checks" ng:click="selectCheck(check.id)" style="cursor: pointer;">
                     <td>{{ check.name }}</td>
                     <td>{{ check.target }}</td>
                     <td>{{ check.state }}</td>
                     <td>{{ check.warn }}</td>
                     <td>{{ check.error }}</td>
-                    <td>{{ check.enabled }}</td>
+                    <td><input type="checkbox" ng:checked="{{ check.enabled }}" ng:click="swapEnabled(check)" /></td>
                 </tr>
             </tbody>
         </table>

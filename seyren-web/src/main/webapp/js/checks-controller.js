@@ -2,6 +2,7 @@
 
 function ChecksController() {
     this.$xhr.defaults.headers.post['Content-Type'] = 'application/json';
+    this.$xhr.defaults.headers.put['Content-Type'] = 'application/json';
     this.location = {};
 }
 
@@ -41,6 +42,23 @@ ChecksController.prototype = {
     
     createCheckFailure : function (code, response) {
         console.log('Create check failed');
+    },
+    
+    saveCheck : function (check) {
+        this.$xhr('PUT', this.seyrenBaseUrl + '/api/checks/' + check.id, check, this.saveCheckSuccess, this.saveCheckFailure);
+    },
+    
+    saveCheckSuccess : function (code, response) {
+        this.loadChecks();
+    },
+    
+    saveCheckFailure : function (code, response) {
+        console.log('Saving check failed');
+    },
+    
+    swapEnabled : function (check) {
+        check.enabled = !check.enabled;
+        this.saveCheck(check);
     }
     
 };
