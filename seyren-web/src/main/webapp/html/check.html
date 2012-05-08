@@ -65,8 +65,8 @@
         <div class="span4">&nbsp;</div>
         <div class="span5">
             <h2>Subscriptions</h2>
-            <table class="table table-bordered table-striped"
-                ng:show="check.subscriptions">
+            <div ng:hide="check.subscriptions">This check has no subscriptions</div>
+            <table class="table table-bordered table-striped" ng:show="check.subscriptions">
                 <thead>
                     <tr>
                         <th>Target</th>
@@ -166,12 +166,6 @@
                         </div>
                     </div>
                     <div class="control-group">
-                        <label class="control-label" for="newsubscription.enabled">Enabled</label>
-                        <div class="controls">
-                            <input id="newsubscription.enabled" name="newsubscription.enabled" type="checkbox" checked="checked" />
-                        </div>
-                    </div>
-                    <div class="control-group">
                         <label class="control-label"
                             for="newsubscription.fromTime">From</label>
                         <div class="controls">
@@ -184,6 +178,12 @@
                                 class="input-small"
                                 name="newsubscription.toTime"
                                 type="text" value="2359">
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="newsubscription.enabled">Enabled</label>
+                        <div class="controls">
+                            <input id="newsubscription.enabled" name="newsubscription.enabled" type="checkbox" checked="checked" />
                         </div>
                     </div>
                     <div class="control-group">
