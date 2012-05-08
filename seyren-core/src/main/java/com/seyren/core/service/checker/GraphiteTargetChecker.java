@@ -35,7 +35,8 @@ public class GraphiteTargetChecker implements TargetChecker {
 
 		try {
 			client.executeMethod(get);
-			Double value = getValue(get);
+			JsonNode response = new ObjectMapper().readTree(get.getResponseBodyAsString());
+			Double value = getLatestValue(response.get(0));
 			return createAlert(check, value);
 		} finally {
 			get.releaseConnection();
@@ -56,19 +57,20 @@ public class GraphiteTargetChecker implements TargetChecker {
 		return createAlert(check, value, currentState, newState);
 	}
 
-	private Double getValue(GetMethod get) throws Exception {
-		JsonNode tree = new ObjectMapper().readTree(get.getResponseBodyAsString());
-		JsonNode points = tree.get(0).get("datapoints");
-
-		// Loop through the datapoints in reverse order until we find the latest non-null value
-		for (int i = points.size() - 1; i >= 0; i--) {
-			String value = points.get(i).get(0).asText();
+	/**
+	 * Loop through the datapoints in reverse order until we find the latest non-null value
+	 */
+	private Double getLatestValue(JsonNode node) throws Exception {
+		JsonNode datapoints = node.get("datapoints");
+		
+		for (int i = datapoints.size() - 1; i >= 0; i--) {
+			String value = datapoints.get(i).get(0).asText();
 			if (!value.equals("null")) {
 				return Double.valueOf(value);
 			}
 		}
 
-		throw new Exception("Could not find a valid datapoint for uri: " + get);
+		throw new Exception("Could not find a valid datapoint for target: " + node.get("target"));
 	}
 
 	private Alert createAlert(Check check, Double value, AlertType from, AlertType to) {
