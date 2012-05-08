@@ -4,6 +4,11 @@ function ChecksController() {
     this.$xhr.defaults.headers.post['Content-Type'] = 'application/json';
     this.$xhr.defaults.headers.put['Content-Type'] = 'application/json';
     this.location = {};
+    
+    this.pollChecksInSeconds = 5;
+    this.secondsToUpdateChecks = this.pollChecksInSeconds;
+    this.$defer(this.countdownToRefresh, 1000);
+    
 }
 
 ChecksController.prototype = {
@@ -59,6 +64,15 @@ ChecksController.prototype = {
     swapEnabled : function (check) {
         check.enabled = !check.enabled;
         this.saveCheck(check);
+    },
+    
+    countdownToRefresh : function() {
+        this.secondsToUpdateChecks--;
+        if (this.secondsToUpdateChecks <= 0) {
+            this.secondsToUpdateChecks = this.pollChecksInSeconds;
+            this.loadChecks();
+        } 
+        this.$defer(this.countdownToRefresh, 1000);
     }
     
 };
