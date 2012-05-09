@@ -15,6 +15,13 @@
 		<developerConnection>scm:git:git@github.com:scobal/seyren.git</developerConnection>
 		<url>git@github.com:scobal/seyren.git</url>
 	</scm>
+	
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+        </license>
+    </licenses>
 
 	<modules>
 		<module>seyren-acceptance-tests</module>
@@ -103,6 +110,31 @@
 					<target>1.6</target>
 				</configuration>
 			</plugin>
+            <plugin>
+                <groupId>com.mycila.maven-license-plugin</groupId>
+                <artifactId>maven-license-plugin</artifactId>
+                <version>1.9.0</version>
+                <configuration>
+                    <header>LICENSE</header>
+                    <strictCheck>true</strictCheck>
+                    <aggregate>true</aggregate>
+                    <encoding>UTF-8</encoding>
+                    <failIfMissing>true</failIfMissing>
+                    <skipExistingHeaders>true</skipExistingHeaders>
+                    <includes>
+                        <include>**/src/main/java/**</include>
+                        <include>**/src/test/java/**</include>
+                    </includes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>format</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 		</plugins>
 	</build>
 
