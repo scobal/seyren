@@ -2,8 +2,9 @@
 
 [sahy-ruhn] - An alerting dashboard for Graphite
 
-<img src="http://i.imgur.com/2y7lN.png" height="400" width="600" />
-<img src="http://i.imgur.com/LejyO.png" height="400" width="600" />
+###Screenshots
+<img src="http://i.imgur.com/SPNn0.png" height="400" width="700" />
+<img src="http://i.imgur.com/cAW3I.png" height="400" width="700" />
 
 ##Run
 
