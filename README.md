@@ -1,5 +1,7 @@
 #Seyren
 
+An alerting dashboard for Graphite
+
 ##Run
 
 ###Stand alone:
