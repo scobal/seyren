@@ -3,7 +3,6 @@ package com.seyren.mongo;
 import static com.seyren.mongo.NiceDBObject.*;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -76,7 +75,7 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
 	@Override
 	public List<Check> getChecksByState(Set<String> states) {
 		List<Check> result =  new ArrayList<Check>();
-		DBCursor dbc = getChecksCollection().find(new BasicDBObject("state", new BasicDBObject("$in", states.toArray())));
+		DBCursor dbc = getChecksCollection().find(object("state", object("$in", states.toArray())));
 		for (DBObject dbo : dbc.toArray()) {
 			result.add(mapper.checkFrom(dbo));
 		}
@@ -85,7 +84,7 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
 
 	@Override
 	public Check getCheck(String checkId) {
-		DBObject dbo = getChecksCollection().findOne(new BasicDBObject("_id", checkId));
+		DBObject dbo = getChecksCollection().findOne(object("_id", checkId));
 		if (dbo == null) {
 			return null;
 		}
@@ -94,7 +93,7 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
 
 	@Override
 	public void deleteCheck(String checkId) {
-		getChecksCollection().remove(basicDBObjectById(checkId));
+		getChecksCollection().remove(forId(checkId));
 	}
 
 	@Override
@@ -132,38 +131,27 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
 	
 	@Override
 	public List<Alert> getAlerts(String checkId, int start, int items) {
-		DBCursor dbc = getAlertsCollection().find(new BasicDBObject("checkId", checkId));
+		DBCursor dbc = getAlertsCollection().find(object("checkId", checkId)).sort(object("timestamp", -1)).skip(start).limit(items);
 		List<Alert> alerts = new ArrayList<Alert>();
 		for (DBObject dbo : dbc.toArray()) {
 			alerts.add(mapper.alertFrom(dbo));
 		}
-		if (alerts.size() == 0) {
-		    return alerts;
-		}
-		Collections.reverse(alerts);
-		int end = start + items;
-		if (end >= alerts.size()) {
-			end = alerts.size() - 1;
-		}
-		if (start >= alerts.size()) {
-			start = alerts.size() - 1;
-		}
-		return alerts.subList(start, end);
+		return alerts;
 	}
 
 	@Override
 	public Subscription createSubscription(String checkId, Subscription subscription) {
 		subscription.setId(ObjectId.get().toString());
-		DBObject check = basicDBObjectById(checkId);
-		DBObject query = new BasicDBObject("$push", new BasicDBObject("subscriptions", mapper.subscriptionToDBObject(subscription)));
+		DBObject check = forId(checkId);
+		DBObject query = object("$push", object("subscriptions", mapper.subscriptionToDBObject(subscription)));
 		getChecksCollection().update(check, query);
 		return subscription;
 	}
 	
 	@Override
 	public void deleteSubscription(String checkId, String subscriptionId) {
-		DBObject check = basicDBObjectById(checkId);
-		BasicDBObject subscription = new BasicDBObject("$pull", new BasicDBObject("subscriptions", basicDBObjectById(subscriptionId)));
+		DBObject check = forId(checkId);
+		BasicDBObject subscription = object("$pull", object("subscriptions", forId(subscriptionId)));
 		getChecksCollection().update(check, subscription);
 	}
 	
@@ -174,10 +162,6 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
 	    DBObject checkFindObject = forId(checkId).with("subscriptions", object("$elemMatch", subscriptionFindObject));
 	    DBObject updateObject = object("$set", object("subscriptions.$", subscriptionObject));
 	    getChecksCollection().update(checkFindObject, updateObject);
-	}
-	
-	private DBObject basicDBObjectById(String id) {
-	    return new BasicDBObject("_id", id);
 	}
 	
 }
