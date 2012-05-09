@@ -1,6 +1,6 @@
 #Seyren
 
-An alerting dashboard for Graphite
+[sahy-ruhn] - An alerting dashboard for Graphite
 
 ##Run
 
