@@ -2,6 +2,9 @@
 
 [sahy-ruhn] - An alerting dashboard for Graphite
 
+<img src="http://i.imgur.com/2y7lN.png" height="150" width="200" />
+
+
 ##Run
 
 ###Stand alone
