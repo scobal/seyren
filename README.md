@@ -4,7 +4,7 @@ An alerting dashboard for Graphite
 
 ##Run
 
-###Stand alone:
+###Stand alone
 
 ```
 export GRAPHITE_URL=http://graphite.foohost.com:80
