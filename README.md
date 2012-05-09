@@ -7,7 +7,7 @@
 ```
 export GRAPHITE_URL=http://graphite.foohost.com:80
 mvn clean package
-java -jar seyren-web/target/dependency/jetty-runner.jar seyren-web/target/*.war
+java -jar seyren-web/target/dependency/jetty-runner.jar --path /seyren seyren-web/target/*.war
 open http://localhost:8080/seyren
 ```
 
@@ -19,7 +19,7 @@ open http://localhost:8080/seyren
 
 ##Development
 
-To run the acceptance tests with Maven:
+To run the acceptance tests with Maven (this will require a clean mongo database):
 
 ```
 mvn clean verify
