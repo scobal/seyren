@@ -36,3 +36,7 @@ mvn clean verify -Dwait
 ```
 
 You should then be able to browse to `http://localhost:8080/seyren` and have a play.
+
+##Contact
+
+scobal at gmail dot com
