@@ -6,7 +6,7 @@
 
 ##Run
 
-##Prerequisites
+###Prerequisites
 
 * Mongodb
 * Maven
