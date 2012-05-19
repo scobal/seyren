@@ -197,15 +197,13 @@
         </div>
     </div>
     <div class="row-fluid" ng:init="loadAlerts()">
-        <h2>Alerts</h2>
-        <ul class="pager">
-            <li>
-                <a ng:click="loadOlderAlerts()">&larr; Older</a>
-            </li>
-            <li>
-                <a ng:click="loadNewerAlerts()">Newer &rarr;</a>
-            </li>
-        </ul>
+        <h2>Alerts <small>( {{alerts.start}} of {{alerts.total}} )</small> </h2>
+        <div class="pagination">
+            <ul>
+                <li><a ng:click="loadOlderAlerts()">&larr; Older</a></li>    
+                <li><a ng:click="loadNewerAlerts()">Newer &rarr;</a></li>
+            </ul>
+        </div>
         <table class="table table-bordered table-striped"
             ng:show="alerts">
             <thead>
@@ -232,13 +230,5 @@
                 </tr>
             </tbody>
         </table>
-        <ul class="pager">
-            <li>
-                <a ng:click="loadOlderAlerts()">&larr; Older</a>
-            </li>
-            <li>
-                <a ng:click="loadNewerAlerts()">Newer &rarr;</a>
-            </li>
-        </ul>
     </div>
 </div>
