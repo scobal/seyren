@@ -157,6 +157,17 @@ CheckController.prototype = {
             this.loadAlerts();
         } 
         this.$defer(this.countdownToRefresh, 1000);
+    },
+    
+    getGraphUrl : function(minutes) {
+        if (this.config && this.check) {
+            var result = this.config.graphite.baseUrl + '/render/?&hideLegend=true&width=365&height=70&hideAxes=true';
+            result += '&target=dashed(color(constantLine(' + this.check.warn + '),"yellow"))';
+            result += '&target=dashed(color(constantLine(' + this.check.error + '),"red"))';
+            result += '&from=' + minutes + 'Minutes';
+            result += '&target=' + this.check.target;
+            return result;
+        }
     }
     
 };
