@@ -220,7 +220,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr ng:repeat="alert in alerts">
+                <tr ng:repeat="alert in alerts.values">
                     <td>{{ alert.timestamp | date: 'yyyy-MM-dd
                         HH:mm:ss' }}</td>
                     <td>{{ alert.target }}</td>

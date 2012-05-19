@@ -151,7 +151,10 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
 			alerts.add(mapper.alertFrom(dbo));
 		}
 		return new SeyrenResponse<Alert>()
-			.withValues(alerts);
+			.withValues(alerts)
+			.withItems(items)
+			.withStart(start)
+			.withTotal(dbc.count());
 	}
 
 	@Override

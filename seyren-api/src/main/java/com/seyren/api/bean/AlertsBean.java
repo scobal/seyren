@@ -38,7 +38,7 @@ public class AlertsBean implements AlertsResource {
 			return Response.status(400).build();
 		}
 		SeyrenResponse<Alert> response = alertsStore.getAlerts(checkId, start, items);
-		return Response.ok(response.getValues()).build();
+		return Response.ok(response).build();
 	}
 
 }
