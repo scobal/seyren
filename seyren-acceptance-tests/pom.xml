@@ -67,7 +67,7 @@
                     </systemPropertyVariables>
                     <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
                     <includes>
-                        <include>**/*Test.java</include>
+                        <include>**/*AT.java</include>
                     </includes>
                 </configuration>
                 <executions>
