@@ -16,6 +16,11 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>com.github.rest-driver</groupId>
+            <artifactId>rest-client-driver</artifactId>
+            <scope>test</scope>
+        </dependency>
 		<dependency>
 			<groupId>commons-httpclient</groupId>
 			<artifactId>commons-httpclient</artifactId>
@@ -59,6 +64,11 @@
 			<artifactId>hamcrest-library</artifactId>
 			<scope>test</scope>
 		</dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
+        </dependency>
 		<dependency>
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-core-asl</artifactId>

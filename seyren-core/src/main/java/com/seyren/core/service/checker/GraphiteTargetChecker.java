@@ -13,6 +13,9 @@
  */
 package com.seyren.core.service.checker;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -31,33 +34,38 @@ import com.seyren.core.util.graphite.GraphiteConfig;
 @Named
 public class GraphiteTargetChecker implements TargetChecker {
     
-    private static final String GRAPHITE_TARGET_PATH_FORMAT = "%s/render?from=-5minutes&amp;until=now&amp;uniq=%s&amp;format=json&amp;target=%s";
+    private static final String GRAPHITE_TARGET_PATH_FORMAT = "%s/render?from=-5minutes&until=now&uniq=%s&format=json&target=%s";
 
-	private HttpClient client;
+	private final HttpClient client;
 	private final GraphiteConfig graphiteConfig;
-
+	
 	@Inject
 	public GraphiteTargetChecker(GraphiteConfig graphiteConfig) {
-		client = new HttpClient(new MultiThreadedHttpConnectionManager());
-		this.graphiteConfig = graphiteConfig;
+	    this.graphiteConfig = graphiteConfig;
+	    this.client = new HttpClient(new MultiThreadedHttpConnectionManager());
 	}
-
+	
 	@Override
-	public Alert check(Check check) throws Exception {
+	public List<Alert> check(Check check) throws Exception {
 		GetMethod get = new GetMethod(String.format(GRAPHITE_TARGET_PATH_FORMAT, graphiteConfig.getBaseUrl(), new DateTime().getMillis(), check.getTarget()));
 
 		try {
 			client.executeMethod(get);
 			JsonNode response = new ObjectMapper().readTree(get.getResponseBodyAsString());
-			Double value = getLatestValue(response.get(0));
-			return createAlert(check, value);
+			List<Alert> alerts = new ArrayList<Alert>();
+			for (JsonNode metric : response) {
+    			String target = metric.path("target").asText();
+    			Double value = getLatestValue(metric);
+    			alerts.add(createAlert(check, target, value));
+			}
+			return alerts;
 		} finally {
 			get.releaseConnection();
 		}
 		
 	}
 
-	private Alert createAlert(Check check, Double value) {
+	private Alert createAlert(Check check, String target, Double value) {
 		AlertType currentState = check.getState();
 		AlertType newState = AlertType.OK;
 
@@ -67,7 +75,7 @@ public class GraphiteTargetChecker implements TargetChecker {
 			newState = AlertType.WARN;
 		}
 		
-		return createAlert(check, value, currentState, newState);
+		return createAlert(check, target, value, currentState, newState);
 	}
 
 	/**
@@ -86,10 +94,10 @@ public class GraphiteTargetChecker implements TargetChecker {
 		throw new Exception("Could not find a valid datapoint for target: " + node.get("target"));
 	}
 
-	private Alert createAlert(Check check, Double value, AlertType from, AlertType to) {
+	private Alert createAlert(Check check, String target, Double value, AlertType from, AlertType to) {
 		return new Alert()
 				.withValue(value)
-				.withTarget(check.getTarget())
+				.withTarget(target)
 				.withWarn(check.getWarn())
 				.withError(check.getError())
 				.withFromType(from)

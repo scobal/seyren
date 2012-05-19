@@ -71,30 +71,32 @@ public class CheckScheduler {
 	    public final void run() {
 	        if (check.isEnabled()) {
                 try {
-                    Alert alert = checker.check(check);
+                    List<Alert> alerts = checker.check(check);
                     
-                    if (alert.isStillOk()) {
-                        return;
-                    }
-                    
-                    alertsStore.createAlert(check.getId(), alert);
-                    check.setState(alert.getToType());
-                    checksStore.saveCheck(check);
-                    
-                    // Only notify if the alert has changed state
-                    if (!alert.hasStateChanged()) {
-                        return;
-                    }
-                    
-                    for (Subscription subscription : check.getSubscriptions()) {
-                        if (!subscription.shouldNotify(alert)) {
-                            continue;
+                    for (Alert alert : alerts) {
+                        if (alert.isStillOk()) {
+                            return;
                         }
                         
-                        try {
-                            notificationService.sendNotification(check, subscription, alert);
-                        } catch (Exception e) {
-                            LOGGER.warn(subscription.getTarget() + " failed", e);
+                        alertsStore.createAlert(check.getId(), alert);
+                        check.setState(alert.getToType());
+                        checksStore.saveCheck(check);
+                        
+                        // Only notify if the alert has changed state
+                        if (!alert.hasStateChanged()) {
+                            return;
+                        }
+                        
+                        for (Subscription subscription : check.getSubscriptions()) {
+                            if (!subscription.shouldNotify(alert)) {
+                                continue;
+                            }
+                            
+                            try {
+                                notificationService.sendNotification(check, subscription, alert);
+                            } catch (Exception e) {
+                                LOGGER.warn(subscription.getTarget() + " failed", e);
+                            }
                         }
                     }
                 } catch (Exception e) {
