@@ -24,13 +24,17 @@ public final class SeyrenDriver {
 	private static final String DEFAULT_PORT = "8080";
 	private static final String DEFAULT_CONTEXT_ROOT = "seyren";
     private static final int DEFAULT_REST_DRIVER_PORT = 8081;
+    
+    public static Url checks() {
+    	return baseUri().withPath("checks");
+    }
 
-	public static Url checks() {
-		return baseUri().withPath("checks");
-	}
+    public static Url check(String checkId) {
+    	return checks().withPath("/" + checkId);
+    }
 	
 	public static Url alerts(String checkId) {
-		return checks().withPath("/" + checkId + "/alerts");
+		return check(checkId).withPath("/alerts");
 	}
     
 	private static Url baseUri() {

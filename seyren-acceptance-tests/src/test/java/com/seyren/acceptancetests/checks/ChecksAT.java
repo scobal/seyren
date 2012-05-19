@@ -62,7 +62,17 @@ public class ChecksAT {
     @Test
     public void testCreateCheckReturnsCreated() {
         Response response = createCheck("{ }");
+		assertThat(response, hasStatusCode(201));
         deleteLocation(response.getHeader("Location").getValue());
+	}
+    
+    @Test
+    public void testCreateCheckWithErrorState() {
+        Response response = createCheck("{ \"state\" : \"ERROR\" }");
+		assertThat(response, hasStatusCode(201));
+		String location = response.getHeader("Location").getValue();
+		assertThat(get(location).asJson(), hasJsonPath("$.state", is("ERROR")));
+        deleteLocation(location);
 	}
     
     private Response createCheck(String body) { 

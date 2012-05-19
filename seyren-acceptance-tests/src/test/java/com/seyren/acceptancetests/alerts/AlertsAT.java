@@ -32,4 +32,15 @@ public class AlertsAT {
 		assertThat(response.asJson(), hasJsonPath("$.", hasSize(0)));
 	}
 	
+	@Test
+	public void testGetAlertsInvalidStart() {
+		Response response = get(alerts("1").withParam("start", "-1"));
+		assertThat(response, hasStatusCode(400));
+	}
+	
+	@Test
+	public void testGetAlertsInvalidItems() {
+		Response response = get(alerts("1").withParam("items", "-1"));
+		assertThat(response, hasStatusCode(400));
+	}
 }
