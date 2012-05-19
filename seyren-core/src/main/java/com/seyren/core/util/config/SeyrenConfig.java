@@ -11,31 +11,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.seyren.core.util.graphite;
+package com.seyren.core.util.config;
 
-import static org.apache.commons.lang.StringUtils.*;
-
+import javax.inject.Inject;
 import javax.inject.Named;
 
 @Named
-public class GraphiteConfig {
-	
-	private final String baseUrl;
+public class SeyrenConfig {
 
-	public GraphiteConfig() {
-		this.baseUrl = stripEnd(environmentOrDefault("GRAPHITE_URL", "http://localhost:80"), "/");
-	}
+	private final GraphiteConfig graphite;
 
-	public String getBaseUrl() {
-		return baseUrl;
+	@Inject
+	public SeyrenConfig(GraphiteConfig graphite) {
+		this.graphite = graphite;
 	}
 	
-	private static String environmentOrDefault(String propertyName, String defaultValue) {
-	    String value = System.getenv(propertyName);
-	    if (isEmpty(value)) {
-	        return defaultValue;
-	    }
-	    return value;
+	public GraphiteConfig getGraphite() {
+		return graphite;
 	}
 	
 }

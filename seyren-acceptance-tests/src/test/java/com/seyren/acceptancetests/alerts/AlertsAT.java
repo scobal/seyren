@@ -29,7 +29,10 @@ public class AlertsAT {
 	public void testGetAlertsReturnsOk() {
 		Response response = get(alerts("1"));
 		assertThat(response, hasStatusCode(200));
-		assertThat(response.asJson(), hasJsonPath("$.", hasSize(0)));
+		assertThat(response.asJson(), hasJsonPath("$.values", hasSize(0)));
+		assertThat(response.asJson(), hasJsonPath("$.items", is(20)));
+		assertThat(response.asJson(), hasJsonPath("$.start", is(0)));
+		assertThat(response.asJson(), hasJsonPath("$.total", is(0)));
 	}
 	
 	@Test

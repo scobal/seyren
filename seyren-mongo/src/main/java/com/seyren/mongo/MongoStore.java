@@ -31,6 +31,7 @@ import com.mongodb.DBObject;
 import com.mongodb.MongoURI;
 import com.seyren.core.domain.Alert;
 import com.seyren.core.domain.Check;
+import com.seyren.core.domain.SeyrenResponse;
 import com.seyren.core.domain.Subscription;
 import com.seyren.core.store.AlertsStore;
 import com.seyren.core.store.ChecksStore;
@@ -143,13 +144,17 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
 	}
 	
 	@Override
-	public List<Alert> getAlerts(String checkId, int start, int items) {
+	public SeyrenResponse<Alert> getAlerts(String checkId, int start, int items) {
 		DBCursor dbc = getAlertsCollection().find(object("checkId", checkId)).sort(object("timestamp", -1)).skip(start).limit(items);
 		List<Alert> alerts = new ArrayList<Alert>();
 		for (DBObject dbo : dbc.toArray()) {
 			alerts.add(mapper.alertFrom(dbo));
 		}
-		return alerts;
+		return new SeyrenResponse<Alert>()
+			.withValues(alerts)
+			.withItems(items)
+			.withStart(start)
+			.withTotal(dbc.count());
 	}
 
 	@Override

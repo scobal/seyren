@@ -11,15 +11,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.seyren.core.store;
+package com.seyren.api.jaxrs;
 
-import com.seyren.core.domain.Alert;
-import com.seyren.core.domain.SeyrenResponse;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
-public interface AlertsStore {
-	
-	Alert createAlert(String checkId, Alert alert);
-	
-	SeyrenResponse<Alert> getAlerts(String checkId, int start, int items);
+@Path("/config")
+public interface ConfigResource {
+
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	Response getSeyrenConfig();
 	
 }

@@ -17,28 +17,23 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ws.rs.core.Response;
 
-import com.seyren.api.jaxrs.AlertsResource;
-import com.seyren.core.domain.Alert;
-import com.seyren.core.domain.SeyrenResponse;
-import com.seyren.core.store.AlertsStore;
+import com.seyren.api.jaxrs.ConfigResource;
+import com.seyren.core.util.config.SeyrenConfig;
 
 @Named
-public class AlertsBean implements AlertsResource {
+public class ConfigBean implements ConfigResource {
 
-	private AlertsStore alertsStore;
+
+	private final SeyrenConfig seyrenConfig;
 
 	@Inject
-	public AlertsBean(AlertsStore alertsStore) {
-		this.alertsStore = alertsStore;
+	public ConfigBean(SeyrenConfig seyrenConfig) {
+		this.seyrenConfig = seyrenConfig;
 	}
 	
 	@Override
-	public Response getAlerts(String checkId, int start, int items) {
-		if (start < 0 || items < 0) {
-			return Response.status(400).build();
-		}
-		SeyrenResponse<Alert> response = alertsStore.getAlerts(checkId, start, items);
-		return Response.ok(response).build();
+	public Response getSeyrenConfig() {
+		return Response.ok(seyrenConfig).build();
 	}
 
 }

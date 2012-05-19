@@ -11,10 +11,24 @@ function CheckController() {
     this.pollAlertsInSeconds = 5;
     this.secondsToUpdateAlerts = this.pollAlertsInSeconds;
     this.$defer(this.countdownToRefresh, 1000);
+    
+    this.loadConfig();
 }
 
 CheckController.prototype = {
     
+    loadConfig : function () {
+        this.$xhr('GET', this.seyrenBaseUrl + '/api/config', this.loadConfigSuccess, this.loadConfigFailure);
+    },
+    
+    loadConfigSuccess : function (code, response) {
+        this.config = response;
+    },
+    
+    loadConfigFailure : function (code, response) {
+        console.log('Loading config failed');
+    },
+        
     loadCheck : function () {
         this.$xhr('GET', this.seyrenBaseUrl + '/api/checks/' + this.id, this.loadCheckSuccess, this.loadCheckFailure);
     },
@@ -121,7 +135,7 @@ CheckController.prototype = {
     },
     
     loadOlderAlerts : function () {
-        if (this.alerts.length !== this.alertItemsPerPage) {
+        if (this.alerts.values.length !== this.alertItemsPerPage) {
             return;
         }
         this.alertStartIndex += this.alertItemsPerPage;
@@ -143,6 +157,17 @@ CheckController.prototype = {
             this.loadAlerts();
         } 
         this.$defer(this.countdownToRefresh, 1000);
+    },
+    
+    getGraphUrl : function(minutes) {
+        if (this.config && this.check) {
+            var result = this.config.graphite.baseUrl + '/render/?&hideLegend=true&width=365&height=70&hideAxes=true';
+            result += '&target=dashed(color(constantLine(' + this.check.warn + '),"yellow"))';
+            result += '&target=dashed(color(constantLine(' + this.check.error + '),"red"))';
+            result += '&from=' + minutes + 'Minutes';
+            result += '&target=' + this.check.target;
+            return result;
+        }
     }
     
 };
