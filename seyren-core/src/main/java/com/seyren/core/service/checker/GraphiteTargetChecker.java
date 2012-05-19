@@ -26,7 +26,7 @@ import org.joda.time.DateTime;
 import com.seyren.core.domain.Alert;
 import com.seyren.core.domain.AlertType;
 import com.seyren.core.domain.Check;
-import com.seyren.core.util.graphite.GraphiteConfig;
+import com.seyren.core.util.config.GraphiteConfig;
 
 @Named
 public class GraphiteTargetChecker implements TargetChecker {

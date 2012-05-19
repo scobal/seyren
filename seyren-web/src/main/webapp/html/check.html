@@ -62,7 +62,9 @@
                 </fieldset>
             </form>
         </div>
-        <div class="span4">&nbsp;</div>
+        <div class="span4">
+            <img src="{{config.graphite.baseUrl}}/render/?target={{check.target}}&amp;hideLegend=true&from=-10Minutes" />
+        </div>
         <div class="span5">
             <h2>Subscriptions</h2>
             <div ng:hide="check.subscriptions">This check has no subscriptions</div>

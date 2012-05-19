@@ -11,10 +11,24 @@ function CheckController() {
     this.pollAlertsInSeconds = 5;
     this.secondsToUpdateAlerts = this.pollAlertsInSeconds;
     this.$defer(this.countdownToRefresh, 1000);
+    
+    this.loadConfig();
 }
 
 CheckController.prototype = {
     
+    loadConfig : function () {
+        this.$xhr('GET', this.seyrenBaseUrl + '/api/config', this.loadConfigSuccess, this.loadConfigFailure);
+    },
+    
+    loadConfigSuccess : function (code, response) {
+        this.config = response;
+    },
+    
+    loadConfigFailure : function (code, response) {
+        console.log('Loading config failed');
+    },
+        
     loadCheck : function () {
         this.$xhr('GET', this.seyrenBaseUrl + '/api/checks/' + this.id, this.loadCheckSuccess, this.loadCheckFailure);
     },
