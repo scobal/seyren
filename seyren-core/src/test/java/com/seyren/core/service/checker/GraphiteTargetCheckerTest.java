@@ -29,7 +29,7 @@ import com.github.restdriver.clientdriver.ClientDriverRule;
 import com.seyren.core.domain.Alert;
 import com.seyren.core.domain.AlertType;
 import com.seyren.core.domain.Check;
-import com.seyren.core.util.graphite.GraphiteConfig;
+import com.seyren.core.util.config.GraphiteConfig;
 
 public class GraphiteTargetCheckerTest {
     
