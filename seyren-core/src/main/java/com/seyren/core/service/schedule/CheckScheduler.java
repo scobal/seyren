@@ -75,7 +75,7 @@ public class CheckScheduler {
                     
                     for (Alert alert : alerts) {
                         if (alert.isStillOk()) {
-                            return;
+                            continue;
                         }
                         
                         alertsStore.createAlert(check.getId(), alert);
@@ -84,7 +84,7 @@ public class CheckScheduler {
                         
                         // Only notify if the alert has changed state
                         if (!alert.hasStateChanged()) {
-                            return;
+                            continue;
                         }
                         
                         for (Subscription subscription : check.getSubscriptions()) {
