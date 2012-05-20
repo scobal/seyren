@@ -137,6 +137,24 @@ public class GraphiteTargetCheckerTest {
     }
     
     @Test
+    public void checkSkipsNullValuesToDetermineCurrentState() throws Exception {
+        String response = "[{\"target\": \"service.error.1MinuteRate\", \"datapoints\": [[0.17, 1337453460],[null, 1337453463]]}]";
+        
+        clientDriver.addExpectation(
+                onRequestTo("/render")
+                    .withParam("from", "-5minutes")
+                    .withParam("until", "now")
+                    .withParam("uniq", Pattern.compile("[0-9]+"))
+                    .withParam("format", "json")
+                    .withParam("target", "service.error.1MinuteRate"),
+                giveResponse(response));
+        
+        List<Alert> alerts = checker.check(check());
+        
+        assertThat(alerts.get(0).getToType(), is(AlertType.WARN));
+    }
+    
+    @Test
     public void checkReturningMultipleMetricsCreatesAlertForEach() throws Exception {
         String response = "[" +
         		    "{\"target\": \"service.error.1MinuteRate\", \"datapoints\": [[0.20, 1337453460],[0.01, 1337453463]]}," +
