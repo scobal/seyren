@@ -2,7 +2,7 @@
 
 [sahy-ruhn] - An alerting dashboard for Graphite
 
-<img src="http://i.imgur.com/vikGy.png" height="400" width="700" />
+<img src="http://i.imgur.com/ToPSO.png" height="400" width="700" />
 
 ##Run
 
