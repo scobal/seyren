@@ -160,11 +160,22 @@ CheckController.prototype = {
         this.$defer(this.countdownToRefresh, 1000);
     },
     
-    getGraphUrl : function(minutes) {
+    getSmallGraphUrl : function(minutes) {
         if (this.config && this.check) {
-            var result = this.config.graphite.baseUrl + '/render/?&hideLegend=true&width=365&height=70&hideAxes=true';
-            result += '&target=dashed(color(constantLine(' + this.check.warn + '),"yellow"))';
+            var result = this.config.graphite.baseUrl + '/render/?hideLegend=true&width=365&height=70&hideAxes=true';
+            result += '&target=alias(dashed(color(constantLine(' + this.check.warn + '),"yellow")),"warn level")';
             result += '&target=dashed(color(constantLine(' + this.check.error + '),"red"))';
+            result += '&from=' + minutes + 'Minutes';
+            result += '&target=' + this.check.target;
+            return result;
+        }
+    },
+    
+    getBigGraphUrl : function(minutes) {
+        if (this.config && this.check) {
+            var result = this.config.graphite.baseUrl + '/render/?width=1400&height=350';
+            result += '&target=alias(dashed(color(constantLine(' + this.check.warn + '),"yellow")),"warn level")';
+            result += '&target=alias(dashed(color(constantLine(' + this.check.error + '),"red")),"error level")';
             result += '&from=' + minutes + 'Minutes';
             result += '&target=' + this.check.target;
             return result;
