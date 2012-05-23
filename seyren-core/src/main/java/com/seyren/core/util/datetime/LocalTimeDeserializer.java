@@ -26,6 +26,9 @@ public class LocalTimeDeserializer extends JsonDeserializer<LocalTime> {
 	@Override
 	public LocalTime deserialize(JsonParser parser, DeserializationContext context) throws IOException, JsonProcessingException {
 		String raw = parser.getText();
+		if (raw == null || raw.length() != 4) {
+			return null;
+		}
 		int hours = Integer.valueOf(raw.substring(0, 2));
 		int mins = Integer.valueOf(raw.substring(2));
 		return new LocalTime(hours, mins);
