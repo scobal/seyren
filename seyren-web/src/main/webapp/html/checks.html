@@ -1,6 +1,14 @@
-<h1>Checks</h1>
+<div class="row-fluid">
+    <div class="span11">
+        <h1>Checks</h1>
+    </div>
+    <div class="span1">
+        <a class="btn btn-primary" data-toggle="modal" data-show="true" href="#createCheckModal" >Create check</a>
+    </div>
+</div>
+<br/>
 <div class="row-fluid" ng:init="loadChecks()">
-    <div class="span7">
+    <div class="span12">
         <table class="table table-bordered table-striped"
             ng:show="checks">
             <thead>
@@ -26,10 +34,16 @@
         </table>
         <p ng:hide="checks">We've got no checks. Why not create one?</p>
     </div>
-    <div class="span5">
+</div>
+
+<div class="modal hide" id="createCheckModal">
+    <div class="modal-header">
+        <button class="close" data-dismiss="modal">x</button>
+        <h3>Create check</h3>
+    </div>
+    <div class="modal-body">
         <form ng:submit="createCheck()" class="well form-horizontal">
             <fieldset>
-                <legend>Create check</legend>
                 <div class="control-group">
                     <label class="control-label" for="newcheck.name">Name</label>
                     <div class="controls">
@@ -68,8 +82,7 @@
                 </div>
                 <div class="control-group">
                     <div class="controls">
-                        <button type="submit" class="btn btn-primary">
-                            Create check</button>
+                        <button type="submit" class="btn btn-primary">Create check</button>
                     </div>
                 </div>
             </fieldset>

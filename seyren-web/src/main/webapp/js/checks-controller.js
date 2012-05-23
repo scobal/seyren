@@ -42,6 +42,8 @@ ChecksController.prototype = {
     },
     
     createCheckSuccess : function (code, response) {
+        $("#createCheckModal").modal("hide"); 
+        this.newcheck = { enabled : true };
         this.loadChecks();
     },
     
