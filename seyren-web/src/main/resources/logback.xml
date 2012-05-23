@@ -13,8 +13,6 @@
         </encoder>
     </appender>
 
-    <appender name="metrics" class="com.yammer.metrics.logback.InstrumentedAppender" />
-
     <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>debug</level>
@@ -27,7 +25,6 @@
     <root level="debug">
         <appender-ref ref="file" />
         <appender-ref ref="console" />
-        <appender-ref ref="metrics" />
     </root>
 
 </configuration>

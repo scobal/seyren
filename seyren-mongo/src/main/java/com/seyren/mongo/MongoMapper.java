@@ -61,7 +61,7 @@ public class MongoMapper {
 	public Subscription subscriptionFrom(DBObject dbo) {
 		String id = dbo.get("_id").toString();
 		String target = getString(dbo, "target");
-		SubscriptionType type = SubscriptionType.valueOf(getString(dbo, "type"));
+		SubscriptionType type = getSubscriptionType(getString(dbo, "type"));
 		boolean su = getBoolean(dbo, "su");
 		boolean mo = getBoolean(dbo, "mo");
 		boolean tu = getBoolean(dbo, "tu");
@@ -142,7 +142,9 @@ public class MongoMapper {
 		Map map = new HashMap();
 		map.put("_id", subscription.getId());
 		map.put("target", subscription.getTarget());
-		map.put("type", subscription.getType().toString());
+		if (subscription.getType() != null) {
+			map.put("type", subscription.getType().toString());
+		}
 		map.put("su", subscription.isSu());
 		map.put("mo", subscription.isMo());
 		map.put("tu", subscription.isTu());
@@ -150,10 +152,14 @@ public class MongoMapper {
 		map.put("th", subscription.isTh());
 		map.put("fr", subscription.isFr());
 		map.put("sa", subscription.isSa());
-		map.put("fromHour", subscription.getFromTime().getHourOfDay());
-		map.put("fromMin", subscription.getFromTime().getMinuteOfHour());
-		map.put("toHour", subscription.getToTime().getHourOfDay());
-		map.put("toMin", subscription.getToTime().getMinuteOfHour());
+		if (subscription.getFromTime() != null) {
+			map.put("fromHour", subscription.getFromTime().getHourOfDay());
+			map.put("fromMin", subscription.getFromTime().getMinuteOfHour());
+		}
+		if (subscription.getToTime() != null) {
+			map.put("toHour", subscription.getToTime().getHourOfDay());
+			map.put("toMin", subscription.getToTime().getMinuteOfHour());
+		}
 		map.put("enabled", subscription.isEnabled());
 		return map;
 	}
@@ -186,7 +192,9 @@ public class MongoMapper {
 	}
 	
 	private LocalTime getLocalTime(DBObject dbo, String hourKey, String minKey) {
-		return new LocalTime(getInteger(dbo, hourKey), getInteger(dbo, minKey));
+		Integer hour = getInteger(dbo, hourKey);
+		Integer min = getInteger(dbo, minKey);
+		return (hour == null || min == null) ? null : new LocalTime(hour, min);
 	}
 	
 	private String getString(DBObject dbo, String key) {
@@ -207,6 +215,10 @@ public class MongoMapper {
 			result = new BasicDBList();
 		}
 		return result;
+	}
+	
+	private SubscriptionType getSubscriptionType(String value) {
+		return value == null ? null : SubscriptionType.valueOf(value);
 	}
 	
 }

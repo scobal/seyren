@@ -13,6 +13,7 @@
  */
 package com.seyren.acceptancetests.util;
 
+import com.github.restdriver.serverdriver.http.Header;
 import com.github.restdriver.serverdriver.http.Url;
 
 public final class SeyrenDriver {
@@ -35,6 +36,14 @@ public final class SeyrenDriver {
 	
 	public static Url alerts(String checkId) {
 		return check(checkId).withPath("/alerts");
+	}
+	
+	public static Url subscriptions(String checkId) {
+		return check(checkId).withPath("/subscriptions");
+	}
+	
+	public static Url subscriptions(Header checkLocation) {
+		return new Url(checkLocation.getValue()).withPath("/subscriptions");
 	}
     
 	private static Url baseUri() {
