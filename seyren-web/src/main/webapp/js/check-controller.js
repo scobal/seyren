@@ -97,6 +97,7 @@ CheckController.prototype = {
     },
     
     createSubscriptionSuccess : function (code, response) {
+        $("#addSubscriptionModal").modal("hide"); 
         this.newsubscription.target = '';
         this.loadCheck();
     },
