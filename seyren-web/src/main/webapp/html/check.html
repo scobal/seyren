@@ -166,7 +166,7 @@
     <div class="row-fluid">
         <div class="span12">
             <div class="pull-right">
-                <button type="submit" class="btn btn-danger" ng:click="deleteCheck()">Delete check</button>
+                <a class="btn btn-danger" data-toggle="modal" data-show="true" href="#confirmCheckDeleteModal">Delete check</a>
             </div>
         </div>
     </div>
@@ -241,6 +241,19 @@
                 </div>
             </fieldset>
         </form>
+    </div>
+</div>
+
+<div class="modal hide" id="confirmCheckDeleteModal">
+    <div class="modal-header">
+        <button class="close" data-dismiss="modal">x</button>
+        <h4>Are you sure?</h4>
+    </div>
+    <div class="modal-body">
+        <div class="pull-right">
+            <button class="btn" data-dismiss="modal">Cancel</button>
+            <button class="btn btn-primary" ng:click="deleteCheck()">Ok</button>
+        </div>
     </div>
 </div>
 

@@ -58,6 +58,7 @@ CheckController.prototype = {
     },
     
     deleteCheckSuccess : function (code, response) {
+        $("#confirmCheckDeleteModal").modal("hide"); 
         this.$location.updateHash('/checks');
     },
     
