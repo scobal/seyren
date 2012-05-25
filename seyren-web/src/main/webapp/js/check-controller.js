@@ -176,23 +176,26 @@ CheckController.prototype = {
     },
     
     getSmallGraphUrl : function(minutes) {
-        if (this.config && this.check) {
-            var result = this.config.graphite.baseUrl + '/render/?hideLegend=true&width=365&height=70&hideAxes=true';
-            result += '&target=alias(dashed(color(constantLine(' + this.check.warn + '),"yellow")),"warn level")';
-            result += '&target=dashed(color(constantLine(' + this.check.error + '),"red"))';
-            result += '&from=' + minutes + 'Minutes';
-            result += '&target=' + this.check.target;
-            return result;
+        var baseUrl = this.getBaseGraphUrl(minutes);
+        if (baseUrl) {
+            return baseUrl + '&width=365&height=70&hideAxes=true&hideLegend=true';
         }
     },
     
     getBigGraphUrl : function(minutes) {
+        var baseUrl = this.getBaseGraphUrl(minutes);
+        if (baseUrl) {
+            return baseUrl + '&width=1200&height=350';
+        }
+    },
+    
+    getBaseGraphUrl : function(minutes) {
         if (this.config && this.check) {
-            var result = this.config.graphite.baseUrl + '/render/?width=1400&height=350';
-            result += '&target=alias(dashed(color(constantLine(' + this.check.warn + '),"yellow")),"warn level")';
-            result += '&target=alias(dashed(color(constantLine(' + this.check.error + '),"red")),"error level")';
+            var result = this.config.graphite.baseUrl + '/render/?';
+            result += 'target=' + this.check.target;
             result += '&from=' + minutes + 'Minutes';
-            result += '&target=' + this.check.target;
+            result += '&target=alias(dashed(color(constantLine(' + this.check.warn + '),"yellow")),"warn level")';
+            result += '&target=dashed(color(constantLine(' + this.check.error + '),"red"))';
             return result;
         }
     }
