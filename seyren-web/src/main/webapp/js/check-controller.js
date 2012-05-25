@@ -10,7 +10,7 @@ function CheckController() {
     
     this.pollAlertsInSeconds = 5;
     this.secondsToUpdateAlerts = this.pollAlertsInSeconds;
-    this.$defer(this.countdownToRefresh, 1000);
+    this.$defer(this.countdownToRefreshAlerts, 1000);
     
     this.loadConfig();
 }
@@ -152,13 +152,13 @@ CheckController.prototype = {
         this.loadAlerts();
     },
     
-    countdownToRefresh : function() {
+    countdownToRefreshAlerts : function() {
         this.secondsToUpdateAlerts--;
         if (this.secondsToUpdateAlerts <= 0) {
             this.secondsToUpdateAlerts = this.pollAlertsInSeconds;
             this.loadAlerts();
         } 
-        this.$defer(this.countdownToRefresh, 1000);
+        this.$defer(this.countdownToRefreshAlerts, 1000);
     },
     
     getSmallGraphUrl : function(minutes) {
