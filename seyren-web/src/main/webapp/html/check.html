@@ -2,34 +2,14 @@
     <div class="row-fluid">
         <div class="span12">
             <ul class="thumbnails">
-                <li class="span3">
+                <li class="span3" ng:repeat="graph in graphs">
                     <div class="thumbnail">
-                        <a href="{{ getBigGraphUrl(-15) }}" target="_blank"> 
-                            <img ng:src="{{ getSmallGraphUrl(-15) }}" /> 
+                        <a href="{{ getBigGraphUrl(graph.minutes) }}" target="_blank"> 
+                            <img ng:src="{{ getSmallGraphUrl(graph.minutes) }}" /> 
                         </a>
-                        <h5>15 minutes</h5>
-                    </div></li>
-                <li class="span3">
-                    <div class="thumbnail">
-                        <a href="{{ getBigGraphUrl(-60) }}" target="_blank"> 
-                            <img ng:src="{{ getSmallGraphUrl(-60) }}" /> 
-                        </a>
-                        <h5>1 hour</h5>
-                    </div></li>
-                <li class="span3">
-                    <div class="thumbnail">
-                        <a href="{{ getBigGraphUrl(-1440) }}" target="_blank"> 
-                            <img ng:src="{{ getSmallGraphUrl(-1440) }}" /> 
-                        </a>
-                        <h5>1 day</h5>
-                    </div></li>
-                <li class="span3">
-                    <div class="thumbnail">
-                        <a href="{{ getBigGraphUrl(-10080) }}" target="_blank"> 
-                            <img ng:src="{{ getSmallGraphUrl(-10080) }}" /> 
-                        </a>
-                        <h5>1 week</h5>
-                    </div></li>
+                        <h5>{{ graph.description }}</h5>
+                    </div>
+                </li>
             </ul>
         </div>
     </div>

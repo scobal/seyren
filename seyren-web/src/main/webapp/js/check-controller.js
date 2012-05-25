@@ -13,6 +13,20 @@ function CheckController() {
     this.$defer(this.countdownToRefreshAlerts, 1000);
     
     this.loadConfig();
+    
+    this.graphs = [{
+        description : "15 minutes",
+        minutes : -15
+    }, {
+        description : "1 hour",
+        minutes : -60
+    }, {
+        description : "1 day",
+        minutes : -1440
+    }, {
+        description : "1 week",
+        minutes : -10080
+    }];
 }
 
 CheckController.prototype = {
