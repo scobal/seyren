@@ -1,4 +1,4 @@
-/*global ChecksController,CheckController,HomeController,angular*/
+/*global ChecksController,CheckController,HomeController,angular,console */
 
 function MainController($xhr, $route, $location, $defer) {
     this.$xhr = $xhr;
@@ -6,6 +6,8 @@ function MainController($xhr, $route, $location, $defer) {
     this.$location = $location;
     this.$defer = $defer;
     this.seyrenBaseUrl = '.';
+    
+    this.loadConfig();
     
     this.$route.when('/checks', {
         controller: ChecksController,
@@ -26,6 +28,20 @@ function MainController($xhr, $route, $location, $defer) {
 }
 
 MainController.prototype = {
+        
+    loadConfig : function () {
+        this.$xhr('GET', this.seyrenBaseUrl + '/api/config', this.loadConfigSuccess, this.loadConfigFailure);
+    },
+    
+    loadConfigSuccess : function (code, response) {
+        this.config = response;
+        this.pingGraphite();
+    },
+    
+    loadConfigFailure : function (code, response) {
+        console.log('Loading config failed');
+    }
+    
 };
 
 MainController.$inject = ['$xhr', '$route', '$location', '$defer'];

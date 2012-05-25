@@ -12,8 +12,6 @@ function CheckController() {
     this.secondsToUpdateAlerts = this.pollAlertsInSeconds;
     this.$defer(this.countdownToRefreshAlerts, 1000);
     
-    this.loadConfig();
-    
     this.graphs = [{
         description : "15 minutes",
         minutes : -15
@@ -31,18 +29,6 @@ function CheckController() {
 
 CheckController.prototype = {
     
-    loadConfig : function () {
-        this.$xhr('GET', this.seyrenBaseUrl + '/api/config', this.loadConfigSuccess, this.loadConfigFailure);
-    },
-    
-    loadConfigSuccess : function (code, response) {
-        this.config = response;
-    },
-    
-    loadConfigFailure : function (code, response) {
-        console.log('Loading config failed');
-    },
-        
     loadCheck : function () {
         this.$xhr('GET', this.seyrenBaseUrl + '/api/checks/' + this.id, this.loadCheckSuccess, this.loadCheckFailure);
     },
@@ -195,7 +181,7 @@ CheckController.prototype = {
             result += 'target=' + this.check.target;
             result += '&from=' + minutes + 'Minutes';
             result += '&target=alias(dashed(color(constantLine(' + this.check.warn + '),"yellow")),"warn level")';
-            result += '&target=dashed(color(constantLine(' + this.check.error + '),"red"))';
+            result += '&target=alias(dashed(color(constantLine(' + this.check.error + '),"red")),"error level")';
             return result;
         }
     }
