@@ -32,7 +32,7 @@ public interface ChecksResource {
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	Response getChecks(@QueryParam("states") String states);
+	Response getChecks(@QueryParam("states") String states, @QueryParam("enabled") Boolean enabled);
 	
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
