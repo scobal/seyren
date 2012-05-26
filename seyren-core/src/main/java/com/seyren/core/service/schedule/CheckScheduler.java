@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import com.seyren.core.domain.Alert;
+import com.seyren.core.domain.AlertType;
 import com.seyren.core.domain.Check;
 import com.seyren.core.domain.Subscription;
 import com.seyren.core.service.checker.TargetChecker;
@@ -72,15 +73,19 @@ public class CheckScheduler {
 	        if (check.isEnabled()) {
                 try {
                     List<Alert> alerts = checker.check(check);
+                    AlertType worstState = AlertType.UNKNOWN;
                     
                     for (Alert alert : alerts) {
+                        
+                        if (alert.getToType().isWorseThan(worstState)) {
+                            worstState = alert.getToType();
+                        }
+                        
                         if (alert.isStillOk()) {
                             continue;
                         }
                         
                         alertsStore.createAlert(check.getId(), alert);
-                        check.setState(alert.getToType());
-                        checksStore.saveCheck(check);
                         
                         // Only notify if the alert has changed state
                         if (!alert.hasStateChanged()) {
@@ -99,6 +104,8 @@ public class CheckScheduler {
                             }
                         }
                     }
+                    check.setState(worstState);
+                    checksStore.saveCheck(check);
                 } catch (Exception e) {
                     LOGGER.warn(check.getName() + " failed", e);
                 }

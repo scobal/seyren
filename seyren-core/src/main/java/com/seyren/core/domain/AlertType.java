@@ -14,7 +14,20 @@
 package com.seyren.core.domain;
 
 public enum AlertType {
-
-	OK, WARN, ERROR, UNKNOWN
+    
+    UNKNOWN(0), OK(1), WARN(2), ERROR(3);
+    
+    private final int value;
+    
+    private AlertType(int value) {
+        this.value = value;
+    }
+	
+	public boolean isWorseThan(AlertType other) {
+	    if (other == null) {
+	        return true;
+	    }
+	    return value > other.value;
+	}
 	
 }
