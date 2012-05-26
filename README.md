@@ -23,9 +23,10 @@ open http://localhost:8080/seyren
 
 ###Available environment variables
 * `GRAPHITE_URL` - The location of your graphite server. Default: `http://localhost:80`
+* `SEYREN_URL` - The location of your seyren instance. Default: `http://localhost:8080/seyren`
+* `MONGO_URL` - The mongo connection string. Default: `mongodb://localhost:27017/seyren`
 * `SMTP_HOST` - The smtp server to send email notifications from. Default: `localhost`
 * `SMTP_PORT` - The smtp server port. Default: `25`
-* `MONGO_URL` - The mongo connection string. Default: `mongodb://localhost:27017/seyren`
 
 ##Development
 

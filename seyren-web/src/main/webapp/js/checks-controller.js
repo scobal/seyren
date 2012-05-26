@@ -75,6 +75,17 @@ ChecksController.prototype = {
             this.loadChecks();
         } 
         this.$defer(this.countdownToRefresh, 1000);
+    },
+    
+    getSmallGraphUrl : function() {
+        if (this.config && this.newcheck.target) {
+            var result = this.config.graphite.baseUrl + '/render/?';
+            result += 'target=' + this.newcheck.target;
+            result += '&target=alias(dashed(color(constantLine(' + this.newcheck.warn + '),"yellow")),"warn level")';
+            result += '&target=alias(dashed(color(constantLine(' + this.newcheck.error + '),"red")),"error level")';
+            result += '&width=290&height=70&hideLegend=true&from=-1day';
+            return result;
+        }
     }
     
 };
