@@ -16,6 +16,8 @@ package com.seyren.core.domain;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
 /**
  * This class represents a graphite target that needs to be monitored.
  * 
@@ -24,6 +26,7 @@ import java.util.List;
  * @author mark
  *
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Check {
 
 	private String id;

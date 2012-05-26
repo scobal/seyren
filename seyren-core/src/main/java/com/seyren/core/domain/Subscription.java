@@ -13,6 +13,7 @@
  */
 package com.seyren.core.domain;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.map.annotate.JsonDeserialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.joda.time.LocalTime;
@@ -26,6 +27,7 @@ import com.seyren.core.util.datetime.LocalTimeSerializer;
  * @author mark
  *
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Subscription {
 
 	private String id;

@@ -13,6 +13,7 @@
  */
 package com.seyren.core.domain;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.joda.time.DateTime;
 
 /**
@@ -24,6 +25,7 @@ import org.joda.time.DateTime;
  * @author mark
  * 
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Alert {
 
 	private String id;

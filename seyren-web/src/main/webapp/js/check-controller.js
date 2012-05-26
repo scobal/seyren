@@ -8,6 +8,10 @@ function CheckController() {
     this.alertStartIndex = 0;
     this.alertItemsPerPage = 10;
     
+    this.pollCheckInSeconds = 5;
+    this.secondsToUpdateCheck = this.pollCheckInSeconds;
+    this.$defer(this.countdownToRefreshCheck, 1000);
+    
     this.pollAlertsInSeconds = 5;
     this.secondsToUpdateAlerts = this.pollAlertsInSeconds;
     this.$defer(this.countdownToRefreshAlerts, 1000);
@@ -35,6 +39,7 @@ CheckController.prototype = {
     
     loadCheckSuccess : function (code, response) {
         this.check = response;
+        this.check.lastLoadTime = new Date().getTime();
     },
     
     loadCheckFailure : function (code, response) {
@@ -152,6 +157,15 @@ CheckController.prototype = {
         this.loadAlerts();
     },
     
+    countdownToRefreshCheck : function() {
+        this.secondsToUpdateCheck--;
+        if (this.secondsToUpdateCheck <= 0) {
+            this.secondsToUpdateCheck = this.pollCheckInSeconds;
+            this.loadCheck();
+        } 
+        this.$defer(this.countdownToRefreshCheck, 1000);
+    },
+    
     countdownToRefreshAlerts : function() {
         this.secondsToUpdateAlerts--;
         if (this.secondsToUpdateAlerts <= 0) {
@@ -164,7 +178,7 @@ CheckController.prototype = {
     getSmallGraphUrl : function(minutes) {
         var baseUrl = this.getBaseGraphUrl(minutes);
         if (baseUrl) {
-            return baseUrl + '&width=365&height=70&hideAxes=true&hideLegend=true';
+            return baseUrl + '&width=365&height=70&hideAxes=true&hideLegend=true&uniq=' + this.check.lastLoadTime;
         }
     },
     
