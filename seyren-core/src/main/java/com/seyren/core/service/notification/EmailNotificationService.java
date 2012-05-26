@@ -33,6 +33,7 @@ import com.seyren.core.domain.Alert;
 import com.seyren.core.domain.Check;
 import com.seyren.core.domain.Subscription;
 import com.seyren.core.exception.NotificationFailedException;
+import com.seyren.core.util.config.SeyrenConfig;
 import com.seyren.core.util.email.Email;
 
 @Named
@@ -41,10 +42,12 @@ public class EmailNotificationService implements NotificationService {
 	private static final String TEMPLATE_FILE_NAME = "com/seyren/core/service/notification/email-template.vm";
 	
     private final JavaMailSender mailSender;
+    private final SeyrenConfig seyrenConfig;
 
     @Inject
-    public EmailNotificationService(JavaMailSender mailSender) {
+    public EmailNotificationService(JavaMailSender mailSender, SeyrenConfig seyrenConfig) {
         this.mailSender = mailSender;
+        this.seyrenConfig = seyrenConfig;
         Velocity.init();
     }
     
@@ -76,6 +79,7 @@ public class EmailNotificationService implements NotificationService {
 
 	private VelocityContext createVelocityContext(Check check, Subscription subscription, Alert alert) {
 		VelocityContext result = new VelocityContext();
+		result.put("CHECK_ID", check.getId());
 		result.put("CHECK_NAME", check.getName());
 		result.put("ALERT_ERROR", alert.getError());
 		result.put("ALERT_FROMTYPE", alert.getFromType());
@@ -84,6 +88,7 @@ public class EmailNotificationService implements NotificationService {
 		result.put("ALERT_TOTYPE", alert.getToType());
 		result.put("ALERT_VALUE", alert.getValue());
 		result.put("ALERT_WARN", alert.getWarn());
+		result.put("SEYREN_URL", seyrenConfig.getBaseUrl());
 		return result;
 	}
 
@@ -102,4 +107,5 @@ public class EmailNotificationService implements NotificationService {
 
         return mail;
     }
+    
 }
