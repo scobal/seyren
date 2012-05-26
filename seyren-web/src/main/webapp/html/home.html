@@ -48,7 +48,7 @@
                 <td>{{ check.state }}</td>
                 <td>{{ check.warn }}</td>
                 <td>{{ check.error }}</td>
-                <td>{{ check.enabled }}</td>
+                <td><input type="checkbox" ng:checked="{{ check.enabled }}" ng:click="swapEnabled(check)" /></td>
             </tr>
         </tbody>
     </table>
