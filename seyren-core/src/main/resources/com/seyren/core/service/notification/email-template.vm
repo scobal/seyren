@@ -1,6 +1,6 @@
 <html>
 <body>
-<h3>$CHECK_NAME from $ALERT_FROMTYPE to $ALERT_TOTYPE</h3>
+<h3><a href="$SEYREN_URL/#/checks/$CHECK_ID">$CHECK_NAME</a> from $ALERT_FROMTYPE to $ALERT_TOTYPE</h3>
 
 <table>
     <tr>

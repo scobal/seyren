@@ -13,6 +13,8 @@
  */
 package com.seyren.core.util.config;
 
+import static org.apache.commons.lang.StringUtils.*;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -20,14 +22,28 @@ import javax.inject.Named;
 public class SeyrenConfig {
 
 	private final GraphiteConfig graphite;
+	private final String baseUrl;
 
 	@Inject
 	public SeyrenConfig(GraphiteConfig graphite) {
 		this.graphite = graphite;
+		this.baseUrl = stripEnd(environmentOrDefault("SEYREN_URL", "http://localhost:8080/seyren"), "/");
 	}
 	
 	public GraphiteConfig getGraphite() {
 		return graphite;
 	}
+
+    public String getBaseUrl() {
+        return baseUrl;
+    }
+    
+    private static String environmentOrDefault(String propertyName, String defaultValue) {
+        String value = System.getenv(propertyName);
+        if (isEmpty(value)) {
+            return defaultValue;
+        }
+        return value;
+    }
 	
 }
