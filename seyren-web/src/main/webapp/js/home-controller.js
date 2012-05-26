@@ -12,7 +12,7 @@ function HomeController() {
 HomeController.prototype = {
     
     loadErrorChecks : function () {
-        this.$xhr('GET', this.seyrenBaseUrl + '/api/checks?states=ERROR', this.loadErrorChecksSuccess, this.loadErrorChecksFailure);
+        this.$xhr('GET', this.seyrenBaseUrl + '/api/checks?states=ERROR&enabled=true', this.loadErrorChecksSuccess, this.loadErrorChecksFailure);
     },
         
     loadErrorChecksSuccess : function (code, response) {
@@ -24,7 +24,7 @@ HomeController.prototype = {
     },
     
     loadWarnChecks : function () {
-        this.$xhr('GET', this.seyrenBaseUrl + '/api/checks?states=WARN', this.loadWarnChecksSuccess, this.loadWarnChecksFailure);
+        this.$xhr('GET', this.seyrenBaseUrl + '/api/checks?states=WARN&enabled=true', this.loadWarnChecksSuccess, this.loadWarnChecksFailure);
     },
         
     loadWarnChecksSuccess : function (code, response) {
