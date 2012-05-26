@@ -5,7 +5,7 @@ function ChecksController() {
     this.$xhr.defaults.headers.put['Content-Type'] = 'application/json';
     this.location = {};
     
-    this.pollChecksInSeconds = 5;
+    this.pollChecksInSeconds = 30;
     this.secondsToUpdateChecks = this.pollChecksInSeconds;
     this.$defer(this.countdownToRefresh, 1000);
     
