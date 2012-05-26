@@ -35,7 +35,6 @@ MainController.prototype = {
     
     loadConfigSuccess : function (code, response) {
         this.config = response;
-        this.pingGraphite();
     },
     
     loadConfigFailure : function (code, response) {
