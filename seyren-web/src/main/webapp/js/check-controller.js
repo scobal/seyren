@@ -8,7 +8,7 @@ function CheckController() {
     this.alertStartIndex = 0;
     this.alertItemsPerPage = 10;
     
-    this.pollCheckInSeconds = 5;
+    this.pollCheckInSeconds = 30;
     this.secondsToUpdateCheck = this.pollCheckInSeconds;
     this.$defer(this.countdownToRefreshCheck, 1000);
     
