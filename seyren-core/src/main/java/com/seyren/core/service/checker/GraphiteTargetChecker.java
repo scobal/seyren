@@ -34,7 +34,7 @@ import com.seyren.core.util.config.GraphiteConfig;
 @Named
 public class GraphiteTargetChecker implements TargetChecker {
     
-    private static final String GRAPHITE_TARGET_PATH_FORMAT = "%s/render?from=-5minutes&until=now&uniq=%s&format=json&target=%s";
+    private static final String GRAPHITE_TARGET_PATH_FORMAT = "%s/render?from=-5minutes&until=-1Minutes&uniq=%s&format=json&target=%s";
 
 	private final HttpClient client;
 	private final GraphiteConfig graphiteConfig;
