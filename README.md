@@ -1,6 +1,6 @@
-#Seyren
+#Seyren ([/ˈsaɪ.rʌn/](http://en.wikipedia.org/wiki/Wikipedia:IPA_for_English#Key))
 
-[sahy-ruhn] - An alerting dashboard for Graphite
+An alerting dashboard for Graphite
 
 <img src="http://i.imgur.com/ToPSO.png" height="400" width="700" />
 
