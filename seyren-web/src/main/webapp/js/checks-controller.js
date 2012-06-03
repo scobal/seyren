@@ -9,6 +9,10 @@ function ChecksController() {
     this.secondsToUpdateChecks = this.pollChecksInSeconds;
     this.$defer(this.countdownToRefresh, 1000);
     
+    $('#createCheckModal').on('shown', function () {
+        $('#newcheck\\.name').focus();
+    });
+    
 }
 
 ChecksController.prototype = {
