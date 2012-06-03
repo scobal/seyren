@@ -44,7 +44,7 @@ public class ChecksAT {
 	@Test
 	public void testGetChecksByErrorStateReturnsOk() {
         Response createResponse = createCheck("{ \"state\" : \"ERROR\" }");
-		Response response = get(checks().withParam("states", "error"));
+		Response response = get(checks().withParam("state", "ERROR"));
 		assertThat(response, hasStatusCode(200));
 		assertThat(response.asJson(), hasJsonPath("$.", hasSize(1)));
         deleteLocation(createResponse.getHeader("Location").getValue());
@@ -53,7 +53,7 @@ public class ChecksAT {
 	@Test
 	public void testGetChecksByWarnStateReturnsOk() {
         Response createResponse = createCheck("{ \"state\" : \"WARN\" }");
-		Response response = get(checks().withParam("states", "warn"));
+		Response response = get(checks().withParam("state", "WARN"));
 		assertThat(response, hasStatusCode(200));
 		assertThat(response.asJson(), hasJsonPath("$.", hasSize(1)));
         deleteLocation(createResponse.getHeader("Location").getValue());

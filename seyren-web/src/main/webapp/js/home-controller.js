@@ -11,28 +11,16 @@ function HomeController() {
 
 HomeController.prototype = {
     
-    loadErrorChecks : function () {
-        this.$xhr('GET', this.seyrenBaseUrl + '/api/checks?states=ERROR&enabled=true', this.loadErrorChecksSuccess, this.loadErrorChecksFailure);
+    loadUnhealthyChecks : function () {
+        this.$xhr('GET', this.seyrenBaseUrl + '/api/checks?state=ERROR&state=WARN&state=EXCEPTION&state=UNKNOWN&enabled=true', this.loadUnhealthyChecksSuccess, this.loadUnhealthyChecksFailure);
     },
         
-    loadErrorChecksSuccess : function (code, response) {
-        this.errorChecks = response;
+    loadUnhealthyChecksSuccess : function (code, response) {
+        this.unhealthyChecks = response;
     },
         
-    loadErrorChecksFailure : function (code, response) {
-        console.log('Loading error checks failed');
-    },
-    
-    loadWarnChecks : function () {
-        this.$xhr('GET', this.seyrenBaseUrl + '/api/checks?states=WARN&enabled=true', this.loadWarnChecksSuccess, this.loadWarnChecksFailure);
-    },
-        
-    loadWarnChecksSuccess : function (code, response) {
-        this.warnChecks = response;
-    },
-        
-    loadWarnChecksFailure : function (code, response) {
-        console.log('Loading warn checks failed');
+    loadUnhealthyChecksFailure : function (code, response) {
+        console.log('Loading unhealthy checks failed');
     },
     
     loadAlertStream : function () {

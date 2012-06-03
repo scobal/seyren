@@ -13,6 +13,8 @@
  */
 package com.seyren.api.jaxrs;
 
+import java.util.Set;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -32,7 +34,7 @@ public interface ChecksResource {
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	Response getChecks(@QueryParam("states") String states, @QueryParam("enabled") Boolean enabled);
+	Response getChecks(@QueryParam("state") Set<String> states, @QueryParam("enabled") Boolean enabled);
 	
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
