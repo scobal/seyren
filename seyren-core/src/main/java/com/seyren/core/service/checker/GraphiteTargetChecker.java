@@ -13,6 +13,7 @@
  */
 package com.seyren.core.service.checker;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,22 +36,26 @@ import com.seyren.core.util.config.GraphiteConfig;
 @Named
 public class GraphiteTargetChecker implements TargetChecker {
     
-    private static final String GRAPHITE_TARGET_PATH_FORMAT = "%s/render?from=-5minutes&until=now&uniq=%s&format=json&target=%s";
+    private static final String QUERY_STRING = "from=-5minutes&until=now&uniq=%s&format=json&target=%s";
     private static final int MAX_CONNECTIONS_PER_ROUTE = 20;
 
 	private final HttpClient client;
-	private final GraphiteConfig graphiteConfig;
+	private final String graphiteScheme;
+	private final String graphiteHost;
 	private final JsonNodeResponseHandler handler = new JsonNodeResponseHandler();
 	
 	@Inject
 	public GraphiteTargetChecker(GraphiteConfig graphiteConfig) {
-	    this.graphiteConfig = graphiteConfig;
+	    this.graphiteScheme = graphiteConfig.getScheme();
+	    this.graphiteHost = graphiteConfig.getHost();
 	    this.client = new DefaultHttpClient(createConnectionManager());
 	}
 	
 	@Override
 	public List<Alert> check(Check check) throws Exception {
-		HttpGet get = new HttpGet(String.format(GRAPHITE_TARGET_PATH_FORMAT, graphiteConfig.getBaseUrl(), new DateTime().getMillis(), check.getTarget()));
+	    String formattedQuery = String.format(QUERY_STRING, new DateTime().getMillis(), check.getTarget());
+	    URI uri = new URI(graphiteScheme, graphiteHost, "/render", formattedQuery, null);
+		HttpGet get = new HttpGet(uri);
 
 		try {
 		    JsonNode response = client.execute(get, handler);

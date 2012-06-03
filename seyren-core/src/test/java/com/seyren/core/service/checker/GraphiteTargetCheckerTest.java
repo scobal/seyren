@@ -16,7 +16,6 @@ package com.seyren.core.service.checker;
 import static com.github.restdriver.clientdriver.RestClientDriver.*;
 import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.Matchers.*;
-import static org.mockito.Mockito.*;
 
 import java.util.List;
 import java.util.regex.Pattern;
@@ -36,14 +35,13 @@ public class GraphiteTargetCheckerTest {
     @Rule
     public ClientDriverRule clientDriver = new ClientDriverRule();
     
-    private GraphiteConfig mockGraphiteConfig;
+    private GraphiteConfig graphiteConfig;
     private GraphiteTargetChecker checker;
     
     @Before
     public void before() {
-        mockGraphiteConfig = mock(GraphiteConfig.class);
-        when(mockGraphiteConfig.getBaseUrl()).thenReturn(clientDriver.getBaseUrl());
-        checker = new GraphiteTargetChecker(mockGraphiteConfig);
+        graphiteConfig = new GraphiteConfig(clientDriver.getBaseUrl());
+        checker = new GraphiteTargetChecker(graphiteConfig);
     }
     
     @Test
