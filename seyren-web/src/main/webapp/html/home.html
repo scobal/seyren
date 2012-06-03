@@ -74,16 +74,18 @@
                 <td>{{ alert.warn }}</td>
                 <td>{{ alert.error }}</td>
                 <td>
+                    <span ng:show="alert.fromType == 'UNKNOWN'" class="label">{{ alert.fromType }}</span>
                     <span ng:show="alert.fromType == 'OK'" class="label label-success">{{ alert.fromType }}</span>
                     <span ng:show="alert.fromType == 'WARN'" class="label label-warning">{{ alert.fromType }}</span>
                     <span ng:show="alert.fromType == 'ERROR'" class="label label-important">{{ alert.fromType }}</span>
                     <span ng:show="alert.fromType == 'EXCEPTION'" class="label label-inverse">{{ alert.fromType }}</span>
                 </td>
                 <td>
+                    <span ng:show="alert.toType == 'UNKNOWN'" class="label">{{ alert.toType }}</span>
                     <span ng:show="alert.toType == 'OK'" class="label label-success">{{ alert.toType }}</span>
                     <span ng:show="alert.toType == 'WARN'" class="label label-warning">{{ alert.toType }}</span>
                     <span ng:show="alert.toType == 'ERROR'" class="label label-important">{{ alert.toType }}</span>
-                    <span ng:show="alert.fromType == 'EXCEPTION'" class="label label-inverse">{{ alert.toType }}</span>
+                    <span ng:show="alert.toType == 'EXCEPTION'" class="label label-inverse">{{ alert.toType }}</span>
                 </td>
             </tr>
         </tbody>

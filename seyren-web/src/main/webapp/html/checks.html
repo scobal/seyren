@@ -30,6 +30,7 @@
                     <td>{{ check.name }}</td>
                     <td>{{ check.target }}</td>
                     <td>
+                        <span ng:show="check.state == 'UNKNOWN'" class="label">{{ check.state }}</span>
                         <span ng:show="check.state == 'OK'" class="label label-success">{{ check.state }}</span>
                         <span ng:show="check.state == 'WARN'" class="label label-warning">{{ check.state }}</span>
                         <span ng:show="check.state == 'ERROR'" class="label label-important">{{ check.state }}</span>
