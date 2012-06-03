@@ -14,54 +14,39 @@
         </div>
     </div>
     <div class="row-fluid">
-        <div class="span3">
-            <h2>Details</h2>
-            <div>
+        <div class="span7">
+            <div class="row-fluid">
+                <h2>Details <small>[<a class="" data-toggle="modal" data-show="true" href="#editCheckModal">edit</a>]</small></h2>
+            </div>
+            <div class="row-fluid">
+                <span class="span1">Name:</span>
+                <span class="span11">{{check.name}}</span>
+            </div>
+            <div class="row-fluid">
+                <span class="span1">State:</span>
+                <span class="span11">
                 <span ng:show="check.state == 'OK'" class="label label-success">{{ check.state }}</span>
                 <span ng:show="check.state == 'WARN'" class="label label-warning">{{ check.state }}</span>
                 <span ng:show="check.state == 'ERROR'" class="label label-important">{{ check.state }}</span>
+                </span>
             </div>
-            <form ng:submit="saveCheck()" class="form-horizontal">
-                <fieldset>
-                    <div class="control-group">
-                        <label class="control-label" for="check.name">Name</label>
-                        <div class="controls">
-                            <input id="check.name" class="input-xlarge" name="check.name" type="text" />
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label" for="check.target">Target</label>
-                        <div class="controls">
-                            <input id="check.target" class="input-xlarge" name="check.target" type="text" />
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label" for="check.warn">Warn level</label>
-                        <div class="controls">
-                            <input id="check.warn" class="input-small" name="check.warn" type="text" />
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label" for="check.error">Error level</label>
-                        <div class="controls">
-                            <input id="check.error" class="input-small" name="check.error" type="text" />
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label" for="check.enabled">Enabled</label>
-                        <div class="controls">
-                            <input id="check.enabled" class="input-medium" name="check.enabled" type="checkbox">
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <div class="controls">
-                            <button type="submit" class="btn btn-primary">Save check</button>
-                        </div>
-                    </div>
-                </fieldset>
-            </form>
+            <div class="row-fluid">
+                <span class="span1">Target:</span>
+                <span class="span11">{{check.target}}</span>
+            </div>
+            <div class="row-fluid">
+                <span class="span1">Warn:</span>
+                <span class="span11">{{check.warn}}</span>
+            </div>
+            <div class="row-fluid">
+                <span class="span1">Error:</span>
+                <span class="span11">{{check.error}}</span>
+            </div>
+            <div class="row-fluid">
+                <span class="span1">Enabled:</span>
+                <span class="span11"><input type="checkbox" ng:checked="{{ check.enabled }}" ng:click="swapCheckEnabled()" /> </span>
+            </div>
         </div>
-        <div class="span4">&nbsp;</div>
         <div class="span5">
             <div class="row-fluid">
                 <div class="span9">
@@ -162,90 +147,140 @@
             </div>
         </div>
     </div>
-</div>
-
-<div class="modal hide" id="addSubscriptionModal">
-    <div class="modal-header">
-        <button class="close" data-dismiss="modal">x</button>
-        <h3>Add subscription</h3>
-    </div>
-    <div class="modal-body">
-        <form ng:submit="createSubscription()" class="well form-horizontal">
-            <fieldset>
-                <div class="control-group">
-                    <label class="control-label" for="newsubscription.target">Target</label>
-                    <div class="controls">
-                        <input id="newsubscription.target" class="input-xlarge" name="newsubscription.target" type="text" />
+    
+    <div class="modal hide" id="addSubscriptionModal">
+        <div class="modal-header">
+            <button class="close" data-dismiss="modal">x</button>
+            <h3>Add subscription</h3>
+        </div>
+        <div class="modal-body">
+            <form ng:submit="createSubscription()" class="well form-horizontal">
+                <fieldset>
+                    <div class="control-group">
+                        <label class="control-label" for="newsubscription.target">Target</label>
+                        <div class="controls">
+                            <input id="newsubscription.target" class="input-xlarge" name="newsubscription.target" type="text" />
+                        </div>
                     </div>
-                </div>
-                <div class="control-group">
-                    <label class="control-label" for="newsubscription.type">Type</label>
-                    <div class="controls">
-                        <select id="newsubscription.type" class="input-medium" name="newsubscription.type">
-                            <option value="EMAIL">Email</option>
-                        </select>
+                    <div class="control-group">
+                        <label class="control-label" for="newsubscription.type">Type</label>
+                        <div class="controls">
+                            <select id="newsubscription.type" class="input-medium" name="newsubscription.type">
+                                <option value="EMAIL">Email</option>
+                            </select>
+                        </div>
                     </div>
-                </div>
-                <div class="control-group">
-                    <label class="control-label">Days</label>
-                    <div class="controls">
-                        <label class="checkbox inline"> 
-                            <input id="newsubscription.su" class="input-medium" name="newsubscription.su" type="checkbox" checked="checked">Su 
-                        </label> 
-                        <label class="checkbox inline"> 
-                            <input id="newsubscription.mo" class="input-medium" name="newsubscription.mo" type="checkbox" checked="checked">Mo 
-                        </label> 
-                        <label class="checkbox inline"> 
-                            <input id="newsubscription.tu" class="input-medium" name="newsubscription.tu" type="checkbox" checked="checked">Tu 
-                        </label> 
-                        <label class="checkbox inline"> 
-                            <input id="newsubscription.we" class="input-medium" name="newsubscription.we" type="checkbox" checked="checked">We 
-                        </label> 
-                        <label class="checkbox inline"> 
-                            <input id="newsubscription.th" class="input-medium" name="newsubscription.th" type="checkbox" checked="checked">Th 
-                        </label> 
-                        <label class="checkbox inline"> 
-                            <input id="newsubscription.fr" class="input-medium" name="newsubscription.fr" type="checkbox" checked="checked">Fr 
-                        </label> 
-                        <label class="checkbox inline"> 
-                            <input id="newsubscription.sa" class="input-medium" name="newsubscription.sa" type="checkbox" checked="checked">Sa 
-                        </label>
+                    <div class="control-group">
+                        <label class="control-label">Days</label>
+                        <div class="controls">
+                            <label class="checkbox inline"> 
+                                <input id="newsubscription.su" class="input-medium" name="newsubscription.su" type="checkbox" checked="checked">Su 
+                            </label> 
+                            <label class="checkbox inline"> 
+                                <input id="newsubscription.mo" class="input-medium" name="newsubscription.mo" type="checkbox" checked="checked">Mo 
+                            </label> 
+                            <label class="checkbox inline"> 
+                                <input id="newsubscription.tu" class="input-medium" name="newsubscription.tu" type="checkbox" checked="checked">Tu 
+                            </label> 
+                            <label class="checkbox inline"> 
+                                <input id="newsubscription.we" class="input-medium" name="newsubscription.we" type="checkbox" checked="checked">We 
+                            </label> 
+                            <label class="checkbox inline"> 
+                                <input id="newsubscription.th" class="input-medium" name="newsubscription.th" type="checkbox" checked="checked">Th 
+                            </label> 
+                            <label class="checkbox inline"> 
+                                <input id="newsubscription.fr" class="input-medium" name="newsubscription.fr" type="checkbox" checked="checked">Fr 
+                            </label> 
+                            <label class="checkbox inline"> 
+                                <input id="newsubscription.sa" class="input-medium" name="newsubscription.sa" type="checkbox" checked="checked">Sa 
+                            </label>
+                        </div>
                     </div>
-                </div>
-                <div class="control-group">
-                    <label class="control-label" for="newsubscription.fromTime">From</label>
-                    <div class="controls">
-                        <input id="newsubscription.fromTime" class="input-small" name="newsubscription.fromTime" type="text" value="0000"> 
-                        &nbsp;to&nbsp; 
-                        <input id="newsubscription.toTime" class="input-small" name="newsubscription.toTime" type="text" value="2359">
+                    <div class="control-group">
+                        <label class="control-label" for="newsubscription.fromTime">From</label>
+                        <div class="controls">
+                            <input id="newsubscription.fromTime" class="input-small" name="newsubscription.fromTime" type="text" value="0000"> 
+                            &nbsp;to&nbsp; 
+                            <input id="newsubscription.toTime" class="input-small" name="newsubscription.toTime" type="text" value="2359">
+                        </div>
                     </div>
-                </div>
-                <div class="control-group">
-                    <label class="control-label" for="newsubscription.enabled">Enabled</label>
-                    <div class="controls">
-                        <input id="newsubscription.enabled" name="newsubscription.enabled" type="checkbox" checked="checked" />
+                    <div class="control-group">
+                        <label class="control-label" for="newsubscription.enabled">Enabled</label>
+                        <div class="controls">
+                            <input id="newsubscription.enabled" name="newsubscription.enabled" type="checkbox" checked="checked" />
+                        </div>
                     </div>
-                </div>
-                <div class="control-group">
-                    <div class="controls">
-                        <button type="submit" class="btn btn-primary">Add</button>
+                    <div class="control-group">
+                        <div class="controls">
+                            <button type="submit" class="btn btn-primary">Add</button>
+                        </div>
                     </div>
-                </div>
-            </fieldset>
-        </form>
-    </div>
-</div>
-
-<div class="modal hide" id="confirmCheckDeleteModal">
-    <div class="modal-header">
-        <button class="close" data-dismiss="modal">x</button>
-        <h4>Are you sure?</h4>
-    </div>
-    <div class="modal-body">
-        <div class="pull-right">
-            <button class="btn" data-dismiss="modal">Cancel</button>
-            <button class="btn btn-primary" ng:click="deleteCheck()">Ok</button>
+                </fieldset>
+            </form>
         </div>
     </div>
+    
+    <div class="modal hide" id="confirmCheckDeleteModal">
+        <div class="modal-header">
+            <button class="close" data-dismiss="modal">x</button>
+            <h4>Are you sure?</h4>
+        </div>
+        <div class="modal-body">
+            <div class="pull-right">
+                <button class="btn" data-dismiss="modal">Cancel</button>
+                <button class="btn btn-primary" ng:click="deleteCheck()">Ok</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal hide" id="editCheckModal">
+        <div class="modal-header">
+            <button class="close" data-dismiss="modal">x</button>
+            <h3>Edit check</h3>
+        </div>
+        <div class="modal-body">
+            <form ng:submit="saveCheck()" class="well form-horizontal">
+                <fieldset>
+                    <div class="control-group">
+                        <label class="control-label" for="check.name">Name</label>
+                        <div class="controls">
+                            <input id="check.name" class="input-xlarge" name="check.name" type="text" />
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="check.target">Target</label>
+                        <div class="controls">
+                            <input id="check.target" class="input-xlarge" name="check.target" type="text" />
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="check.warn">Warn level</label>
+                        <div class="controls">
+                            <input id="check.warn" class="input-small" name="check.warn" type="text" />
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="check.error">Error level</label>
+                        <div class="controls">
+                            <input id="check.error" class="input-small" name="check.error" type="text" />
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="check.enabled">Enabled</label>
+                        <div class="controls">
+                            <input id="check.enabled" class="input-medium" name="check.enabled" type="checkbox">
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <div class="controls">
+                            <button type="submit" class="btn btn-primary">Save check</button>
+                        </div>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+    
 </div>
+
 

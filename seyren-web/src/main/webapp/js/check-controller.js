@@ -1,6 +1,8 @@
 /*global console,$ */
 
 function CheckController() {
+    var self = this;
+    
     this.$xhr.defaults.headers.post['Content-Type'] = 'application/json';
     this.$xhr.defaults.headers.put['Content-Type'] = 'application/json';
     this.id = this.$route.current.params.id;
@@ -29,6 +31,10 @@ function CheckController() {
         description : "1 week",
         minutes : -10080
     }];
+    
+    $('#editCheckModal').on('hide', function () {
+        self.loadCheck();
+    });
 }
 
 CheckController.prototype = {
@@ -76,11 +82,21 @@ CheckController.prototype = {
     },
     
     saveCheckSuccess : function (code, response) {
+        $("#editCheckModal").modal("hide"); 
         this.loadCheck();
     },
     
     saveCheckFailure : function (code, response) {
         console.log('Saving check failed');
+    },
+    
+    swapCheckEnabled : function() {
+      this.check.enabled = !this.check.enabled;
+      this.saveCheck();
+    },
+    
+    closeEditCheckModal : function() {
+        this.loadCheck();
     },
     
     createSubscription : function () {
