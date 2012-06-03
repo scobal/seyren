@@ -100,7 +100,7 @@
                                 </td>
                                 <td>{{ subscription.fromTime}} to {{ subscription.toTime }}</td>
                                 <td>
-                                    <input type="checkbox" ng:checked="{{ subscription.enabled }}" ng:click="swapEnabled(subscription)" />
+                                    <input type="checkbox" ng:checked="{{ subscription.enabled }}" ng:click="swapSubscriptionEnabled(subscription)" />
                                 </td>
                                 <td>
                                     <button type="submit" class="btn btn-danger btn-mini" ng:click="deleteSubscription(subscription.id)">Delete</button>

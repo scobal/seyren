@@ -112,7 +112,7 @@ CheckController.prototype = {
         console.log('Creating subscription failed');
     },
     
-    swapEnabled : function (subscription) {
+    swapSubscriptionEnabled : function (subscription) {
         subscription.enabled = !subscription.enabled;
         this.updateSubscription(subscription);
     },
