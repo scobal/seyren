@@ -31,23 +31,26 @@ ChecksController.prototype = {
     
     createCheck : function () {
         var check = {
-                name : this.newcheck.name,
-                target : this.newcheck.target,
-                warn : this.newcheck.warn,
-                error : this.newcheck.error,
-                enabled : this.newcheck.enabled
-                };
+            name : this.newcheck.name,
+            target : this.newcheck.target,
+            warn : this.newcheck.warn,
+            error : this.newcheck.error,
+            enabled : this.newcheck.enabled
+        };
         
+        $("#createCheckButton").addClass("disabled");
         this.$xhr('POST', this.seyrenBaseUrl + '/api/checks', check, this.createCheckSuccess, this.createCheckFailure);
     },
     
     createCheckSuccess : function (code, response) {
-        $("#createCheckModal").modal("hide"); 
+        $("#createCheckModal").modal("hide");
+        $("#createCheckButton").removeClass("disabled");
         this.newcheck = { enabled : true };
         this.loadChecks();
     },
     
     createCheckFailure : function (code, response) {
+        $("#createCheckButton").removeClass("disabled");
         console.log('Create check failed');
     },
     

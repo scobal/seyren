@@ -65,15 +65,18 @@ CheckController.prototype = {
     },
     
     deleteCheck : function () {
+        $('#confirmDeleteCheckButton').addClass('disabled');
         this.$xhr('DELETE', this.seyrenBaseUrl + '/api/checks/' + this.id, this.deleteCheckSuccess, this.deleteCheckFailure);
     },
     
     deleteCheckSuccess : function (code, response) {
         $("#confirmCheckDeleteModal").modal("hide"); 
+        $('#confirmDeleteCheckButton').removeClass('disabled');
         this.$location.updateHash('/checks');
     },
     
     deleteCheckFailure : function (code, response) {
+        $('#confirmDeleteCheckButton').removeClass('disabled');
         console.log('Deleting check failed');
     },
     
@@ -114,17 +117,19 @@ CheckController.prototype = {
             toTime : this.newsubscription.toTime,
             enabled : this.newsubscription.enabled
         };
-        
+        $('#createSubscriptionButton').addClass('disabled');
         this.$xhr('POST', this.seyrenBaseUrl + '/api/checks/' + this.id + '/subscriptions', subscription, this.createSubscriptionSuccess, this.createSubscriptionFailure);
     },
     
     createSubscriptionSuccess : function (code, response) {
         $("#addSubscriptionModal").modal("hide"); 
+        $('#createSubscriptionButton').removeClass('disabled');
         this.newsubscription.target = '';
         this.loadCheck();
     },
     
     createSubscriptionFailure : function (code, response) {
+        $('#createSubscriptionButton').removeClass('disabled');
         console.log('Creating subscription failed');
     },
     
