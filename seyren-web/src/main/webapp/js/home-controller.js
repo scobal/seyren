@@ -43,8 +43,8 @@ HomeController.prototype = {
         this.secondsToUpdateAlerts--;
         if (this.secondsToUpdateAlerts <= 0) {
             this.secondsToUpdateAlerts = this.pollAlertsInSeconds;
-            this.loadErrorChecks();
-            this.loadWarnChecks();
+            this.loadUnhealthyChecks();
+            this.loadAlertStream();
         } 
         this.$defer(this.countdownToRefresh, 1000);
     },
@@ -54,8 +54,7 @@ HomeController.prototype = {
     },
     
     saveCheckSuccess : function (code, response) {
-        this.loadErrorChecks();
-        this.loadWarnChecks();
+        this.loadUnhealthyChecks();
     },
     
     saveCheckFailure : function (code, response) {
