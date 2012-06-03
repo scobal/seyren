@@ -213,11 +213,11 @@ public class MongoMapper {
 	}
 	
 	private BigDecimal getBigDecimal(DBObject dbo, String key) {
-		String result = getString(dbo, key);
+		Object result = dbo.get(key);
 		if (result == null) {
 			return null;
 		}
-		return new BigDecimal(result);
+		return new BigDecimal(result.toString());
 	}
 	
 	private Integer getInteger(DBObject dbo, String key) {
