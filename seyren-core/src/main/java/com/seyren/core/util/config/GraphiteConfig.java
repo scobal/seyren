@@ -21,13 +21,39 @@ import javax.inject.Named;
 public class GraphiteConfig {
 	
 	private final String baseUrl;
+	private final String[] baseParts;
 
 	public GraphiteConfig() {
-		this.baseUrl = stripEnd(environmentOrDefault("GRAPHITE_URL", "http://localhost:80"), "/");
+	    this(stripEnd(environmentOrDefault("GRAPHITE_URL", "http://localhost:80"), "/"));
 	}
+	
+	public GraphiteConfig(String baseUrl) {
+        this.baseUrl = baseUrl;
+        this.baseParts = splitBaseUrl(baseUrl);
+    }
 
 	public String getBaseUrl() {
 		return baseUrl;
+	}
+	
+	public String getScheme() {
+	    return baseParts[0];
+	}
+	
+	public String getHost() {
+	    return baseParts[1];
+	}
+	
+	private String[] splitBaseUrl(String baseUrl) {
+	    String[] baseParts;
+        
+        if (baseUrl.toString().contains("://")) {
+            baseParts = baseUrl.toString().split("://");
+        } else {
+            baseParts = new String[] { "http", baseUrl.toString() };
+        }
+        
+        return baseParts;
 	}
 	
 	private static String environmentOrDefault(String propertyName, String defaultValue) {
@@ -36,6 +62,6 @@ public class GraphiteConfig {
 	        return defaultValue;
 	    }
 	    return value;
-	}
+	} 
 	
 }
