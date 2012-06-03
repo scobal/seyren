@@ -17,6 +17,7 @@ import static com.github.restdriver.clientdriver.RestClientDriver.*;
 import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.Matchers.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -185,8 +186,8 @@ public class GraphiteTargetCheckerTest {
         return new Check()
             .withId("id")
             .withTarget(target)
-            .withWarn(0.15)
-            .withError(0.20);
+            .withWarn(new BigDecimal("0.15"))
+            .withError(new BigDecimal("0.20"));
     }
     
 }

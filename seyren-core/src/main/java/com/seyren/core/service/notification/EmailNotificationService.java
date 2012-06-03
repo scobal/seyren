@@ -81,13 +81,13 @@ public class EmailNotificationService implements NotificationService {
 		VelocityContext result = new VelocityContext();
 		result.put("CHECK_ID", check.getId());
 		result.put("CHECK_NAME", check.getName());
-		result.put("ALERT_ERROR", alert.getError());
+		result.put("ALERT_ERROR", alert.getError().toPlainString());
 		result.put("ALERT_FROMTYPE", alert.getFromType());
 		result.put("ALERT_TARGET", alert.getTarget());
 		result.put("ALERT_TIMESTAMP", alert.getTimestamp().toString("HH:mm d MMM yyyy"));
 		result.put("ALERT_TOTYPE", alert.getToType());
-		result.put("ALERT_VALUE", alert.getValue());
-		result.put("ALERT_WARN", alert.getWarn());
+		result.put("ALERT_VALUE", alert.getValue().toPlainString());
+		result.put("ALERT_WARN", alert.getWarn().toPlainString());
 		result.put("SEYREN_URL", seyrenConfig.getBaseUrl());
 		return result;
 	}

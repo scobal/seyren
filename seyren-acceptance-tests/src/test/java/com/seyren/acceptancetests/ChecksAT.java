@@ -35,6 +35,7 @@ public class ChecksAT {
 	@Test
 	public void testGetChecksReturnsResultsOk() {
         Response createResponse = createCheck("{ }");
+        System.out.println(createResponse.asText());
 		Response response = get(checks());
 		assertThat(response, hasStatusCode(200));
 		assertThat(response.asJson(), hasJsonPath("$.", hasSize(1)));
@@ -77,6 +78,7 @@ public class ChecksAT {
     
     private Response createCheck(String body) { 
     	Response response = post(checks(), body(body, "application/json"));
+    	System.out.println(response.asText());
     	assertThat(response, hasStatusCode(201));
     	assertThat(response, hasHeader("Location"));
     	return response;

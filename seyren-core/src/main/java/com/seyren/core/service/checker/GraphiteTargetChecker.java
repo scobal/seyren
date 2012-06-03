@@ -13,6 +13,7 @@
  */
 package com.seyren.core.service.checker;
 
+import java.math.BigDecimal;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -65,7 +66,7 @@ public class GraphiteTargetChecker implements TargetChecker {
 		    JsonNode response = client.execute(get, handler);
 			for (JsonNode metric : response) {
     			String target = metric.path("target").asText();
-    			Double value = getLatestValue(metric);
+    			BigDecimal value = getLatestValue(metric);
     			alerts.add(createAlert(check, target, value));
 			}
 		} catch (Exception e) {
@@ -79,7 +80,7 @@ public class GraphiteTargetChecker implements TargetChecker {
 		
 	}
 	
-	private Alert createAlert(Check check, String target, Double value) {
+	private Alert createAlert(Check check, String target, BigDecimal value) {
 		AlertType currentState = check.getState();
 		AlertType newState = AlertType.OK;
 
@@ -95,13 +96,13 @@ public class GraphiteTargetChecker implements TargetChecker {
 	/**
 	 * Loop through the datapoints in reverse order until we find the latest non-null value
 	 */
-	private Double getLatestValue(JsonNode node) throws Exception {
+	private BigDecimal getLatestValue(JsonNode node) throws Exception {
 		JsonNode datapoints = node.get("datapoints");
 		
 		for (int i = datapoints.size() - 1; i >= 0; i--) {
 			String value = datapoints.get(i).get(0).asText();
 			if (!value.equals("null")) {
-				return Double.valueOf(value);
+				return new BigDecimal(value);
 			}
 		}
 
@@ -109,7 +110,7 @@ public class GraphiteTargetChecker implements TargetChecker {
 		throw new Exception("Could not find a valid datapoint for target: " + node.get("target"));
 	}
 
-	private Alert createAlert(Check check, String target, Double value, AlertType from, AlertType to) {
+	private Alert createAlert(Check check, String target, BigDecimal value, AlertType from, AlertType to) {
 		return new Alert()
 				.withValue(value)
 				.withTarget(target)

@@ -13,6 +13,7 @@
  */
 package com.seyren.mongo;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -37,8 +38,8 @@ public class MongoMapper {
 		String id = dbo.get("_id").toString();
 		String name = getString(dbo, "name");
 		String target = getString(dbo, "target");
-		Double warn = getDouble(dbo, "warn");
-		Double error = getDouble(dbo, "error");
+		BigDecimal warn = getBigDecimal(dbo, "warn");
+		BigDecimal error = getBigDecimal(dbo, "error");
 		boolean enabled = getBoolean(dbo, "enabled");
 		AlertType state = AlertType.valueOf(getString(dbo, "state"));
 		
@@ -92,10 +93,10 @@ public class MongoMapper {
 	public Alert alertFrom(DBObject dbo) {
 		String id = dbo.get("_id").toString();
 		String checkId = getString(dbo, "checkId");
-		Double value = getDouble(dbo, "value");
+		BigDecimal value = getBigDecimal(dbo, "value");
 		String target = getString(dbo, "target");
-		Double warn = getDouble(dbo, "warn");
-		Double error = getDouble(dbo, "error");
+		BigDecimal warn = getBigDecimal(dbo, "warn");
+		BigDecimal error = getBigDecimal(dbo, "error");
 		AlertType fromType = AlertType.valueOf(getString(dbo, "fromType"));
 		AlertType toType = AlertType.valueOf(getString(dbo, "toType"));
 		DateTime timestamp = getDateTime(dbo, "timestamp");
@@ -130,8 +131,12 @@ public class MongoMapper {
 		map.put("_id", check.getId());
 		map.put("name", check.getName());
 		map.put("target", check.getTarget());
-		map.put("warn", check.getWarn());
-		map.put("error", check.getError());
+		if (check.getWarn() != null) {
+			map.put("warn", check.getWarn().toPlainString());
+		}
+		if (check.getError() != null) {
+			map.put("error", check.getError().toPlainString());
+		}
 		map.put("enabled", check.isEnabled());
 		map.put("state", check.getState().toString());
 		return map;
@@ -169,10 +174,16 @@ public class MongoMapper {
 		Map map = new HashMap();
 		map.put("_id", alert.getId());
 		map.put("checkId", alert.getCheckId());
-		map.put("value", alert.getValue());
 		map.put("target", alert.getTarget());
-		map.put("warn", alert.getWarn());
-		map.put("error", alert.getError());
+		if (alert.getValue() != null) {
+			map.put("value", alert.getValue().toPlainString());
+		}
+		if (alert.getWarn() != null) {
+			map.put("warn", alert.getWarn().toPlainString());
+		}
+		if (alert.getError() != null) {
+			map.put("error", alert.getError().toPlainString());
+		}
 		map.put("fromType", alert.getFromType().toString());
 		map.put("toType", alert.getToType().toString());
 		map.put("timestamp", new Date(alert.getTimestamp().getMillis()));
@@ -201,8 +212,12 @@ public class MongoMapper {
 		return (String) dbo.get(key);
 	}
 	
-	private Double getDouble(DBObject dbo, String key) {
-		return (Double) dbo.get(key);
+	private BigDecimal getBigDecimal(DBObject dbo, String key) {
+		Object result = dbo.get(key);
+		if (result == null) {
+			return null;
+		}
+		return new BigDecimal(result.toString());
 	}
 	
 	private Integer getInteger(DBObject dbo, String key) {

@@ -16,40 +16,46 @@ package com.seyren.core.domain;
 import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.Matchers.*;
 
+import java.math.BigDecimal;
+
 import org.junit.Test;
 
 public class CheckTest {
 
 	@Test
 	public void testIsBeyondWarnThresholdWhenHigherIsBad() {
-		Check check = new Check().withWarn(10d).withError(20d);
-		assertThat(check.isBeyondWarnThreshold(9d), is(equalTo(false)));
-		assertThat(check.isBeyondWarnThreshold(10d), is(equalTo(true)));
-		assertThat(check.isBeyondWarnThreshold(11d), is(equalTo(true)));
+		Check check = new Check().withWarn(bigdecimal(10)).withError(bigdecimal(20));
+		assertThat(check.isBeyondWarnThreshold(bigdecimal(9)), is(equalTo(false)));
+		assertThat(check.isBeyondWarnThreshold(bigdecimal(10)), is(equalTo(true)));
+		assertThat(check.isBeyondWarnThreshold(bigdecimal(11)), is(equalTo(true)));
 	}
 	
 	@Test
 	public void testIsBeyondWarnThresholdWhenLowerIsBad() {
-		Check check = new Check().withWarn(10d).withError(0d);
-		assertThat(check.isBeyondWarnThreshold(9d), is(equalTo(true)));
-		assertThat(check.isBeyondWarnThreshold(10d), is(equalTo(true)));
-		assertThat(check.isBeyondWarnThreshold(11d), is(equalTo(false)));
+		Check check = new Check().withWarn(bigdecimal(10)).withError(bigdecimal(0));
+		assertThat(check.isBeyondWarnThreshold(bigdecimal(9)), is(equalTo(true)));
+		assertThat(check.isBeyondWarnThreshold(bigdecimal(10)), is(equalTo(true)));
+		assertThat(check.isBeyondWarnThreshold(bigdecimal(11)), is(equalTo(false)));
 	}
 	
 	@Test
 	public void testIsBeyondErrorThresholdWhenHigherIsBad() {
-		Check check = new Check().withWarn(10d).withError(20d);
-		assertThat(check.isBeyondErrorThreshold(19d), is(equalTo(false)));
-		assertThat(check.isBeyondErrorThreshold(20d), is(equalTo(true)));
-		assertThat(check.isBeyondErrorThreshold(21d), is(equalTo(true)));
+		Check check = new Check().withWarn(bigdecimal(10)).withError(bigdecimal(20));
+		assertThat(check.isBeyondErrorThreshold(bigdecimal(19)), is(equalTo(false)));
+		assertThat(check.isBeyondErrorThreshold(bigdecimal(20)), is(equalTo(true)));
+		assertThat(check.isBeyondErrorThreshold(bigdecimal(21)), is(equalTo(true)));
 	}
 	
 	@Test
 	public void testIsBeyondErrorThresholdWhenLowerIsBad() {
-		Check check = new Check().withWarn(10d).withError(5d);
-		assertThat(check.isBeyondErrorThreshold(4d), is(equalTo(true)));
-		assertThat(check.isBeyondErrorThreshold(5d), is(equalTo(true)));
-		assertThat(check.isBeyondErrorThreshold(6d), is(equalTo(false)));
+		Check check = new Check().withWarn(bigdecimal(10)).withError(bigdecimal(5));
+		assertThat(check.isBeyondErrorThreshold(bigdecimal(4)), is(equalTo(true)));
+		assertThat(check.isBeyondErrorThreshold(bigdecimal(5)), is(equalTo(true)));
+		assertThat(check.isBeyondErrorThreshold(bigdecimal(6)), is(equalTo(false)));
+	}
+	
+	private BigDecimal bigdecimal(int i) {
+		return new BigDecimal(i);
 	}
 	
 }
