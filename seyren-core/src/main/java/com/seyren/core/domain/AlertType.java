@@ -15,7 +15,7 @@ package com.seyren.core.domain;
 
 public enum AlertType {
     
-    UNKNOWN(0), OK(1), WARN(2), ERROR(3);
+    UNKNOWN(0), OK(1), WARN(2), ERROR(3), EXCEPTION(4);
     
     private final int value;
     

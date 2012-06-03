@@ -27,6 +27,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.codehaus.jackson.JsonNode;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.seyren.core.domain.Alert;
 import com.seyren.core.domain.AlertType;
@@ -36,6 +38,7 @@ import com.seyren.core.util.config.GraphiteConfig;
 @Named
 public class GraphiteTargetChecker implements TargetChecker {
     
+    private static final Logger LOGGER = LoggerFactory.getLogger(GraphiteTargetChecker.class);
     private static final String QUERY_STRING = "from=-5minutes&until=-1minutes&uniq=%s&format=json&target=%s";
     private static final int MAX_CONNECTIONS_PER_ROUTE = 20;
 
@@ -56,19 +59,23 @@ public class GraphiteTargetChecker implements TargetChecker {
 	    String formattedQuery = String.format(QUERY_STRING, new DateTime().getMillis(), check.getTarget());
 	    URI uri = new URI(graphiteScheme, graphiteHost, "/render", formattedQuery, null);
 		HttpGet get = new HttpGet(uri);
+		List<Alert> alerts = new ArrayList<Alert>();
 
 		try {
 		    JsonNode response = client.execute(get, handler);
-			List<Alert> alerts = new ArrayList<Alert>();
 			for (JsonNode metric : response) {
     			String target = metric.path("target").asText();
     			Double value = getLatestValue(metric);
     			alerts.add(createAlert(check, target, value));
 			}
-			return alerts;
+		} catch (Exception e) {
+		    LOGGER.warn(check.getName() + " failed to read from Graphite", e);
+		    alerts.add(createExceptionAlert(check));
 		} finally {
 			get.releaseConnection();
 		}
+		
+		return alerts;
 		
 	}
 	
@@ -111,6 +118,15 @@ public class GraphiteTargetChecker implements TargetChecker {
 				.withToType(to)
 				.withTimestamp(new DateTime());
 	}
+
+    private Alert createExceptionAlert(Check check) {
+        return new Alert()
+                .withWarn(check.getWarn())
+                .withError(check.getError())
+                .withFromType(check.getState())
+                .withToType(AlertType.EXCEPTION)
+                .withTimestamp(new DateTime());
+    }
 
     private ClientConnectionManager createConnectionManager() {
         PoolingClientConnectionManager manager = new PoolingClientConnectionManager();
