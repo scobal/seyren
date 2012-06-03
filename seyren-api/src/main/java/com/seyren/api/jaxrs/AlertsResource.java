@@ -22,13 +22,20 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-@Path("/checks/{checkId}/alerts")
+@Path("/")
 public interface AlertsResource {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	Response getAlerts(@PathParam("checkId") String checkId,
+	@Path("/checks/{checkId}/alerts")
+	Response getAlertsForCheck(@PathParam("checkId") String checkId,
 			@QueryParam("start") @DefaultValue("0") int start,
+			@QueryParam("items") @DefaultValue("20") int items);
+	
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/alerts")
+	Response getAlerts(@QueryParam("start") @DefaultValue("0") int start,
 			@QueryParam("items") @DefaultValue("20") int items);
 	
 }

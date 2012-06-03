@@ -21,5 +21,7 @@ public interface AlertsStore {
 	Alert createAlert(String checkId, Alert alert);
 	
 	SeyrenResponse<Alert> getAlerts(String checkId, int start, int items);
+
+	SeyrenResponse<Alert> getAlerts(int start, int items);
 	
 }

@@ -35,6 +35,18 @@ HomeController.prototype = {
         console.log('Loading warn checks failed');
     },
     
+    loadAlertStream : function () {
+        this.$xhr('GET', this.seyrenBaseUrl + '/api/alerts?items=10', this.loadAlertStreamSuccess, this.loadAlertStreamFailure);
+    },
+        
+    loadAlertStreamSuccess : function (code, response) {
+        this.alertStream = response;
+    },
+        
+    loadAlertStreamFailure : function (code, response) {
+        console.log('Loading alert stream failed');
+    },
+    
     selectCheck : function (id) {
         this.$location.updateHash('/checks/' + id);
     },

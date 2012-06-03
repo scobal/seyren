@@ -33,11 +33,20 @@ public class AlertsBean implements AlertsResource {
 	}
 	
 	@Override
-	public Response getAlerts(String checkId, int start, int items) {
+	public Response getAlertsForCheck(String checkId, int start, int items) {
 		if (start < 0 || items < 0) {
 			return Response.status(400).build();
 		}
 		SeyrenResponse<Alert> response = alertsStore.getAlerts(checkId, start, items);
+		return Response.ok(response).build();
+	}
+
+	@Override
+	public Response getAlerts(int start, int items) {
+		if (start < 0 || items < 0) {
+			return Response.status(400).build();
+		}
+		SeyrenResponse<Alert> response = alertsStore.getAlerts(start, items);
 		return Response.ok(response).build();
 	}
 

@@ -28,6 +28,7 @@
     </table>
     <p ng:hide="errorChecks">No checks in error state</p>
 </div>
+
 <div class="row-fluid" ng:init="loadWarnChecks()" ng:controller="HomeController">
     <h2>Checks in warn state</h2>
     <table class="table table-bordered table-striped" ng:show="warnChecks">
@@ -57,4 +58,41 @@
         </tbody>
     </table>
     <p ng:hide="warnChecks">No checks in warn state</p>
+</div>
+
+<div class="row-fluid" ng:init="loadAlertStream()" ng:controller="HomeController">
+    <h2>Recent alerts</h2>
+    <table class="table table-bordered table-striped" ng:show="alertStream">
+        <thead>
+            <tr>
+                <th>Timestamp</th>
+                <th>Target</th>
+                <th>Value</th>
+                <th>Warn</th>
+                <th>Error</th>
+                <th>From</th>
+                <th>To</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng:repeat="alert in alertStream.values" ng:click="selectCheck(alert.checkId)" style="cursor: pointer;">
+                <td>{{ alert.timestamp | date: 'yyyy-MM-dd HH:mm:ss' }}</td>
+                <td>{{ alert.target }}</td>
+                <td>{{ alert.value }}</td>
+                <td>{{ alert.warn }}</td>
+                <td>{{ alert.error }}</td>
+                <td>
+                    <span ng:show="alert.fromType == 'OK'" class="label label-success">{{ alert.fromType }}</span>
+                    <span ng:show="alert.fromType == 'WARN'" class="label label-warning">{{ alert.fromType }}</span>
+                    <span ng:show="alert.fromType == 'ERROR'" class="label label-important">{{ alert.fromType }}</span>
+                </td>
+                <td>
+                    <span ng:show="alert.toType == 'OK'" class="label label-success">{{ alert.toType }}</span>
+                    <span ng:show="alert.toType == 'WARN'" class="label label-warning">{{ alert.toType }}</span>
+                    <span ng:show="alert.toType == 'ERROR'" class="label label-important">{{ alert.toType }}</span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <p ng:hide="alertStream">You've had no previous alerts</p>
 </div>

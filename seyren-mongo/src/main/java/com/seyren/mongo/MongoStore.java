@@ -156,6 +156,20 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
 			.withStart(start)
 			.withTotal(dbc.count());
 	}
+	
+	@Override
+	public SeyrenResponse<Alert> getAlerts(int start, int items) {
+		DBCursor dbc = getAlertsCollection().find().sort(object("timestamp", -1)).skip(start).limit(items);
+		List<Alert> alerts = new ArrayList<Alert>();
+		for (DBObject dbo : dbc.toArray()) {
+			alerts.add(mapper.alertFrom(dbo));
+		}
+		return new SeyrenResponse<Alert>()
+			.withValues(alerts)
+			.withItems(items)
+			.withStart(start)
+			.withTotal(dbc.count());
+	}
 
 	@Override
 	public Subscription createSubscription(String checkId, Subscription subscription) {
@@ -181,5 +195,5 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
 	    DBObject updateObject = object("$set", object("subscriptions.$", subscriptionObject));
 	    getChecksCollection().update(checkFindObject, updateObject);
 	}
-	
+
 }
