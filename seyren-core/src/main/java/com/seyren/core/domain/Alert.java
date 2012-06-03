@@ -13,6 +13,8 @@
  */
 package com.seyren.core.domain;
 
+import java.math.BigDecimal;
+
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.joda.time.DateTime;
 
@@ -30,10 +32,10 @@ public class Alert {
 
 	private String id;
 	private String checkId;
-	private Double value;
+	private BigDecimal value;
 	private String target;
-	private Double warn;
-	private Double error;
+	private BigDecimal warn;
+	private BigDecimal error;
 	private AlertType fromType;
 	private AlertType toType;
 	private DateTime timestamp;
@@ -64,15 +66,15 @@ public class Alert {
 		return this;
 	}
 	
-	public Double getValue() {
+	public BigDecimal getValue() {
 		return value;
 	}
 
-	public void setValue(Double value) {
+	public void setValue(BigDecimal value) {
 		this.value = value;
 	}
 	
-	public Alert withValue(Double value) {
+	public Alert withValue(BigDecimal value) {
 		setValue(value);
 		return this;
 	}
@@ -90,28 +92,28 @@ public class Alert {
 		return this;
 	}
 
-	public Double getWarn() {
+	public BigDecimal getWarn() {
 		return warn;
 	}
 
-	public void setWarn(Double warn) {
+	public void setWarn(BigDecimal warn) {
 		this.warn = warn;
 	}
 	
-	public Alert withWarn(Double warn) {
+	public Alert withWarn(BigDecimal warn) {
 		setWarn(warn);
 		return this;
 	}
 
-	public Double getError() {
+	public BigDecimal getError() {
 		return error;
 	}
 
-	public void setError(Double error) {
+	public void setError(BigDecimal error) {
 		this.error = error;
 	}
 	
-	public Alert withError(Double error) {
+	public Alert withError(BigDecimal error) {
 		setError(error);
 		return this;
 	}

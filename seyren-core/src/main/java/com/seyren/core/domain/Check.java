@@ -13,10 +13,16 @@
  */
 package com.seyren.core.domain;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.codehaus.jackson.map.annotate.JsonDeserialize;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+import org.codehaus.jackson.map.deser.std.StdDeserializer.BigDecimalDeserializer;
+
+import com.seyren.core.util.math.BigDecimalSerializer;
 
 /**
  * This class represents a graphite target that needs to be monitored.
@@ -32,8 +38,8 @@ public class Check {
 	private String id;
 	private String name;
 	private String target;
-	private Double warn;
-	private Double error;
+	private BigDecimal warn;
+	private BigDecimal error;
 	private boolean enabled;
 	private AlertType state;
 	private List<Subscription> subscriptions = new ArrayList<Subscription>();
@@ -77,28 +83,32 @@ public class Check {
 		return this;
 	}
 
-	public Double getWarn() {
+	@JsonSerialize(using = BigDecimalSerializer.class)
+	public BigDecimal getWarn() {
 		return warn;
 	}
 
-	public void setWarn(Double warn) {
+	@JsonDeserialize(using = BigDecimalDeserializer.class)
+	public void setWarn(BigDecimal warn) {
 		this.warn = warn;
 	}
 	
-	public Check withWarn(Double warn) {
+	public Check withWarn(BigDecimal warn) {
 		setWarn(warn);
 		return this;
 	}
 
-	public Double getError() {
+	@JsonSerialize(using = BigDecimalSerializer.class)
+	public BigDecimal getError() {
 		return error;
 	}
 
-	public void setError(Double error) {
+	@JsonDeserialize(using = BigDecimalDeserializer.class)
+	public void setError(BigDecimal error) {
 		this.error = error;
 	}
 	
-	public Check withError(Double error) {
+	public Check withError(BigDecimal error) {
 		setError(error);
 		return this;
 	}
@@ -142,21 +152,21 @@ public class Check {
 		return this;
 	}
 
-	public boolean isBeyondWarnThreshold(Double value) {
+	public boolean isBeyondWarnThreshold(BigDecimal value) {
 		if (isTheValueBeingHighBad()) {
-			return value >= getWarn();
+			return value.compareTo(getWarn()) >= 0;
 		}
-		return value <= getWarn();
+		return value.compareTo(getWarn()) <= 0;
 	}
 
-	public boolean isBeyondErrorThreshold(Double value) {
+	public boolean isBeyondErrorThreshold(BigDecimal value) {
 		if (isTheValueBeingHighBad()) {
-			return value >= getError();
+			return value.compareTo(getError()) >= 0;
 		}
-		return value <= getError();
+		return value.compareTo(getError()) <= 0;
 	}
 	
 	private boolean isTheValueBeingHighBad() {
-		return getWarn() <= getError();
+		return getWarn().compareTo(getError()) <= 0;
 	}
 }

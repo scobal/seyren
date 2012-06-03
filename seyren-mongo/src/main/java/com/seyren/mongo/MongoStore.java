@@ -123,8 +123,8 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
 	    
 	    DBObject updateObject = object("name", check.getName())
     	    .with("target", check.getTarget())
-    	    .with("warn", check.getWarn())
-    	    .with("error", check.getError())
+    	    .with("warn", check.getWarn().toPlainString())
+    	    .with("error", check.getError().toPlainString())
     	    .with("enabled", check.isEnabled())
     	    .with("state", check.getState().toString());
 	    
