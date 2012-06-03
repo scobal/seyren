@@ -105,6 +105,7 @@ public class GraphiteTargetChecker implements TargetChecker {
 			}
 		}
 
+		LOGGER.warn("{}", node);
 		throw new Exception("Could not find a valid datapoint for target: " + node.get("target"));
 	}
 
