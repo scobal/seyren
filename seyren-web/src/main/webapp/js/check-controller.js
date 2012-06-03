@@ -46,6 +46,7 @@ CheckController.prototype = {
     loadCheckSuccess : function (code, response) {
         this.check = response;
         this.check.lastLoadTime = new Date().getTime();
+        this.copyCheckToEditCheck();
     },
     
     loadCheckFailure : function (code, response) {
@@ -80,7 +81,7 @@ CheckController.prototype = {
         console.log('Deleting check failed');
     },
     
-    saveCheck : function () {
+    saveCheck : function() {
         this.$xhr('PUT', this.seyrenBaseUrl + '/api/checks/' + this.id, this.check, this.saveCheckSuccess, this.saveCheckFailure);
     },
     
@@ -219,6 +220,25 @@ CheckController.prototype = {
             result += '&target=alias(dashed(color(constantLine(' + this.check.error + '),"red")),"error level")';
             return result;
         }
+    },
+    
+    copyCheckToEditCheck : function() {
+        this.editcheck = {
+            name : this.check.name,
+            target : this.check.target,
+            warn : this.check.warn,
+            error : this.check.error,
+            enabled : this.check.enabled
+        };
+    },
+    
+    submitEditCheck : function() {
+        this.check.name = this.editcheck.name;
+        this.check.target = this.editcheck.target;
+        this.check.warn = this.editcheck.warn;
+        this.check.error = this.editcheck.error;
+        this.check.enabled = this.editcheck.enabled;
+        this.saveCheck();
     }
     
 };
