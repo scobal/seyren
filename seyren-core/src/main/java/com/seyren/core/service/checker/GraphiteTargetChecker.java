@@ -39,7 +39,7 @@ import com.seyren.core.util.config.GraphiteConfig;
 public class GraphiteTargetChecker implements TargetChecker {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(GraphiteTargetChecker.class);
-    private static final String QUERY_STRING = "from=-5minutes&until=-1minutes&uniq=%s&format=json&target=%s";
+    private static final String QUERY_STRING = "from=-11minutes&until=-1minutes&uniq=%s&format=json&target=%s";
     private static final int MAX_CONNECTIONS_PER_ROUTE = 20;
 
 	private final HttpClient client;

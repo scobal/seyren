@@ -50,7 +50,7 @@ public class GraphiteTargetCheckerTest {
         
         clientDriver.addExpectation(
                 onRequestTo("/render")
-                    .withParam("from", "-5minutes")
+                    .withParam("from", "-11minutes")
                     .withParam("until", "-1minutes")
                     .withParam("uniq", Pattern.compile("[0-9]+"))
                     .withParam("format", "json")
@@ -68,7 +68,7 @@ public class GraphiteTargetCheckerTest {
         
         clientDriver.addExpectation(
                 onRequestTo("/render")
-                    .withParam("from", "-5minutes")
+                    .withParam("from", "-11minutes")
                     .withParam("until", "-1minutes")
                     .withParam("uniq", Pattern.compile("[0-9]+"))
                     .withParam("format", "json")
@@ -86,7 +86,7 @@ public class GraphiteTargetCheckerTest {
         
         clientDriver.addExpectation(
                 onRequestTo("/render")
-                    .withParam("from", "-5minutes")
+                    .withParam("from", "-11minutes")
                     .withParam("until", "-1minutes")
                     .withParam("uniq", Pattern.compile("[0-9]+"))
                     .withParam("format", "json")
@@ -104,7 +104,7 @@ public class GraphiteTargetCheckerTest {
         
         clientDriver.addExpectation(
                 onRequestTo("/render")
-                    .withParam("from", "-5minutes")
+                    .withParam("from", "-11minutes")
                     .withParam("until", "-1minutes")
                     .withParam("uniq", Pattern.compile("[0-9]+"))
                     .withParam("format", "json")
@@ -122,7 +122,7 @@ public class GraphiteTargetCheckerTest {
         
         clientDriver.addExpectation(
                 onRequestTo("/render")
-                    .withParam("from", "-5minutes")
+                    .withParam("from", "-11minutes")
                     .withParam("until", "-1minutes")
                     .withParam("uniq", Pattern.compile("[0-9]+"))
                     .withParam("format", "json")
@@ -140,7 +140,7 @@ public class GraphiteTargetCheckerTest {
         
         clientDriver.addExpectation(
                 onRequestTo("/render")
-                    .withParam("from", "-5minutes")
+                    .withParam("from", "-11minutes")
                     .withParam("until", "-1minutes")
                     .withParam("uniq", Pattern.compile("[0-9]+"))
                     .withParam("format", "json")
@@ -161,7 +161,7 @@ public class GraphiteTargetCheckerTest {
         
         clientDriver.addExpectation(
                 onRequestTo("/render")
-                    .withParam("from", "-5minutes")
+                    .withParam("from", "-11minutes")
                     .withParam("until", "-1minutes")
                     .withParam("uniq", Pattern.compile("[0-9]+"))
                     .withParam("format", "json")
