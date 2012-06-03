@@ -40,7 +40,7 @@ HomeController.prototype = {
     },
         
     loadAlertStreamSuccess : function (code, response) {
-        this.alertStream = response;
+        this.alertStream = response.values;
     },
         
     loadAlertStreamFailure : function (code, response) {
