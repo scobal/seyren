@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 import com.seyren.core.domain.Alert;
 import com.seyren.core.domain.AlertType;
 import com.seyren.core.domain.Check;
+import com.seyren.core.exception.InvalidGraphiteValueException;
 import com.seyren.core.util.config.GraphiteConfig;
 
 @Named
@@ -69,6 +70,9 @@ public class GraphiteTargetChecker implements TargetChecker {
     			BigDecimal value = getLatestValue(metric);
     			alerts.add(createAlert(check, target, value));
 			}
+		} catch (InvalidGraphiteValueException igve) {
+			LOGGER.warn(check.getName() + " failed to read from Graphite", igve);
+			// Silence these - we don't know what's causing Graphite to return null values
 		} catch (Exception e) {
 		    LOGGER.warn(check.getName() + " failed to read from Graphite", e);
 		    alerts.add(createExceptionAlert(check));
@@ -107,7 +111,7 @@ public class GraphiteTargetChecker implements TargetChecker {
 		}
 
 		LOGGER.warn("{}", node);
-		throw new Exception("Could not find a valid datapoint for target: " + node.get("target"));
+		throw new InvalidGraphiteValueException("Could not find a valid datapoint for target: " + node.get("target"));
 	}
 
 	private Alert createAlert(Check check, String target, BigDecimal value, AlertType from, AlertType to) {
