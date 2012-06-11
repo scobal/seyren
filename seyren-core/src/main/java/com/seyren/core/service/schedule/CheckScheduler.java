@@ -73,6 +73,11 @@ public class CheckScheduler {
 	        if (check.isEnabled()) {
                 try {
                     List<Alert> alerts = checker.check(check);
+                    
+                    if (alerts != null && alerts.isEmpty()) {
+                    	return;
+                    }
+                    
                     AlertType worstState = AlertType.UNKNOWN;
                     
                     for (Alert alert : alerts) {
@@ -104,8 +109,10 @@ public class CheckScheduler {
                             }
                         }
                     }
+                    
                     check.setState(worstState);
                     checksStore.saveCheck(check);
+                    
                 } catch (Exception e) {
                     LOGGER.warn(check.getName() + " failed", e);
                 }
