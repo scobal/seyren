@@ -15,8 +15,8 @@ package com.seyren.core.service.checker;
 
 import java.math.BigDecimal;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -31,8 +31,7 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.seyren.core.domain.Alert;
-import com.seyren.core.domain.AlertType;
+import com.google.common.base.Optional;
 import com.seyren.core.domain.Check;
 import com.seyren.core.exception.InvalidGraphiteValueException;
 import com.seyren.core.util.config.GraphiteConfig;
@@ -57,44 +56,35 @@ public class GraphiteTargetChecker implements TargetChecker {
 	}
 	
 	@Override
-	public List<Alert> check(Check check) throws Exception {
+	public Map<String, Optional<BigDecimal>> check(Check check) throws Exception {
+	    
 	    String formattedQuery = String.format(QUERY_STRING, new DateTime().getMillis(), check.getTarget());
 	    URI uri = new URI(graphiteScheme, graphiteHost, "/render", formattedQuery, null);
 		HttpGet get = new HttpGet(uri);
-		List<Alert> alerts = new ArrayList<Alert>();
+		Map<String, Optional<BigDecimal>> targetValues = new HashMap<String, Optional<BigDecimal>>();
 
 		try {
 		    JsonNode response = client.execute(get, handler);
 			for (JsonNode metric : response) {
     			String target = metric.path("target").asText();
-    			BigDecimal value = getLatestValue(metric);
-    			alerts.add(createAlert(check, target, value));
+    			
+    			try {
+        			BigDecimal value = getLatestValue(metric);
+        			targetValues.put(target, Optional.of(value));
+    			} catch (InvalidGraphiteValueException e) {
+    			    // Silence these - we don't know what's causing Graphite to return null values
+    			    LOGGER.warn(check.getName() + " failed to read from Graphite", e);
+    			    targetValues.put(target, Optional.<BigDecimal>absent());
+    			}
 			}
-		} catch (InvalidGraphiteValueException igve) {
-			LOGGER.warn(check.getName() + " failed to read from Graphite", igve);
-			// Silence these - we don't know what's causing Graphite to return null values
 		} catch (Exception e) {
 		    LOGGER.warn(check.getName() + " failed to read from Graphite", e);
-		    alerts.add(createExceptionAlert(check));
 		} finally {
 			get.releaseConnection();
 		}
 		
-		return alerts;
+		return targetValues;
 		
-	}
-	
-	private Alert createAlert(Check check, String target, BigDecimal value) {
-		AlertType currentState = check.getState();
-		AlertType newState = AlertType.OK;
-
-		if (check.isBeyondErrorThreshold(value)) {
-			newState = AlertType.ERROR;
-		} else if (check.isBeyondWarnThreshold(value)) {
-			newState = AlertType.WARN;
-		}
-		
-		return createAlert(check, target, value, currentState, newState);
 	}
 
 	/**
@@ -113,26 +103,6 @@ public class GraphiteTargetChecker implements TargetChecker {
 		LOGGER.warn("{}", node);
 		throw new InvalidGraphiteValueException("Could not find a valid datapoint for target: " + node.get("target"));
 	}
-
-	private Alert createAlert(Check check, String target, BigDecimal value, AlertType from, AlertType to) {
-		return new Alert()
-				.withValue(value)
-				.withTarget(target)
-				.withWarn(check.getWarn())
-				.withError(check.getError())
-				.withFromType(from)
-				.withToType(to)
-				.withTimestamp(new DateTime());
-	}
-
-    private Alert createExceptionAlert(Check check) {
-        return new Alert()
-                .withWarn(check.getWarn())
-                .withError(check.getError())
-                .withFromType(check.getState())
-                .withToType(AlertType.EXCEPTION)
-                .withTimestamp(new DateTime());
-    }
 
     private ClientConnectionManager createConnectionManager() {
         PoolingClientConnectionManager manager = new PoolingClientConnectionManager();

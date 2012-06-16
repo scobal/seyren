@@ -11,19 +11,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.seyren.core.store;
+package com.seyren.core.service.checker;
 
-import com.seyren.core.domain.Alert;
-import com.seyren.core.domain.SeyrenResponse;
+import java.math.BigDecimal;
 
-public interface AlertsStore {
-	
-	Alert createAlert(String checkId, Alert alert);
-	
-	SeyrenResponse<Alert> getAlerts(String checkId, int start, int items);
+import com.seyren.core.domain.AlertType;
 
-	SeyrenResponse<Alert> getAlerts(int start, int items);
-
-    Alert getLastAlertForTarget(String target);
-	
+public interface ValueChecker {
+    
+    AlertType checkValue(BigDecimal value, BigDecimal warn, BigDecimal error);
+    
 }

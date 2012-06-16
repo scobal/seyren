@@ -80,8 +80,9 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
 	@Override
 	public List<Check> getChecks() {
 		List<Check> result =  new ArrayList<Check>();
-		for (DBObject dbo : getChecksCollection().find().toArray()) {
-			result.add(mapper.checkFrom(dbo));
+		DBCursor dbc = getChecksCollection().find();
+		while (dbc.hasNext()) {
+			result.add(mapper.checkFrom(dbc.next()));
 		}
 		return result;
 	}
@@ -90,9 +91,10 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
 	public List<Check> getChecksByState(Set<String> states) {
 		List<Check> result =  new ArrayList<Check>();
 		DBCursor dbc = getChecksCollection().find(object("state", object("$in", states.toArray())));
-		for (DBObject dbo : dbc.toArray()) {
-			result.add(mapper.checkFrom(dbo));
+		while (dbc.hasNext()) {
+			result.add(mapper.checkFrom(dbc.next()));
 		}
+		dbc.close();
 		return result;
 	}
 
@@ -147,9 +149,10 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
 	public SeyrenResponse<Alert> getAlerts(String checkId, int start, int items) {
 		DBCursor dbc = getAlertsCollection().find(object("checkId", checkId)).sort(object("timestamp", -1)).skip(start).limit(items);
 		List<Alert> alerts = new ArrayList<Alert>();
-		for (DBObject dbo : dbc.toArray()) {
-			alerts.add(mapper.alertFrom(dbo));
-		}
+        while (dbc.hasNext()) {
+            alerts.add(mapper.alertFrom(dbc.next()));
+        }
+        dbc.close();
 		return new SeyrenResponse<Alert>()
 			.withValues(alerts)
 			.withItems(items)
@@ -161,14 +164,29 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
 	public SeyrenResponse<Alert> getAlerts(int start, int items) {
 		DBCursor dbc = getAlertsCollection().find().sort(object("timestamp", -1)).skip(start).limit(items);
 		List<Alert> alerts = new ArrayList<Alert>();
-		for (DBObject dbo : dbc.toArray()) {
-			alerts.add(mapper.alertFrom(dbo));
+		while (dbc.hasNext()) {
+		    alerts.add(mapper.alertFrom(dbc.next()));
 		}
+		dbc.close();
 		return new SeyrenResponse<Alert>()
 			.withValues(alerts)
 			.withItems(items)
 			.withStart(start)
 			.withTotal(dbc.count());
+	}
+	
+	@Override
+	public Alert getLastAlertForTarget(String target) {
+	    DBObject query = object("target", target);
+	    DBCursor cursor = getAlertsCollection().find(query).sort(object("timestamp", -1)).limit(1);
+	    try {
+	        while (cursor.hasNext()) {
+	            return mapper.alertFrom(cursor.next());
+	        }
+	    } finally {
+	        cursor.close();
+	    }
+	    return null;
 	}
 
 	@Override

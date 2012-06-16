@@ -13,13 +13,14 @@
  */
 package com.seyren.core.service.checker;
 
-import java.util.List;
+import java.math.BigDecimal;
+import java.util.Map;
 
-import com.seyren.core.domain.Alert;
+import com.google.common.base.Optional;
 import com.seyren.core.domain.Check;
 
 public interface TargetChecker {
 
-	List<Alert> check(Check check) throws Exception;
+    Map<String, Optional<BigDecimal>> check(Check check) throws Exception;
 	
 }

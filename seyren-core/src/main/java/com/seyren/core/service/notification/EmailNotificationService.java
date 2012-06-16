@@ -15,6 +15,7 @@ package com.seyren.core.service.notification;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -52,10 +53,10 @@ public class EmailNotificationService implements NotificationService {
     }
     
     @Override
-    public void sendNotification(Check check, Subscription subscription, Alert alert) {
+    public void sendNotification(Check check, Subscription subscription, List<Alert> alerts) {
 
         try {
-        	VelocityContext context = createVelocityContext(check, subscription, alert);
+        	VelocityContext context = createVelocityContext(check, subscription, alerts);
         	
         	StringWriter w = new StringWriter();
 	    	Velocity.evaluate(context, w, "EmailNotificationService", getTemplateAsString());
@@ -63,7 +64,7 @@ public class EmailNotificationService implements NotificationService {
 	    	Email email = new Email()
 				.withTo(subscription.getTarget())
 				.withFrom("seyren-alerts@seyren")
-				.withSubject(createSubject(check, alert))
+				.withSubject(createSubject(check))
 				.withMessage(w.getBuffer().toString());
         	
 	    	mailSender.send(createMimeMessage(email));
@@ -73,21 +74,14 @@ public class EmailNotificationService implements NotificationService {
         }
     }
 
-	private String createSubject(Check check, Alert alert) {
-		return check.getName() + " from " + alert.getFromType() + " to " + alert.getToType();
+	private String createSubject(Check check) {
+		return "Seyren alert: " + check.getName();
 	}
 
-	private VelocityContext createVelocityContext(Check check, Subscription subscription, Alert alert) {
+	private VelocityContext createVelocityContext(Check check, Subscription subscription, List<Alert> alerts) {
 		VelocityContext result = new VelocityContext();
-		result.put("CHECK_ID", check.getId());
-		result.put("CHECK_NAME", check.getName());
-		result.put("ALERT_ERROR", alert.getError().toPlainString());
-		result.put("ALERT_FROMTYPE", alert.getFromType());
-		result.put("ALERT_TARGET", alert.getTarget());
-		result.put("ALERT_TIMESTAMP", alert.getTimestamp().toString("HH:mm d MMM yyyy"));
-		result.put("ALERT_TOTYPE", alert.getToType());
-		result.put("ALERT_VALUE", alert.getValue().toPlainString());
-		result.put("ALERT_WARN", alert.getWarn().toPlainString());
+		result.put("CHECK", check);
+		result.put("ALERTS", alerts);
 		result.put("SEYREN_URL", seyrenConfig.getBaseUrl());
 		return result;
 	}

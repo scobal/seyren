@@ -42,14 +42,12 @@ public class SubscriptionsAT {
 	
     private Response createSubscription(Header checkLocation, String body) { 
     	Response response = post(subscriptions(checkLocation), body(body, "application/json"));
-    	System.out.println(response.getContent());
     	assertThat(response, hasStatusCode(201));
     	assertThat(response, hasHeader("Location"));
     	return response;
     }
     
 	private void deleteLocation(String location) {
-		System.out.println(get(location).getContent());
 		assertThat(get(location), hasStatusCode(200));
         delete(location);
         assertThat(get(location), hasStatusCode(404));

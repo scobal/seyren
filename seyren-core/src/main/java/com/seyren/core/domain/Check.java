@@ -151,22 +151,5 @@ public class Check {
 		setSubscriptions(subscriptions);
 		return this;
 	}
-
-	public boolean isBeyondWarnThreshold(BigDecimal value) {
-		if (isTheValueBeingHighBad()) {
-			return value.compareTo(getWarn()) >= 0;
-		}
-		return value.compareTo(getWarn()) <= 0;
-	}
-
-	public boolean isBeyondErrorThreshold(BigDecimal value) {
-		if (isTheValueBeingHighBad()) {
-			return value.compareTo(getError()) >= 0;
-		}
-		return value.compareTo(getError()) <= 0;
-	}
 	
-	private boolean isTheValueBeingHighBad() {
-		return getWarn().compareTo(getError()) <= 0;
-	}
 }

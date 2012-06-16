@@ -1,21 +1,48 @@
 <html>
-<body>
-<h3><a href="$SEYREN_URL/#/checks/$CHECK_ID">$CHECK_NAME</a> from $ALERT_FROMTYPE to $ALERT_TOTYPE</h3>
-
-<table>
-    <tr>
-        <td>Current value:</td><td>$ALERT_VALUE</td>
-    </tr>
-    <tr>
-        <td>Warn level:</td><td>$ALERT_WARN</td>
-    </tr>
-    <tr>
-        <td>Error level:</td><td>$ALERT_ERROR</td>
-    </tr>
-</table>
-
-<br/>
-<div>Run at $ALERT_TIMESTAMP</div>
-
-</body>
+	<head>
+		<style type="text/css">
+			table { border-collapse: collapse; }
+			table th, table td { padding: 0.5em; }
+			tr.OK { background-color: #468847; color: black; }
+			tr.WARN { background-color: #f89406; color: black; }
+			tr.ERROR { background-color: #b94a48; color: black; }
+			tr.UNKNOWN { background-color: #999999; color: black; }
+			tr.EXCEPTION { background-color: #333333; color: white; }			
+			th, td { border: 1px solid black; }
+		</style>
+	</head>
+	<body>
+		<h3>Alert on check <a href="$SEYREN_URL/#/checks/$CHECK.Id">$CHECK.Name</a></h3>
+		<ul>
+			<li>Warning threshold: $CHECK.Warn</li>
+			<li>Error threshold: $CHECK.Error</li>
+		</ul>
+#if( $ALERTS.size() == 1 )
+		<p>The following target has changed from its previous state:</p>
+#else
+		<p>The following targets have changed from their previous state:</p>
+#end
+		<table>
+			<thead>
+				<tr>
+					<th>Target</th>
+					<th>Current</th>
+					<th>From</th>
+					<th>To</th>
+					<th>Run at</th>
+				</tr>
+			</thead>
+			<tbody>
+#foreach( $ALERT in $ALERTS )
+			    <tr class="$ALERT.ToType">
+			    	<td>$ALERT.Target</td>
+			    	<td>$ALERT.Value</td>
+			    	<td>$ALERT.FromType</td>
+			    	<td>$ALERT.ToType</td>
+			    	<td>$ALERT.Timestamp.toString("HH:mm d MMM yyyy")</td>
+			    </tr>
+#end
+			</tbody>
+		</table>
+	</body>
 </html>

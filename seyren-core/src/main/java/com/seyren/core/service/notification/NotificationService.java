@@ -13,6 +13,8 @@
  */
 package com.seyren.core.service.notification;
 
+import java.util.List;
+
 import com.seyren.core.domain.Alert;
 import com.seyren.core.domain.Check;
 import com.seyren.core.domain.Subscription;
@@ -20,6 +22,6 @@ import com.seyren.core.exception.NotificationFailedException;
 
 public interface NotificationService {
 	
-    void sendNotification(Check check, Subscription subscription, Alert alert) throws NotificationFailedException;
+    void sendNotification(Check check, Subscription subscription, List<Alert> alerts) throws NotificationFailedException;
     
 }

@@ -25,36 +25,31 @@ public class SubscriptionTest {
 	@Test
 	public void testShouldNotify() {
 		Subscription sub = new Subscription().withEnabled(true).withFromTime(localTime("1000")).withToTime(localTime("1100")).withSu(true);
-		Alert alert = new Alert().withTimestamp(dateTime("1030"));
-		assertThat(sub.shouldNotify(alert), is(equalTo(true)));
+		assertThat(sub.shouldNotify(dateTime("1030")), is(equalTo(true)));
 	}
 	
 	@Test
 	public void testShouldNotifyAfterTime() {
 		Subscription sub = new Subscription().withFromTime(localTime("1000")).withToTime(localTime("1100")).withSu(true);
-		Alert alert = new Alert().withTimestamp(dateTime("1200"));
-		assertThat(sub.shouldNotify(alert), is(equalTo(false)));
+		assertThat(sub.shouldNotify(dateTime("1200")), is(equalTo(false)));
 	}
 	
 	@Test
 	public void testShouldNotifyBeforeTime() {
 		Subscription sub = new Subscription().withFromTime(localTime("1000")).withToTime(localTime("1100")).withSu(true);
-		Alert alert = new Alert().withTimestamp(dateTime("0900"));
-		assertThat(sub.shouldNotify(alert), is(equalTo(false)));
+		assertThat(sub.shouldNotify(dateTime("0900")), is(equalTo(false)));
 	}
 	
 	@Test
 	public void testShouldNotifyIncorrectDay() {
 		Subscription sub = new Subscription();
-		Alert alert = new Alert().withTimestamp(dateTime("1015"));
-		assertThat(sub.shouldNotify(alert), is(equalTo(false)));
+		assertThat(sub.shouldNotify(dateTime("1015")), is(equalTo(false)));
 	}
 	
 	@Test
 	public void shouldNotNotifyWhenNotEnabled() {
 	    Subscription sub = new Subscription().withEnabled(false);
-	    Alert alert = new Alert().withTimestamp(dateTime("1015"));
-	    assertThat(sub.shouldNotify(alert), is(equalTo(false)));
+	    assertThat(sub.shouldNotify(dateTime("1015")), is(equalTo(false)));
 	}
 
 	private DateTime dateTime(String time) {

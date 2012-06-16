@@ -16,6 +16,7 @@ package com.seyren.core.domain;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.map.annotate.JsonDeserialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
+import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
 
 import com.seyren.core.util.datetime.LocalTimeDeserializer;
@@ -211,17 +212,17 @@ public class Subscription {
 	    return this;
 	}
 
-	public boolean shouldNotify(Alert alert) {
-		return isEnabled() && isCorrectDayOfWeek(alert) && isCorrectHourOfDay(alert);
+	public boolean shouldNotify(DateTime time) {
+		return isEnabled() && isCorrectDayOfWeek(time) && isCorrectHourOfDay(time);
 	}
 
-	private boolean isCorrectHourOfDay(Alert alert) {
-		LocalTime alertTime = new LocalTime(alert.getTimestamp().getHourOfDay(), alert.getTimestamp().getMinuteOfHour());
+	private boolean isCorrectHourOfDay(DateTime time) {
+		LocalTime alertTime = new LocalTime(time.getHourOfDay(), time.getMinuteOfHour());
 		return alertTime.isAfter(getFromTime()) && alertTime.isBefore(getToTime());
 	}
 
-	private boolean isCorrectDayOfWeek(Alert alert) {
-    	int day = alert.getTimestamp().getDayOfWeek();
+	private boolean isCorrectDayOfWeek(DateTime time) {
+    	int day = time.getDayOfWeek();
 		if (day == 1 && isMo()) return true;
 		if (day == 2 && isTu()) return true;
 		if (day == 3 && isWe()) return true;
