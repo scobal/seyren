@@ -12,15 +12,15 @@
 	<bean id="placeholderConfig" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="locations">
 			<list>
-				<value>classpath:seyren-ses.properties</value>
+				<value>classpath:smtp.properties</value>
 				<value>classpath:aws.properties</value>
 			</list>
 		</property>
 	</bean>
 	
 	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
-		<property name="host" value="${ses.server}" />
-		<property name="port" value="${ses.port}" />
+		<property name="host" value="${smtp.server}" />
+		<property name="port" value="${smtp.port}" />
 		<property name="protocol" value="smtps" />
 		<property name="username" value="${aws.accessKey}"/>
 		<property name="password" value="${aws.secretKey}"/>
@@ -29,7 +29,7 @@
 				<prop key="mail.smtps.auth">true</prop>
 				<prop key="mail.smtp.ssl.enable">true</prop>
 				<prop key="mail.transport.protocol">smtps</prop>
-				<prop key="mail.debug">${ses.debug.mail}</prop> 
+				<prop key="mail.debug">${smtp.debug.mail}</prop> 
 			</props>
 		</property>
 	</bean> 
