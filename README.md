@@ -2,7 +2,7 @@
 
 An alerting dashboard for Graphite
 
-<img src="http://i.imgur.com/eMQ3j.png" height="490" width="800" />
+<img src="http://i.imgur.com/hyAEH.png" height="490" width="800" />
 
 ##Run
 
