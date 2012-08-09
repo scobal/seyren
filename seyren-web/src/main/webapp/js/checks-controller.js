@@ -1,4 +1,4 @@
-/*global console,$ */
+/*global console,$,angular */
 
 function ChecksController() {
     this.$xhr.defaults.headers.post['Content-Type'] = 'application/json';

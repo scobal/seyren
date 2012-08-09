@@ -15,7 +15,6 @@ package com.seyren.api.bean;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -23,12 +22,10 @@ import javax.inject.Named;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
-
 import com.seyren.api.jaxrs.ChecksResource;
 import com.seyren.core.domain.AlertType;
 import com.seyren.core.domain.Check;
+import com.seyren.core.domain.SeyrenResponse;
 import com.seyren.core.store.ChecksStore;
 
 @Named
@@ -43,14 +40,11 @@ public class ChecksBean implements ChecksResource {
 	
 	@Override
 	public Response getChecks(Set<String> states, Boolean enabled) {
-		List<Check> checks;
+		SeyrenResponse<Check> checks;
 		if (states != null && !states.isEmpty()) {
-			checks = checksStore.getChecksByState(states);
+			checks = checksStore.getChecksByState(states, enabled);
 		} else {
-			checks = checksStore.getChecks();
-		}
-		if (enabled != null) {
-			filterByEnabled(checks, enabled);
+			checks = checksStore.getChecks(enabled);
 		}
 		return Response.ok(checks).build();
 	}
@@ -87,15 +81,6 @@ public class ChecksBean implements ChecksResource {
 	public Response deleteCheck(String checkId) {
 		checksStore.deleteCheck(checkId);
 		return Response.noContent().build();
-	}
-	
-	private void filterByEnabled(final List<Check> checks, final boolean enabled) {
-		CollectionUtils.filter(checks, new Predicate() {
-			@Override
-			public boolean evaluate(Object object) {
-				return ((Check)object).isEnabled() == enabled;
-			}
-		});
 	}
 	
 	private URI uri(String checkId) {

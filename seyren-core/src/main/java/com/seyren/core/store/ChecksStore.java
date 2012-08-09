@@ -13,16 +13,16 @@
  */
 package com.seyren.core.store;
 
-import java.util.List;
 import java.util.Set;
 
 import com.seyren.core.domain.Check;
+import com.seyren.core.domain.SeyrenResponse;
 
 public interface ChecksStore {
 
-	List<Check> getChecks();
+	SeyrenResponse<Check> getChecks(Boolean enabled);
 	
-	List<Check> getChecksByState(Set<String> states);
+	SeyrenResponse<Check> getChecksByState(Set<String> states, Boolean enabled);
 
 	Check getCheck(String checkId);
 

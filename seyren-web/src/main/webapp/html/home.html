@@ -1,6 +1,6 @@
 <div class="row-fluid" ng:init="loadUnhealthyChecks()" ng:controller="HomeController">
     <h2>Checks in an unhealthy state</h2>
-    <table class="table table-bordered table-striped" ng:show="unhealthyChecks">
+    <table class="table table-bordered table-striped" ng:show="unhealthyChecks.values.length > 0">
         <thead>
             <tr>
                 <th>Name</th>
@@ -12,7 +12,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr ng:repeat="check in unhealthyChecks" ng:click="selectCheck(check.id)" style="cursor: pointer;">
+            <tr ng:repeat="check in unhealthyChecks.values" ng:click="selectCheck(check.id)" style="cursor: pointer;">
                 <td>{{ check.name }}</td>
                 <td>{{ check.target }}</td>
                 <td>
@@ -28,7 +28,7 @@
             </tr>
         </tbody>
     </table>
-    <p ng:hide="unhealthyChecks">No checks in an unhealthy state</p>
+    <p ng:hide="unhealthyChecks.values.length > 0">No checks in an unhealthy state</p>
 </div>
 
 <div class="row-fluid" ng:init="loadAlertStream()" ng:controller="HomeController">

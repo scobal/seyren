@@ -78,24 +78,41 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
 	}
 	
 	@Override
-	public List<Check> getChecks() {
-		List<Check> result =  new ArrayList<Check>();
-		DBCursor dbc = getChecksCollection().find();
-		while (dbc.hasNext()) {
-			result.add(mapper.checkFrom(dbc.next()));
+	public SeyrenResponse<Check> getChecks(Boolean enabled) {
+		List<Check> checks =  new ArrayList<Check>();
+		DBCursor dbc;
+		if (enabled != null) {
+			dbc  = getChecksCollection().find(object("enabled", enabled));
+		} else {
+			dbc  = getChecksCollection().find();
 		}
-		return result;
+		while (dbc.hasNext()) {
+			checks.add(mapper.checkFrom(dbc.next()));
+		}
+		return new SeyrenResponse<Check>()
+				.withValues(checks)
+				.withTotal(dbc.count());
 	}
 	
 	@Override
-	public List<Check> getChecksByState(Set<String> states) {
-		List<Check> result =  new ArrayList<Check>();
-		DBCursor dbc = getChecksCollection().find(object("state", object("$in", states.toArray())));
+	public SeyrenResponse<Check> getChecksByState(Set<String> states, Boolean enabled) {
+		List<Check> checks =  new ArrayList<Check>();
+		
+		DBObject query = new BasicDBObject();
+		query.put("state", object("$in", states.toArray()));
+		if (enabled != null) {
+			query.put("enabled", enabled);
+		}
+		DBCursor dbc = getChecksCollection().find(query);
+		
 		while (dbc.hasNext()) {
-			result.add(mapper.checkFrom(dbc.next()));
+			checks.add(mapper.checkFrom(dbc.next()));
 		}
 		dbc.close();
-		return result;
+		
+		return new SeyrenResponse<Check>()
+				.withValues(checks)
+				.withTotal(dbc.count());
 	}
 
 	@Override

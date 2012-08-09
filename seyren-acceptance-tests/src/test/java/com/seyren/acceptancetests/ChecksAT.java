@@ -29,7 +29,7 @@ public class ChecksAT {
 	public void testGetChecksReturnsOk() {
 		Response response = get(checks());
 		assertThat(response, hasStatusCode(200));
-		assertThat(response.asJson(), hasJsonPath("$.", hasSize(0)));
+		assertThat(response.asJson(), hasJsonPath("$.values", hasSize(0)));
 	}
 	
 	@Test
@@ -37,7 +37,7 @@ public class ChecksAT {
         Response createResponse = createCheck("{ }");
 		Response response = get(checks());
 		assertThat(response, hasStatusCode(200));
-		assertThat(response.asJson(), hasJsonPath("$.", hasSize(1)));
+		assertThat(response.asJson(), hasJsonPath("$.values", hasSize(1)));
         deleteLocation(createResponse.getHeader("Location").getValue());
 	}
 	
@@ -46,7 +46,7 @@ public class ChecksAT {
         Response createResponse = createCheck("{ \"state\" : \"ERROR\" }");
 		Response response = get(checks().withParam("state", "ERROR"));
 		assertThat(response, hasStatusCode(200));
-		assertThat(response.asJson(), hasJsonPath("$.", hasSize(1)));
+		assertThat(response.asJson(), hasJsonPath("$.values", hasSize(1)));
         deleteLocation(createResponse.getHeader("Location").getValue());
 	}
 	
@@ -55,7 +55,7 @@ public class ChecksAT {
         Response createResponse = createCheck("{ \"state\" : \"WARN\" }");
 		Response response = get(checks().withParam("state", "WARN"));
 		assertThat(response, hasStatusCode(200));
-		assertThat(response.asJson(), hasJsonPath("$.", hasSize(1)));
+		assertThat(response.asJson(), hasJsonPath("$.values", hasSize(1)));
         deleteLocation(createResponse.getHeader("Location").getValue());
 	}
 	
