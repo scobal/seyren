@@ -63,7 +63,7 @@ public class EmailNotificationService implements NotificationService {
 	    	
 	    	Email email = new Email()
 				.withTo(subscription.getTarget())
-				.withFrom("Seyren Alerts<monitoring-alerts@je-labs.com>")
+				.withFrom("seyren-alerts@seyren")
 				.withSubject(createSubject(check))
 				.withMessage(w.getBuffer().toString());
         	
