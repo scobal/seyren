@@ -52,6 +52,11 @@ public class EmailNotificationService implements NotificationService {
         Velocity.init();
     }
     
+    
+    public void sendStatusEmail(List<Check> checks) {
+    	
+    }
+    
     @Override
     public void sendNotification(Check check, Subscription subscription, List<Alert> alerts) {
 
@@ -63,7 +68,7 @@ public class EmailNotificationService implements NotificationService {
 	    	
 	    	Email email = new Email()
 				.withTo(subscription.getTarget())
-				.withFrom("seyren-alerts@seyren")
+				.withFrom("cgander@ea.com")
 				.withSubject(createSubject(check))
 				.withMessage(w.getBuffer().toString());
         	
