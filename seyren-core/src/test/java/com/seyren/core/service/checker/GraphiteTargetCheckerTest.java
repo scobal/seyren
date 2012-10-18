@@ -49,7 +49,7 @@ public class GraphiteTargetCheckerTest {
         String response = "[{\"target\": \"service.error.1MinuteRate\", \"datapoints\": [[0.06, 1337453460]]}]";
         
         clientDriver.addExpectation(
-                onRequestTo("/render")
+                onRequestTo("/render/")
                     .withParam("from", "-11minutes")
                     .withParam("until", "-1minutes")
                     .withParam("uniq", Pattern.compile("[0-9]+"))
@@ -67,7 +67,7 @@ public class GraphiteTargetCheckerTest {
         String response = "[{\"target\": \"service.error.1MinuteRate\", \"datapoints\": [[0.06, 1337453460]]}]";
         
         clientDriver.addExpectation(
-                onRequestTo("/render")
+                onRequestTo("/render/")
                     .withParam("from", "-11minutes")
                     .withParam("until", "-1minutes")
                     .withParam("uniq", Pattern.compile("[0-9]+"))
@@ -86,7 +86,7 @@ public class GraphiteTargetCheckerTest {
         String response = "[{\"target\": \"service.error.1MinuteRate\", \"datapoints\": [[0.20, 1337453460],[0.01, 1337453463]]}]";
         
         clientDriver.addExpectation(
-                onRequestTo("/render")
+                onRequestTo("/render/")
                     .withParam("from", "-11minutes")
                     .withParam("until", "-1minutes")
                     .withParam("uniq", Pattern.compile("[0-9]+"))
@@ -104,7 +104,7 @@ public class GraphiteTargetCheckerTest {
         String response = "[{\"target\": \"service.error.1MinuteRate\", \"datapoints\": [[0.17, 1337453460],[null, 1337453463]]}]";
         
         clientDriver.addExpectation(
-                onRequestTo("/render")
+                onRequestTo("/render/")
                     .withParam("from", "-11minutes")
                     .withParam("until", "-1minutes")
                     .withParam("uniq", Pattern.compile("[0-9]+"))
@@ -122,7 +122,7 @@ public class GraphiteTargetCheckerTest {
         String response = "[{\"target\": \"service.error.1MinuteRate\", \"datapoints\": [[null, 1337453460],[null, 1337453463]]}]";
         
         clientDriver.addExpectation(
-                onRequestTo("/render")
+                onRequestTo("/render/")
                     .withParam("from", "-11minutes")
                     .withParam("until", "-1minutes")
                     .withParam("uniq", Pattern.compile("[0-9]+"))
@@ -143,7 +143,7 @@ public class GraphiteTargetCheckerTest {
         		"]";
         
         clientDriver.addExpectation(
-                onRequestTo("/render")
+                onRequestTo("/render/")
                     .withParam("from", "-11minutes")
                     .withParam("until", "-1minutes")
                     .withParam("uniq", Pattern.compile("[0-9]+"))

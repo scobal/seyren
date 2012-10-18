@@ -23,5 +23,6 @@ import com.seyren.core.exception.NotificationFailedException;
 public interface NotificationService {
 	
     void sendNotification(Check check, Subscription subscription, List<Alert> alerts) throws NotificationFailedException;
+    void sendStatusEmail(List<Check> checks);
     
 }

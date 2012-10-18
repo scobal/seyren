@@ -46,12 +46,14 @@ public class GraphiteTargetChecker implements TargetChecker {
 	private final HttpClient client;
 	private final String graphiteScheme;
 	private final String graphiteHost;
+	private final String graphitePath;
 	private final JsonNodeResponseHandler handler = new JsonNodeResponseHandler();
 	
 	@Inject
 	public GraphiteTargetChecker(GraphiteConfig graphiteConfig) {
 	    this.graphiteScheme = graphiteConfig.getScheme();
 	    this.graphiteHost = graphiteConfig.getHost();
+	    this.graphitePath = graphiteConfig.getPath();
 	    this.client = new DefaultHttpClient(createConnectionManager());
 	}
 	
@@ -59,7 +61,8 @@ public class GraphiteTargetChecker implements TargetChecker {
 	public Map<String, Optional<BigDecimal>> check(Check check) throws Exception {
 	    
 	    String formattedQuery = String.format(QUERY_STRING, new DateTime().getMillis(), check.getTarget());
-	    URI uri = new URI(graphiteScheme, graphiteHost, "/render", formattedQuery, null);
+	    URI uri = new URI(graphiteScheme, graphiteHost, graphitePath + "/render/", formattedQuery, null);
+	    System.out.println(uri.toString());
 		HttpGet get = new HttpGet(uri);
 		Map<String, Optional<BigDecimal>> targetValues = new HashMap<String, Optional<BigDecimal>>();
 

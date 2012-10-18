@@ -70,6 +70,14 @@ public class CheckScheduler {
 		}
 	}
 	
+	@Scheduled(fixedRate = 60000)
+	public void sendStatusEmail() {
+		List<Check> checks = checksStore.getChecks(true).getValues();
+		
+	
+		
+	}
+	
 	private class CheckRunner implements Runnable {
 	    
 	    private final Check check;
