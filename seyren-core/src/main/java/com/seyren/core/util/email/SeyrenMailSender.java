@@ -15,20 +15,46 @@ package com.seyren.core.util.email;
 
 import static org.apache.commons.lang.StringUtils.*;
 
+import java.util.Properties;
+
 import javax.inject.Named;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+
+import com.seyren.core.service.schedule.CheckScheduler;
 
 @Named
 public class SeyrenMailSender extends JavaMailSenderImpl {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(CheckScheduler.class);
+	
     public static final String DEFAULT_SMTP_HOST = "localhost";
     public static final String DEFAULT_SMTP_PORT = "25";
 
     public SeyrenMailSender() {
-        setHost(environmentOrDefault("SMTP_HOST", DEFAULT_SMTP_HOST));
-        setPort(Integer.parseInt(environmentOrDefault("SMTP_PORT", DEFAULT_SMTP_PORT)));
+    	
+    	String username = environmentOrDefault("SMTP_USERNAME", "");
+    	String password = environmentOrDefault("SMTP_PASSWORD","");
+    	String hostname = environmentOrDefault("SMTP_HOST", DEFAULT_SMTP_HOST);
+        
+    	setPort(Integer.parseInt(environmentOrDefault("SMTP_PORT", DEFAULT_SMTP_PORT)));
+    	setHost(hostname);       
+        setUsername(username);
+        setPassword(password);
+        
+        if(username != "" && password != "") {
+	        Properties props = new Properties();
+	        props.setProperty("mail.smtp.auth", "true");
+	        setJavaMailProperties(props);
+        }
+        
         setProtocol("smtp");
+        
+        LOGGER.info(username + ":" + password + "@" + hostname);
+        
+        
     }
     
     public SeyrenMailSender withHost(String host) {

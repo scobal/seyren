@@ -8,7 +8,7 @@ An alerting dashboard for Graphite
 
 ###Prerequisites
 
-* Mongodb
+* Mongodb ([Install instructions](http://docs.mongodb.org/manual/installation/#installation-guides Installing MongoDB))
 * Maven
 * An instance of Graphite
 
@@ -27,6 +27,9 @@ open http://localhost:8080/seyren
 * `MONGO_URL` - The mongo connection string. Default: `mongodb://localhost:27017/seyren`
 * `SMTP_HOST` - The smtp server to send email notifications from. Default: `localhost`
 * `SMTP_PORT` - The smtp server port. Default: `25`
+* `SMTP_USERNAME` - The smtp server username if authenticated SMTP is used. Default: ``
+* `SMTP_PASSWORD` - The smtp server password if authenticated SMTP is used. Default: ``
+
 
 ##Development
 

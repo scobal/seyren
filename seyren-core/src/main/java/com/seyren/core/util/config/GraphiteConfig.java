@@ -44,14 +44,28 @@ public class GraphiteConfig {
 	    return baseParts[1];
 	}
 	
+	public String getPath() {
+	    return baseParts[2];
+	}
+	
 	private String[] splitBaseUrl(String baseUrl) {
-	    String[] baseParts;
+	    String[] baseParts = new String[3];
         
         if (baseUrl.toString().contains("://")) {
-            baseParts = baseUrl.toString().split("://");
+            baseParts[0] = baseUrl.toString().split("://")[0];
+            baseUrl = baseUrl.toString().split("://")[1];
         } else {
-            baseParts = new String[] { "http", baseUrl.toString() };
+            baseParts[0] = "http";
         }
+        
+        if(baseUrl.contains("/")) {
+            baseParts[1] = baseUrl.split("/")[0];
+            baseParts[2] = "/" + baseUrl.split("/",2)[1];
+        } else {
+            baseParts[1] = baseUrl;
+            baseParts[2] = "";
+        }
+        
         
         return baseParts;
 	}
