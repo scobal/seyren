@@ -98,8 +98,10 @@ public class EmailNotificationService implements NotificationService {
     private MimeMessage createMimeMessage(Email email) throws AddressException, MessagingException {
 
     	MimeMessage mail = mailSender.createMimeMessage();
+	InternetAddress senderAddress = new InternetAddress(email.getFrom());
         mail.addRecipient(RecipientType.TO, new InternetAddress(email.getTo()));
-        mail.setSender(new InternetAddress(email.getFrom()));
+	mail.setSender(senderAddress);
+	mail.setFrom(senderAddress);
         mail.setText(email.getMessage());
         mail.setSubject(email.getSubject());
         mail.addHeader("Content-Type", "text/html; charset=UTF-8");
