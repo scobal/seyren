@@ -30,6 +30,9 @@ open http://localhost:8080/seyren
 * `SMTP_USERNAME` - The smtp server username if authenticated SMTP is used. Default: ``
 * `SMTP_PASSWORD` - The smtp server password if authenticated SMTP is used. Default: ``
 
+###Cloud Formation
+
+If you are running on amazon infrastructure use this [Cloud Formation Template](https://gist.github.com/3923120) to bring up a single instance of any size. All the environment variables required for Seyren are specified as properties to the cloud formation template and a fully configured Seyren instance should come up with no other intervention.
 
 ##Development
 
