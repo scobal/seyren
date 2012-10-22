@@ -21,11 +21,13 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
+import org.apache.http.message.BasicHeader;
 import org.codehaus.jackson.JsonNode;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -47,6 +49,8 @@ public class GraphiteTargetChecker implements TargetChecker {
 	private final String graphiteScheme;
 	private final String graphiteHost;
 	private final String graphitePath;
+	private final String graphiteUsername;
+	private final String graphitePassword;
 	private final JsonNodeResponseHandler handler = new JsonNodeResponseHandler();
 	
 	@Inject
@@ -54,6 +58,8 @@ public class GraphiteTargetChecker implements TargetChecker {
 	    this.graphiteScheme = graphiteConfig.getScheme();
 	    this.graphiteHost = graphiteConfig.getHost();
 	    this.graphitePath = graphiteConfig.getPath();
+		this.graphiteUsername = graphiteConfig.getUsername();
+		this.graphitePassword = graphiteConfig.getPassword();	    
 	    this.client = new DefaultHttpClient(createConnectionManager());
 	}
 	
@@ -62,8 +68,11 @@ public class GraphiteTargetChecker implements TargetChecker {
 	    
 	    String formattedQuery = String.format(QUERY_STRING, new DateTime().getMillis(), check.getTarget());
 	    URI uri = new URI(graphiteScheme, graphiteHost, graphitePath + "/render/", formattedQuery, null);
-	    System.out.println(uri.toString());
 		HttpGet get = new HttpGet(uri);
+		String authHeaderString = "Basic "
+				+ new Base64().encodeAsString((this.graphiteUsername + ":" + this.graphitePassword)
+						.getBytes("ISO-8859-1"));
+		get.setHeader(new BasicHeader("Authorization", authHeaderString));
 		Map<String, Optional<BigDecimal>> targetValues = new HashMap<String, Optional<BigDecimal>>();
 
 		try {
