@@ -69,7 +69,7 @@ public class GraphiteTargetChecker implements TargetChecker {
 	    String formattedQuery = String.format(QUERY_STRING, new DateTime().getMillis(), check.getTarget());
 	    URI uri = new URI(graphiteScheme, graphiteHost, graphitePath + "/render/", formattedQuery, null);
 		HttpGet get = new HttpGet(uri);
-		if(this.graphiteUsername != null && !this.graphiteUsername.equals("") && this.graphitePassword ! = null 
+		if(this.graphiteUsername != null && !this.graphiteUsername.equals("") && this.graphitePassword != null 
 				&& !this.graphitePassword.equals("")) {
 			String authHeaderString = "Basic "
 					+ new Base64().encodeAsString((this.graphiteUsername + ":" + this.graphitePassword)
