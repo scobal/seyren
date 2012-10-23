@@ -69,10 +69,13 @@ public class GraphiteTargetChecker implements TargetChecker {
 	    String formattedQuery = String.format(QUERY_STRING, new DateTime().getMillis(), check.getTarget());
 	    URI uri = new URI(graphiteScheme, graphiteHost, graphitePath + "/render/", formattedQuery, null);
 		HttpGet get = new HttpGet(uri);
-		String authHeaderString = "Basic "
-				+ new Base64().encodeAsString((this.graphiteUsername + ":" + this.graphitePassword)
+		if(this.graphiteUsername != null && !this.graphiteUsername.equals("") && this.graphitePassword ! = null 
+				&& !this.graphitePassword.equals("")) {
+			String authHeaderString = "Basic "
+					+ new Base64().encodeAsString((this.graphiteUsername + ":" + this.graphitePassword)
 						.getBytes("ISO-8859-1"));
-		get.setHeader(new BasicHeader("Authorization", authHeaderString));
+			get.setHeader(new BasicHeader("Authorization", authHeaderString));
+		}
 		Map<String, Optional<BigDecimal>> targetValues = new HashMap<String, Optional<BigDecimal>>();
 
 		try {
