@@ -23,6 +23,8 @@ open http://localhost:8080/seyren
 
 ###Available environment variables
 * `GRAPHITE_URL` - The location of your graphite server. Default: `http://localhost:80`
+* `GRAPHITE_USERNAME` - The Http Basic auth username for the graphite server. Default: ``
+* `GRAPHITE_PASSWORD` - The Http Basic auth password for the graphite server. Default: ``
 * `SEYREN_URL` - The location of your seyren instance. Default: `http://localhost:8080/seyren`
 * `MONGO_URL` - The mongo connection string. Default: `mongodb://localhost:27017/seyren`
 * `SMTP_HOST` - The smtp server to send email notifications from. Default: `localhost`

@@ -70,6 +70,14 @@ public class GraphiteConfig {
         return baseParts;
 	}
 	
+	public String getUsername() {
+		return environmentOrDefault("GRAPHITE_USERNAME", "");
+	}
+
+	public String getPassword() {
+		return environmentOrDefault("GRAPHITE_PASSWORD", "");
+	}
+	
 	private static String environmentOrDefault(String propertyName, String defaultValue) {
 	    String value = System.getenv(propertyName);
 	    if (isEmpty(value)) {
