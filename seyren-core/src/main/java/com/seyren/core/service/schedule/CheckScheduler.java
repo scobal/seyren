@@ -12,7 +12,6 @@
  * limitations under the License.
  */
 package com.seyren.core.service.schedule;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,13 +29,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import com.google.common.base.Optional;
-import com.seyren.core.domain.Alert;
-import com.seyren.core.domain.AlertType;
-import com.seyren.core.domain.Check;
-import com.seyren.core.domain.Subscription;
+import com.seyren.core.domain.*;
 import com.seyren.core.service.checker.TargetChecker;
 import com.seyren.core.service.checker.ValueChecker;
+import com.seyren.core.service.notification.EmailNotificationService;
 import com.seyren.core.service.notification.NotificationService;
+import com.seyren.core.service.notification.PagerDutyNotificationService;
 import com.seyren.core.store.AlertsStore;
 import com.seyren.core.store.ChecksStore;
 
@@ -47,17 +45,17 @@ public class CheckScheduler {
 
 	private final ChecksStore checksStore;
 	private final AlertsStore alertsStore;
-	private final NotificationService notificationService;
+	private final List<NotificationService> notificationServices;
 	private final TargetChecker targetChecker;
 	private final ValueChecker valueChecker;
 	private final ScheduledExecutorService executor = Executors.newScheduledThreadPool(8);
 
 	@Inject
-	public CheckScheduler(ChecksStore checksStore, AlertsStore alertsStore, NotificationService notificationService, TargetChecker targetChecker,
+	public CheckScheduler(ChecksStore checksStore, AlertsStore alertsStore, List<NotificationService> notificationServices, TargetChecker targetChecker,
 	        ValueChecker valueChecker) {
 		this.checksStore = checksStore;
 		this.alertsStore = alertsStore;
-        this.notificationService = notificationService;
+             this.notificationServices = notificationServices;
 		this.targetChecker = targetChecker;
 		this.valueChecker = valueChecker;
 	}
@@ -165,9 +163,19 @@ public class CheckScheduler {
                     }
                     
                     try {
-                        notificationService.sendNotification(check, subscription, interestingAlerts);
+                        int pagerDutyIndex = 0);
+                        int emailIndex = 1;
+                        
+                        if(subscription.getType() == SubscriptionType.EMAIL)
+                        {
+                             notificationServices.get(emailIndex).sendNotification(check, subscription, interestingAlerts);                         
+                        }                                                  
+                        if(subscription.getType() == SubscriptionType.PAGERDUTY)
+                        {
+                            notificationServices.get(pagerDutyIndex).sendNotification(check, subscription, interestingAlerts);
+                        }                        
                     } catch (Exception e) {
-                        LOGGER.warn("Notifying " + subscription.getTarget() + " failed", e);
+                        LOGGER.warn("Notifying " + subscription.getTarget() + " by " + subscription.getType() + " failed", e);
                     }
                 }
                 
