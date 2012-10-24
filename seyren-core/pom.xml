@@ -89,6 +89,10 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context-support</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>biz.neustar</groupId>
+			<artifactId>pagerduty</artifactId>
+		</dependency>		
 	</dependencies>
 
 	<build>
