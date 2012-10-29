@@ -24,12 +24,14 @@ public class SeyrenConfig {
 	private final GraphiteConfig graphite;
 	private final String baseUrl;
 	private final String fromEmail;
+        private final String pagerDutyDomain;
 
 	@Inject
 	public SeyrenConfig(GraphiteConfig graphite) {
 		this.graphite = graphite;
 		this.baseUrl = stripEnd(environmentOrDefault("SEYREN_URL", "http://localhost:8080/seyren"), "/");
 		this.fromEmail = environmentOrDefault("SEYREN_FROM_EMAIL", "alert@seyren");
+		this.pagerDutyDomain = environmentOrDefault("PAGERDUTY_DOMAIN", "mydomain");
 	}
 	
 	public GraphiteConfig getGraphite() {
@@ -38,6 +40,10 @@ public class SeyrenConfig {
 
     public String getBaseUrl() {
         return baseUrl;
+    }
+
+    public String getPagerDutyDomain() {
+        return pagerDutyDomain;
     }
     
     public String getFromEmail() {
