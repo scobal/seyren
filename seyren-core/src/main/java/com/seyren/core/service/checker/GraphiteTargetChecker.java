@@ -21,6 +21,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
@@ -126,13 +127,14 @@ public class GraphiteTargetChecker implements TargetChecker {
 	 * Set auth header for graphite if username and password are provided
 	 */
     private void setAuthHeadersIfNecessary(){
-    	if(this.graphiteUsername != null && !this.graphiteUsername.equals("") && this.graphitePassword != null 
-				&& !this.graphitePassword.equals("")) {
+    	if (!StringUtils.isEmpty(graphiteUsername) && !StringUtils.isEmpty(graphitePassword)) {
     		CredentialsProvider credsProvider = new BasicCredentialsProvider();
     		credsProvider.setCredentials(
-    				new AuthScope(this.graphiteHost, AuthScope.ANY_PORT), 
-    				new UsernamePasswordCredentials(this.graphiteUsername, this.graphitePassword));
-    		((AbstractHttpClient) this.client).setCredentialsProvider(credsProvider);
+    				new AuthScope(graphiteHost, AuthScope.ANY_PORT), 
+    				new UsernamePasswordCredentials(graphiteUsername, graphitePassword));
+    		if (client instanceof AbstractHttpClient) {
+    			((AbstractHttpClient) client).setCredentialsProvider(credsProvider);
+    		}
     	}
     }
 
