@@ -1,5 +1,7 @@
 #Seyren ([/ˈsaɪ.rʌn/](http://en.wikipedia.org/wiki/Wikipedia:IPA_for_English#Key))
 
+[![Build Status](https://secure.travis-ci.org/scobal/seyren.png?branch=master)](http://travis-ci.org/scobal/seyren)
+
 An alerting dashboard for Graphite
 
 <img src="http://i.imgur.com/hyAEH.png" height="490" width="800" />
