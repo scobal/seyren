@@ -68,14 +68,14 @@ public class EmailNotificationService implements NotificationService {
 	    	
 	    	Email email = new Email()
 				.withTo(subscription.getTarget())
-				.withFrom("alert@seyren")
+				.withFrom(this.seyrenConfig.getFromEmail())
 				.withSubject(createSubject(check))
 				.withMessage(w.getBuffer().toString());
         	
 	    	mailSender.send(createMimeMessage(email));
 	    	
         } catch (Exception e) {
-            throw new NotificationFailedException("Failed to send notification to " + subscription.getTarget(), e);
+            throw new NotificationFailedException("Failed to send notification to " + subscription.getTarget() + " from " + this.seyrenConfig.getFromEmail(), e);
         }
     }
 

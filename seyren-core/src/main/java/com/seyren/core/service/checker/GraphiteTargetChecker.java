@@ -21,9 +21,14 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.impl.client.AbstractHttpClient;
+import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.codehaus.jackson.JsonNode;
@@ -47,6 +52,8 @@ public class GraphiteTargetChecker implements TargetChecker {
 	private final String graphiteScheme;
 	private final String graphiteHost;
 	private final String graphitePath;
+	private final String graphiteUsername;
+	private final String graphitePassword;
 	private final JsonNodeResponseHandler handler = new JsonNodeResponseHandler();
 	
 	@Inject
@@ -54,7 +61,10 @@ public class GraphiteTargetChecker implements TargetChecker {
 	    this.graphiteScheme = graphiteConfig.getScheme();
 	    this.graphiteHost = graphiteConfig.getHost();
 	    this.graphitePath = graphiteConfig.getPath();
+		this.graphiteUsername = graphiteConfig.getUsername();
+		this.graphitePassword = graphiteConfig.getPassword();	    
 	    this.client = new DefaultHttpClient(createConnectionManager());
+	    setAuthHeadersIfNecessary();
 	}
 	
 	@Override
@@ -62,7 +72,6 @@ public class GraphiteTargetChecker implements TargetChecker {
 	    
 	    String formattedQuery = String.format(QUERY_STRING, new DateTime().getMillis(), check.getTarget());
 	    URI uri = new URI(graphiteScheme, graphiteHost, graphitePath + "/render/", formattedQuery, null);
-	    System.out.println(uri.toString());
 		HttpGet get = new HttpGet(uri);
 		Map<String, Optional<BigDecimal>> targetValues = new HashMap<String, Optional<BigDecimal>>();
 
@@ -111,6 +120,20 @@ public class GraphiteTargetChecker implements TargetChecker {
         PoolingClientConnectionManager manager = new PoolingClientConnectionManager();
         manager.setDefaultMaxPerRoute(MAX_CONNECTIONS_PER_ROUTE);
         return manager;
+    }
+    
+    /**
+	 * Set auth header for graphite if username and password are provided
+	 */
+    private void setAuthHeadersIfNecessary(){
+    	if(this.graphiteUsername != null && !this.graphiteUsername.equals("") && this.graphitePassword != null 
+				&& !this.graphitePassword.equals("")) {
+    		CredentialsProvider credsProvider = new BasicCredentialsProvider();
+    		credsProvider.setCredentials(
+    				new AuthScope(this.graphiteHost, AuthScope.ANY_PORT), 
+    				new UsernamePasswordCredentials(this.graphiteUsername, this.graphitePassword));
+    		((AbstractHttpClient) this.client).setCredentialsProvider(credsProvider);
+    	}
     }
 
 }
