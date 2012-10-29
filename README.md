@@ -8,9 +8,9 @@ An alerting dashboard for Graphite
 
 ###Prerequisites
 
-* Mongodb ([Install instructions](http://docs.mongodb.org/manual/installation/#installation-guides Installing MongoDB))
 * Maven
 * An instance of Graphite
+* Mongodb ([Install instructions](http://docs.mongodb.org/manual/installation/#installation-guides Installing MongoDB))
 
 ###Stand alone
 
