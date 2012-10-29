@@ -13,63 +13,68 @@
  */
 package com.seyren.core.service.notification;
 
-import biz.neustar.pagerduty.InternalException;
-import biz.neustar.pagerduty.InvalidEventException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import biz.neustar.pagerduty.PagerDutyClient;
-import biz.neustar.pagerduty.model.EventResponse;
+
 import com.seyren.core.domain.Alert;
 import com.seyren.core.domain.AlertType;
 import com.seyren.core.domain.Check;
 import com.seyren.core.domain.Subscription;
+import com.seyren.core.domain.SubscriptionType;
 import com.seyren.core.exception.NotificationFailedException;
 import com.seyren.core.util.config.SeyrenConfig;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.inject.Inject;
-import javax.inject.Named;
 
 @Named
 public class PagerDutyNotificationService implements NotificationService {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(PagerDutyNotificationService.class);
 
     private final SeyrenConfig seyrenConfig;
-    private PagerDutyClient client;
-    
-    @Override
-    public void sendNotification(Check check, Subscription subscription, List<Alert> alerts) throws NotificationFailedException {
-                
-        client = new PagerDutyClient(seyrenConfig.getPagerDutyDomain(), "username", "password");
-        try {        
-            Map details = AddDetailsToNotification(check, alerts);
-            EventResponse response = null;        
-            if (check.getState()== AlertType.ERROR)
-                response = client.trigger(subscription.getTarget(), "Check " + check.getName() + " has exceeded its threshold.  " + seyrenConfig.getBaseUrl() + "/#/checks/" + check.getId(), "MonitoringAlerts_" + check.getId(), details);
-            else
-                response = client.resolve(subscription.getTarget(), "Check " + check.getName() + " has been resolved. " + seyrenConfig.getBaseUrl() + "/#/checks/" + check.getId(), "MonitoringAlerts_" + check.getId(), details);
-            } 
-        catch (Exception e) {
-            throw new NotificationFailedException("Failed to send notification to PagerDuty", e);
-        }         
-    }
     
     @Inject
     public PagerDutyNotificationService(SeyrenConfig seyrenConfig) {
         this.seyrenConfig = seyrenConfig;
     }
     
-    private Map AddDetailsToNotification(Check check, List<Alert> alerts) {
-        Map details = new HashMap();
+    @Override
+    public void sendNotification(Check check, Subscription subscription, List<Alert> alerts) throws NotificationFailedException {
+                
+    	PagerDutyClient client = new PagerDutyClient(seyrenConfig.getPagerDutyDomain(), "username", "password");
+        try {        
+            Map<String, Object> details = createNotificationDetails(check, alerts);
+            
+            if (check.getState() == AlertType.ERROR) {
+                client.trigger(subscription.getTarget(), "Check " + check.getName() + " has exceeded its threshold.  " + seyrenConfig.getBaseUrl() + "/#/checks/" + check.getId(), "MonitoringAlerts_" + check.getId(), details);
+            } else if (check.getState() == AlertType.OK) {
+                client.resolve(subscription.getTarget(), "Check " + check.getName() + " has been resolved. " + seyrenConfig.getBaseUrl() + "/#/checks/" + check.getId(), "MonitoringAlerts_" + check.getId(), details);
+            } else {
+            	LOGGER.warn("Did not send notification to PagerDuty for check in state: " + check.getState());
+            }
+        } catch (Exception e) {
+            throw new NotificationFailedException("Failed to send notification to PagerDuty", e);
+        }         
+    }
+    
+	@Override
+	public boolean canHandle(SubscriptionType subscriptionType) {
+		return subscriptionType == SubscriptionType.PAGERDUTY;
+	}
+    
+    private Map<String, Object> createNotificationDetails(Check check, List<Alert> alerts) {
+        Map<String, Object> details = new HashMap<String, Object>();
         details.put("CHECK", check);
         details.put("ALERTS", alerts);
         details.put("SEYREN_URL", seyrenConfig.getBaseUrl());
         return details;
     }
 
-    @Override
-    public void sendStatusEmail(List<Check> checks) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
 }

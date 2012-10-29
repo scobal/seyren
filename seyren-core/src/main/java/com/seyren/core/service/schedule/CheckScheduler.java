@@ -29,12 +29,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import com.google.common.base.Optional;
-import com.seyren.core.domain.*;
+import com.seyren.core.domain.Alert;
+import com.seyren.core.domain.AlertType;
+import com.seyren.core.domain.Check;
+import com.seyren.core.domain.Subscription;
 import com.seyren.core.service.checker.TargetChecker;
 import com.seyren.core.service.checker.ValueChecker;
-import com.seyren.core.service.notification.EmailNotificationService;
 import com.seyren.core.service.notification.NotificationService;
-import com.seyren.core.service.notification.PagerDutyNotificationService;
 import com.seyren.core.store.AlertsStore;
 import com.seyren.core.store.ChecksStore;
 
@@ -51,11 +52,10 @@ public class CheckScheduler {
 	private final ScheduledExecutorService executor = Executors.newScheduledThreadPool(8);
 
 	@Inject
-	public CheckScheduler(ChecksStore checksStore, AlertsStore alertsStore, List<NotificationService> notificationServices, TargetChecker targetChecker,
-	        ValueChecker valueChecker) {
+	public CheckScheduler(ChecksStore checksStore, AlertsStore alertsStore, List<NotificationService> notificationServices, TargetChecker targetChecker, ValueChecker valueChecker) {
 		this.checksStore = checksStore;
 		this.alertsStore = alertsStore;
-             this.notificationServices = notificationServices;
+		this.notificationServices = notificationServices;
 		this.targetChecker = targetChecker;
 		this.valueChecker = valueChecker;
 	}
@@ -70,10 +70,7 @@ public class CheckScheduler {
 	
 	@Scheduled(fixedRate = 60000)
 	public void sendStatusEmail() {
-		List<Check> checks = checksStore.getChecks(true).getValues();
-		
-	
-		
+		checksStore.getChecks(true).getValues();
 	}
 	
 	private class CheckRunner implements Runnable {
@@ -162,15 +159,15 @@ public class CheckScheduler {
                         continue;
                     }
                     
-                    try {
-                        for (NotificationService n: notificationServices) {
-                            if (n.getClass().toString().toLowerCase().contains(subscription.getType().toString().toLowerCase()) == true) {
-                                LOGGER.debug("Notifying via " + n.getClass().toString().toLowerCase() + " to " + subscription.getType().toString());
-                                n.sendNotification(check, subscription, interestingAlerts);
-                            }
-                        }                     
-                    } catch (Exception e) {
-                        LOGGER.warn("Notifying " + subscription.getTarget() + " by " + subscription.getType() + " failed", e);
+
+                    for (NotificationService notificationService : notificationServices) {
+	                	if (notificationService.canHandle(subscription.getType())) {
+	                		try {
+	                			notificationService.sendNotification(check, subscription, interestingAlerts);
+	                		} catch (Exception e) {
+	                            LOGGER.warn("Notifying " + subscription.getTarget() + " by " + subscription.getType() + " failed.", e);
+	                		}
+	                	}
                     }
                 }
                 

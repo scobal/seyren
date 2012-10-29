@@ -33,6 +33,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import com.seyren.core.domain.Alert;
 import com.seyren.core.domain.Check;
 import com.seyren.core.domain.Subscription;
+import com.seyren.core.domain.SubscriptionType;
 import com.seyren.core.exception.NotificationFailedException;
 import com.seyren.core.util.config.SeyrenConfig;
 import com.seyren.core.util.email.Email;
@@ -50,11 +51,6 @@ public class EmailNotificationService implements NotificationService {
         this.mailSender = mailSender;
         this.seyrenConfig = seyrenConfig;
         Velocity.init();
-    }
-    
-    
-    public void sendStatusEmail(List<Check> checks) {
-    	
     }
     
     @Override
@@ -98,15 +94,20 @@ public class EmailNotificationService implements NotificationService {
     private MimeMessage createMimeMessage(Email email) throws AddressException, MessagingException {
 
     	MimeMessage mail = mailSender.createMimeMessage();
-	InternetAddress senderAddress = new InternetAddress(email.getFrom());
+    	InternetAddress senderAddress = new InternetAddress(email.getFrom());
         mail.addRecipient(RecipientType.TO, new InternetAddress(email.getTo()));
-	mail.setSender(senderAddress);
-	mail.setFrom(senderAddress);
+		mail.setSender(senderAddress);
+		mail.setFrom(senderAddress);
         mail.setText(email.getMessage());
         mail.setSubject(email.getSubject());
         mail.addHeader("Content-Type", "text/html; charset=UTF-8");
 
         return mail;
     }
+
+	@Override
+	public boolean canHandle(SubscriptionType subscriptionType) {
+		return subscriptionType == SubscriptionType.EMAIL;
+	}
     
 }
