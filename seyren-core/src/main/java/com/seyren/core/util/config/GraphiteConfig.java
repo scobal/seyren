@@ -13,24 +13,26 @@
  */
 package com.seyren.core.util.config;
 
-import static org.apache.commons.lang.StringUtils.*;
+import static org.apache.commons.lang.StringUtils.stripEnd;
 
-import javax.inject.Named;
 
-@Named
 public class GraphiteConfig {
 	
 	private final String baseUrl;
 	private final String[] baseParts;
+	private final String username;
+	private final String password;
 
-	public GraphiteConfig() {
-	    this(stripEnd(environmentOrDefault("GRAPHITE_URL", "http://localhost:80"), "/"));
-	}
-	
 	public GraphiteConfig(String baseUrl) {
-        this.baseUrl = baseUrl;
-        this.baseParts = splitBaseUrl(baseUrl);
-    }
+		this(baseUrl, "", "");
+	}
+
+	public GraphiteConfig(String baseUrl, String username, String password) {
+		this.baseUrl = stripEnd(baseUrl, "/");
+		this.baseParts = splitBaseUrl(baseUrl);
+		this.username = username;
+		this.password = password;
+	}
 
 	public String getBaseUrl() {
 		return baseUrl;
@@ -71,19 +73,11 @@ public class GraphiteConfig {
 	}
 	
 	public String getUsername() {
-		return environmentOrDefault("GRAPHITE_USERNAME", "");
+		return username;
 	}
 
 	public String getPassword() {
-		return environmentOrDefault("GRAPHITE_PASSWORD", "");
+		return password;
 	}
-	
-	private static String environmentOrDefault(String propertyName, String defaultValue) {
-	    String value = System.getenv(propertyName);
-	    if (isEmpty(value)) {
-	        return defaultValue;
-	    }
-	    return value;
-	} 
 	
 }

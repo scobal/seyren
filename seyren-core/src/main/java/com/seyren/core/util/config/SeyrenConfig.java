@@ -13,9 +13,12 @@
  */
 package com.seyren.core.util.config;
 
-import static org.apache.commons.lang.StringUtils.*;
+import static org.apache.commons.lang.StringUtils.isEmpty;
+import static org.apache.commons.lang.StringUtils.stripEnd;
 
-import javax.inject.Inject;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.inject.Named;
 
 @Named
@@ -25,13 +28,21 @@ public class SeyrenConfig {
 	private final String baseUrl;
 	private final String fromEmail;
 	private final String pagerDutyDomain;
+	private final Map<String, String> overrides;
 
-	@Inject
-	public SeyrenConfig(GraphiteConfig graphite) {
-		this.graphite = graphite;
-		this.baseUrl = stripEnd(environmentOrDefault("SEYREN_URL", "http://localhost:8080/seyren"), "/");
-		this.fromEmail = environmentOrDefault("SEYREN_FROM_EMAIL", "alert@seyren");
-		this.pagerDutyDomain = environmentOrDefault("PAGERDUTY_DOMAIN", "");
+	public SeyrenConfig() {
+		this(new HashMap<String, String>());
+	}
+
+	public SeyrenConfig(Map<String, String> overrides) {
+		this.overrides = overrides;
+		this.graphite = new GraphiteConfig(getConfigProperty("GRAPHITE_URL", "http://localhost:80"), 
+				getConfigProperty("GRAPHITE_USERNAME", ""), 
+				getConfigProperty("GRAPHITE_PASSWORD", ""));
+		this.baseUrl = stripEnd( getConfigProperty("SEYREN_URL", "http://localhost:8080/seyren"), "/");
+		this.fromEmail = getConfigProperty("SEYREN_FROM_EMAIL", "alert@seyren");
+		this.pagerDutyDomain = getConfigProperty("PAGERDUTY_DOMAIN", "");
+
 	}
 	
 	public GraphiteConfig getGraphite() {
@@ -50,12 +61,21 @@ public class SeyrenConfig {
         return pagerDutyDomain;
     }
     
-    private static String environmentOrDefault(String propertyName, String defaultValue) {
-        String value = System.getenv(propertyName);
-        if (isEmpty(value)) {
-            return defaultValue;
-        }
-        return value;
-    }
+	public void setProperty(String propertyName, String propertyValue) {
+		this.overrides.put(propertyName, propertyValue);
+	}
+    
+    public String getConfigProperty(String propertyName, String defaultValue) {
+		String value;
+		value = overrides.get(propertyName);
+		if (!isEmpty(value)) {
+			return value;
+		}
+		value = System.getenv(propertyName);
+		if (!isEmpty(value)) {
+			return value;
+		}
+		return defaultValue;
+	}
 	
 }
