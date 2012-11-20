@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.bson.types.ObjectId;
@@ -36,6 +37,7 @@ import com.seyren.core.domain.Subscription;
 import com.seyren.core.store.AlertsStore;
 import com.seyren.core.store.ChecksStore;
 import com.seyren.core.store.SubscriptionsStore;
+import com.seyren.core.util.config.SeyrenConfig;
 
 @Named
 public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore {
@@ -44,9 +46,10 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
 	private MongoMapper mapper = new MongoMapper();
 	private DB mongo;
 
-	public MongoStore() {
+	@Inject
+	public MongoStore(SeyrenConfig seyrenConfig) {
 		try {
-			MongoURI mongoUri = new MongoURI(getMongoUri());
+			MongoURI mongoUri = new MongoURI(seyrenConfig.getConfigProperty("MONGO_URL", DEFAULT_MONGO_URL));
 			DB mongo = mongoUri.connectDB();
 			if (mongoUri.getUsername() != null) {
 				mongo.authenticate(mongoUri.getUsername(), mongoUri.getPassword());
@@ -55,14 +58,6 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-	}
-	
-	private String getMongoUri() {
-		String uri = System.getenv("MONGO_URL");
-		if (uri == null) {
-			uri = DEFAULT_MONGO_URL;
-		}
-		return uri;
 	}
 
 	public MongoStore(DB mongo) {

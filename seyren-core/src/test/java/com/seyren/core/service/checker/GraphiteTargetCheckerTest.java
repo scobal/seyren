@@ -18,6 +18,7 @@ import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.Matchers.*;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -29,19 +30,23 @@ import com.github.restdriver.clientdriver.ClientDriverRule;
 import com.google.common.base.Optional;
 import com.seyren.core.domain.Check;
 import com.seyren.core.util.config.GraphiteConfig;
+import com.seyren.core.util.config.SeyrenConfig;
 
 public class GraphiteTargetCheckerTest {
     
     @Rule
     public ClientDriverRule clientDriver = new ClientDriverRule();
     
-    private GraphiteConfig graphiteConfig;
+    
     private GraphiteTargetChecker checker;
     
     @Before
     public void before() {
-        graphiteConfig = new GraphiteConfig(clientDriver.getBaseUrl());
-        checker = new GraphiteTargetChecker(graphiteConfig);
+        
+        Map<String, String> overrides = new HashMap<String, String>();
+        overrides.put("GRAPHITE_URL", clientDriver.getBaseUrl());
+		SeyrenConfig seyrenConfig = new SeyrenConfig(overrides);
+        checker = new GraphiteTargetChecker(seyrenConfig);
     }
     
     @Test
@@ -160,7 +165,10 @@ public class GraphiteTargetCheckerTest {
     
     @Test
     public void exceptionGettingDataFromGraphiteIsHandled() throws Exception {
-        checker = new GraphiteTargetChecker(new GraphiteConfig("http://unknown"));
+    	
+    	Map<String, String> overrides = new HashMap<String, String>();
+        overrides.put("GRAPHITE_URL", "http://unknown");
+        checker = new GraphiteTargetChecker(new SeyrenConfig(overrides));
         checker.check(checkWithTarget("service.*.1MinuteRate"));
     }
     
