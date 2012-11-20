@@ -61,6 +61,10 @@ public class SeyrenConfig {
         return pagerDutyDomain;
     }
     
+	public void setProperty(String propertyName, String propertyValue) {
+		this.overrides.put(propertyName, propertyValue);
+	}
+    
     public String getConfigProperty(String propertyName, String defaultValue) {
 		String value;
 		value = overrides.get(propertyName);
