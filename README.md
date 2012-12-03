@@ -35,6 +35,7 @@ open http://localhost:8080/seyren
 * `SMTP_PORT` - The smtp server port. Default: `25`
 * `SMTP_USERNAME` - The smtp server username if authenticated SMTP is used. Default: ``
 * `SMTP_PASSWORD` - The smtp server password if authenticated SMTP is used. Default: ``
+* `SMTP_PROTOCOL` - The smtp server protocol if authenticated SMTP is used. Default: `smtp`
 
 ###Cloud Formation
 

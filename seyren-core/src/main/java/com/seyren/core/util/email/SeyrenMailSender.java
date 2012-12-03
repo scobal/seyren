@@ -32,12 +32,14 @@ public class SeyrenMailSender extends JavaMailSenderImpl {
 	
     public static final String DEFAULT_SMTP_HOST = "localhost";
     public static final String DEFAULT_SMTP_PORT = "25";
+    public static final String DEFAULT_SMTP_PROTOCOL = "smtp";
 
     public SeyrenMailSender() {
     	
     	String username = environmentOrDefault("SMTP_USERNAME", "");
     	String password = environmentOrDefault("SMTP_PASSWORD","");
     	String hostname = environmentOrDefault("SMTP_HOST", DEFAULT_SMTP_HOST);
+        String protocol = environmentOrDefault("SMTP_PROTOCOL", DEFAULT_SMTP_PROTOCOL);
         
     	setPort(Integer.parseInt(environmentOrDefault("SMTP_PORT", DEFAULT_SMTP_PORT)));
     	setHost(hostname);       
@@ -50,7 +52,7 @@ public class SeyrenMailSender extends JavaMailSenderImpl {
 	        setJavaMailProperties(props);
         }
         
-        setProtocol("smtp");
+        setProtocol(protocol);
         
         LOGGER.info(username + ":" + password + "@" + hostname);
         
