@@ -26,6 +26,11 @@
             <artifactId>guava</artifactId>
         </dependency>
         <dependency>
+			<groupId>commons-httpclient</groupId>
+			<artifactId>commons-httpclient</artifactId>	  
+			<type>jar</type>
+        </dependency>
+        <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
         </dependency>
@@ -92,7 +97,7 @@
 		<dependency>
 			<groupId>biz.neustar</groupId>
 			<artifactId>pagerduty</artifactId>
-		</dependency>		
+		</dependency>
 	</dependencies>
 
 	<build>
