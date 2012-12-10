@@ -28,6 +28,8 @@ open http://localhost:8080/seyren
 * `GRAPHITE_USERNAME` - The Http Basic auth username for the graphite server. Default: ``
 * `GRAPHITE_PASSWORD` - The Http Basic auth password for the graphite server. Default: ``
 * `MONGO_URL` - The mongo connection string. Default: `mongodb://localhost:27017/seyren`
+* `HIPCHAT_AUTH_TOKEN` - The hipchat api auth token. Default: ``
+* `HIPCHAT_USER_NAME` - The username that messages will be sent from to a hipchat room. Default: `Seyren Alert`
 * `PAGERDUTY_DOMAIN` - The PagerDuty domain to be notified. Default: ``
 * `SEYREN_URL` - The location of your seyren instance. Default: `http://localhost:8080/seyren`
 * `SEYREN_FROM_EMAIL` - The from email address for sending out notifications. Default: `alert@seyren`
