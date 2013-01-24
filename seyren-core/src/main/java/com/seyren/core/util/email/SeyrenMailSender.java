@@ -46,10 +46,17 @@ public class SeyrenMailSender extends JavaMailSenderImpl {
         setUsername(username);
         setPassword(password);
         
+        Properties props = new Properties();
         if(username != "" && password != "") {
-	        Properties props = new Properties();
-	        props.setProperty("mail.smtp.auth", "true");
-	        setJavaMailProperties(props);
+            props.setProperty("mail.smtp.auth", "true");
+        }
+
+        if(getPort() == 587) {
+            props.put("mail.smtp.starttls.enable", "true");
+        }
+
+        if(props.size() > 0) {
+            setJavaMailProperties(props);
         }
         
         setProtocol(protocol);
