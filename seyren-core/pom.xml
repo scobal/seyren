@@ -13,9 +13,13 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
+			<groupId>biz.neustar</groupId>
+			<artifactId>pagerduty</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.github.rest-driver</groupId>
             <artifactId>rest-client-driver</artifactId>
@@ -28,7 +32,6 @@
         <dependency>
 			<groupId>commons-httpclient</groupId>
 			<artifactId>commons-httpclient</artifactId>	  
-			<type>jar</type>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
@@ -52,7 +55,7 @@
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
-			<artifactId>junit-dep</artifactId>
+			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
         <dependency>
@@ -79,12 +82,8 @@
             <scope>test</scope>
         </dependency>
 		<dependency>
-			<groupId>org.codehaus.jackson</groupId>
-			<artifactId>jackson-core-asl</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.codehaus.jackson</groupId>
-			<artifactId>jackson-mapper-asl</artifactId>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -94,14 +93,6 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context-support</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>biz.neustar</groupId>
-			<artifactId>pagerduty</artifactId>
-		</dependency>
 	</dependencies>
-
-	<build>
-
-	</build>
 
 </project>

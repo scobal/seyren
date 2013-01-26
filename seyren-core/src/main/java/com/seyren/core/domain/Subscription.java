@@ -13,12 +13,12 @@
  */
 package com.seyren.core.domain;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.codehaus.jackson.map.annotate.JsonDeserialize;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.seyren.core.util.datetime.LocalTimeDeserializer;
 import com.seyren.core.util.datetime.LocalTimeSerializer;
 

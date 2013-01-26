@@ -15,11 +15,12 @@ package com.seyren.core.util.datetime;
 
 import java.io.IOException;
 
-import org.codehaus.jackson.JsonGenerator;
-import org.codehaus.jackson.JsonProcessingException;
-import org.codehaus.jackson.map.JsonSerializer;
-import org.codehaus.jackson.map.SerializerProvider;
 import org.joda.time.LocalTime;
+
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.SerializerProvider;
 
 public class LocalTimeSerializer extends JsonSerializer<LocalTime> {
 

@@ -10,4 +10,6 @@
         
         <task:annotation-driven />
         
+        <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider" />
+        
 </beans>

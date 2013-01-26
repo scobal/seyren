@@ -15,8 +15,9 @@ package com.seyren.core.domain;
 
 import java.math.BigDecimal;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.joda.time.DateTime;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * An instance of this class represents an occurrence of a check that is found

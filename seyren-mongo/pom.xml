@@ -10,10 +10,6 @@
         <version>0.1-SNAPSHOT</version>
     </parent>
 
-    <properties>
-
-    </properties>
-
     <dependencies>
 
         <dependency>
@@ -23,7 +19,7 @@
         </dependency>
         <dependency>
             <groupId>junit</groupId>
-            <artifactId>junit-dep</artifactId>
+            <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -42,9 +38,5 @@
         </dependency>
 
     </dependencies>
-
-    <build>
-
-    </build>
 
 </project>

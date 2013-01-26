@@ -55,7 +55,7 @@ public class GraphiteTargetCheckerTest {
                     .withParam("uniq", Pattern.compile("[0-9]+"))
                     .withParam("format", "json")
                     .withParam("target", "service.error.1MinuteRate"),
-                giveResponse(response));
+                giveResponse(response, "application/json"));
         
         Map<String, Optional<BigDecimal>> values = checker.check(check());
         
@@ -73,7 +73,7 @@ public class GraphiteTargetCheckerTest {
                     .withParam("uniq", Pattern.compile("[0-9]+"))
                     .withParam("format", "json")
                     .withParam("target", "service.error.1MinuteRate"),
-                giveResponse(response));
+                giveResponse(response, "application/json"));
         
         Map<String, Optional<BigDecimal>> values = checker.check(check());
         
@@ -92,7 +92,7 @@ public class GraphiteTargetCheckerTest {
                     .withParam("uniq", Pattern.compile("[0-9]+"))
                     .withParam("format", "json")
                     .withParam("target", "service.error.1MinuteRate"),
-                giveResponse(response));
+                giveResponse(response, "application/json"));
         
         Map<String, Optional<BigDecimal>> values = checker.check(check());
         
@@ -110,7 +110,7 @@ public class GraphiteTargetCheckerTest {
                     .withParam("uniq", Pattern.compile("[0-9]+"))
                     .withParam("format", "json")
                     .withParam("target", "service.error.1MinuteRate"),
-                giveResponse(response));
+                giveResponse(response, "application/json"));
         
         Map<String, Optional<BigDecimal>> values = checker.check(check());
         
@@ -128,7 +128,7 @@ public class GraphiteTargetCheckerTest {
                     .withParam("uniq", Pattern.compile("[0-9]+"))
                     .withParam("format", "json")
                     .withParam("target", "service.error.1MinuteRate"),
-                giveResponse(response));
+                giveResponse(response, "application/json"));
         
         Map<String, Optional<BigDecimal>> values = checker.check(check());
         
@@ -149,7 +149,7 @@ public class GraphiteTargetCheckerTest {
                     .withParam("uniq", Pattern.compile("[0-9]+"))
                     .withParam("format", "json")
                     .withParam("target", "service.*.1MinuteRate"),
-                giveResponse(response));
+                giveResponse(response, "application/json"));
         
         Map<String, Optional<BigDecimal>> values = checker.check(checkWithTarget("service.*.1MinuteRate"));
         

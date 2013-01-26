@@ -32,11 +32,11 @@ import org.apache.http.impl.client.AbstractHttpClient;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
-import org.codehaus.jackson.JsonNode;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Optional;
 import com.seyren.core.domain.Check;
 import com.seyren.core.exception.InvalidGraphiteValueException;
