@@ -117,8 +117,9 @@
                 <groupId>com.mycila.maven-license-plugin</groupId>
                 <artifactId>maven-license-plugin</artifactId>
                 <version>1.9.0</version>
+                <inherited>false</inherited>
                 <configuration>
-                    <header>LICENSE</header>
+                    <header>${basedir}/LICENSE</header>
                     <strictCheck>true</strictCheck>
                     <aggregate>true</aggregate>
                     <encoding>UTF-8</encoding>
@@ -131,7 +132,8 @@
                 </configuration>
                 <executions>
                     <execution>
-                        <phase>process-sources</phase>
+                        <id>check-headers</id>
+                        <phase>verify</phase>
                         <goals>
                             <goal>format</goal>
                         </goals>
