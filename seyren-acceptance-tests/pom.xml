@@ -92,7 +92,6 @@
                     <skip>true</skip>
                 </configuration>
             </plugin>
-
             <plugin>
                 <groupId>org.mortbay.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
@@ -136,7 +135,6 @@
                     </dependency>
                 </dependencies>
             </plugin>
-
         </plugins>
     </build>
     <profiles>
