@@ -42,6 +42,7 @@
         <commons-httpclient.version>3.1</commons-httpclient.version>
 		<commons.io.version>2.3</commons.io.version>
 		<commons-lang.version>2.6</commons-lang.version>
+        <commons-logging.version>99.0-does-not-exist</commons-logging.version>
 		<javax.inject.version>1</javax.inject.version>
 		<javax.mail.version>1.4.5</javax.mail.version>
 		<joda-time.version>2.1</joda-time.version>
@@ -200,6 +201,12 @@
 				<artifactId>commons-lang</artifactId>
 				<version>${commons-lang.version}</version>
 			</dependency>
+            <dependency>
+                <groupId>commons-logging</groupId>
+                <artifactId>commons-logging</artifactId>
+                <version>${commons-logging.version}</version>
+                <scope>provided</scope>
+            </dependency>
 			<dependency>
 				<groupId>javax.inject</groupId>
 				<artifactId>javax.inject</artifactId>
