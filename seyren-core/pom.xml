@@ -20,6 +20,10 @@
             <artifactId>jackson-databind</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-joda</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.github.rest-driver</groupId>
             <artifactId>rest-client-driver</artifactId>
             <scope>test</scope>
