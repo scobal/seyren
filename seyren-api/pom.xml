@@ -24,11 +24,6 @@
             <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-jaxrs</artifactId>
         </dependency>
-
     </dependencies>
-
-    <build>
-
-    </build>
 
 </project>

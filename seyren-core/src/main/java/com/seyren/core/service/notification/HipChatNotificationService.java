@@ -13,27 +13,44 @@
  */
 package com.seyren.core.service.notification;
 
-import com.seyren.core.domain.*;
-import com.seyren.core.exception.NotificationFailedException;
-import com.seyren.core.util.config.SeyrenConfig;
+import java.util.ArrayList;
 import java.util.List;
+
 import javax.inject.Inject;
 import javax.inject.Named;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.PostMethod;
+
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.LoggerFactory;
+
+import com.seyren.core.domain.Alert;
+import com.seyren.core.domain.AlertType;
+import com.seyren.core.domain.Check;
+import com.seyren.core.domain.Subscription;
+import com.seyren.core.domain.SubscriptionType;
+import com.seyren.core.exception.NotificationFailedException;
+import com.seyren.core.util.config.SeyrenConfig;
 
 @Named
 public class HipChatNotificationService implements NotificationService {
     
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(HipChatNotificationService.class);
-    private final SeyrenConfig seyrenConfig;
     
-    private String host = "api.hipchat.com";
+    private final SeyrenConfig seyrenConfig;
+    private final String baseUrl;
     
     @Inject
     public HipChatNotificationService(SeyrenConfig seyrenConfig) {
         this.seyrenConfig = seyrenConfig;
+        this.baseUrl = "https://api.hipchat.com";
+    }
+    
+    protected HipChatNotificationService(SeyrenConfig seyrenConfig, String baseUrl) {
+        this.seyrenConfig = seyrenConfig;
+        this.baseUrl = baseUrl;
     }
     
     @Override
@@ -44,35 +61,37 @@ public class HipChatNotificationService implements NotificationService {
         try {
             if (check.getState() == AlertType.ERROR) {
                 String message = "Check <a href=" + seyrenConfig.getBaseUrl() + "/#/checks/" + check.getId() + ">" + check.getName() + "</a> has exceeded its error threshold value. Please investigate.";
-                SendMessage(message, MessageColor.RED, roomIds, from, token, true);
+                sendMessage(message, MessageColor.RED, roomIds, from, token, true);
             } else if (check.getState() == AlertType.OK) {
                 String message = "Check <a href=" + seyrenConfig.getBaseUrl() + "/#/checks/" + check.getId() + ">" + check.getName() + "</a> is back up.";
-                SendMessage(message, MessageColor.GREEN, roomIds, from, token, true);
+                sendMessage(message, MessageColor.GREEN, roomIds, from, token, true);
             } else {
-                LOGGER.warn("Did not send notification to HipChat for check in state: " + check.getState());
+                LOGGER.warn("Did not send notification to HipChat for check in state: {}", check.getState());
             }
         } catch (Exception e) {
             throw new NotificationFailedException("Failed to send notification to HipChat", e);
         }
     }
     
-    public void SendMessage(String message, MessageColor color, String[] roomIds, String from, String authToken, boolean notify) {
+    private void sendMessage(String message, MessageColor color, String[] roomIds, String from, String authToken, boolean notify) {
         for (String roomId : roomIds) {
-            LOGGER.info("Posting: " + from + " to " + roomId + ": " + message + " " + color);
-            HttpClient client = new HttpClient();
-            String url = "https://" + host + "/v1/rooms/message?auth_token=" + authToken;
-            PostMethod post = new PostMethod(url);
+            LOGGER.info("Posting: {} to {}: {} {}", from, roomId, message, color);
+            HttpClient client = new DefaultHttpClient();
+            String url = baseUrl + "/v1/rooms/message";
+            HttpPost post = new HttpPost(url);
             
             try {
-                post.addParameter("from", from);
-                post.addParameter("room_id", roomId);
-                post.addParameter("message", message);
-                post.addParameter("color", color.name().toLowerCase());
+                List<BasicNameValuePair> parameters = new ArrayList<BasicNameValuePair>();
+                parameters.add(new BasicNameValuePair("auth_token", authToken));
+                parameters.add(new BasicNameValuePair("from", from));
+                parameters.add(new BasicNameValuePair("room_id", roomId));
+                parameters.add(new BasicNameValuePair("message", message));
+                parameters.add(new BasicNameValuePair("color", color.name().toLowerCase()));
                 if (notify) {
-                    post.addParameter("notify", "1");
+                    parameters.add(new BasicNameValuePair("notify", "1"));
                 }
-                post.getParams().setContentCharset("UTF-8");
-                client.executeMethod(post);
+                post.setEntity(new UrlEncodedFormEntity(parameters));
+                client.execute(post);
             } catch (Exception e) {
                 LOGGER.warn("Error posting to HipChat", e);
             } finally {
@@ -86,7 +105,7 @@ public class HipChatNotificationService implements NotificationService {
         return subscriptionType == SubscriptionType.HIPCHAT;
     }
     
-    public enum MessageColor {
+    private enum MessageColor {
         YELLOW, RED, GREEN, PURPLE, RANDOM;
     }
 }
