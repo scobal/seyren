@@ -30,7 +30,6 @@ public class HipChatNotificationService implements NotificationService {
     private final SeyrenConfig seyrenConfig;
 
     private String host = "api.hipchat.com";     
-    private String from;
 
     @Inject
     public HipChatNotificationService(SeyrenConfig seyrenConfig) {
