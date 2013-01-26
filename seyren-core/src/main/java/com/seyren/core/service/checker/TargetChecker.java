@@ -20,7 +20,7 @@ import com.google.common.base.Optional;
 import com.seyren.core.domain.Check;
 
 public interface TargetChecker {
-
+    
     Map<String, Optional<BigDecimal>> check(Check check) throws Exception;
-	
+    
 }

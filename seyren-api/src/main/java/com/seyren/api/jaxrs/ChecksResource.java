@@ -31,27 +31,27 @@ import com.seyren.core.domain.Check;
 
 @Path("/checks")
 public interface ChecksResource {
-	
-	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	Response getChecks(@QueryParam("state") Set<String> states, @QueryParam("enabled") Boolean enabled);
-	
-	@POST
-	@Consumes(MediaType.APPLICATION_JSON)
-	Response createCheck(Check check);
-	
-	@GET
-	@Path("/{checkId}")
-	@Produces(MediaType.APPLICATION_JSON)
-	Response getCheck(@PathParam("checkId") String checkId);
-	
-	@PUT
-	@Path("/{checkId}")
-	@Consumes(MediaType.APPLICATION_JSON)
-	Response updateCheck(@PathParam("checkId") String checkId, Check check);
-	
-	@DELETE
-	@Path("/{checkId}")
-	Response deleteCheck(@PathParam("checkId") String checkId);
-
+    
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    Response getChecks(@QueryParam("state") Set<String> states, @QueryParam("enabled") Boolean enabled);
+    
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    Response createCheck(Check check);
+    
+    @GET
+    @Path("/{checkId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    Response getCheck(@PathParam("checkId") String checkId);
+    
+    @PUT
+    @Path("/{checkId}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    Response updateCheck(@PathParam("checkId") String checkId, Check check);
+    
+    @DELETE
+    @Path("/{checkId}")
+    Response deleteCheck(@PathParam("checkId") String checkId);
+    
 }

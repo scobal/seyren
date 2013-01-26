@@ -48,75 +48,75 @@ public class GraphiteTargetChecker implements TargetChecker {
     private static final Logger LOGGER = LoggerFactory.getLogger(GraphiteTargetChecker.class);
     private static final String QUERY_STRING = "from=-11minutes&until=-1minutes&uniq=%s&format=json&target=%s";
     private static final int MAX_CONNECTIONS_PER_ROUTE = 20;
-
-	private final HttpClient client;
-	private final String graphiteScheme;
-	private final String graphiteHost;
-	private final String graphitePath;
-	private final String graphiteUsername;
-	private final String graphitePassword;
-	private final JsonNodeResponseHandler handler = new JsonNodeResponseHandler();
-	
-	@Inject
-	public GraphiteTargetChecker(GraphiteConfig graphiteConfig) {
-	    this.graphiteScheme = graphiteConfig.getScheme();
-	    this.graphiteHost = graphiteConfig.getHost();
-	    this.graphitePath = graphiteConfig.getPath();
-		this.graphiteUsername = graphiteConfig.getUsername();
-		this.graphitePassword = graphiteConfig.getPassword();	    
-	    this.client = new DefaultHttpClient(createConnectionManager());
-	    setAuthHeadersIfNecessary();
-	}
-	
-	@Override
-	public Map<String, Optional<BigDecimal>> check(Check check) throws Exception {
-	    
-	    String formattedQuery = String.format(QUERY_STRING, new DateTime().getMillis(), check.getTarget());
-	    URI uri = new URI(graphiteScheme, graphiteHost, graphitePath + "/render/", formattedQuery, null);
-		HttpGet get = new HttpGet(uri);
-		Map<String, Optional<BigDecimal>> targetValues = new HashMap<String, Optional<BigDecimal>>();
-
-		try {
-		    JsonNode response = client.execute(get, handler);
-			for (JsonNode metric : response) {
-    			String target = metric.path("target").asText();
-    			
-    			try {
-        			BigDecimal value = getLatestValue(metric);
-        			targetValues.put(target, Optional.of(value));
-    			} catch (InvalidGraphiteValueException e) {
-    			    // Silence these - we don't know what's causing Graphite to return null values
-    			    LOGGER.warn(check.getName() + " failed to read from Graphite", e);
-    			    targetValues.put(target, Optional.<BigDecimal>absent());
-    			}
-			}
-		} catch (Exception e) {
-		    LOGGER.warn(check.getName() + " failed to read from Graphite", e);
-		} finally {
-			get.releaseConnection();
-		}
-		
-		return targetValues;
-		
-	}
-
-	/**
-	 * Loop through the datapoints in reverse order until we find the latest non-null value
-	 */
-	private BigDecimal getLatestValue(JsonNode node) throws Exception {
-		JsonNode datapoints = node.get("datapoints");
-		
-		for (int i = datapoints.size() - 1; i >= 0; i--) {
-			String value = datapoints.get(i).get(0).asText();
-			if (!value.equals("null")) {
-				return new BigDecimal(value);
-			}
-		}
-
-		LOGGER.warn("{}", node);
-		throw new InvalidGraphiteValueException("Could not find a valid datapoint for target: " + node.get("target"));
-	}
-
+    
+    private final HttpClient client;
+    private final String graphiteScheme;
+    private final String graphiteHost;
+    private final String graphitePath;
+    private final String graphiteUsername;
+    private final String graphitePassword;
+    private final JsonNodeResponseHandler handler = new JsonNodeResponseHandler();
+    
+    @Inject
+    public GraphiteTargetChecker(GraphiteConfig graphiteConfig) {
+        this.graphiteScheme = graphiteConfig.getScheme();
+        this.graphiteHost = graphiteConfig.getHost();
+        this.graphitePath = graphiteConfig.getPath();
+        this.graphiteUsername = graphiteConfig.getUsername();
+        this.graphitePassword = graphiteConfig.getPassword();
+        this.client = new DefaultHttpClient(createConnectionManager());
+        setAuthHeadersIfNecessary();
+    }
+    
+    @Override
+    public Map<String, Optional<BigDecimal>> check(Check check) throws Exception {
+        
+        String formattedQuery = String.format(QUERY_STRING, new DateTime().getMillis(), check.getTarget());
+        URI uri = new URI(graphiteScheme, graphiteHost, graphitePath + "/render/", formattedQuery, null);
+        HttpGet get = new HttpGet(uri);
+        Map<String, Optional<BigDecimal>> targetValues = new HashMap<String, Optional<BigDecimal>>();
+        
+        try {
+            JsonNode response = client.execute(get, handler);
+            for (JsonNode metric : response) {
+                String target = metric.path("target").asText();
+                
+                try {
+                    BigDecimal value = getLatestValue(metric);
+                    targetValues.put(target, Optional.of(value));
+                } catch (InvalidGraphiteValueException e) {
+                    // Silence these - we don't know what's causing Graphite to return null values
+                    LOGGER.warn(check.getName() + " failed to read from Graphite", e);
+                    targetValues.put(target, Optional.<BigDecimal> absent());
+                }
+            }
+        } catch (Exception e) {
+            LOGGER.warn(check.getName() + " failed to read from Graphite", e);
+        } finally {
+            get.releaseConnection();
+        }
+        
+        return targetValues;
+        
+    }
+    
+    /**
+     * Loop through the datapoints in reverse order until we find the latest non-null value
+     */
+    private BigDecimal getLatestValue(JsonNode node) throws Exception {
+        JsonNode datapoints = node.get("datapoints");
+        
+        for (int i = datapoints.size() - 1; i >= 0; i--) {
+            String value = datapoints.get(i).get(0).asText();
+            if (!value.equals("null")) {
+                return new BigDecimal(value);
+            }
+        }
+        
+        LOGGER.warn("{}", node);
+        throw new InvalidGraphiteValueException("Could not find a valid datapoint for target: " + node.get("target"));
+    }
+    
     private ClientConnectionManager createConnectionManager() {
         PoolingClientConnectionManager manager = new PoolingClientConnectionManager();
         manager.setDefaultMaxPerRoute(MAX_CONNECTIONS_PER_ROUTE);
@@ -124,18 +124,18 @@ public class GraphiteTargetChecker implements TargetChecker {
     }
     
     /**
-	 * Set auth header for graphite if username and password are provided
-	 */
-    private void setAuthHeadersIfNecessary(){
-    	if (!StringUtils.isEmpty(graphiteUsername) && !StringUtils.isEmpty(graphitePassword)) {
-    		CredentialsProvider credsProvider = new BasicCredentialsProvider();
-    		credsProvider.setCredentials(
-    				new AuthScope(graphiteHost, AuthScope.ANY_PORT), 
-    				new UsernamePasswordCredentials(graphiteUsername, graphitePassword));
-    		if (client instanceof AbstractHttpClient) {
-    			((AbstractHttpClient) client).setCredentialsProvider(credsProvider);
-    		}
-    	}
+     * Set auth header for graphite if username and password are provided
+     */
+    private void setAuthHeadersIfNecessary() {
+        if (!StringUtils.isEmpty(graphiteUsername) && !StringUtils.isEmpty(graphitePassword)) {
+            CredentialsProvider credsProvider = new BasicCredentialsProvider();
+            credsProvider.setCredentials(
+                    new AuthScope(graphiteHost, AuthScope.ANY_PORT),
+                    new UsernamePasswordCredentials(graphiteUsername, graphitePassword));
+            if (client instanceof AbstractHttpClient) {
+                ((AbstractHttpClient) client).setCredentialsProvider(credsProvider);
+            }
+        }
     }
-
+    
 }

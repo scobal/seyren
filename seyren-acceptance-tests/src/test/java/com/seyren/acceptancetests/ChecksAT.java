@@ -24,68 +24,68 @@ import org.junit.Test;
 import com.github.restdriver.serverdriver.http.response.Response;
 
 public class ChecksAT {
-	
-	@Test
-	public void testGetChecksReturnsOk() {
-		Response response = get(checks());
-		assertThat(response, hasStatusCode(200));
-		assertThat(response.asJson(), hasJsonPath("$.values", hasSize(0)));
-	}
-	
-	@Test
-	public void testGetChecksReturnsResultsOk() {
+    
+    @Test
+    public void testGetChecksReturnsOk() {
+        Response response = get(checks());
+        assertThat(response, hasStatusCode(200));
+        assertThat(response.asJson(), hasJsonPath("$.values", hasSize(0)));
+    }
+    
+    @Test
+    public void testGetChecksReturnsResultsOk() {
         Response createResponse = createCheck("{ }");
-		Response response = get(checks());
-		assertThat(response, hasStatusCode(200));
-		assertThat(response.asJson(), hasJsonPath("$.values", hasSize(1)));
+        Response response = get(checks());
+        assertThat(response, hasStatusCode(200));
+        assertThat(response.asJson(), hasJsonPath("$.values", hasSize(1)));
         deleteLocation(createResponse.getHeader("Location").getValue());
-	}
-	
-	@Test
-	public void testGetChecksByErrorStateReturnsOk() {
+    }
+    
+    @Test
+    public void testGetChecksByErrorStateReturnsOk() {
         Response createResponse = createCheck("{ \"state\" : \"ERROR\" }");
-		Response response = get(checks().withParam("state", "ERROR"));
-		assertThat(response, hasStatusCode(200));
-		assertThat(response.asJson(), hasJsonPath("$.values", hasSize(1)));
+        Response response = get(checks().withParam("state", "ERROR"));
+        assertThat(response, hasStatusCode(200));
+        assertThat(response.asJson(), hasJsonPath("$.values", hasSize(1)));
         deleteLocation(createResponse.getHeader("Location").getValue());
-	}
-	
-	@Test
-	public void testGetChecksByWarnStateReturnsOk() {
+    }
+    
+    @Test
+    public void testGetChecksByWarnStateReturnsOk() {
         Response createResponse = createCheck("{ \"state\" : \"WARN\" }");
-		Response response = get(checks().withParam("state", "WARN"));
-		assertThat(response, hasStatusCode(200));
-		assertThat(response.asJson(), hasJsonPath("$.values", hasSize(1)));
+        Response response = get(checks().withParam("state", "WARN"));
+        assertThat(response, hasStatusCode(200));
+        assertThat(response.asJson(), hasJsonPath("$.values", hasSize(1)));
         deleteLocation(createResponse.getHeader("Location").getValue());
-	}
-	
+    }
+    
     @Test
     public void testCreateCheckReturnsCreated() {
         Response response = createCheck("{ }");
-		assertThat(response, hasStatusCode(201));
+        assertThat(response, hasStatusCode(201));
         deleteLocation(response.getHeader("Location").getValue());
-	}
+    }
     
     @Test
     public void testCreateCheckWithErrorState() {
         Response response = createCheck("{ \"state\" : \"ERROR\" }");
-		assertThat(response, hasStatusCode(201));
-		String location = response.getHeader("Location").getValue();
-		assertThat(get(location).asJson(), hasJsonPath("$.state", is("ERROR")));
+        assertThat(response, hasStatusCode(201));
+        String location = response.getHeader("Location").getValue();
+        assertThat(get(location).asJson(), hasJsonPath("$.state", is("ERROR")));
         deleteLocation(location);
-	}
-    
-    private Response createCheck(String body) { 
-    	Response response = post(checks(), body(body, "application/json"));
-    	assertThat(response, hasStatusCode(201));
-    	assertThat(response, hasHeader("Location"));
-    	return response;
     }
-	
-	private void deleteLocation(String location) {
-		assertThat(get(location), hasStatusCode(200));
+    
+    private Response createCheck(String body) {
+        Response response = post(checks(), body(body, "application/json"));
+        assertThat(response, hasStatusCode(201));
+        assertThat(response, hasHeader("Location"));
+        return response;
+    }
+    
+    private void deleteLocation(String location) {
+        assertThat(get(location), hasStatusCode(200));
         delete(location);
         assertThat(get(location), hasStatusCode(404));
-	}
-
+    }
+    
 }

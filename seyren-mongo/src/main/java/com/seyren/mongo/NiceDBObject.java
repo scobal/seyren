@@ -17,9 +17,9 @@ import com.mongodb.BasicDBObject;
 
 public final class NiceDBObject extends BasicDBObject {
     
-	private static final long serialVersionUID = 1L;
-
-	private NiceDBObject(String field, Object value) {
+    private static final long serialVersionUID = 1L;
+    
+    private NiceDBObject(String field, Object value) {
         put(field, value);
     }
     

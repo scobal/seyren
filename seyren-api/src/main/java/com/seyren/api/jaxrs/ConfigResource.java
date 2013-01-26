@@ -21,9 +21,9 @@ import javax.ws.rs.core.Response;
 
 @Path("/config")
 public interface ConfigResource {
-
-	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	Response getSeyrenConfig();
-	
+    
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    Response getSeyrenConfig();
+    
 }

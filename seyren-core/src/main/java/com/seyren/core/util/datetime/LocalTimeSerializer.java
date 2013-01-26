@@ -23,17 +23,17 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
 public class LocalTimeSerializer extends JsonSerializer<LocalTime> {
-
-	@Override
-	public void serialize(LocalTime time, JsonGenerator gen, SerializerProvider provider) throws IOException, JsonProcessingException {
-		gen.writeString(padWithZero(time.getHourOfDay()) + padWithZero(time.getMinuteOfHour()));
-	}
-
-	private String padWithZero(int value) {
-		if (Integer.toString(value).length() == 1) {
-			return "0" + value;
-		}
-		return "" + value;
-	}
-
+    
+    @Override
+    public void serialize(LocalTime time, JsonGenerator gen, SerializerProvider provider) throws IOException, JsonProcessingException {
+        gen.writeString(padWithZero(time.getHourOfDay()) + padWithZero(time.getMinuteOfHour()));
+    }
+    
+    private String padWithZero(int value) {
+        if (Integer.toString(value).length() == 1) {
+            return "0" + value;
+        }
+        return "" + value;
+    }
+    
 }

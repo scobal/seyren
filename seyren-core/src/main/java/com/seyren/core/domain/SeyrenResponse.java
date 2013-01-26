@@ -16,65 +16,65 @@ package com.seyren.core.domain;
 import java.util.List;
 
 public class SeyrenResponse<T> {
-
-	private List<T> values;
-	
-	private int items;
-	
-	private int start;
-	
-	private int total;
-
-	public List<T> getValues() {
-		return values;
-	}
-
-	public void setValues(List<T> values) {
-		this.values = values;
-	}
-
-	public SeyrenResponse<T> withValues(List<T> values) {
-		setValues(values);
-		return this;
-	}
-	
-	public int getItems() {
-		return items;
-	}
-	
-	public void setItems(int items) {
-		this.items = items;
-	}
-	
-	public SeyrenResponse<T> withItems(int items) {
-		setItems(items);
-		return this;
-	}
-
-	public int getStart() {
-		return start;
-	}
-
-	public void setStart(int start) {
-		this.start = start;
-	}
-	
-	public SeyrenResponse<T> withStart(int start) {
-		setStart(start);
-		return this;
-	}
-
-	public int getTotal() {
-		return total;
-	}
-
-	public void setTotal(int total) {
-		this.total = total;
-	}
-	
-	public SeyrenResponse<T> withTotal(int total) {
-		setTotal(total);
-		return this;
-	}
-	
+    
+    private List<T> values;
+    
+    private int items;
+    
+    private int start;
+    
+    private int total;
+    
+    public List<T> getValues() {
+        return values;
+    }
+    
+    public void setValues(List<T> values) {
+        this.values = values;
+    }
+    
+    public SeyrenResponse<T> withValues(List<T> values) {
+        setValues(values);
+        return this;
+    }
+    
+    public int getItems() {
+        return items;
+    }
+    
+    public void setItems(int items) {
+        this.items = items;
+    }
+    
+    public SeyrenResponse<T> withItems(int items) {
+        setItems(items);
+        return this;
+    }
+    
+    public int getStart() {
+        return start;
+    }
+    
+    public void setStart(int start) {
+        this.start = start;
+    }
+    
+    public SeyrenResponse<T> withStart(int start) {
+        setStart(start);
+        return this;
+    }
+    
+    public int getTotal() {
+        return total;
+    }
+    
+    public void setTotal(int total) {
+        this.total = total;
+    }
+    
+    public SeyrenResponse<T> withTotal(int total) {
+        setTotal(total);
+        return this;
+    }
+    
 }

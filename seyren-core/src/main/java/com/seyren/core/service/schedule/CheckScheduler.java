@@ -12,6 +12,7 @@
  * limitations under the License.
  */
 package com.seyren.core.service.schedule;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,55 +44,55 @@ import com.seyren.core.store.ChecksStore;
 public class CheckScheduler {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(CheckScheduler.class);
-
-	private final ChecksStore checksStore;
-	private final AlertsStore alertsStore;
-	private final List<NotificationService> notificationServices;
-	private final TargetChecker targetChecker;
-	private final ValueChecker valueChecker;
-	private final ScheduledExecutorService executor = Executors.newScheduledThreadPool(8);
-
-	@Inject
-	public CheckScheduler(ChecksStore checksStore, AlertsStore alertsStore, List<NotificationService> notificationServices, TargetChecker targetChecker, ValueChecker valueChecker) {
-		this.checksStore = checksStore;
-		this.alertsStore = alertsStore;
-		this.notificationServices = notificationServices;
-		this.targetChecker = targetChecker;
-		this.valueChecker = valueChecker;
-	}
-	
-	@Scheduled(fixedRate = 60000)
-	public void performChecks() {
-	    List<Check> checks = checksStore.getChecks(true).getValues();
-		for (final Check check : checks) {
-		    executor.execute(new CheckRunner(check));
-		}
-	}
-	
-	@Scheduled(fixedRate = 60000)
-	public void sendStatusEmail() {
-		checksStore.getChecks(true).getValues();
-	}
-	
-	private class CheckRunner implements Runnable {
-	    
-	    private final Check check;
-	    
-	    public CheckRunner(Check check) {
-	        this.check = check;
-	    }
-	    
-	    @Override
-	    public final void run() {
-	        if (!check.isEnabled()) {
-	            return;
-	        }
-	        
+    
+    private final ChecksStore checksStore;
+    private final AlertsStore alertsStore;
+    private final List<NotificationService> notificationServices;
+    private final TargetChecker targetChecker;
+    private final ValueChecker valueChecker;
+    private final ScheduledExecutorService executor = Executors.newScheduledThreadPool(8);
+    
+    @Inject
+    public CheckScheduler(ChecksStore checksStore, AlertsStore alertsStore, List<NotificationService> notificationServices, TargetChecker targetChecker, ValueChecker valueChecker) {
+        this.checksStore = checksStore;
+        this.alertsStore = alertsStore;
+        this.notificationServices = notificationServices;
+        this.targetChecker = targetChecker;
+        this.valueChecker = valueChecker;
+    }
+    
+    @Scheduled(fixedRate = 60000)
+    public void performChecks() {
+        List<Check> checks = checksStore.getChecks(true).getValues();
+        for (final Check check : checks) {
+            executor.execute(new CheckRunner(check));
+        }
+    }
+    
+    @Scheduled(fixedRate = 60000)
+    public void sendStatusEmail() {
+        checksStore.getChecks(true).getValues();
+    }
+    
+    private class CheckRunner implements Runnable {
+        
+        private final Check check;
+        
+        public CheckRunner(Check check) {
+            this.check = check;
+        }
+        
+        @Override
+        public final void run() {
+            if (!check.isEnabled()) {
+                return;
+            }
+            
             try {
                 Map<String, Optional<BigDecimal>> targetValues = targetChecker.check(check);
                 
                 if (targetValues.isEmpty()) {
-                	return;
+                    return;
                 }
                 
                 DateTime now = new DateTime();
@@ -159,33 +160,32 @@ public class CheckScheduler {
                         continue;
                     }
                     
-
                     for (NotificationService notificationService : notificationServices) {
-	                	if (notificationService.canHandle(subscription.getType())) {
-	                		try {
-	                			notificationService.sendNotification(check, subscription, interestingAlerts);
-	                		} catch (Exception e) {
-	                            LOGGER.warn("Notifying " + subscription.getTarget() + " by " + subscription.getType() + " failed.", e);
-	                		}
-	                	}
+                        if (notificationService.canHandle(subscription.getType())) {
+                            try {
+                                notificationService.sendNotification(check, subscription, interestingAlerts);
+                            } catch (Exception e) {
+                                LOGGER.warn("Notifying " + subscription.getTarget() + " by " + subscription.getType() + " failed.", e);
+                            }
+                        }
                     }
                 }
                 
             } catch (Exception e) {
                 LOGGER.warn(check.getName() + " failed", e);
             }
-	    }
-	    
-	}
-
+        }
+        
+    }
+    
     private boolean isStillOk(AlertType last, AlertType current) {
         return last == AlertType.OK && current == AlertType.OK;
     }
-
+    
     private boolean stateIsTheSame(AlertType last, AlertType current) {
         return last == current;
     }
-
+    
     private Alert createAlert(String target, BigDecimal value, BigDecimal warn, BigDecimal error, AlertType from, AlertType to, DateTime now) {
         return new Alert()
                 .withTarget(target)
@@ -196,5 +196,5 @@ public class CheckScheduler {
                 .withToType(to)
                 .withTimestamp(now);
     }
-	
+    
 }

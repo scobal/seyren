@@ -50,11 +50,11 @@ public class GraphiteTargetCheckerTest {
         
         clientDriver.addExpectation(
                 onRequestTo("/render/")
-                    .withParam("from", "-11minutes")
-                    .withParam("until", "-1minutes")
-                    .withParam("uniq", Pattern.compile("[0-9]+"))
-                    .withParam("format", "json")
-                    .withParam("target", "service.error.1MinuteRate"),
+                        .withParam("from", "-11minutes")
+                        .withParam("until", "-1minutes")
+                        .withParam("uniq", Pattern.compile("[0-9]+"))
+                        .withParam("format", "json")
+                        .withParam("target", "service.error.1MinuteRate"),
                 giveResponse(response, "application/json"));
         
         Map<String, Optional<BigDecimal>> values = checker.check(check());
@@ -68,11 +68,11 @@ public class GraphiteTargetCheckerTest {
         
         clientDriver.addExpectation(
                 onRequestTo("/render/")
-                    .withParam("from", "-11minutes")
-                    .withParam("until", "-1minutes")
-                    .withParam("uniq", Pattern.compile("[0-9]+"))
-                    .withParam("format", "json")
-                    .withParam("target", "service.error.1MinuteRate"),
+                        .withParam("from", "-11minutes")
+                        .withParam("until", "-1minutes")
+                        .withParam("uniq", Pattern.compile("[0-9]+"))
+                        .withParam("format", "json")
+                        .withParam("target", "service.error.1MinuteRate"),
                 giveResponse(response, "application/json"));
         
         Map<String, Optional<BigDecimal>> values = checker.check(check());
@@ -87,11 +87,11 @@ public class GraphiteTargetCheckerTest {
         
         clientDriver.addExpectation(
                 onRequestTo("/render/")
-                    .withParam("from", "-11minutes")
-                    .withParam("until", "-1minutes")
-                    .withParam("uniq", Pattern.compile("[0-9]+"))
-                    .withParam("format", "json")
-                    .withParam("target", "service.error.1MinuteRate"),
+                        .withParam("from", "-11minutes")
+                        .withParam("until", "-1minutes")
+                        .withParam("uniq", Pattern.compile("[0-9]+"))
+                        .withParam("format", "json")
+                        .withParam("target", "service.error.1MinuteRate"),
                 giveResponse(response, "application/json"));
         
         Map<String, Optional<BigDecimal>> values = checker.check(check());
@@ -105,11 +105,11 @@ public class GraphiteTargetCheckerTest {
         
         clientDriver.addExpectation(
                 onRequestTo("/render/")
-                    .withParam("from", "-11minutes")
-                    .withParam("until", "-1minutes")
-                    .withParam("uniq", Pattern.compile("[0-9]+"))
-                    .withParam("format", "json")
-                    .withParam("target", "service.error.1MinuteRate"),
+                        .withParam("from", "-11minutes")
+                        .withParam("until", "-1minutes")
+                        .withParam("uniq", Pattern.compile("[0-9]+"))
+                        .withParam("format", "json")
+                        .withParam("target", "service.error.1MinuteRate"),
                 giveResponse(response, "application/json"));
         
         Map<String, Optional<BigDecimal>> values = checker.check(check());
@@ -123,11 +123,11 @@ public class GraphiteTargetCheckerTest {
         
         clientDriver.addExpectation(
                 onRequestTo("/render/")
-                    .withParam("from", "-11minutes")
-                    .withParam("until", "-1minutes")
-                    .withParam("uniq", Pattern.compile("[0-9]+"))
-                    .withParam("format", "json")
-                    .withParam("target", "service.error.1MinuteRate"),
+                        .withParam("from", "-11minutes")
+                        .withParam("until", "-1minutes")
+                        .withParam("uniq", Pattern.compile("[0-9]+"))
+                        .withParam("format", "json")
+                        .withParam("target", "service.error.1MinuteRate"),
                 giveResponse(response, "application/json"));
         
         Map<String, Optional<BigDecimal>> values = checker.check(check());
@@ -138,17 +138,17 @@ public class GraphiteTargetCheckerTest {
     @Test
     public void multipleTargetsAreHandledCorrectly() throws Exception {
         String response = "[" +
-        		    "{\"target\": \"service.error.1MinuteRate\", \"datapoints\": [[0.20, 1337453460],[0.01, 1337453463]]}," +
-        		    "{\"target\": \"service.warn.1MinuteRate\", \"datapoints\": [[0.56, 1337453460],[0.78, 1337453463]]}" +
-        		"]";
+                    "{\"target\": \"service.error.1MinuteRate\", \"datapoints\": [[0.20, 1337453460],[0.01, 1337453463]]}," +
+                    "{\"target\": \"service.warn.1MinuteRate\", \"datapoints\": [[0.56, 1337453460],[0.78, 1337453463]]}" +
+                "]";
         
         clientDriver.addExpectation(
                 onRequestTo("/render/")
-                    .withParam("from", "-11minutes")
-                    .withParam("until", "-1minutes")
-                    .withParam("uniq", Pattern.compile("[0-9]+"))
-                    .withParam("format", "json")
-                    .withParam("target", "service.*.1MinuteRate"),
+                        .withParam("from", "-11minutes")
+                        .withParam("until", "-1minutes")
+                        .withParam("uniq", Pattern.compile("[0-9]+"))
+                        .withParam("format", "json")
+                        .withParam("target", "service.*.1MinuteRate"),
                 giveResponse(response, "application/json"));
         
         Map<String, Optional<BigDecimal>> values = checker.check(checkWithTarget("service.*.1MinuteRate"));
@@ -170,10 +170,10 @@ public class GraphiteTargetCheckerTest {
     
     private Check checkWithTarget(String target) {
         return new Check()
-            .withId("id")
-            .withTarget(target)
-            .withWarn(new BigDecimal("0.15"))
-            .withError(new BigDecimal("0.20"));
+                .withId("id")
+                .withTarget(target)
+                .withWarn(new BigDecimal("0.15"))
+                .withError(new BigDecimal("0.20"));
     }
     
 }

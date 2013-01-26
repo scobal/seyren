@@ -22,10 +22,10 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 
 public class BigDecimalDeserializer extends JsonDeserializer<BigDecimal> {
-
-	@Override
-	public BigDecimal deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {
-		return jp.getText() != null ? new BigDecimal(jp.getText()) : null;
-	}
-
+    
+    @Override
+    public BigDecimal deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+        return jp.getText() != null ? new BigDecimal(jp.getText()) : null;
+    }
+    
 }

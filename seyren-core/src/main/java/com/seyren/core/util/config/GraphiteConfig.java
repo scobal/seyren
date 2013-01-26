@@ -19,37 +19,37 @@ import javax.inject.Named;
 
 @Named
 public class GraphiteConfig {
-	
-	private final String baseUrl;
-	private final String[] baseParts;
-
-	public GraphiteConfig() {
-	    this(stripEnd(environmentOrDefault("GRAPHITE_URL", "http://localhost:80"), "/"));
-	}
-	
-	public GraphiteConfig(String baseUrl) {
+    
+    private final String baseUrl;
+    private final String[] baseParts;
+    
+    public GraphiteConfig() {
+        this(stripEnd(environmentOrDefault("GRAPHITE_URL", "http://localhost:80"), "/"));
+    }
+    
+    public GraphiteConfig(String baseUrl) {
         this.baseUrl = baseUrl;
         this.baseParts = splitBaseUrl(baseUrl);
     }
-
-	public String getBaseUrl() {
-		return baseUrl;
-	}
-	
-	public String getScheme() {
-	    return baseParts[0];
-	}
-	
-	public String getHost() {
-	    return baseParts[1];
-	}
-	
-	public String getPath() {
-	    return baseParts[2];
-	}
-	
-	private String[] splitBaseUrl(String baseUrl) {
-	    String[] baseParts = new String[3];
+    
+    public String getBaseUrl() {
+        return baseUrl;
+    }
+    
+    public String getScheme() {
+        return baseParts[0];
+    }
+    
+    public String getHost() {
+        return baseParts[1];
+    }
+    
+    public String getPath() {
+        return baseParts[2];
+    }
+    
+    private String[] splitBaseUrl(String baseUrl) {
+        String[] baseParts = new String[3];
         
         if (baseUrl.toString().contains("://")) {
             baseParts[0] = baseUrl.toString().split("://")[0];
@@ -58,32 +58,31 @@ public class GraphiteConfig {
             baseParts[0] = "http";
         }
         
-        if(baseUrl.contains("/")) {
+        if (baseUrl.contains("/")) {
             baseParts[1] = baseUrl.split("/")[0];
-            baseParts[2] = "/" + baseUrl.split("/",2)[1];
+            baseParts[2] = "/" + baseUrl.split("/", 2)[1];
         } else {
             baseParts[1] = baseUrl;
             baseParts[2] = "";
         }
         
-        
         return baseParts;
-	}
-	
-	public String getUsername() {
-		return environmentOrDefault("GRAPHITE_USERNAME", "");
-	}
-
-	public String getPassword() {
-		return environmentOrDefault("GRAPHITE_PASSWORD", "");
-	}
-	
-	private static String environmentOrDefault(String propertyName, String defaultValue) {
-	    String value = System.getenv(propertyName);
-	    if (isEmpty(value)) {
-	        return defaultValue;
-	    }
-	    return value;
-	} 
-	
+    }
+    
+    public String getUsername() {
+        return environmentOrDefault("GRAPHITE_USERNAME", "");
+    }
+    
+    public String getPassword() {
+        return environmentOrDefault("GRAPHITE_PASSWORD", "");
+    }
+    
+    private static String environmentOrDefault(String propertyName, String defaultValue) {
+        String value = System.getenv(propertyName);
+        if (isEmpty(value)) {
+            return defaultValue;
+        }
+        return value;
+    }
+    
 }

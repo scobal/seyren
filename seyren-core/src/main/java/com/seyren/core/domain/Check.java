@@ -29,126 +29,126 @@ import com.seyren.core.util.math.BigDecimalSerializer;
  * It stores current subscriptions
  * 
  * @author mark
- *
+ * 
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Check {
-
-	private String id;
-	private String name;
-	private String target;
-	private BigDecimal warn;
-	private BigDecimal error;
-	private boolean enabled;
-	private AlertType state;
-	private List<Subscription> subscriptions = new ArrayList<Subscription>();
-	
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-	
-	public Check withId(String id) {
-		setId(id);
-		return this;
-	}
-	
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-	
-	public Check withName(String name) {
-		setName(name);
-		return this;
-	}
-
-	public String getTarget() {
-		return target;
-	}
-
-	public void setTarget(String target) {
-		this.target = target;
-	}
-	
-	public Check withTarget(String target) {
-		setTarget(target);
-		return this;
-	}
-
-	@JsonSerialize(using = BigDecimalSerializer.class)
-	public BigDecimal getWarn() {
-		return warn;
-	}
-
-	@JsonDeserialize(using = BigDecimalDeserializer.class)
-	public void setWarn(BigDecimal warn) {
-		this.warn = warn;
-	}
-	
-	public Check withWarn(BigDecimal warn) {
-		setWarn(warn);
-		return this;
-	}
-
-	@JsonSerialize(using = BigDecimalSerializer.class)
-	public BigDecimal getError() {
-		return error;
-	}
-
-	@JsonDeserialize(using = BigDecimalDeserializer.class)
-	public void setError(BigDecimal error) {
-		this.error = error;
-	}
-	
-	public Check withError(BigDecimal error) {
-		setError(error);
-		return this;
-	}
-
-	public boolean isEnabled() {
-		return enabled;
-	}
-
-	public void setEnabled(boolean enabled) {
-		this.enabled = enabled;
-	}
-	
-	public Check withEnabled(boolean enabled) {
-		setEnabled(enabled);
-		return this;
-	}
-	
-	public AlertType getState() {
-		return state;
-	}
-
-	public void setState(AlertType state) {
-		this.state = state;
-	}
-	
-	public Check withState(AlertType state) {
-		setState(state);
-		return this;
-	}
-
-	public List<Subscription> getSubscriptions() {
-		return subscriptions;
-	}
-
-	public void setSubscriptions(List<Subscription> subscriptions) {
-		this.subscriptions = subscriptions;
-	}
-	
-	public Check withSubscriptions(List<Subscription> subscriptions) {
-		setSubscriptions(subscriptions);
-		return this;
-	}
-	
+    
+    private String id;
+    private String name;
+    private String target;
+    private BigDecimal warn;
+    private BigDecimal error;
+    private boolean enabled;
+    private AlertType state;
+    private List<Subscription> subscriptions = new ArrayList<Subscription>();
+    
+    public String getId() {
+        return id;
+    }
+    
+    public void setId(String id) {
+        this.id = id;
+    }
+    
+    public Check withId(String id) {
+        setId(id);
+        return this;
+    }
+    
+    public String getName() {
+        return name;
+    }
+    
+    public void setName(String name) {
+        this.name = name;
+    }
+    
+    public Check withName(String name) {
+        setName(name);
+        return this;
+    }
+    
+    public String getTarget() {
+        return target;
+    }
+    
+    public void setTarget(String target) {
+        this.target = target;
+    }
+    
+    public Check withTarget(String target) {
+        setTarget(target);
+        return this;
+    }
+    
+    @JsonSerialize(using = BigDecimalSerializer.class)
+    public BigDecimal getWarn() {
+        return warn;
+    }
+    
+    @JsonDeserialize(using = BigDecimalDeserializer.class)
+    public void setWarn(BigDecimal warn) {
+        this.warn = warn;
+    }
+    
+    public Check withWarn(BigDecimal warn) {
+        setWarn(warn);
+        return this;
+    }
+    
+    @JsonSerialize(using = BigDecimalSerializer.class)
+    public BigDecimal getError() {
+        return error;
+    }
+    
+    @JsonDeserialize(using = BigDecimalDeserializer.class)
+    public void setError(BigDecimal error) {
+        this.error = error;
+    }
+    
+    public Check withError(BigDecimal error) {
+        setError(error);
+        return this;
+    }
+    
+    public boolean isEnabled() {
+        return enabled;
+    }
+    
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+    
+    public Check withEnabled(boolean enabled) {
+        setEnabled(enabled);
+        return this;
+    }
+    
+    public AlertType getState() {
+        return state;
+    }
+    
+    public void setState(AlertType state) {
+        this.state = state;
+    }
+    
+    public Check withState(AlertType state) {
+        setState(state);
+        return this;
+    }
+    
+    public List<Subscription> getSubscriptions() {
+        return subscriptions;
+    }
+    
+    public void setSubscriptions(List<Subscription> subscriptions) {
+        this.subscriptions = subscriptions;
+    }
+    
+    public Check withSubscriptions(List<Subscription> subscriptions) {
+        setSubscriptions(subscriptions);
+        return this;
+    }
+    
 }

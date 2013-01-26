@@ -26,17 +26,17 @@ import com.seyren.core.domain.Subscription;
 
 @Path("/checks/{checkId}/subscriptions")
 public interface SubscriptionsResource {
-	
-	@POST
-	@Consumes(MediaType.APPLICATION_JSON)
-	Response createSubscription(@PathParam("checkId") String checkId, Subscription subscription);
-	
-	@PUT
+    
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    Response createSubscription(@PathParam("checkId") String checkId, Subscription subscription);
+    
+    @PUT
     @Path("/{subscriptionId}")
     Response updateSubscription(@PathParam("checkId") String checkId, Subscription subscription);
-	
-	@DELETE
-	@Path("/{subscriptionId}")
-	Response deleteSubscription(@PathParam("checkId") String checkId, @PathParam("subscriptionId") String subscriptionId);
-
+    
+    @DELETE
+    @Path("/{subscriptionId}")
+    Response deleteSubscription(@PathParam("checkId") String checkId, @PathParam("subscriptionId") String subscriptionId);
+    
 }

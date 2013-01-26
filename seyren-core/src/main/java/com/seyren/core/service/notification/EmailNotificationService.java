@@ -40,12 +40,12 @@ import com.seyren.core.util.email.Email;
 
 @Named
 public class EmailNotificationService implements NotificationService {
-
-	private static final String TEMPLATE_FILE_NAME = "com/seyren/core/service/notification/email-template.vm";
-	
+    
+    private static final String TEMPLATE_FILE_NAME = "com/seyren/core/service/notification/email-template.vm";
+    
     private final JavaMailSender mailSender;
     private final SeyrenConfig seyrenConfig;
-
+    
     @Inject
     public EmailNotificationService(JavaMailSender mailSender, SeyrenConfig seyrenConfig) {
         this.mailSender = mailSender;
@@ -55,59 +55,59 @@ public class EmailNotificationService implements NotificationService {
     
     @Override
     public void sendNotification(Check check, Subscription subscription, List<Alert> alerts) {
-
+        
         try {
-        	VelocityContext context = createVelocityContext(check, subscription, alerts);
-        	
-        	StringWriter w = new StringWriter();
-	    	Velocity.evaluate(context, w, "EmailNotificationService", getTemplateAsString());
-	    	
-	    	Email email = new Email()
-				.withTo(subscription.getTarget())
-				.withFrom(seyrenConfig.getFromEmail())
-				.withSubject(createSubject(check))
-				.withMessage(w.getBuffer().toString());
-        	
-	    	mailSender.send(createMimeMessage(email));
-	    	
+            VelocityContext context = createVelocityContext(check, subscription, alerts);
+            
+            StringWriter w = new StringWriter();
+            Velocity.evaluate(context, w, "EmailNotificationService", getTemplateAsString());
+            
+            Email email = new Email()
+                    .withTo(subscription.getTarget())
+                    .withFrom(seyrenConfig.getFromEmail())
+                    .withSubject(createSubject(check))
+                    .withMessage(w.getBuffer().toString());
+            
+            mailSender.send(createMimeMessage(email));
+            
         } catch (Exception e) {
             throw new NotificationFailedException("Failed to send notification to " + subscription.getTarget() + " from " + seyrenConfig.getFromEmail(), e);
         }
     }
-
-	private String createSubject(Check check) {
-		return "Seyren alert: " + check.getName();
-	}
-
-	private VelocityContext createVelocityContext(Check check, Subscription subscription, List<Alert> alerts) {
-		VelocityContext result = new VelocityContext();
-		result.put("CHECK", check);
-		result.put("ALERTS", alerts);
-		result.put("SEYREN_URL", seyrenConfig.getBaseUrl());
-		return result;
-	}
-
-	private String getTemplateAsString() throws IOException {
-		return IOUtils.toString(Thread.currentThread().getContextClassLoader().getResourceAsStream(TEMPLATE_FILE_NAME));
-	}
-
+    
+    private String createSubject(Check check) {
+        return "Seyren alert: " + check.getName();
+    }
+    
+    private VelocityContext createVelocityContext(Check check, Subscription subscription, List<Alert> alerts) {
+        VelocityContext result = new VelocityContext();
+        result.put("CHECK", check);
+        result.put("ALERTS", alerts);
+        result.put("SEYREN_URL", seyrenConfig.getBaseUrl());
+        return result;
+    }
+    
+    private String getTemplateAsString() throws IOException {
+        return IOUtils.toString(Thread.currentThread().getContextClassLoader().getResourceAsStream(TEMPLATE_FILE_NAME));
+    }
+    
     private MimeMessage createMimeMessage(Email email) throws AddressException, MessagingException {
-
-    	MimeMessage mail = mailSender.createMimeMessage();
-    	InternetAddress senderAddress = new InternetAddress(email.getFrom());
+        
+        MimeMessage mail = mailSender.createMimeMessage();
+        InternetAddress senderAddress = new InternetAddress(email.getFrom());
         mail.addRecipient(RecipientType.TO, new InternetAddress(email.getTo()));
-		mail.setSender(senderAddress);
-		mail.setFrom(senderAddress);
+        mail.setSender(senderAddress);
+        mail.setFrom(senderAddress);
         mail.setText(email.getMessage());
         mail.setSubject(email.getSubject());
         mail.addHeader("Content-Type", "text/html; charset=UTF-8");
-
+        
         return mail;
     }
-
-	@Override
-	public boolean canHandle(SubscriptionType subscriptionType) {
-		return subscriptionType == SubscriptionType.EMAIL;
-	}
+    
+    @Override
+    public boolean canHandle(SubscriptionType subscriptionType) {
+        return subscriptionType == SubscriptionType.EMAIL;
+    }
     
 }

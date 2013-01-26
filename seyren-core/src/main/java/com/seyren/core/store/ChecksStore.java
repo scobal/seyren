@@ -19,17 +19,17 @@ import com.seyren.core.domain.Check;
 import com.seyren.core.domain.SeyrenResponse;
 
 public interface ChecksStore {
-
-	SeyrenResponse<Check> getChecks(Boolean enabled);
-	
-	SeyrenResponse<Check> getChecksByState(Set<String> states, Boolean enabled);
-
-	Check getCheck(String checkId);
-
-	void deleteCheck(String checkId);
-
-	Check createCheck(Check check);
-
-	Check saveCheck(Check check);
-
+    
+    SeyrenResponse<Check> getChecks(Boolean enabled);
+    
+    SeyrenResponse<Check> getChecksByState(Set<String> states, Boolean enabled);
+    
+    Check getCheck(String checkId);
+    
+    void deleteCheck(String checkId);
+    
+    Check createCheck(Check check);
+    
+    Check saveCheck(Check check);
+    
 }

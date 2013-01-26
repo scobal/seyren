@@ -24,33 +24,33 @@ import com.github.restdriver.serverdriver.http.Header;
 import com.github.restdriver.serverdriver.http.response.Response;
 
 public class SubscriptionsAT {
-	
-	@Test
-	public void testCreateSubscriptionReturnsCreated() {
-		Header checkLocation = createCheck("{ }").getHeader("Location");
-		Response response = createSubscription(checkLocation, "{ }");
-		assertThat(response, hasStatusCode(201));
-		deleteLocation(checkLocation.getValue());
-	}
-	
-	private Response createCheck(String body) { 
-    	Response response = post(checks(), body(body, "application/json"));
-    	assertThat(response, hasStatusCode(201));
-    	assertThat(response, hasHeader("Location"));
-    	return response;
-    }
-	
-    private Response createSubscription(Header checkLocation, String body) { 
-    	Response response = post(subscriptions(checkLocation), body(body, "application/json"));
-    	assertThat(response, hasStatusCode(201));
-    	assertThat(response, hasHeader("Location"));
-    	return response;
+    
+    @Test
+    public void testCreateSubscriptionReturnsCreated() {
+        Header checkLocation = createCheck("{ }").getHeader("Location");
+        Response response = createSubscription(checkLocation, "{ }");
+        assertThat(response, hasStatusCode(201));
+        deleteLocation(checkLocation.getValue());
     }
     
-	private void deleteLocation(String location) {
-		assertThat(get(location), hasStatusCode(200));
+    private Response createCheck(String body) {
+        Response response = post(checks(), body(body, "application/json"));
+        assertThat(response, hasStatusCode(201));
+        assertThat(response, hasHeader("Location"));
+        return response;
+    }
+    
+    private Response createSubscription(Header checkLocation, String body) {
+        Response response = post(subscriptions(checkLocation), body(body, "application/json"));
+        assertThat(response, hasStatusCode(201));
+        assertThat(response, hasHeader("Location"));
+        return response;
+    }
+    
+    private void deleteLocation(String location) {
+        assertThat(get(location), hasStatusCode(200));
         delete(location);
         assertThat(get(location), hasStatusCode(404));
-	}
-
+    }
+    
 }

@@ -22,9 +22,9 @@ import com.seyren.core.domain.SubscriptionType;
 import com.seyren.core.exception.NotificationFailedException;
 
 public interface NotificationService {
-	
+    
     void sendNotification(Check check, Subscription subscription, List<Alert> alerts) throws NotificationFailedException;
     
-    boolean canHandle(SubscriptionType subscriptionType); 
+    boolean canHandle(SubscriptionType subscriptionType);
     
 }

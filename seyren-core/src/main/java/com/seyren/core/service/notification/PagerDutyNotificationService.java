@@ -35,9 +35,9 @@ import com.seyren.core.util.config.SeyrenConfig;
 
 @Named
 public class PagerDutyNotificationService implements NotificationService {
-	
-	private static final Logger LOGGER = LoggerFactory.getLogger(PagerDutyNotificationService.class);
-
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(PagerDutyNotificationService.class);
+    
     private final SeyrenConfig seyrenConfig;
     
     @Inject
@@ -47,9 +47,9 @@ public class PagerDutyNotificationService implements NotificationService {
     
     @Override
     public void sendNotification(Check check, Subscription subscription, List<Alert> alerts) throws NotificationFailedException {
-                
-    	PagerDutyClient client = new PagerDutyClient(seyrenConfig.getPagerDutyDomain(), "username", "password");
-        try {        
+        
+        PagerDutyClient client = new PagerDutyClient(seyrenConfig.getPagerDutyDomain(), "username", "password");
+        try {
             Map<String, Object> details = createNotificationDetails(check, alerts);
             
             if (check.getState() == AlertType.ERROR) {
@@ -57,17 +57,17 @@ public class PagerDutyNotificationService implements NotificationService {
             } else if (check.getState() == AlertType.OK) {
                 client.resolve(subscription.getTarget(), "Check " + check.getName() + " has been resolved. " + seyrenConfig.getBaseUrl() + "/#/checks/" + check.getId(), "MonitoringAlerts_" + check.getId(), details);
             } else {
-            	LOGGER.warn("Did not send notification to PagerDuty for check in state: " + check.getState());
+                LOGGER.warn("Did not send notification to PagerDuty for check in state: " + check.getState());
             }
         } catch (Exception e) {
             throw new NotificationFailedException("Failed to send notification to PagerDuty", e);
-        }         
+        }
     }
     
-	@Override
-	public boolean canHandle(SubscriptionType subscriptionType) {
-		return subscriptionType == SubscriptionType.PAGERDUTY;
-	}
+    @Override
+    public boolean canHandle(SubscriptionType subscriptionType) {
+        return subscriptionType == SubscriptionType.PAGERDUTY;
+    }
     
     private Map<String, Object> createNotificationDetails(Check check, List<Alert> alerts) {
         Map<String, Object> details = new HashMap<String, Object>();
@@ -76,5 +76,5 @@ public class PagerDutyNotificationService implements NotificationService {
         details.put("SEYREN_URL", seyrenConfig.getBaseUrl());
         return details;
     }
-
+    
 }

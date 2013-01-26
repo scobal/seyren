@@ -22,12 +22,12 @@ public enum AlertType {
     private AlertType(int value) {
         this.value = value;
     }
-	
-	public boolean isWorseThan(AlertType other) {
-	    if (other == null) {
-	        return true;
-	    }
-	    return value > other.value;
-	}
-	
+    
+    public boolean isWorseThan(AlertType other) {
+        if (other == null) {
+            return true;
+        }
+        return value > other.value;
+    }
+    
 }

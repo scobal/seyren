@@ -20,34 +20,34 @@ import javax.inject.Named;
 
 @Named
 public class SeyrenConfig {
-
-	private final GraphiteConfig graphite;
-	private final String baseUrl;
-	private final String fromEmail;
-	private final String pagerDutyDomain;
-	private final String hipChatAuthToken;
-	private final String hipChatUserName;
-
-	@Inject
-	public SeyrenConfig(GraphiteConfig graphite) {
-		this.graphite = graphite;
-		this.baseUrl = stripEnd(environmentOrDefault("SEYREN_URL", "http://localhost:8080/seyren"), "/");
-		this.fromEmail = environmentOrDefault("SEYREN_FROM_EMAIL", "alert@seyren");
-		this.pagerDutyDomain = environmentOrDefault("PAGERDUTY_DOMAIN", "");
-		this.hipChatAuthToken = environmentOrDefault("HIPCHAT_AUTH_TOKEN", "");
-		this.hipChatUserName = environmentOrDefault("HIPCHAT_USER_NAME", "Seyren Alert");
-	}
-	
-	public GraphiteConfig getGraphite() {
-		return graphite;
-	}
-
+    
+    private final GraphiteConfig graphite;
+    private final String baseUrl;
+    private final String fromEmail;
+    private final String pagerDutyDomain;
+    private final String hipChatAuthToken;
+    private final String hipChatUserName;
+    
+    @Inject
+    public SeyrenConfig(GraphiteConfig graphite) {
+        this.graphite = graphite;
+        this.baseUrl = stripEnd(environmentOrDefault("SEYREN_URL", "http://localhost:8080/seyren"), "/");
+        this.fromEmail = environmentOrDefault("SEYREN_FROM_EMAIL", "alert@seyren");
+        this.pagerDutyDomain = environmentOrDefault("PAGERDUTY_DOMAIN", "");
+        this.hipChatAuthToken = environmentOrDefault("HIPCHAT_AUTH_TOKEN", "");
+        this.hipChatUserName = environmentOrDefault("HIPCHAT_USER_NAME", "Seyren Alert");
+    }
+    
+    public GraphiteConfig getGraphite() {
+        return graphite;
+    }
+    
     public String getBaseUrl() {
         return baseUrl;
     }
-
+    
     public String getFromEmail() {
-    	return fromEmail;
+        return fromEmail;
     }
     
     public String getPagerDutyDomain() {
@@ -57,7 +57,7 @@ public class SeyrenConfig {
     public String getHipChatAuthToken() {
         return hipChatAuthToken;
     }
-	
+    
     public String getHipChatUserName() {
         return hipChatUserName;
     }
@@ -69,5 +69,5 @@ public class SeyrenConfig {
         }
         return value;
     }
-	
+    
 }

@@ -24,30 +24,30 @@ import com.seyren.core.store.AlertsStore;
 
 @Named
 public class AlertsBean implements AlertsResource {
-
-	private AlertsStore alertsStore;
-
-	@Inject
-	public AlertsBean(AlertsStore alertsStore) {
-		this.alertsStore = alertsStore;
-	}
-	
-	@Override
-	public Response getAlertsForCheck(String checkId, int start, int items) {
-		if (start < 0 || items < 0) {
-			return Response.status(400).build();
-		}
-		SeyrenResponse<Alert> response = alertsStore.getAlerts(checkId, start, items);
-		return Response.ok(response).build();
-	}
-
-	@Override
-	public Response getAlerts(int start, int items) {
-		if (start < 0 || items < 0) {
-			return Response.status(400).build();
-		}
-		SeyrenResponse<Alert> response = alertsStore.getAlerts(start, items);
-		return Response.ok(response).build();
-	}
-
+    
+    private AlertsStore alertsStore;
+    
+    @Inject
+    public AlertsBean(AlertsStore alertsStore) {
+        this.alertsStore = alertsStore;
+    }
+    
+    @Override
+    public Response getAlertsForCheck(String checkId, int start, int items) {
+        if (start < 0 || items < 0) {
+            return Response.status(400).build();
+        }
+        SeyrenResponse<Alert> response = alertsStore.getAlerts(checkId, start, items);
+        return Response.ok(response).build();
+    }
+    
+    @Override
+    public Response getAlerts(int start, int items) {
+        if (start < 0 || items < 0) {
+            return Response.status(400).build();
+        }
+        SeyrenResponse<Alert> response = alertsStore.getAlerts(start, items);
+        return Response.ok(response).build();
+    }
+    
 }

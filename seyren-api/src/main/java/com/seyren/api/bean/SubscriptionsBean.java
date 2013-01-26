@@ -26,38 +26,38 @@ import com.seyren.core.store.SubscriptionsStore;
 
 @Named
 public class SubscriptionsBean implements SubscriptionsResource {
-
-	private SubscriptionsStore subscriptionsStore;
-
-	@Inject
-	public SubscriptionsBean(SubscriptionsStore subscriptionsStore) {
-		this.subscriptionsStore = subscriptionsStore;
-	}
-	
-	@Override
-	public Response createSubscription(String checkId, Subscription subscription) {
-		Subscription stored = subscriptionsStore.createSubscription(checkId, subscription);
-		return Response.created(uri(checkId, stored.getId())).build();
-	}
+    
+    private SubscriptionsStore subscriptionsStore;
+    
+    @Inject
+    public SubscriptionsBean(SubscriptionsStore subscriptionsStore) {
+        this.subscriptionsStore = subscriptionsStore;
+    }
+    
+    @Override
+    public Response createSubscription(String checkId, Subscription subscription) {
+        Subscription stored = subscriptionsStore.createSubscription(checkId, subscription);
+        return Response.created(uri(checkId, stored.getId())).build();
+    }
     
     @Override
     public Response updateSubscription(String checkId, Subscription subscription) {
         subscriptionsStore.updateSubscription(checkId, subscription);
         return Response.noContent().build();
     }
-
-	@Override
-	public Response deleteSubscription(String checkId, String subscriptionId) {
-		subscriptionsStore.deleteSubscription(checkId, subscriptionId);
-		return Response.noContent().build();
-	}
-	
-	private URI uri(String checkId, String subscriptionId) {
-		try {
-			return new URI("checks/" + checkId + "/subscriptions/" + subscriptionId);
-		} catch (URISyntaxException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
+    
+    @Override
+    public Response deleteSubscription(String checkId, String subscriptionId) {
+        subscriptionsStore.deleteSubscription(checkId, subscriptionId);
+        return Response.noContent().build();
+    }
+    
+    private URI uri(String checkId, String subscriptionId) {
+        try {
+            return new URI("checks/" + checkId + "/subscriptions/" + subscriptionId);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
 }

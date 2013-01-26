@@ -27,35 +27,35 @@ import com.seyren.core.service.schedule.CheckScheduler;
 
 @Named
 public class SeyrenMailSender extends JavaMailSenderImpl {
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(CheckScheduler.class);
-	
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(CheckScheduler.class);
+    
     public static final String DEFAULT_SMTP_HOST = "localhost";
     public static final String DEFAULT_SMTP_PORT = "25";
     public static final String DEFAULT_SMTP_PROTOCOL = "smtp";
-
+    
     public SeyrenMailSender() {
-    	
-    	String username = environmentOrDefault("SMTP_USERNAME", "");
-    	String password = environmentOrDefault("SMTP_PASSWORD","");
-    	String hostname = environmentOrDefault("SMTP_HOST", DEFAULT_SMTP_HOST);
+        
+        String username = environmentOrDefault("SMTP_USERNAME", "");
+        String password = environmentOrDefault("SMTP_PASSWORD", "");
+        String hostname = environmentOrDefault("SMTP_HOST", DEFAULT_SMTP_HOST);
         String protocol = environmentOrDefault("SMTP_PROTOCOL", DEFAULT_SMTP_PROTOCOL);
         
-    	setPort(Integer.parseInt(environmentOrDefault("SMTP_PORT", DEFAULT_SMTP_PORT)));
-    	setHost(hostname);       
+        setPort(Integer.parseInt(environmentOrDefault("SMTP_PORT", DEFAULT_SMTP_PORT)));
+        setHost(hostname);
         setUsername(username);
         setPassword(password);
         
         Properties props = new Properties();
-        if(username != "" && password != "") {
+        if (username != "" && password != "") {
             props.setProperty("mail.smtp.auth", "true");
         }
-
-        if(getPort() == 587) {
+        
+        if (getPort() == 587) {
             props.put("mail.smtp.starttls.enable", "true");
         }
-
-        if(props.size() > 0) {
+        
+        if (props.size() > 0) {
             setJavaMailProperties(props);
         }
         
@@ -63,25 +63,24 @@ public class SeyrenMailSender extends JavaMailSenderImpl {
         
         LOGGER.info(username + ":" + password + "@" + hostname);
         
-        
     }
     
     public SeyrenMailSender withHost(String host) {
-    	setHost(host);
-    	return this;
+        setHost(host);
+        return this;
     }
     
     public SeyrenMailSender withPort(int port) {
-    	setPort(port);
-    	return this;
+        setPort(port);
+        return this;
     }
-
-	private static String environmentOrDefault(String propertyName, String defaultValue) {
-	    String value = System.getenv(propertyName);
-	    if (isEmpty(value)) {
-	        return defaultValue;
-	    }
-	    return value;
-	}
-
+    
+    private static String environmentOrDefault(String propertyName, String defaultValue) {
+        String value = System.getenv(propertyName);
+        if (isEmpty(value)) {
+            return defaultValue;
+        }
+        return value;
+    }
+    
 }
