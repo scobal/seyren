@@ -36,6 +36,7 @@ ChecksController.prototype = {
     createCheck : function () {
         var check = {
             name : this.newcheck.name,
+            description : this.newcheck.description,
             target : this.newcheck.target,
             warn : this.newcheck.warn,
             error : this.newcheck.error,

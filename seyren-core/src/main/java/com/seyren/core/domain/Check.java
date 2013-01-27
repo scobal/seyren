@@ -36,6 +36,7 @@ public class Check {
     
     private String id;
     private String name;
+    private String description;
     private String target;
     private BigDecimal warn;
     private BigDecimal error;
@@ -66,6 +67,19 @@ public class Check {
     
     public Check withName(String name) {
         setName(name);
+        return this;
+    }
+    
+    public String getDescription() {
+        return description;
+    }
+    
+    public void setDescription(String description) {
+        this.description = description;
+    }
+    
+    public Check withDescription(String description) {
+        this.description = description;
         return this;
     }
     

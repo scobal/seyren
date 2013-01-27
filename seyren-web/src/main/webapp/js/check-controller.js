@@ -225,6 +225,7 @@ CheckController.prototype = {
     copyCheckToEditCheck : function() {
         this.editcheck = {
             name : this.check.name,
+            description : this.check.description,
             target : this.check.target,
             warn : this.check.warn,
             error : this.check.error,
@@ -234,6 +235,7 @@ CheckController.prototype = {
     
     submitEditCheck : function() {
         this.check.name = this.editcheck.name;
+        this.check.description = this.editcheck.description;
         this.check.target = this.editcheck.target;
         this.check.warn = this.editcheck.warn;
         this.check.error = this.editcheck.error;

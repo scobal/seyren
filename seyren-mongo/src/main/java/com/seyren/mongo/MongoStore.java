@@ -141,6 +141,7 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
         DBObject findObject = forId(check.getId());
         
         DBObject updateObject = object("name", check.getName())
+                .with("description", check.getDescription())
                 .with("target", check.getTarget())
                 .with("warn", check.getWarn().toPlainString())
                 .with("error", check.getError().toPlainString())

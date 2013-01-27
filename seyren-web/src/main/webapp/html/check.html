@@ -19,12 +19,16 @@
                 <h2>Details <small>[<a class="" data-toggle="modal" data-show="true" href="#editCheckModal">edit</a>]</small></h2>
             </div>
             <div class="row-fluid">
-                <span class="span1">Name:</span>
-                <span class="span11">{{check.name}}</span>
+                <span class="span2">Name:</span>
+                <span class="span10">{{check.name}}</span>
             </div>
             <div class="row-fluid">
-                <span class="span1">State:</span>
-                <span class="span11">
+                <span class="span2">Description:</span>
+                <span class="span10">{{check.description}}</span>
+            </div>
+            <div class="row-fluid">
+                <span class="span2">State:</span>
+                <span class="span10">
                     <span ng:show="check.state == 'UNKNOWN'" class="label">{{ check.state }}</span>
                     <span ng:show="check.state == 'OK'" class="label label-success">{{ check.state }}</span>
                     <span ng:show="check.state == 'WARN'" class="label label-warning">{{ check.state }}</span>
@@ -33,20 +37,20 @@
                 </span>
             </div>
             <div class="row-fluid">
-                <span class="span1">Target:</span>
-                <span class="span11">{{check.target}}</span>
+                <span class="span2">Target:</span>
+                <span class="span10">{{check.target}}</span>
             </div>
             <div class="row-fluid">
-                <span class="span1">Warn:</span>
-                <span class="span11">{{check.warn}}</span>
+                <span class="span2">Warn:</span>
+                <span class="span10">{{check.warn}}</span>
             </div>
             <div class="row-fluid">
-                <span class="span1">Error:</span>
-                <span class="span11">{{check.error}}</span>
+                <span class="span2">Error:</span>
+                <span class="span10">{{check.error}}</span>
             </div>
             <div class="row-fluid">
-                <span class="span1">Enabled:</span>
-                <span class="span11"><input type="checkbox" ng:checked="{{ check.enabled }}" ng:click="swapCheckEnabled()" /> </span>
+                <span class="span2">Enabled:</span>
+                <span class="span10"><input type="checkbox" ng:checked="{{ check.enabled }}" ng:click="swapCheckEnabled()" /> </span>
             </div>
         </div>
         <div class="span5">
@@ -254,6 +258,12 @@
                         <label class="control-label" for="editcheck.name">Name</label>
                         <div class="controls">
                             <input id="editcheck.name" class="input-xlarge" name="editcheck.name" type="text" />
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="editcheck.description">Description</label>
+                        <div class="controls">
+                            <input id="editcheck.description" class="input-xlarge" name="editcheck.description" type="text" />
                         </div>
                     </div>
                     <div class="control-group">
