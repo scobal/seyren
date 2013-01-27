@@ -38,6 +38,7 @@ open http://localhost:8080/seyren
 * `SMTP_USERNAME` - The smtp server username if authenticated SMTP is used. Default: ``
 * `SMTP_PASSWORD` - The smtp server password if authenticated SMTP is used. Default: ``
 * `SMTP_PROTOCOL` - The smtp server protocol if authenticated SMTP is used. Default: `smtp`
+* `SEYREN_HUBOT_URL` - The location where Hubot is running. Default ``
 
 ###Cloud Formation
 

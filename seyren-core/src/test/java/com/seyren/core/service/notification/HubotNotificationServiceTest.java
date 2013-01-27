@@ -78,7 +78,8 @@ public class HubotNotificationServiceTest {
                 .withState(AlertType.ERROR);
         
         Subscription subscription = new Subscription()
-                .withType(SubscriptionType.HUBOT);
+                .withType(SubscriptionType.HUBOT)
+                .withTarget("123,456");
         
         Alert alert = new Alert()
                 .withTarget("the.target.name")
@@ -112,6 +113,9 @@ public class HubotNotificationServiceTest {
         assertThat(node, hasJsonPath("$.alerts[0].error", is(10)));
         assertThat(node, hasJsonPath("$.alerts[0].fromType", is("WARN")));
         assertThat(node, hasJsonPath("$.alerts[0].toType", is("ERROR")));
+        assertThat(node, hasJsonPath("$.rooms", hasSize(2)));
+        assertThat(node, hasJsonPath("$.rooms[0]", is("123")));
+        assertThat(node, hasJsonPath("$.rooms[1]", is("456")));
         
         verify(mockSeyrenConfig).getHubotUrl();
         verify(mockSeyrenConfig).getBaseUrl();

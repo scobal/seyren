@@ -19,13 +19,17 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seyren.core.domain.Alert;
@@ -35,8 +39,10 @@ import com.seyren.core.domain.SubscriptionType;
 import com.seyren.core.exception.NotificationFailedException;
 import com.seyren.core.util.config.SeyrenConfig;
 
+@Named
 public class HubotNotificationService implements NotificationService {
     
+    private static final Logger LOGGER = LoggerFactory.getLogger(HubotNotificationService.class);
     private static final ObjectMapper MAPPER = new ObjectMapper();
     
     private final SeyrenConfig seyrenConfig;
@@ -48,12 +54,19 @@ public class HubotNotificationService implements NotificationService {
     
     @Override
     public void sendNotification(Check check, Subscription subscription, List<Alert> alerts) throws NotificationFailedException {
-        String hubotUrl = seyrenConfig.getHubotUrl();
+        String hubotUrl = StringUtils.trimToNull(seyrenConfig.getHubotUrl());
+        
+        if (hubotUrl == null) {
+            LOGGER.warn("Hubot URL needs to be set before sending notifications to Hubot");
+            return;
+        }
         
         Map<String, Object> body = new HashMap<String, Object>();
         body.put("seyrenUrl", seyrenConfig.getBaseUrl());
         body.put("check", check);
+        body.put("subscription", subscription);
         body.put("alerts", alerts);
+        body.put("rooms", subscription.getTarget().split(","));
         
         HttpClient client = new DefaultHttpClient();
         
@@ -63,7 +76,7 @@ public class HubotNotificationService implements NotificationService {
             post.setEntity(entity);
             client.execute(post);
         } catch (IOException e) {
-            throw new NotificationFailedException("Sending notification to Hubot at " + hubotUrl + " + failed.", e);
+            throw new NotificationFailedException("Sending notification to Hubot at " + hubotUrl + " failed.", e);
         }
     }
     
