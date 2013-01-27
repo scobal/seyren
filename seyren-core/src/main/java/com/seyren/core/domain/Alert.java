@@ -18,6 +18,10 @@ import java.math.BigDecimal;
 import org.joda.time.DateTime;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.joda.deser.DateTimeDeserializer;
+import com.fasterxml.jackson.datatype.joda.ser.DateTimeSerializer;
 
 /**
  * An instance of this class represents an occurrence of a check that is found
@@ -145,10 +149,12 @@ public class Alert {
         return this;
     }
     
+    @JsonSerialize(using = DateTimeSerializer.class)
     public DateTime getTimestamp() {
         return timestamp;
     }
     
+    @JsonDeserialize(using = DateTimeDeserializer.class)
     public void setTimestamp(DateTime timestamp) {
         this.timestamp = timestamp;
     }
