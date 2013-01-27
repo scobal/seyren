@@ -27,6 +27,7 @@ public class SeyrenConfig {
     private final String pagerDutyDomain;
     private final String hipChatAuthToken;
     private final String hipChatUserName;
+    private final String hubotUrl;
     
     @Inject
     public SeyrenConfig(GraphiteConfig graphite) {
@@ -36,6 +37,7 @@ public class SeyrenConfig {
         this.pagerDutyDomain = environmentOrDefault("PAGERDUTY_DOMAIN", "");
         this.hipChatAuthToken = environmentOrDefault("HIPCHAT_AUTH_TOKEN", "");
         this.hipChatUserName = environmentOrDefault("HIPCHAT_USER_NAME", "Seyren Alert");
+        this.hubotUrl = environmentOrDefault("SEYREN_HUBOT_URL", "");
     }
     
     public GraphiteConfig getGraphite() {
@@ -60,6 +62,10 @@ public class SeyrenConfig {
     
     public String getHipChatUserName() {
         return hipChatUserName;
+    }
+    
+    public String getHubotUrl() {
+        return hubotUrl;
     }
     
     private static String environmentOrDefault(String propertyName, String defaultValue) {
