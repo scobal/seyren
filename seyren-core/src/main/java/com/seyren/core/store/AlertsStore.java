@@ -24,6 +24,6 @@ public interface AlertsStore {
     
     SeyrenResponse<Alert> getAlerts(int start, int items);
     
-    Alert getLastAlertForTarget(String target);
+    Alert getLastAlertForTargetOfCheck(String target, String checkId);
     
 }

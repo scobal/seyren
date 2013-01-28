@@ -115,7 +115,7 @@ public class CheckScheduler {
                     
                     BigDecimal currentValue = value.get();
                     
-                    Alert lastAlert = alertsStore.getLastAlertForTarget(target);
+                    Alert lastAlert = alertsStore.getLastAlertForTargetOfCheck(target, check.getId());
                     
                     AlertType lastState;
                     
