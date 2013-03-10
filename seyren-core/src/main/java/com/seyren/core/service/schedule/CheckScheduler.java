@@ -202,7 +202,7 @@ public class CheckScheduler {
 
     @PreDestroy
     public void preDestroy() throws InterruptedException {
-        // executor.shutdown();
-        // executor.awaitTermination(500, TimeUnit.MILLISECONDS);
+        executor.shutdown();
+        executor.awaitTermination(500, TimeUnit.MILLISECONDS);
     }
 }
