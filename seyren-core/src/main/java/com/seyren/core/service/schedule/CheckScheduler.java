@@ -20,10 +20,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
+import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +53,7 @@ public class CheckScheduler {
     private final List<NotificationService> notificationServices;
     private final TargetChecker targetChecker;
     private final ValueChecker valueChecker;
-    private final ScheduledExecutorService executor = Executors.newScheduledThreadPool(8);
+    private final ScheduledExecutorService executor = Executors.newScheduledThreadPool(8, new ThreadFactoryBuilder().setNameFormat("seyren.check-scheduler-%s").setDaemon(false).build());
     
     @Inject
     public CheckScheduler(ChecksStore checksStore, AlertsStore alertsStore, List<NotificationService> notificationServices, TargetChecker targetChecker, ValueChecker valueChecker) {
@@ -196,5 +199,10 @@ public class CheckScheduler {
                 .withToType(to)
                 .withTimestamp(now);
     }
-    
+
+    @PreDestroy
+    public void preDestroy() throws InterruptedException {
+        executor.shutdown();
+        executor.awaitTermination(500, TimeUnit.MILLISECONDS);
+    }
 }
