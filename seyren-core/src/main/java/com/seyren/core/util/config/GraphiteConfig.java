@@ -78,11 +78,15 @@ public class GraphiteConfig {
     }
     
     private static String environmentOrDefault(String propertyName, String defaultValue) {
-        String value = System.getenv(propertyName);
-        if (isEmpty(value)) {
-            return defaultValue;
+        String value = System.getProperty(propertyName);
+        if (isNotEmpty(value)) {
+            return value;
         }
-        return value;
+        value = System.getenv(propertyName);
+        if (isNotEmpty(value)) {
+            return value;
+        }
+        return defaultValue;
     }
     
 }
