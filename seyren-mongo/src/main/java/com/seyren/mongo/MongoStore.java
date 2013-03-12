@@ -14,6 +14,7 @@
 package com.seyren.mongo;
 
 import static com.seyren.mongo.NiceDBObject.*;
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +47,8 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
     
     public MongoStore() {
         try {
-            MongoURI mongoUri = new MongoURI(getMongoUri());
+            String uri = environmentOrDefault("MONGO_URL", DEFAULT_MONGO_URL);
+            MongoURI mongoUri = new MongoURI(uri);
             DB mongo = mongoUri.connectDB();
             if (mongoUri.getUsername() != null) {
                 mongo.authenticate(mongoUri.getUsername(), mongoUri.getPassword());
@@ -56,15 +58,7 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
             throw new RuntimeException(e);
         }
     }
-    
-    private String getMongoUri() {
-        String uri = System.getenv("MONGO_URL");
-        if (uri == null) {
-            uri = DEFAULT_MONGO_URL;
-        }
-        return uri;
-    }
-    
+
     public MongoStore(DB mongo) {
         this.mongo = mongo;
     }
@@ -231,5 +225,16 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
         DBObject updateObject = object("$set", object("subscriptions.$", subscriptionObject));
         getChecksCollection().update(checkFindObject, updateObject);
     }
-    
+
+    private static String environmentOrDefault(String propertyName, String defaultValue) {
+        String value = System.getProperty(propertyName);
+        if (isNotEmpty(value)) {
+            return value;
+        }
+        value = System.getenv(propertyName);
+        if (isNotEmpty(value)) {
+            return value;
+        }
+        return defaultValue;
+    }
 }
