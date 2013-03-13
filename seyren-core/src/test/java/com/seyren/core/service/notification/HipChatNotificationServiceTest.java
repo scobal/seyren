@@ -43,9 +43,7 @@ public class HipChatNotificationServiceTest {
     
     @Before
     public void before() {
-        GraphiteConfig graphiteConfig = new GraphiteConfig();
-        SeyrenConfig seyrenConfig = new SeyrenConfig(graphiteConfig);
-        notificationService = new HipChatNotificationService(seyrenConfig, clientDriver.getBaseUrl());
+        notificationService = new HipChatNotificationService(new SeyrenConfig(new GraphiteConfig()), clientDriver.getBaseUrl());
     }
     
     @Test
