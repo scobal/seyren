@@ -5,7 +5,7 @@
     <name>Seyren Core</name>
 
     <parent>
-        <groupId>com.github.seyren</groupId>
+        <groupId>com.github.scobal.seyren</groupId>
         <artifactId>seyren-parent</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
