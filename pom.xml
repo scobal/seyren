@@ -7,7 +7,15 @@
     <version>0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
+    <parent>
+        <groupId>org.sonatype.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>7</version>
+    </parent>
+
     <name>Seyren</name>
+    <description>An alerting dashboard for Graphite</description>
+    <url>https://github.com/scobal/seyren</url>
 
     <scm>
         <connection>scm:git:git@github.com:scobal/seyren.git</connection>
@@ -21,6 +29,20 @@
             <url>http://www.apache.org/licenses/LICENSE-2.0</url>
         </license>
     </licenses>
+
+    <developers>
+        <developer>
+            <name>Mark Pope</name>
+            <email>scobal+seyren@gmail.com</email>
+            <organization>Oracle</organization>
+        </developer>
+        <developer>
+            <name>Neil Prosser</name>
+            <email>neil.prosser+seyren@gmail.com</email>
+            <organization>Nokia</organization>
+            <organizationUrl>http://music.nokia.com</organizationUrl>
+        </developer>
+    </developers>
 
     <modules>
         <module>seyren-acceptance-tests</module>
@@ -120,8 +142,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.0</version>
                 <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
+                    <source>1.7</source>
+                    <target>1.7</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -147,6 +169,24 @@
                         <phase>verify</phase>
                         <goals>
                             <goal>format</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.2.1</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.1.2</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
                         </goals>
                     </execution>
                 </executions>
