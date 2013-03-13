@@ -20,7 +20,6 @@ import javax.inject.Named;
 @Named
 public class GraphiteConfig {
     
-    private final String baseUrl;
     private final String[] baseParts;
     
     public GraphiteConfig() {
@@ -28,24 +27,27 @@ public class GraphiteConfig {
     }
     
     public GraphiteConfig(String baseUrl) {
-        this.baseUrl = baseUrl;
         this.baseParts = splitBaseUrl(baseUrl);
     }
     
-    public String getBaseUrl() {
-        return baseUrl;
-    }
-    
-    public String getScheme() {
+    String getScheme() {
         return baseParts[0];
     }
     
-    public String getHost() {
+    String getHost() {
         return baseParts[1];
     }
     
-    public String getPath() {
+    String getPath() {
         return baseParts[2];
+    }
+    
+    String getUsername() {
+        return environmentOrDefault("GRAPHITE_USERNAME", "");
+    }
+    
+    String getPassword() {
+        return environmentOrDefault("GRAPHITE_PASSWORD", "");
     }
     
     private String[] splitBaseUrl(String baseUrl) {
@@ -67,14 +69,6 @@ public class GraphiteConfig {
         }
         
         return baseParts;
-    }
-    
-    public String getUsername() {
-        return environmentOrDefault("GRAPHITE_USERNAME", "");
-    }
-    
-    public String getPassword() {
-        return environmentOrDefault("GRAPHITE_PASSWORD", "");
     }
     
     private static String environmentOrDefault(String propertyName, String defaultValue) {
