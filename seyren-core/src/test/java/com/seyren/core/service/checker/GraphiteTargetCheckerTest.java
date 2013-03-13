@@ -29,21 +29,20 @@ import com.github.restdriver.clientdriver.ClientDriverRule;
 import com.google.common.base.Optional;
 import com.seyren.core.domain.Check;
 import com.seyren.core.util.config.GraphiteConfig;
+import com.seyren.core.util.config.SeyrenConfig;
 
 public class GraphiteTargetCheckerTest {
     
     @Rule
     public ClientDriverRule clientDriver = new ClientDriverRule();
     
-    private GraphiteConfig graphiteConfig;
     private GraphiteTargetChecker checker;
     
     @Before
     public void before() {
-        graphiteConfig = new GraphiteConfig(clientDriver.getBaseUrl());
-        checker = new GraphiteTargetChecker(graphiteConfig);
+        checker = new GraphiteTargetChecker(seyrenConfig(clientDriver.getBaseUrl()));
     }
-    
+
     @Test
     public void singleValidTargetIsPresent() throws Exception {
         String response = "[{\"target\": \"service.error.1MinuteRate\", \"datapoints\": [[0.06, 1337453460]]}]";
@@ -160,9 +159,13 @@ public class GraphiteTargetCheckerTest {
     
     @Test
     public void exceptionGettingDataFromGraphiteIsHandled() throws Exception {
-        checker = new GraphiteTargetChecker(new GraphiteConfig("http://unknown"));
+        checker = new GraphiteTargetChecker(seyrenConfig("http://unknown"));
         checker.check(checkWithTarget("service.*.1MinuteRate"));
     }
+    
+	private SeyrenConfig seyrenConfig(String graphiteUrl) {
+		return new SeyrenConfig(new GraphiteConfig(graphiteUrl));
+	}
     
     private Check check() {
         return checkWithTarget("service.error.1MinuteRate");

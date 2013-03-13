@@ -14,12 +14,12 @@
 package com.seyren.mongo;
 
 import static com.seyren.mongo.NiceDBObject.*;
-import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.bson.types.ObjectId;
@@ -37,17 +37,18 @@ import com.seyren.core.domain.Subscription;
 import com.seyren.core.store.AlertsStore;
 import com.seyren.core.store.ChecksStore;
 import com.seyren.core.store.SubscriptionsStore;
+import com.seyren.core.util.config.SeyrenConfig;
 
 @Named
 public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore {
     
-    private static final String DEFAULT_MONGO_URL = "mongodb://localhost:27017/seyren";
     private MongoMapper mapper = new MongoMapper();
     private DB mongo;
     
-    public MongoStore() {
+    @Inject
+    public MongoStore(SeyrenConfig seyrenConfig) {
         try {
-            String uri = environmentOrDefault("MONGO_URL", DEFAULT_MONGO_URL);
+            String uri = seyrenConfig.getMongoUrl();
             MongoURI mongoUri = new MongoURI(uri);
             DB mongo = mongoUri.connectDB();
             if (mongoUri.getUsername() != null) {
@@ -226,15 +227,4 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
         getChecksCollection().update(checkFindObject, updateObject);
     }
 
-    private static String environmentOrDefault(String propertyName, String defaultValue) {
-        String value = System.getProperty(propertyName);
-        if (isNotEmpty(value)) {
-            return value;
-        }
-        value = System.getenv(propertyName);
-        if (isNotEmpty(value)) {
-            return value;
-        }
-        return defaultValue;
-    }
 }

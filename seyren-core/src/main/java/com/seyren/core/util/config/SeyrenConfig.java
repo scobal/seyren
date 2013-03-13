@@ -24,33 +24,56 @@ public class SeyrenConfig {
     private final GraphiteConfig graphite;
     private final String baseUrl;
     private final String fromEmail;
+    private final String mongoUrl;
     private final String pagerDutyDomain;
     private final String hipChatAuthToken;
     private final String hipChatUserName;
     private final String hubotUrl;
+	private final String smtpUsername;
+	private final String smtpPassword;
+	private final String smtpHost;
+	private final String smtpProtocol;
+	private final Integer smtpPort;
     
-    @Inject
+	@Inject
     public SeyrenConfig(GraphiteConfig graphite) {
         this.graphite = graphite;
+        
+        // Base
         this.baseUrl = stripEnd(environmentOrDefault("SEYREN_URL", "http://localhost:8080/seyren"), "/");
         this.fromEmail = environmentOrDefault("SEYREN_FROM_EMAIL", "alert@seyren");
-        this.pagerDutyDomain = environmentOrDefault("PAGERDUTY_DOMAIN", "");
+        this.mongoUrl = environmentOrDefault("MONGO_URL", "mongodb://localhost:27017/seyren");
+        // TODO GRAPHITE_URL, GRAPHITE_USERNAME, GRAPHITE_PASSWORD
+        
+        // SMTP
+        this.smtpUsername = environmentOrDefault("SMTP_USERNAME", "");
+        this.smtpPassword = environmentOrDefault("SMTP_PASSWORD", "");
+        this.smtpHost = environmentOrDefault("SMTP_HOST", "localhost");
+        this.smtpProtocol = environmentOrDefault("SMTP_PROTOCOL", "smtp");
+        this.smtpPort = Integer.parseInt(environmentOrDefault("SMTP_PORT", "25"));
+
+        // HipChat
         this.hipChatAuthToken = environmentOrDefault("HIPCHAT_AUTH_TOKEN", "");
         this.hipChatUserName = environmentOrDefault("HIPCHAT_USER_NAME", "Seyren Alert");
+        
+        // PagerDuty
+        this.pagerDutyDomain = environmentOrDefault("PAGERDUTY_DOMAIN", "");
+        
+        // Hubot
         this.hubotUrl = environmentOrDefault("SEYREN_HUBOT_URL", "");
     }
     
-    public GraphiteConfig getGraphite() {
-        return graphite;
-    }
-    
-    public String getBaseUrl() {
+	public String getBaseUrl() {
         return baseUrl;
     }
     
     public String getFromEmail() {
         return fromEmail;
     }
+    
+    public String getMongoUrl() {
+		return mongoUrl;
+	}
     
     public String getPagerDutyDomain() {
         return pagerDutyDomain;
@@ -67,6 +90,47 @@ public class SeyrenConfig {
     public String getHubotUrl() {
         return hubotUrl;
     }
+    
+    public String getSmtpUsername() {
+		return smtpUsername;
+	}
+
+	public String getSmtpPassword() {
+		return smtpPassword;
+	}
+
+	public String getSmtpHost() {
+		return smtpHost;
+	}
+
+	public String getSmtpProtocol() {
+		return smtpProtocol;
+	}
+
+	public Integer getSmtpPort() {
+		return smtpPort;
+	}
+	
+	public String getGraphiteScheme() {
+		return graphite.getScheme();
+	}
+	
+	public String getGraphiteHost() {
+		return graphite.getHost();
+	}
+	
+	public String getGraphitePath() {
+		return graphite.getPath();
+	}
+	
+	public String getGraphiteUsername() {
+		return graphite.getUsername();
+	}
+	
+	public String getGraphitePassword() {
+		return graphite.getPassword();
+	}
+	
     
     private static String environmentOrDefault(String propertyName, String defaultValue) {
         String value = System.getProperty(propertyName);

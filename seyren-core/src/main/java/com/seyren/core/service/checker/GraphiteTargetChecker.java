@@ -40,7 +40,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Optional;
 import com.seyren.core.domain.Check;
 import com.seyren.core.exception.InvalidGraphiteValueException;
-import com.seyren.core.util.config.GraphiteConfig;
+import com.seyren.core.util.config.SeyrenConfig;
 
 @Named
 public class GraphiteTargetChecker implements TargetChecker {
@@ -58,12 +58,12 @@ public class GraphiteTargetChecker implements TargetChecker {
     private final JsonNodeResponseHandler handler = new JsonNodeResponseHandler();
     
     @Inject
-    public GraphiteTargetChecker(GraphiteConfig graphiteConfig) {
-        this.graphiteScheme = graphiteConfig.getScheme();
-        this.graphiteHost = graphiteConfig.getHost();
-        this.graphitePath = graphiteConfig.getPath();
-        this.graphiteUsername = graphiteConfig.getUsername();
-        this.graphitePassword = graphiteConfig.getPassword();
+    public GraphiteTargetChecker(SeyrenConfig seyrenConfig) {
+        this.graphiteScheme = seyrenConfig.getGraphiteScheme();
+        this.graphiteHost = seyrenConfig.getGraphiteHost();
+        this.graphitePath = seyrenConfig.getGraphitePath();
+        this.graphiteUsername = seyrenConfig.getGraphiteUsername();
+        this.graphitePassword = seyrenConfig.getGraphitePassword();
         this.client = new DefaultHttpClient(createConnectionManager());
         setAuthHeadersIfNecessary();
     }
