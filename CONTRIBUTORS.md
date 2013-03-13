@@ -3,3 +3,4 @@
 * Andrew Jones (ahjones)
 * Joe Littlejohn (joelittlejohn)
 * Usman Ismail (usmanismail)
+* Cyrille Le Clerc (cyrille-leclerc)
