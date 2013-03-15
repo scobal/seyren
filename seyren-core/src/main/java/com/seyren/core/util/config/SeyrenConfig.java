@@ -18,15 +18,16 @@ import static org.apache.commons.lang.StringUtils.*;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 
 @Named
 public class SeyrenConfig {
     
-    private final GraphiteConfig graphite;
     private final String baseUrl;
     private final String mongoUrl;
+	private final String graphiteUrl;
+	private final String graphiteUsername;
+	private final String graphitePassword;
     private final String pagerDutyDomain;
     private final String hipChatAuthToken;
     private final String hipChatUsername;
@@ -38,14 +39,16 @@ public class SeyrenConfig {
 	private final String smtpProtocol;
 	private final Integer smtpPort;
     
-	@Inject
-    public SeyrenConfig(GraphiteConfig graphite) {
-        this.graphite = graphite;
+    public SeyrenConfig() {
         
         // Base
         this.baseUrl = stripEnd(configOrDefault("SEYREN_URL", "http://localhost:8080/seyren"), "/");
         this.mongoUrl = configOrDefault("MONGO_URL", "mongodb://localhost:27017/seyren");
-        // TODO GRAPHITE_URL, GRAPHITE_USERNAME, GRAPHITE_PASSWORD
+        
+        // Graphite
+        this.graphiteUrl = stripEnd(configOrDefault("GRAPHITE_URL", "http://localhost:80"), "/");
+        this.graphiteUsername = configOrDefault("GRAPHITE_USERNAME", "");
+        this.graphitePassword = configOrDefault("GRAPHITE_PASSWORD", "");
         
         // SMTP
         this.smtpFrom = configOrDefault(list("SMTP_FROM", "SEYREN_FROM_EMAIL"), "alert@seyren");
@@ -114,27 +117,34 @@ public class SeyrenConfig {
 		return smtpPort;
 	}
 	
-	public String getGraphiteScheme() {
-		return graphite.getScheme();
-	}
-	
-	public String getGraphiteHost() {
-		return graphite.getHost();
-	}
-	
-	public String getGraphitePath() {
-		return graphite.getPath();
+	public String getGraphiteUrl() {
+		return graphiteUrl;
 	}
 	
 	public String getGraphiteUsername() {
-		return graphite.getUsername();
+		return graphiteUsername;
 	}
 	
 	public String getGraphitePassword() {
-		return graphite.getPassword();
+		return graphitePassword;
 	}
 	
-    
+	public String getGraphiteScheme() {
+		return splitBaseUrl(graphiteUrl)[0];
+	}
+	
+	public String getGraphiteHost() {
+		return splitBaseUrl(graphiteUrl)[1];
+	}
+	
+	public String getGraphitePath() {
+		return splitBaseUrl(graphiteUrl)[2];
+	}
+	
+    private static String configOrDefault(String propertyName, String defaultValue) {
+    	return configOrDefault(list(propertyName), defaultValue);
+    }
+
 	private static String configOrDefault(List<String> propertyNames, String defaultValue) {
 		
 		for (String propertyName : propertyNames) {
@@ -153,15 +163,28 @@ public class SeyrenConfig {
         return defaultValue;
 	}
 	
-	/**
-	 * NOTE: Temporarily non-private until GraphiteConfig is re-factored into this class 
-	 */
-    static String configOrDefault(String propertyName, String defaultValue) {
-    	return configOrDefault(list(propertyName), defaultValue);
-    }
-
 	private static List<String> list(String... propertyNames) {
 		return Arrays.asList(propertyNames);
 	}
     
+    private static String[] splitBaseUrl(String baseUrl) {
+        String[] baseParts = new String[3];
+        
+        if (baseUrl.toString().contains("://")) {
+            baseParts[0] = baseUrl.toString().split("://")[0];
+            baseUrl = baseUrl.toString().split("://")[1];
+        } else {
+            baseParts[0] = "http";
+        }
+        
+        if (baseUrl.contains("/")) {
+            baseParts[1] = baseUrl.split("/")[0];
+            baseParts[2] = "/" + baseUrl.split("/", 2)[1];
+        } else {
+            baseParts[1] = baseUrl;
+            baseParts[2] = "";
+        }
+        
+        return baseParts;
+    }
 }

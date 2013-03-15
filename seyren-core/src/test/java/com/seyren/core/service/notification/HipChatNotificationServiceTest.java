@@ -31,7 +31,6 @@ import com.seyren.core.domain.AlertType;
 import com.seyren.core.domain.Check;
 import com.seyren.core.domain.Subscription;
 import com.seyren.core.domain.SubscriptionType;
-import com.seyren.core.util.config.GraphiteConfig;
 import com.seyren.core.util.config.SeyrenConfig;
 
 public class HipChatNotificationServiceTest {
@@ -43,7 +42,7 @@ public class HipChatNotificationServiceTest {
     
     @Before
     public void before() {
-        notificationService = new HipChatNotificationService(new SeyrenConfig(new GraphiteConfig()), clientDriver.getBaseUrl());
+        notificationService = new HipChatNotificationService(new SeyrenConfig(), clientDriver.getBaseUrl());
     }
     
     @Test

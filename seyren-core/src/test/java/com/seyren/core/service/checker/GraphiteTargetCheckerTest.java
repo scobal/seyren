@@ -28,7 +28,6 @@ import org.junit.Test;
 import com.github.restdriver.clientdriver.ClientDriverRule;
 import com.google.common.base.Optional;
 import com.seyren.core.domain.Check;
-import com.seyren.core.util.config.GraphiteConfig;
 import com.seyren.core.util.config.SeyrenConfig;
 
 public class GraphiteTargetCheckerTest {
@@ -164,7 +163,8 @@ public class GraphiteTargetCheckerTest {
     }
     
 	private SeyrenConfig seyrenConfig(String graphiteUrl) {
-		return new SeyrenConfig(new GraphiteConfig(graphiteUrl));
+		System.setProperty("GRAPHITE_URL", graphiteUrl);
+		return new SeyrenConfig();
 	}
     
     private Check check() {
