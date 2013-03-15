@@ -15,6 +15,9 @@ package com.seyren.core.util.config;
 
 import static org.apache.commons.lang.StringUtils.*;
 
+import java.util.Arrays;
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -40,27 +43,27 @@ public class SeyrenConfig {
         this.graphite = graphite;
         
         // Base
-        this.baseUrl = stripEnd(environmentOrDefault("SEYREN_URL", "http://localhost:8080/seyren"), "/");
-        this.mongoUrl = environmentOrDefault("MONGO_URL", "mongodb://localhost:27017/seyren");
+        this.baseUrl = stripEnd(configOrDefault("SEYREN_URL", "http://localhost:8080/seyren"), "/");
+        this.mongoUrl = configOrDefault("MONGO_URL", "mongodb://localhost:27017/seyren");
         // TODO GRAPHITE_URL, GRAPHITE_USERNAME, GRAPHITE_PASSWORD
         
         // SMTP
-        this.smtpFrom = environmentOrDefault("SEYREN_FROM_EMAIL", "alert@seyren");
-        this.smtpUsername = environmentOrDefault("SMTP_USERNAME", "");
-        this.smtpPassword = environmentOrDefault("SMTP_PASSWORD", "");
-        this.smtpHost = environmentOrDefault("SMTP_HOST", "localhost");
-        this.smtpProtocol = environmentOrDefault("SMTP_PROTOCOL", "smtp");
-        this.smtpPort = Integer.parseInt(environmentOrDefault("SMTP_PORT", "25"));
+        this.smtpFrom = configOrDefault(list("SMTP_FROM", "SEYREN_FROM_EMAIL"), "alert@seyren");
+        this.smtpUsername = configOrDefault("SMTP_USERNAME", "");
+        this.smtpPassword = configOrDefault("SMTP_PASSWORD", "");
+        this.smtpHost = configOrDefault("SMTP_HOST", "localhost");
+        this.smtpProtocol = configOrDefault("SMTP_PROTOCOL", "smtp");
+        this.smtpPort = Integer.parseInt(configOrDefault("SMTP_PORT", "25"));
 
         // HipChat
-        this.hipChatAuthToken = environmentOrDefault("HIPCHAT_AUTH_TOKEN", "");
-        this.hipChatUsername = environmentOrDefault("HIPCHAT_USER_NAME", "Seyren Alert");
+        this.hipChatAuthToken = configOrDefault(list("HIPCHAT_AUTHTOKEN", "HIPCHAT_AUTH_TOKEN"), "");
+        this.hipChatUsername = configOrDefault(list("HIPCHAT_USERNAME", "HIPCHAT_USER_NAME"), "Seyren Alert");
         
         // PagerDuty
-        this.pagerDutyDomain = environmentOrDefault("PAGERDUTY_DOMAIN", "");
+        this.pagerDutyDomain = configOrDefault("PAGERDUTY_DOMAIN", "");
         
         // Hubot
-        this.hubotUrl = environmentOrDefault("SEYREN_HUBOT_URL", "");
+        this.hubotUrl = configOrDefault(list("HUBOT_URL", "SEYREN_HUBOT_URL"), "");
     }
     
 	public String getBaseUrl() {
@@ -132,16 +135,33 @@ public class SeyrenConfig {
 	}
 	
     
-    private static String environmentOrDefault(String propertyName, String defaultValue) {
-        String value = System.getProperty(propertyName);
-        if (isNotEmpty(value)) {
-            return value;
-        }
-        value = System.getenv(propertyName);
-        if (isNotEmpty(value)) {
-            return value;
-        }
+	private static String configOrDefault(List<String> propertyNames, String defaultValue) {
+		
+		for (String propertyName : propertyNames) {
+			
+			String value = System.getProperty(propertyName);
+	        if (isNotEmpty(value)) {
+	            return value;
+	        }
+	        
+	        value = System.getenv(propertyName);
+	        if (isNotEmpty(value)) {
+	            return value;
+	        }
+		}
+		
         return defaultValue;
+	}
+	
+	/**
+	 * NOTE: Temporarily non-private until GraphiteConfig is re-factored into this class 
+	 */
+    static String configOrDefault(String propertyName, String defaultValue) {
+    	return configOrDefault(list(propertyName), defaultValue);
     }
+
+	private static List<String> list(String... propertyNames) {
+		return Arrays.asList(propertyNames);
+	}
     
 }

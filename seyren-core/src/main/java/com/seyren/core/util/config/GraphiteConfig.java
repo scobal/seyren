@@ -21,13 +21,17 @@ import javax.inject.Named;
 public class GraphiteConfig {
     
     private final String[] baseParts;
+    private final String username;
+    private final String password;
     
     public GraphiteConfig() {
-        this(stripEnd(environmentOrDefault("GRAPHITE_URL", "http://localhost:80"), "/"));
+        this(stripEnd(SeyrenConfig.configOrDefault("GRAPHITE_URL", "http://localhost:80"), "/"));
     }
     
     public GraphiteConfig(String baseUrl) {
         this.baseParts = splitBaseUrl(baseUrl);
+        this.username = SeyrenConfig.configOrDefault("GRAPHITE_USERNAME", "");
+        this.password= SeyrenConfig.configOrDefault("GRAPHITE_PASSWORD", "");
     }
     
     String getScheme() {
@@ -43,11 +47,11 @@ public class GraphiteConfig {
     }
     
     String getUsername() {
-        return environmentOrDefault("GRAPHITE_USERNAME", "");
+        return username;
     }
     
     String getPassword() {
-        return environmentOrDefault("GRAPHITE_PASSWORD", "");
+        return password;
     }
     
     private String[] splitBaseUrl(String baseUrl) {
@@ -69,18 +73,6 @@ public class GraphiteConfig {
         }
         
         return baseParts;
-    }
-    
-    private static String environmentOrDefault(String propertyName, String defaultValue) {
-        String value = System.getProperty(propertyName);
-        if (isNotEmpty(value)) {
-            return value;
-        }
-        value = System.getenv(propertyName);
-        if (isNotEmpty(value)) {
-            return value;
-        }
-        return defaultValue;
     }
     
 }

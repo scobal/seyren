@@ -31,24 +31,24 @@ open http://localhost:8080/seyren
 * `GRAPHITE_PASSWORD` - The Http Basic auth password for the graphite server. Default: ``
 * `MONGO_URL` - The mongo connection string. Default: `mongodb://localhost:27017/seyren`
 * `SEYREN_URL` - The location of your seyren instance. Default: `http://localhost:8080/seyren`
-* `SEYREN_FROM_EMAIL` - The from email address for sending out notifications. Default: `alert@seyren`
 
 #### SMTP
 * `SMTP_HOST` - The smtp server to send email notifications from. Default: `localhost`
 * `SMTP_PORT` - The smtp server port. Default: `25`
+* `SMTP_FROM` - The from email address for sending out notifications. Default: `alert@seyren`
 * `SMTP_USERNAME` - The smtp server username if authenticated SMTP is used. Default: ``
 * `SMTP_PASSWORD` - The smtp server password if authenticated SMTP is used. Default: ``
 * `SMTP_PROTOCOL` - The smtp server protocol if authenticated SMTP is used. Default: `smtp`
 
 #### HipChat
-* `HIPCHAT_AUTH_TOKEN` - The hipchat api auth token. Default: ``
-* `HIPCHAT_USER_NAME` - The username that messages will be sent from to a hipchat room. Default: `Seyren Alert`
+* `HIPCHAT_AUTHTOKEN` - The hipchat api auth token. Default: ``
+* `HIPCHAT_USERNAME` - The username that messages will be sent from to a hipchat room. Default: `Seyren Alert`
 
 #### PagerDuty
 * `PAGERDUTY_DOMAIN` - The PagerDuty domain to be notified. Default: ``
 
 #### Hubot
-* `SEYREN_HUBOT_URL` - The location where Hubot is running. Default ``
+* `HUBOT_URL` - The location where Hubot is running. Default ``
 
 
 
