@@ -56,7 +56,7 @@ public class HipChatNotificationService implements NotificationService {
     @Override
     public void sendNotification(Check check, Subscription subscription, List<Alert> alerts) throws NotificationFailedException {
         String token = seyrenConfig.getHipChatAuthToken();
-        String from = seyrenConfig.getHipChatUserName();
+        String from = seyrenConfig.getHipChatUsername();
         String[] roomIds = subscription.getTarget().split(",");
         try {
             if (check.getState() == AlertType.ERROR) {

@@ -23,12 +23,12 @@ public class SeyrenConfig {
     
     private final GraphiteConfig graphite;
     private final String baseUrl;
-    private final String fromEmail;
     private final String mongoUrl;
     private final String pagerDutyDomain;
     private final String hipChatAuthToken;
-    private final String hipChatUserName;
+    private final String hipChatUsername;
     private final String hubotUrl;
+    private final String smtpFrom;
 	private final String smtpUsername;
 	private final String smtpPassword;
 	private final String smtpHost;
@@ -41,11 +41,11 @@ public class SeyrenConfig {
         
         // Base
         this.baseUrl = stripEnd(environmentOrDefault("SEYREN_URL", "http://localhost:8080/seyren"), "/");
-        this.fromEmail = environmentOrDefault("SEYREN_FROM_EMAIL", "alert@seyren");
         this.mongoUrl = environmentOrDefault("MONGO_URL", "mongodb://localhost:27017/seyren");
         // TODO GRAPHITE_URL, GRAPHITE_USERNAME, GRAPHITE_PASSWORD
         
         // SMTP
+        this.smtpFrom = environmentOrDefault("SEYREN_FROM_EMAIL", "alert@seyren");
         this.smtpUsername = environmentOrDefault("SMTP_USERNAME", "");
         this.smtpPassword = environmentOrDefault("SMTP_PASSWORD", "");
         this.smtpHost = environmentOrDefault("SMTP_HOST", "localhost");
@@ -54,7 +54,7 @@ public class SeyrenConfig {
 
         // HipChat
         this.hipChatAuthToken = environmentOrDefault("HIPCHAT_AUTH_TOKEN", "");
-        this.hipChatUserName = environmentOrDefault("HIPCHAT_USER_NAME", "Seyren Alert");
+        this.hipChatUsername = environmentOrDefault("HIPCHAT_USER_NAME", "Seyren Alert");
         
         // PagerDuty
         this.pagerDutyDomain = environmentOrDefault("PAGERDUTY_DOMAIN", "");
@@ -65,10 +65,6 @@ public class SeyrenConfig {
     
 	public String getBaseUrl() {
         return baseUrl;
-    }
-    
-    public String getFromEmail() {
-        return fromEmail;
     }
     
     public String getMongoUrl() {
@@ -83,12 +79,16 @@ public class SeyrenConfig {
         return hipChatAuthToken;
     }
     
-    public String getHipChatUserName() {
-        return hipChatUserName;
+    public String getHipChatUsername() {
+        return hipChatUsername;
     }
     
     public String getHubotUrl() {
         return hubotUrl;
+    }
+    
+    public String getSmtpFrom() {
+        return smtpFrom;
     }
     
     public String getSmtpUsername() {
