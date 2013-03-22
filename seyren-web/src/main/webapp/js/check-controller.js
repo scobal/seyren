@@ -213,7 +213,7 @@ CheckController.prototype = {
     
     getBaseGraphUrl : function(minutes) {
         if (this.config && this.check) {
-            var result = this.config.graphite.baseUrl + '/render/?';
+            var result = this.config.graphiteUrl + '/render/?';
             result += 'target=' + this.check.target;
             result += '&from=' + minutes + 'Minutes';
             result += '&target=alias(dashed(color(constantLine(' + this.check.warn + '),"yellow")),"warn level")';
