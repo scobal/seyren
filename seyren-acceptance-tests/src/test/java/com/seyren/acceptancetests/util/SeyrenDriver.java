@@ -26,6 +26,10 @@ public final class SeyrenDriver {
     private static final String DEFAULT_CONTEXT_ROOT = "seyren";
     private static final int DEFAULT_REST_DRIVER_PORT = 8081;
     
+    public static Url config() {
+        return baseUri().withPath("config");
+    }
+    
     public static Url checks() {
         return baseUri().withPath("checks");
     }
