@@ -62,6 +62,11 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
 
     public MongoStore(DB mongo) {
         this.mongo = mongo;
+        bootstrapMongo();
+    }
+    
+    private void bootstrapMongo() {
+        getChecksCollection().ensureIndex(new BasicDBObject("name", 1), new BasicDBObject("unique", true));
     }
     
     private DBCollection getChecksCollection() {
