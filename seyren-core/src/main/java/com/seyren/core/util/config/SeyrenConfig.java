@@ -13,7 +13,8 @@
  */
 package com.seyren.core.util.config;
 
-import static org.apache.commons.lang.StringUtils.*;
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
+import static org.apache.commons.lang.StringUtils.stripEnd;
 
 import java.util.Arrays;
 import java.util.List;
@@ -38,6 +39,8 @@ public class SeyrenConfig {
 	private final String smtpHost;
 	private final String smtpProtocol;
 	private final Integer smtpPort;
+	private final String ircCatHost;
+	private final int ircCatPort;
     
     public SeyrenConfig() {
         
@@ -67,6 +70,10 @@ public class SeyrenConfig {
         
         // Hubot
         this.hubotUrl = configOrDefault(list("HUBOT_URL", "SEYREN_HUBOT_URL"), "");
+        
+        // IrcCat
+        this.ircCatHost = configOrDefault("IRCCAT_HOST", "localhost");
+        this.ircCatPort = Integer.parseInt(configOrDefault("IRCCAT_PORT", "12345"));
     }
     
 	public String getBaseUrl() {
@@ -141,7 +148,11 @@ public class SeyrenConfig {
 		return splitBaseUrl(graphiteUrl)[2];
 	}
 	
-    private static String configOrDefault(String propertyName, String defaultValue) {
+    public int getIrcCatPort() {
+		return ircCatPort;
+	}
+
+	private static String configOrDefault(String propertyName, String defaultValue) {
     	return configOrDefault(list(propertyName), defaultValue);
     }
 
@@ -187,4 +198,8 @@ public class SeyrenConfig {
         
         return baseParts;
     }
+
+	public String getIrcCatHost() {
+		return this.ircCatHost;
+	}
 }
