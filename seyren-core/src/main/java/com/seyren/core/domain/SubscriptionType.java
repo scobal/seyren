@@ -14,7 +14,18 @@
 package com.seyren.core.domain;
 
 public enum SubscriptionType {
-    
-    EMAIL, PAGERDUTY, HIPCHAT, HUBOT
-    
+
+	EMAIL("Email"), PAGERDUTY("PagerDuty"), HIPCHAT("HipChat"), HUBOT("Hubot"), IRCCAT(
+			"IRCCat");
+
+	private final String name;
+
+	private SubscriptionType(String name) {
+		this.name = name;
+	}
+
+	public String getName() {
+		return name;
+	}
+	
 }
