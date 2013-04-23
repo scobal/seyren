@@ -41,7 +41,7 @@ public class GraphiteTargetCheckerTest {
     public void before() {
         checker = new GraphiteTargetChecker(seyrenConfig(clientDriver.getBaseUrl()));
     }
-
+    
     @Test
     public void singleValidTargetIsPresent() throws Exception {
         String response = "[{\"target\": \"service.error.1MinuteRate\", \"datapoints\": [[0.06, 1337453460]]}]";
@@ -162,10 +162,34 @@ public class GraphiteTargetCheckerTest {
         checker.check(checkWithTarget("service.*.1MinuteRate"));
     }
     
-	private SeyrenConfig seyrenConfig(String graphiteUrl) {
-		System.setProperty("GRAPHITE_URL", graphiteUrl);
-		return new SeyrenConfig();
-	}
+    @Test
+    public void authIsAddedWhenUsernameAndPasswordAreProvided() throws Exception {
+        System.setProperty("GRAPHITE_USERNAME", "seyren");
+        System.setProperty("GRAPHITE_PASSWORD", "s3yr3N");
+        checker = new GraphiteTargetChecker(seyrenConfig(clientDriver.getBaseUrl()));
+        
+        String response = "[{\"target\": \"service.error.1MinuteRate\", \"datapoints\": [[0.20, 1337453460],[0.01, 1337453463]]}]";
+        
+        clientDriver.addExpectation(
+                onRequestTo("/render/")
+                        .withParam("from", "-11minutes")
+                        .withParam("until", "-1minutes")
+                        .withParam("uniq", Pattern.compile("[0-9]+"))
+                        .withParam("format", "json")
+                        .withParam("target", "service.error.1MinuteRate")
+                        .withHeader("Authorization", "Basic c2V5cmVuOnMzeXIzTg=="),
+                giveResponse(response, "application/json"));
+        
+        checker.check(checkWithTarget("service.error.1MinuteRate"));
+        
+        System.clearProperty("GRAPHITE_USERNAME");
+        System.clearProperty("GRAPHITE_PASSWORD");
+    }
+    
+    private SeyrenConfig seyrenConfig(String graphiteUrl) {
+        System.setProperty("GRAPHITE_URL", graphiteUrl);
+        return new SeyrenConfig();
+    }
     
     private Check check() {
         return checkWithTarget("service.error.1MinuteRate");

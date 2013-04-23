@@ -13,6 +13,7 @@
  */
 package com.seyren.core.service.checker;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.util.HashMap;
@@ -22,16 +23,26 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.HttpException;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpRequestInterceptor;
+import org.apache.http.auth.AuthScheme;
 import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.AuthState;
+import org.apache.http.auth.Credentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.impl.client.AbstractHttpClient;
-import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
+import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.ExecutionContext;
+import org.apache.http.protocol.HttpContext;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,13 +60,14 @@ public class GraphiteTargetChecker implements TargetChecker {
     private static final String QUERY_STRING = "from=-11minutes&until=-1minutes&uniq=%s&format=json&target=%s";
     private static final int MAX_CONNECTIONS_PER_ROUTE = 20;
     
-    private final HttpClient client;
+    private final JsonNodeResponseHandler handler = new JsonNodeResponseHandler();
     private final String graphiteScheme;
     private final String graphiteHost;
     private final String graphitePath;
     private final String graphiteUsername;
     private final String graphitePassword;
-    private final JsonNodeResponseHandler handler = new JsonNodeResponseHandler();
+    private final HttpClient client;
+    private final HttpContext context;
     
     @Inject
     public GraphiteTargetChecker(SeyrenConfig seyrenConfig) {
@@ -64,8 +76,8 @@ public class GraphiteTargetChecker implements TargetChecker {
         this.graphitePath = seyrenConfig.getGraphitePath();
         this.graphiteUsername = seyrenConfig.getGraphiteUsername();
         this.graphitePassword = seyrenConfig.getGraphitePassword();
-        this.client = new DefaultHttpClient(createConnectionManager());
-        setAuthHeadersIfNecessary();
+        this.context = new BasicHttpContext();
+        this.client = createHttpClient();
     }
     
     @Override
@@ -77,7 +89,7 @@ public class GraphiteTargetChecker implements TargetChecker {
         Map<String, Optional<BigDecimal>> targetValues = new HashMap<String, Optional<BigDecimal>>();
         
         try {
-            JsonNode response = client.execute(get, handler);
+            JsonNode response = client.execute(get, handler, context);
             for (JsonNode metric : response) {
                 String target = metric.path("target").asText();
                 
@@ -117,24 +129,47 @@ public class GraphiteTargetChecker implements TargetChecker {
         throw new InvalidGraphiteValueException("Could not find a valid datapoint for target: " + node.get("target"));
     }
     
+    private HttpClient createHttpClient() {
+        DefaultHttpClient client = new DefaultHttpClient(createConnectionManager());
+        
+        // Set auth header for graphite if username and password are provided
+        if (!StringUtils.isEmpty(graphiteUsername) && !StringUtils.isEmpty(graphitePassword)) {
+            client.getCredentialsProvider().setCredentials(
+                    new AuthScope(AuthScope.ANY_HOST, AuthScope.ANY_PORT),
+                    new UsernamePasswordCredentials(graphiteUsername, graphitePassword));
+            context.setAttribute("preemptive-auth", new BasicScheme());
+            client.addRequestInterceptor(new PreemptiveAuth(), 0);
+        }
+        
+        return client;
+    }
+    
     private ClientConnectionManager createConnectionManager() {
         PoolingClientConnectionManager manager = new PoolingClientConnectionManager();
         manager.setDefaultMaxPerRoute(MAX_CONNECTIONS_PER_ROUTE);
         return manager;
     }
     
-    /**
-     * Set auth header for graphite if username and password are provided
+    /*
+     * Adapted from an answer to this question on Stack Overflow:
+     * http://stackoverflow.com/questions/2014700/preemptive-basic-authentication-with-apache-httpclient-4
+     * Code originally came from here:
+     * http://subversion.jfrog.org/jfrog/build-info/trunk/build-info-client/src/main/java/org/jfrog/build/client/PreemptiveHttpClient.java
      */
-    private void setAuthHeadersIfNecessary() {
-        if (!StringUtils.isEmpty(graphiteUsername) && !StringUtils.isEmpty(graphitePassword)) {
-            CredentialsProvider credsProvider = new BasicCredentialsProvider();
-            credsProvider.setCredentials(
-                    new AuthScope(graphiteHost, AuthScope.ANY_PORT),
-                    new UsernamePasswordCredentials(graphiteUsername, graphitePassword));
-            if (client instanceof AbstractHttpClient) {
-                ((AbstractHttpClient) client).setCredentialsProvider(credsProvider);
+    private static class PreemptiveAuth implements HttpRequestInterceptor {
+        public void process(HttpRequest request, HttpContext context) throws HttpException, IOException {
+            AuthState authState = (AuthState) context.getAttribute(ClientContext.TARGET_AUTH_STATE);
+            if (authState.getAuthScheme() != null) {
+                return;
             }
+            AuthScheme authScheme = (AuthScheme) context.getAttribute("preemptive-auth");
+            if (authScheme == null) {
+                return;
+            }
+            CredentialsProvider credsProvider = (CredentialsProvider) context.getAttribute(ClientContext.CREDS_PROVIDER);
+            HttpHost targetHost = (HttpHost) context.getAttribute(ExecutionContext.HTTP_TARGET_HOST);
+            Credentials credentials = credsProvider.getCredentials(new AuthScope(targetHost.getHostName(), targetHost.getPort()));
+            authState.update(authScheme, credentials);
         }
     }
     
