@@ -60,10 +60,13 @@ public class HipChatNotificationService implements NotificationService {
         String[] roomIds = subscription.getTarget().split(",");
         try {
             if (check.getState() == AlertType.ERROR) {
-                String message = "Check <a href=" + seyrenConfig.getBaseUrl() + "/#/checks/" + check.getId() + ">" + check.getName() + "</a> has exceeded its error threshold value. Please investigate.";
+                 String message = getHipChatMessage(check);                  
                 sendMessage(message, MessageColor.RED, roomIds, from, token, true);
+            } else if (check.getState() == AlertType.WARN) {
+                String message = getHipChatMessage(check);
+                sendMessage(message, MessageColor.YELLOW, roomIds, from, token, true);
             } else if (check.getState() == AlertType.OK) {
-                String message = "Check <a href=" + seyrenConfig.getBaseUrl() + "/#/checks/" + check.getId() + ">" + check.getName() + "</a> is back up.";
+                String message = getHipChatMessage(check);
                 sendMessage(message, MessageColor.GREEN, roomIds, from, token, true);
             } else {
                 LOGGER.warn("Did not send notification to HipChat for check in state: {}", check.getState());
@@ -72,6 +75,11 @@ public class HipChatNotificationService implements NotificationService {
             throw new NotificationFailedException("Failed to send notification to HipChat", e);
         }
     }
+
+    private String getHipChatMessage(Check check) {
+        String message = "Check <a href=" + seyrenConfig.getBaseUrl() + "/#/checks/" + check.getId() + ">" + check.getName() + "</a> has entered its " + check.getState().toString() + " state.";
+        return message;
+    }     
     
     private void sendMessage(String message, MessageColor color, String[] roomIds, String from, String authToken, boolean notify) {
         for (String roomId : roomIds) {
