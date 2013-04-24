@@ -71,7 +71,7 @@ public class HipChatNotificationServiceTest {
                         .withParam("auth_token", "")
                         .withParam("from", "Seyren Alert")
                         .withParam("room_id", "target")
-                        .withParam("message", "Check <a href=http://localhost:8080/seyren/#/checks/null>test-check</a> has exceeded its error threshold value. Please investigate.")
+                        .withParam("message", "Check <a href=http://localhost:8080/seyren/#/checks/null>test-check</a> has entered its ERROR state.")
                         .withParam("color", "red")
                         .withParam("notify", "1")
                         .withHeader("Content-Type", "application/x-www-form-urlencoded"),
