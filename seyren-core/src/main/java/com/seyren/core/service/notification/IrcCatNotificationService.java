@@ -56,22 +56,9 @@ public class IrcCatNotificationService implements NotificationService {
 				","));
 		try {
 			for (String channel : channels) {
-				String message = null;
-				if (check.getState() == AlertType.ERROR) {
-					message = createMessage(check);
-				} else if (check.getState() == AlertType.OK) {
-					message = "Check <a href=" + seyrenConfig.getBaseUrl()
-							+ "/#/checks/" + check.getId() + ">"
-							+ check.getName() + "</a> is back up.";
-				} else {
-					LOGGER.warn(
-							"Did not send notification to HipChat for check in state: {}",
-							check.getState());
-				}
-				if (message != null) {
-					sendMessage(seyrenConfig.getIrcCatHost(),
-							seyrenConfig.getIrcCatPort(), message, channel);
-				}
+				String message = createMessage(check);
+				sendMessage(seyrenConfig.getIrcCatHost(),
+						seyrenConfig.getIrcCatPort(), message, channel);
 			}
 		} catch (IOException ioe) {
 			throw new NotificationFailedException("Could not send message", ioe);
@@ -79,15 +66,26 @@ public class IrcCatNotificationService implements NotificationService {
 	}
 
 	private String createMessage(Check check) {
-		StringBuilder message = new StringBuilder("Check " + check.getName());
+		String message;
+
+		String checkUrl = seyrenConfig.getBaseUrl() + "/#/checks/"
+				+ check.getId();
+
 		if (check.getState() == AlertType.ERROR) {
-			message.append(" has exceeded its error threshold value. Please investigate.");
+			message = format("%%RED[CRIT]%%NORMAL %s | Please check %s.",
+					check.getName(), checkUrl);
+		} else if (check.getState() == AlertType.WARN) {
+			message = format("%%YELLOW[WARN]%%NORMAL %s | Please check %s.",
+					check.getName(), checkUrl);
 		} else if (check.getState() == AlertType.OK) {
-			message.append(" is back up.");
+			message = format("%%GREEN[OK]%%NORMAL %s | %s", check.getName(),
+					checkUrl);
+		} else {
+			message = "";
+			LOGGER.info("Unmanaged check state [%s] for check [%s]",
+					check.getState(), check.getName());
 		}
-		message.append(" (" + seyrenConfig.getBaseUrl() + "/#/checks/"
-				+ check.getId() + ")\n");
-		return message.toString();
+		return message;
 	}
 
 	private void sendMessage(String ircCatHost, int ircCatPort, String message,
@@ -95,7 +93,7 @@ public class IrcCatNotificationService implements NotificationService {
 		Socket socket = new Socket(ircCatHost, ircCatPort);
 		Writer out = new OutputStreamWriter(socket.getOutputStream());
 		try {
-			out.write(format("%s %s", channel, message));
+			out.write(format("%s %s\n", channel, message));
 			out.flush();
 		} catch (IOException e) {
 			Closeables.closeQuietly(out);

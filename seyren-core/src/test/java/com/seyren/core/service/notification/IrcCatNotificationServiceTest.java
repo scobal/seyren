@@ -113,8 +113,9 @@ public class IrcCatNotificationServiceTest {
 			serverThread = new Thread(new Runnable() {
 				@Override
 				public void run() {
+					ServerSocket serverSocket = null;
 					try {
-						ServerSocket serverSocket = new ServerSocket(port);
+						serverSocket = new ServerSocket(port);
 						while (!shutdown) {
 							Socket socket = serverSocket.accept();
 							BufferedReader in = new BufferedReader(
@@ -123,6 +124,7 @@ public class IrcCatNotificationServiceTest {
 							try {
 								String message = in.readLine();
 								messages.add(message);
+								System.out.println(message);
 								synchronized (this) {
 									this.notifyAll();
 								}
@@ -132,7 +134,8 @@ public class IrcCatNotificationServiceTest {
 							}
 						}
 					} catch (IOException ioe) {
-
+					} finally {
+						Closeables.closeQuietly(serverSocket);
 					}
 				}
 			});
