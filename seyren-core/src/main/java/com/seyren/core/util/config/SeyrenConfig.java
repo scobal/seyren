@@ -29,6 +29,9 @@ public class SeyrenConfig {
 	private final String graphiteUsername;
 	private final String graphitePassword;
     private final String pagerDutyDomain;
+    private final String pagerDutyToken;
+    private final String pagerDutyUsername;
+    private final String pagerDutyPassword;
     private final String hipChatAuthToken;
     private final String hipChatUsername;
     private final String hubotUrl;
@@ -64,6 +67,9 @@ public class SeyrenConfig {
         
         // PagerDuty
         this.pagerDutyDomain = configOrDefault("PAGERDUTY_DOMAIN", "");
+        this.pagerDutyToken = configOrDefault("PAGERDUTY_TOKEN", "");
+        this.pagerDutyUsername = configOrDefault("PAGERDUTY_USERNAME", "");
+        this.pagerDutyPassword = configOrDefault("PAGERDUTY_PASSWORD", "");
         
         // Hubot
         this.hubotUrl = configOrDefault(list("HUBOT_URL", "SEYREN_HUBOT_URL"), "");
@@ -81,6 +87,18 @@ public class SeyrenConfig {
         return pagerDutyDomain;
     }
     
+    public String getPagerDutyToken() {
+        return pagerDutyToken;
+    }
+
+    public String getPagerDutyUsername() {
+        return pagerDutyUsername;
+    }
+
+    public String getPagerDutyPassword() {
+        return pagerDutyPassword;
+    }
+
     public String getHipChatAuthToken() {
         return hipChatAuthToken;
     }
