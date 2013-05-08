@@ -52,6 +52,10 @@ open http://localhost:8080/seyren
 #### Hubot
 * `HUBOT_URL` - The location where Hubot is running. Default ``
 
+#### IRCcat
+[IRCcat](https://github.com/RJ/irccat) is a simple TCP to IRC repeater. 
+* `IRCCAT_HOST` - The hostname of the server where IRCcat is running. Default `localhost`
+* `IRCCAT_PORT` - The port on which IRCcat is running. Default `12345`
 
 
 
