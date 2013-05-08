@@ -46,6 +46,8 @@ open http://localhost:8080/seyren
 
 #### PagerDuty
 * `PAGERDUTY_DOMAIN` - The PagerDuty domain to be notified. Default: ``
+* `PAGERDUTY_USERNAME` - The PagerDuty API username. Default: ``
+* `PAGERDUTY_PASSWORD` - The PagerDuty API Password. Default: ``
 
 #### Hubot
 * `HUBOT_URL` - The location where Hubot is running. Default ``
