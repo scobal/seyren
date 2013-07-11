@@ -18,6 +18,7 @@ import java.util.Properties;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
@@ -45,7 +46,7 @@ public class SeyrenMailSender extends JavaMailSenderImpl {
 		setPassword(password);
         
         Properties props = new Properties();
-        if (username != "" && password != "") {
+        if (StringUtils.isNotEmpty(username) && StringUtils.isNotEmpty(password)) {
             props.setProperty("mail.smtp.auth", "true");
         }
         
