@@ -13,14 +13,21 @@
  */
 package com.seyren.core.service.checker;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URI;
+import java.security.KeyStore;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpException;
@@ -37,6 +44,8 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
@@ -66,6 +75,10 @@ public class GraphiteTargetChecker implements TargetChecker {
     private final String graphitePath;
     private final String graphiteUsername;
     private final String graphitePassword;
+    private final String graphiteKeyStore;
+    private final String graphiteKeyStorePassword;
+    private final String graphiteTrustStore;
+    private final int graphiteSSLPort;
     private final HttpClient client;
     private final HttpContext context;
     
@@ -76,6 +89,10 @@ public class GraphiteTargetChecker implements TargetChecker {
         this.graphitePath = seyrenConfig.getGraphitePath();
         this.graphiteUsername = seyrenConfig.getGraphiteUsername();
         this.graphitePassword = seyrenConfig.getGraphitePassword();
+        this.graphiteKeyStore = seyrenConfig.getGraphiteKeyStore();
+        this.graphiteKeyStorePassword = seyrenConfig.getGraphiteKeyStorePassword();
+        this.graphiteTrustStore = seyrenConfig.getGraphiteTrustStore();
+        this.graphiteSSLPort = seyrenConfig.getGraphiteSSLPort();
         this.context = new BasicHttpContext();
         this.client = createHttpClient();
     }
@@ -111,7 +128,7 @@ public class GraphiteTargetChecker implements TargetChecker {
         return targetValues;
         
     }
-    
+
     /**
      * Loop through the datapoints in reverse order until we find the latest non-null value
      */
@@ -140,11 +157,55 @@ public class GraphiteTargetChecker implements TargetChecker {
             context.setAttribute("preemptive-auth", new BasicScheme());
             client.addRequestInterceptor(new PreemptiveAuth(), 0);
         }
-        
+
+        // Set SSL configuration if keystore and truststore are provided
+        if ("https".equals(graphiteScheme) && !StringUtils.isEmpty(graphiteKeyStore) && !StringUtils.isEmpty(graphiteKeyStorePassword) && !StringUtils.isEmpty(graphiteTrustStore)) {
+            try {
+                // Read the keystore and trustore
+                KeyStore keyStore = loadKeyStore(graphiteKeyStore, graphiteKeyStorePassword);
+                KeyStore trustStore = loadKeyStore(graphiteTrustStore, null);
+
+                KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+                keyManagerFactory.init(keyStore, graphiteKeyStorePassword.toCharArray());
+                KeyManager[] keyManagers = keyManagerFactory.getKeyManagers();
+
+                TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+                trustManagerFactory.init(trustStore);
+                TrustManager[] trustManagers = trustManagerFactory.getTrustManagers();
+
+                SSLContext sslContext = SSLContext.getInstance("SSL");
+                sslContext.init(keyManagers,trustManagers, null);
+
+                SSLSocketFactory socketFactory = new SSLSocketFactory(sslContext);
+                Scheme scheme = new Scheme(graphiteScheme, graphiteSSLPort, socketFactory);
+                client.getConnectionManager().getSchemeRegistry().register(scheme);
+            } catch (Exception e) {
+                LOGGER.warn("A problem occurs when building SSLSocketFactory", e);
+            }
+        }
         return client;
     }
-    
-    private ClientConnectionManager createConnectionManager() {
+
+    private KeyStore loadKeyStore(String keyStorePath, String password) throws Exception {
+        FileInputStream keyStoreInput = null;
+        try {
+            KeyStore keyStore = KeyStore.getInstance("JKS");
+            keyStoreInput = new FileInputStream(keyStorePath);
+            keyStore.load(keyStoreInput, password == null ? null : password.toCharArray());
+            return keyStore;
+        } catch (Exception e) {
+          LOGGER.warn("A problem occurs when loading keystore {}", keyStorePath);
+          throw e;
+        } finally {
+          if (keyStoreInput != null) {
+              try {
+                keyStoreInput.close();
+              } catch (IOException e) {}
+            }
+        }
+    }
+
+  private ClientConnectionManager createConnectionManager() {
         PoolingClientConnectionManager manager = new PoolingClientConnectionManager();
         manager.setDefaultMaxPerRoute(MAX_CONNECTIONS_PER_ROUTE);
         return manager;
