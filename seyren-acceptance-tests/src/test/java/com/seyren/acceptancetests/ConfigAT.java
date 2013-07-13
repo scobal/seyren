@@ -41,7 +41,10 @@ public class ConfigAT {
         assertThat(response.asJson(), hasJsonPath("$.graphiteScheme", is("http")));
         assertThat(response.asJson(), hasJsonPath("$.graphiteHost", is("localhost:80")));
         assertThat(response.asJson(), hasJsonPath("$.graphitePath", is("")));
-        
+        assertThat(response.asJson(), hasJsonPath("$.graphiteKeyStore", is("")));
+        assertThat(response.asJson(), hasJsonPath("$.graphiteKeyStorePassword", is("")));
+        assertThat(response.asJson(), hasJsonPath("$.graphiteTrustStore", is("")));
+
         // SMTP
         assertThat(response.asJson(), hasJsonPath("$.smtpFrom", is("alert@seyren")));
         assertThat(response.asJson(), hasJsonPath("$.smtpUsername", is("")));
