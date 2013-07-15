@@ -62,6 +62,11 @@ public class ConfigAT {
         
         // Hubot
         assertThat(response.asJson(), hasJsonPath("$.hubotUrl", is("")));
+
+        // Flowdock
+        assertThat(response.asJson(), hasJsonPath("$.flowdockExternalUsername", is("")));
+        assertThat(response.asJson(), hasJsonPath("$.flowdockTags", is("")));
+        assertThat(response.asJson(), hasJsonPath("$.flowdockEmojis", is("")));
     }
     
 }
