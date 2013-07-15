@@ -25,9 +25,12 @@ public class SeyrenConfig {
     
     private final String baseUrl;
     private final String mongoUrl;
-	private final String graphiteUrl;
-	private final String graphiteUsername;
-	private final String graphitePassword;
+    private final String graphiteUrl;
+    private final String graphiteUsername;
+    private final String graphitePassword;
+    private final String graphiteKeyStore;
+    private final String graphiteKeyStorePassword;
+    private final String graphiteTrustStore;
     private final String pagerDutyDomain;
     private final String pagerDutyToken;
     private final String pagerDutyUsername;
@@ -52,7 +55,10 @@ public class SeyrenConfig {
         this.graphiteUrl = stripEnd(configOrDefault("GRAPHITE_URL", "http://localhost:80"), "/");
         this.graphiteUsername = configOrDefault("GRAPHITE_USERNAME", "");
         this.graphitePassword = configOrDefault("GRAPHITE_PASSWORD", "");
-        
+        this.graphiteKeyStore = configOrDefault("GRAPHITE_KEYSTORE", "");
+        this.graphiteKeyStorePassword = configOrDefault("GRAPHITE_KEYSTORE_PASSWORD", "");
+        this.graphiteTrustStore = configOrDefault("GRAPHITE_TRUSTSTORE", "");
+
         // SMTP
         this.smtpFrom = configOrDefault(list("SMTP_FROM", "SEYREN_FROM_EMAIL"), "alert@seyren");
         this.smtpUsername = configOrDefault("SMTP_USERNAME", "");
@@ -150,16 +156,32 @@ public class SeyrenConfig {
 	public String getGraphiteScheme() {
 		return splitBaseUrl(graphiteUrl)[0];
 	}
-	
-	public String getGraphiteHost() {
-		return splitBaseUrl(graphiteUrl)[1];
-	}
-	
-	public String getGraphitePath() {
+
+    public int getGraphiteSSLPort() {
+        return Integer.valueOf(splitBaseUrl(graphiteUrl)[1]);
+    }
+
+    public String getGraphiteHost() {
 		return splitBaseUrl(graphiteUrl)[2];
 	}
 	
-    private static String configOrDefault(String propertyName, String defaultValue) {
+	public String getGraphitePath() {
+		return splitBaseUrl(graphiteUrl)[3];
+	}
+
+    public String getGraphiteKeyStore() {
+        return graphiteKeyStore;
+    }
+
+    public String getGraphiteKeyStorePassword() {
+        return graphiteKeyStorePassword;
+    }
+
+    public String getGraphiteTrustStore() {
+        return graphiteTrustStore;
+    }
+
+  private static String configOrDefault(String propertyName, String defaultValue) {
     	return configOrDefault(list(propertyName), defaultValue);
     }
 
@@ -186,7 +208,7 @@ public class SeyrenConfig {
 	}
     
     private static String[] splitBaseUrl(String baseUrl) {
-        String[] baseParts = new String[3];
+        String[] baseParts = new String[4];
         
         if (baseUrl.toString().contains("://")) {
             baseParts[0] = baseUrl.toString().split("://")[0];
@@ -194,13 +216,19 @@ public class SeyrenConfig {
         } else {
             baseParts[0] = "http";
         }
-        
-        if (baseUrl.contains("/")) {
-            baseParts[1] = baseUrl.split("/")[0];
-            baseParts[2] = "/" + baseUrl.split("/", 2)[1];
+
+        if (baseUrl.contains(":")) {
+          baseParts[1] = baseUrl.split(":")[1];
         } else {
-            baseParts[1] = baseUrl;
-            baseParts[2] = "";
+          baseParts[1] = "443";
+        }
+
+        if (baseUrl.contains("/")) {
+            baseParts[2] = baseUrl.split("/")[0];
+            baseParts[3] = "/" + baseUrl.split("/", 2)[1];
+        } else {
+            baseParts[2] = baseUrl;
+            baseParts[3] = "";
         }
         
         return baseParts;

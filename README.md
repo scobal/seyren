@@ -29,6 +29,9 @@ open http://localhost:8080/seyren
 * `GRAPHITE_URL` - The location of your graphite server. Default: `http://localhost:80`
 * `GRAPHITE_USERNAME` - The Http Basic auth username for the graphite server. Default: ``
 * `GRAPHITE_PASSWORD` - The Http Basic auth password for the graphite server. Default: ``
+* `GRAPHITE_KEYSTORE` - The Http KeyStore path for the https graphite server. Default: ``
+* `GRAPHITE_KEYSTORE_PASSWORD` - The Http KeyStore password for the https graphite server. Default: ``
+* `GRAPHITE_TRUSTSTORE` - The Http TrustStore path for the https graphite server. Default: ``
 * `MONGO_URL` - The mongo connection string. Default: `mongodb://localhost:27017/seyren`
 * `SEYREN_URL` - The location of your seyren instance. Default: `http://localhost:8080/seyren`
 
