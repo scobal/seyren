@@ -15,6 +15,6 @@ package com.seyren.core.domain;
 
 public enum SubscriptionType {
     
-    EMAIL, PAGERDUTY, HIPCHAT, HUBOT
+    EMAIL, PAGERDUTY, HIPCHAT, HUBOT, FLOWDOCK
     
 }
