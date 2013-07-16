@@ -44,7 +44,12 @@ public class SeyrenConfig {
 	private final String smtpHost;
 	private final String smtpProtocol;
 	private final Integer smtpPort;
-    
+    private final String flowdockExternalUsername;
+    private final String flowdockTags;
+    // Icon mapped check sate (AlertType) see http://apps.timwhitlock.info/emoji/tables/unicode
+    // question, sunny, cloud, voltage exclamation should be: \u2753,\u2600,\u2601,\u26A1,\u2757
+    private final String flowdockEmojis;
+
     public SeyrenConfig() {
         
         // Base
@@ -79,6 +84,11 @@ public class SeyrenConfig {
         
         // Hubot
         this.hubotUrl = configOrDefault(list("HUBOT_URL", "SEYREN_HUBOT_URL"), "");
+
+        // Flowdock
+        this.flowdockExternalUsername = configOrDefault("FLOWDOCK_EXTERNAL_USERNAME", "Seyren");
+        this.flowdockTags = configOrDefault("FLOWDOCK_TAGS", "");
+        this.flowdockEmojis = configOrDefault("FLOWDOCK_EMOJIS", "");
     }
     
 	public String getBaseUrl() {
@@ -116,7 +126,19 @@ public class SeyrenConfig {
     public String getHubotUrl() {
         return hubotUrl;
     }
-    
+
+    public String getFlowdockExternalUsername() {
+        return flowdockExternalUsername;
+    }
+
+    public String getFlowdockTags() {
+        return flowdockTags;
+    }
+
+    public String getFlowdockEmojis() {
+        return flowdockEmojis;
+    }
+
     public String getSmtpFrom() {
         return smtpFrom;
     }

@@ -55,8 +55,10 @@ open http://localhost:8080/seyren
 #### Hubot
 * `HUBOT_URL` - The location where Hubot is running. Default ``
 
-
-
+#### Flowdock
+* `FLOWDOCK_EXTERNAL_USERNAME` - The username that messages will be sent from to a flow. Default: `Seyren`
+* `FLOWDOCK_TAGS` -  Special tags to add to all messages. Default: ``
+* `FLOWDOCK_EMOJIS` - Mapping between state and emojis unicode. Default: ``
 
 ###Cloud Formation
 
