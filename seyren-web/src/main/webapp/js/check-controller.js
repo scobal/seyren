@@ -198,7 +198,7 @@ CheckController.prototype = {
     },
     
     getSmallGraphUrl : function(minutes) {
-        var baseUrl = this.getBaseGraphUrl(minutes);
+        var baseUrl = this.getBaseGraphUrl(minutes, this.editcheck);
         if (baseUrl) {
             return baseUrl + '&width=365&height=70&hideAxes=true&hideLegend=true&uniq=' + this.check.lastLoadTime;
         }
@@ -211,13 +211,14 @@ CheckController.prototype = {
         }
     },
     
-    getBaseGraphUrl : function(minutes) {
-        if (this.config && this.check) {
-            var result = this.config.graphiteUrl + '/render/?';
-            result += 'target=' + this.check.target;
+    getBaseGraphUrl : function(minutes, alternativeCheck) {
+      if (this.config && this.check) {
+            var result = this.config.graphiteUrl + '/render/?',
+                currentCheck = alternativeCheck || this.check;
+            result += 'target=' + currentCheck.target;
             result += '&from=' + minutes + 'Minutes';
-            result += '&target=alias(dashed(color(constantLine(' + this.check.warn + '),"yellow")),"warn level")';
-            result += '&target=alias(dashed(color(constantLine(' + this.check.error + '),"red")),"error level")';
+            result += '&target=alias(dashed(color(constantLine(' + currentCheck.warn + '),"yellow")),"warn level")';
+            result += '&target=alias(dashed(color(constantLine(' + currentCheck.error + '),"red")),"error level")';
             return result;
         }
     },
