@@ -13,12 +13,15 @@
  */
 package com.seyren.core.util.config;
 
-import static org.apache.commons.lang.StringUtils.*;
-
 import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Named;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
+import static org.apache.commons.lang.StringUtils.stripEnd;
 
 @Named
 public class SeyrenConfig {
@@ -94,71 +97,88 @@ public class SeyrenConfig {
 	public String getBaseUrl() {
         return baseUrl;
     }
-    
+
+    @JsonIgnore
     public String getMongoUrl() {
 		return mongoUrl;
 	}
-    
+
+    @JsonIgnore
     public String getPagerDutyDomain() {
         return pagerDutyDomain;
     }
-    
+
+    @JsonIgnore
     public String getPagerDutyToken() {
         return pagerDutyToken;
     }
 
+    @JsonIgnore
     public String getPagerDutyUsername() {
         return pagerDutyUsername;
     }
 
+    @JsonIgnore
     public String getPagerDutyPassword() {
         return pagerDutyPassword;
     }
 
+    @JsonIgnore
     public String getHipChatAuthToken() {
         return hipChatAuthToken;
     }
-    
+
+    @JsonIgnore
     public String getHipChatUsername() {
         return hipChatUsername;
     }
-    
+
+    @JsonIgnore
     public String getHubotUrl() {
         return hubotUrl;
     }
 
+    @JsonIgnore
     public String getFlowdockExternalUsername() {
         return flowdockExternalUsername;
     }
 
+    @JsonIgnore
     public String getFlowdockTags() {
         return flowdockTags;
     }
 
+    @JsonIgnore
     public String getFlowdockEmojis() {
         return flowdockEmojis;
     }
 
+    @JsonIgnore
     public String getSmtpFrom() {
         return smtpFrom;
     }
-    
+
+    @JsonIgnore
     public String getSmtpUsername() {
 		return smtpUsername;
 	}
 
+    @JsonIgnore
 	public String getSmtpPassword() {
 		return smtpPassword;
 	}
 
+    @JsonIgnore
 	public String getSmtpHost() {
 		return smtpHost;
 	}
 
+    @JsonIgnore
 	public String getSmtpProtocol() {
 		return smtpProtocol;
 	}
 
+    @JsonIgnore
 	public Integer getSmtpPort() {
 		return smtpPort;
 	}
@@ -166,15 +186,17 @@ public class SeyrenConfig {
 	public String getGraphiteUrl() {
 		return graphiteUrl;
 	}
-	
+
+    @JsonIgnore
 	public String getGraphiteUsername() {
 		return graphiteUsername;
 	}
-	
+
+    @JsonIgnore
 	public String getGraphitePassword() {
 		return graphitePassword;
 	}
-	
+
 	public String getGraphiteScheme() {
 		return splitBaseUrl(graphiteUrl)[0];
 	}
@@ -191,14 +213,17 @@ public class SeyrenConfig {
 		return splitBaseUrl(graphiteUrl)[3];
 	}
 
+    @JsonIgnore
     public String getGraphiteKeyStore() {
         return graphiteKeyStore;
     }
 
+    @JsonIgnore
     public String getGraphiteKeyStorePassword() {
         return graphiteKeyStorePassword;
     }
 
+    @JsonIgnore
     public String getGraphiteTrustStore() {
         return graphiteTrustStore;
     }
