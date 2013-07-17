@@ -84,7 +84,7 @@ ChecksController.prototype = {
         } 
         this.$defer(this.countdownToRefresh, 1000);
     },
-    
+
     getSmallGraphUrl : function() {
         if (this.config && this.newcheck.target) {
             var result = this.config.graphiteUrl + '/render/?';
@@ -94,6 +94,24 @@ ChecksController.prototype = {
             result += '&width=365&height=70&hideLegend=true&from=-1day';
             return result;
         }
+    },
+
+    sortByState: function(o) {
+      switch(o.state) {
+        case 'UNKNOWN':
+            return 0;
+        case 'OK':
+          return 1;
+        case 'WARN':
+          return 2;
+        case 'ERROR':
+          return 3;
+        case 'EXCEPTION':
+          return 4;
+        default:
+          return -1;
+          break;
+      }
     }
-    
+
 };

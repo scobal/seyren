@@ -15,7 +15,7 @@
     </div>
     <div class="row-fluid">
         <div class="span12">
-            <table class="table table-bordered table-striped" ng:show="checks.values.length > 0" ng:init="predicate='name'">
+            <table class="table table-bordered table-striped" ng:show="checks.values.length > 0" ng:init="predicate='state';reverse=true">
                 <thead>
                     <tr>
                         <th><a href="" ng:click="predicate = 'name'; reverse=!reverse">Name</a></th>
@@ -27,7 +27,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng:repeat="check in checks.values.$orderBy(predicate, reverse).$filter(filter)" ng:click="selectCheck(check.id)" style="cursor: pointer;">
+                    <tr ng:repeat="check in checks.values.$orderBy(sortByState, reverse).$filter(filter)" ng:click="selectCheck(check.id)" style="cursor: pointer;">
                         <td>{{ check.name }}</td>
                         <td>{{ check.target }}</td>
                         <td>
