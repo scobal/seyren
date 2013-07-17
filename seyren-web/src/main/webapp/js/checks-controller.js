@@ -91,7 +91,7 @@ ChecksController.prototype = {
             result += 'target=' + this.newcheck.target;
             result += '&target=alias(dashed(color(constantLine(' + this.newcheck.warn + '),"yellow")),"warn level")';
             result += '&target=alias(dashed(color(constantLine(' + this.newcheck.error + '),"red")),"error level")';
-            result += '&width=290&height=70&hideLegend=true&from=-1day';
+            result += '&width=365&height=70&hideLegend=true&from=-1day';
             return result;
         }
     }
