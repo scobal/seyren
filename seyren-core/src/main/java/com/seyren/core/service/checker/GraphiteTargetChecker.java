@@ -56,6 +56,7 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Optional;
 import com.seyren.core.domain.Check;
@@ -119,6 +120,8 @@ public class GraphiteTargetChecker implements TargetChecker {
                     targetValues.put(target, Optional.<BigDecimal> absent());
                 }
             }
+        } catch (JsonParseException e) {
+            LOGGER.warn("A problem occurs when parsing http response as json for check %s", check.getName(), e);
         } catch (Exception e) {
             LOGGER.warn(check.getName() + " failed to read from Graphite", e);
         } finally {
