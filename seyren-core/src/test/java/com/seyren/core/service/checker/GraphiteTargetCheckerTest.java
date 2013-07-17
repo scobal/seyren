@@ -21,6 +21,7 @@ import java.math.BigDecimal;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -36,12 +37,17 @@ public class GraphiteTargetCheckerTest {
     public ClientDriverRule clientDriver = new ClientDriverRule();
     
     private GraphiteTargetChecker checker;
-    
+
     @Before
     public void before() {
         checker = new GraphiteTargetChecker(seyrenConfig(clientDriver.getBaseUrl()));
     }
-    
+
+    @After
+    public void after() {
+        System.clearProperty("GRAPHITE_URL");
+    }
+
     @Test
     public void singleValidTargetIsPresent() throws Exception {
         String response = "[{\"target\": \"service.error.1MinuteRate\", \"datapoints\": [[0.06, 1337453460]]}]";
