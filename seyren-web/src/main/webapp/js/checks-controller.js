@@ -99,7 +99,7 @@ ChecksController.prototype = {
     sortByState: function(o) {
       switch(o.state) {
         case 'UNKNOWN':
-            return 0;
+          return 0;
         case 'OK':
           return 1;
         case 'WARN':
@@ -110,7 +110,6 @@ ChecksController.prototype = {
           return 4;
         default:
           return -1;
-          break;
       }
     }
 
