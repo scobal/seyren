@@ -5,6 +5,7 @@
         <link rel="shortcut icon" href="./img/favicon.ico">
         <link rel="stylesheet" type="text/css" href="./css/bootstrap.min.css" />
         <link rel="stylesheet" type="text/css" href="./css/override-bootstrap.css" />
+        <link rel="stylesheet" type="text/css" href="./css/nav.css" />
         <script src="./js/lib/jquery-1.7.2.min.js" type="text/javascript"></script>
         <script src="./js/lib/angular-0.9.19.min.js" type="text/javascript" ng:autobind></script>
         <script src="./js/lib/bootstrap.min.js" type="text/javascript"></script>
@@ -13,24 +14,62 @@
         <script src="./js/home-controller.js" type="text/javascript"></script>
         <script src="./js/checks-controller.js" type="text/javascript"></script>
         <script src="./js/check-controller.js" type="text/javascript"></script>
+        <script src="./js/nav.js" type="text/javascript"></script>
         
     </head>
     <body ng:controller="MainController">
         <div class="navbar">
             <div class="navbar-inner">
                 <div class="container-fluid">
-                    <a href="#/" class="brand">Seyren</a>
-                    <ul class="nav">
-                        <li><a href="#/checks">Checks</a></li>
+                    <ul id="sddm">
+                        <li><a href="#/"
+                               onmouseover="mopen('m1')"
+                               onmouseout="mclosetime()">Seyren</a>
+                            <div id="m1"
+                                 onmouseover="mcancelclosetime()"
+                                 onmouseout="mclosetime()">
+                                <a href="#/checks">Checks</a>
+
+                            </div>
+                        </li>
+                        <li><a href="#"
+                               onmouseover="mopen('m2')"
+                               onmouseout="mclosetime()">Graphite</a>
+                            <div id="m2"
+                                 onmouseover="mcancelclosetime()"
+                                 onmouseout="mclosetime()">
+                                <a href="http://graphite.integration.sb.karmalab.net" target="_blank">AWS EWE Test</a>
+                                <a href="http://graphite-eweprod-a-lb-81249703.us-east-1.elb.amazonaws.com/" target="_blank">AWS Prod A</a>
+                            </div>
+                        </li>
+                        <li><a href="/dashboards">Dashboards</a></li>
+                        <li><a href="http://ewedashboard.idx.expedmz.com">EWEDashboard</a></li>
+                        <li>
+                            <a href="#"
+                               onmouseover="mopen('m3')"
+                               onmouseout="mclosetime()">Help</a>
+                            <div id="m3"
+                                 onmouseover="mcancelclosetime()"
+                                 onmouseout="mclosetime()">
+                                <a href="#">Monitoring Wiki</a>
+                            </div>
+                        </li>
+
                     </ul>
                 </div>
+
             </div>
+
         </div>
+        <div>
+
+        </div>
+        <div style="clear:both"></div>
         <div class="container-fluid">
             <ng:view></ng:view>
             <hr />
             <footer>
-                <p><a href="https://github.com/scobal/seyren" target="_blank">github.com/scobal/seyren</a></p>
+                <p><a href="https://confluence/display/eweoa/E3+Prime+-+Monitoring%2C+Logging+and+Alerting" target="_blank">Monitoring Wiki</a></p>
             </footer>
         </div>
     </body>
