@@ -52,6 +52,10 @@
                 <span class="span2">Enabled:</span>
                 <span class="span10"><input type="checkbox" ng:checked="{{ check.enabled }}" ng:click="swapCheckEnabled()" /> </span>
             </div>
+            <div class="row-fluid">
+                <span class="span2">Last check:</span>
+                <span class="span10">{{check.lastCheck | date: 'yyyy-MM-dd HH:mm:ss'}}</span>
+            </div>
         </div>
         <div class="span5">
             <div class="row-fluid">

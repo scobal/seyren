@@ -43,7 +43,7 @@ public class MongoMapper {
         BigDecimal error = getBigDecimal(dbo, "error");
         boolean enabled = getBoolean(dbo, "enabled");
         AlertType state = AlertType.valueOf(getString(dbo, "state"));
-        
+        DateTime lastCheck = getDateTime(dbo, "lastCheck");
         List<Subscription> subscriptions = new ArrayList<Subscription>();
         BasicDBList list = getBasicDBList(dbo, "subscriptions");
         for (Object o : list) {
@@ -58,6 +58,7 @@ public class MongoMapper {
                 .withError(error)
                 .withEnabled(enabled)
                 .withState(state)
+                .withLastCheck(lastCheck)
                 .withSubscriptions(subscriptions);
     }
     
@@ -142,6 +143,9 @@ public class MongoMapper {
         }
         map.put("enabled", check.isEnabled());
         map.put("state", check.getState().toString());
+        if (check.getLastCheck() != null) {
+            map.put("lastCheck", new Date(check.getLastCheck().getMillis()));
+        }
         return map;
     }
     
