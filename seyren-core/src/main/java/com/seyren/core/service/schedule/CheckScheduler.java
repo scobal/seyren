@@ -152,6 +152,7 @@ public class CheckScheduler {
                 }
                 
                 check.setState(worstState);
+                check.setLastCheck(DateTime.now());
                 checksStore.saveCheck(check);
                 
                 if (interestingAlerts.isEmpty()) {

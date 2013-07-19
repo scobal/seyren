@@ -16,6 +16,7 @@ package com.seyren.mongo;
 import static com.seyren.mongo.NiceDBObject.*;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -141,6 +142,7 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
                 .with("warn", check.getWarn().toPlainString())
                 .with("error", check.getError().toPlainString())
                 .with("enabled", check.isEnabled())
+                .with("lastCheck", new Date(check.getLastCheck().getMillis()))
                 .with("state", check.getState().toString());
         
         DBObject setObject = object("$set", updateObject);
