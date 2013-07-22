@@ -1,0 +1,12 @@
+{
+    "_id" : "5205121fccf2a07eacba64da",
+    name: "load longterm usage",
+    description: "Load longterm of host host1",
+    target: "prod.host1.load.longterm",
+    warn: "0.5",
+    error: "2.0",
+    enabled: true,
+    state: "WARN",
+    "lastCheck": { "$date": "2013-07-12T10:10:00.000Z"},
+    subscriptions: [ ]
+}

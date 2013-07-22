@@ -66,7 +66,7 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
     public MongoStore(DB mongo) {
         this.mongo = mongo;
     }
-    
+
     private DBCollection getChecksCollection() {
         return mongo.getCollection("checks");
     }
