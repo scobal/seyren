@@ -13,11 +13,16 @@
  */
 package com.seyren.core.service.notification;
 
+import static com.github.restdriver.Matchers.*;
+import static com.github.restdriver.clientdriver.RestClientDriver.*;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
+
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
-import org.hamcrest.MatcherAssert;
 import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Before;
@@ -35,17 +40,6 @@ import com.seyren.core.domain.Check;
 import com.seyren.core.domain.Subscription;
 import com.seyren.core.domain.SubscriptionType;
 import com.seyren.core.util.config.SeyrenConfig;
-
-import static com.github.restdriver.Matchers.hasJsonPath;
-import static com.github.restdriver.clientdriver.RestClientDriver.giveEmptyResponse;
-import static com.github.restdriver.clientdriver.RestClientDriver.onRequestTo;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 public class FlowdockNotificationServiceTest {
     private NotificationService notificationService;
