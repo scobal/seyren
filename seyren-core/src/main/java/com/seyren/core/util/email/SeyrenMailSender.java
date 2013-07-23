@@ -42,12 +42,12 @@ public class SeyrenMailSender extends JavaMailSenderImpl {
         
 		setPort(port);
 		setHost(host);
-		setUsername(username);
-		setPassword(password);
         
         Properties props = new Properties();
         if (StringUtils.isNotEmpty(username) && StringUtils.isNotEmpty(password)) {
             props.setProperty("mail.smtp.auth", "true");
+            setUsername(username);
+            setPassword(password);
         }
         
         if (getPort() == 587) {
