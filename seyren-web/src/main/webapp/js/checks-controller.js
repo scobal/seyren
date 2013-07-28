@@ -87,11 +87,13 @@ ChecksController.prototype = {
 
     getSmallGraphUrl : function() {
         if (this.config && this.newcheck.target) {
-            var result = this.config.graphiteUrl + '/render/?';
-            result += 'target=' + this.newcheck.target;
-            result += '&target=alias(dashed(color(constantLine(' + this.newcheck.warn + '),"yellow")),"warn level")';
-            result += '&target=alias(dashed(color(constantLine(' + this.newcheck.error + '),"red")),"error level")';
-            result += '&width=365&height=70&hideLegend=true&from=-1day';
+            var result = this.seyrenBaseUrl + '/api/chart/' + this.newcheck.target + '/';
+            result += '?warn=' + this.newcheck.warn;
+            result += '&error=' + this.newcheck.error;
+            result += '&width=365';
+            result += '&height=70';
+            result += '&hideLegend=true';
+            result += '&from=-1day';
             return result;
         }
     },
