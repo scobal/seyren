@@ -24,6 +24,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.bson.types.ObjectId;
+import org.joda.time.DateTime;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
@@ -136,13 +137,15 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
     public Check saveCheck(Check check) {
         DBObject findObject = forId(check.getId());
         
+        DateTime lastCheck = check.getLastCheck();
+        
         DBObject updateObject = object("name", check.getName())
                 .with("description", check.getDescription())
                 .with("target", check.getTarget())
                 .with("warn", check.getWarn().toPlainString())
                 .with("error", check.getError().toPlainString())
                 .with("enabled", check.isEnabled())
-                .with("lastCheck", new Date(check.getLastCheck().getMillis()))
+                .with("lastCheck", lastCheck == null ? null : new Date(lastCheck.getMillis()))
                 .with("state", check.getState().toString());
         
         DBObject setObject = object("$set", updateObject);

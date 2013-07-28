@@ -75,6 +75,15 @@ public class ChecksAT {
         deleteLocation(location);
     }
     
+    @Test
+    public void testUpdateHandlesNullLastCheckDate() {
+        Response response = createCheck("{ \"name\": \"test\", \"warn\": 1.0, \"error\": 2.0 }");
+        assertThat(response, hasStatusCode(201));
+        String location = response.getHeader("Location").getValue();
+        assertThat(put(location, body(get(location).asText(), "application/json")), hasStatusCode(200));
+        deleteLocation(location);
+    }
+    
     private Response createCheck(String body) {
         Response response = post(checks(), body(body, "application/json"));
         assertThat(response, hasStatusCode(201));
