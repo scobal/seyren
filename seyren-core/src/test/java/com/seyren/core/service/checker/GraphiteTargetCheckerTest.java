@@ -13,34 +13,40 @@
  */
 package com.seyren.core.service.checker;
 
-import static com.github.restdriver.clientdriver.RestClientDriver.*;
 import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.Matchers.*;
+import static org.mockito.Mockito.*;
 
 import java.math.BigDecimal;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.restdriver.clientdriver.ClientDriverRule;
 import com.google.common.base.Optional;
 import com.seyren.core.domain.Check;
-import com.seyren.core.util.config.SeyrenConfig;
+import com.seyren.core.util.graphite.GraphiteHttpClient;
+import com.seyren.core.util.graphite.GraphiteReadException;
 
 public class GraphiteTargetCheckerTest {
+    
+    private static final ObjectMapper MAPPER = new ObjectMapper();
     
     @Rule
     public ClientDriverRule clientDriver = new ClientDriverRule();
     
+    private GraphiteHttpClient mockGraphiteHttpClient;
     private GraphiteTargetChecker checker;
 
     @Before
     public void before() {
-        checker = new GraphiteTargetChecker(seyrenConfig(clientDriver.getBaseUrl()));
+        mockGraphiteHttpClient = mock(GraphiteHttpClient.class);
+        checker = new GraphiteTargetChecker(mockGraphiteHttpClient);
     }
 
     @After
@@ -50,16 +56,9 @@ public class GraphiteTargetCheckerTest {
 
     @Test
     public void singleValidTargetIsPresent() throws Exception {
-        String response = "[{\"target\": \"service.error.1MinuteRate\", \"datapoints\": [[0.06, 1337453460]]}]";
+        JsonNode node = MAPPER.readTree("[{\"target\": \"service.error.1MinuteRate\", \"datapoints\": [[0.06, 1337453460]]}]");
         
-        clientDriver.addExpectation(
-                onRequestTo("/render/")
-                        .withParam("from", "-11minutes")
-                        .withParam("until", "-1minutes")
-                        .withParam("uniq", Pattern.compile("[0-9]+"))
-                        .withParam("format", "json")
-                        .withParam("target", "service.error.1MinuteRate"),
-                giveResponse(response, "application/json"));
+        when(mockGraphiteHttpClient.getTargetJson("service.error.1MinuteRate")).thenReturn(node);
         
         Map<String, Optional<BigDecimal>> values = checker.check(check());
         
@@ -68,16 +67,9 @@ public class GraphiteTargetCheckerTest {
     
     @Test
     public void singleValidTargetHasCorrectValue() throws Exception {
-        String response = "[{\"target\": \"service.error.1MinuteRate\", \"datapoints\": [[0.06, 1337453460]]}]";
+        JsonNode node = MAPPER.readTree("[{\"target\": \"service.error.1MinuteRate\", \"datapoints\": [[0.06, 1337453460]]}]");
         
-        clientDriver.addExpectation(
-                onRequestTo("/render/")
-                        .withParam("from", "-11minutes")
-                        .withParam("until", "-1minutes")
-                        .withParam("uniq", Pattern.compile("[0-9]+"))
-                        .withParam("format", "json")
-                        .withParam("target", "service.error.1MinuteRate"),
-                giveResponse(response, "application/json"));
+        when(mockGraphiteHttpClient.getTargetJson("service.error.1MinuteRate")).thenReturn(node);
         
         Map<String, Optional<BigDecimal>> values = checker.check(check());
         
@@ -87,16 +79,9 @@ public class GraphiteTargetCheckerTest {
     
     @Test
     public void valueIsDeterminedByGoingThroughDatapointsInReverserOrder() throws Exception {
-        String response = "[{\"target\": \"service.error.1MinuteRate\", \"datapoints\": [[0.20, 1337453460],[0.01, 1337453463]]}]";
+        JsonNode node = MAPPER.readTree("[{\"target\": \"service.error.1MinuteRate\", \"datapoints\": [[0.20, 1337453460],[0.01, 1337453463]]}]");
         
-        clientDriver.addExpectation(
-                onRequestTo("/render/")
-                        .withParam("from", "-11minutes")
-                        .withParam("until", "-1minutes")
-                        .withParam("uniq", Pattern.compile("[0-9]+"))
-                        .withParam("format", "json")
-                        .withParam("target", "service.error.1MinuteRate"),
-                giveResponse(response, "application/json"));
+        when(mockGraphiteHttpClient.getTargetJson("service.error.1MinuteRate")).thenReturn(node);
         
         Map<String, Optional<BigDecimal>> values = checker.check(check());
         
@@ -105,16 +90,9 @@ public class GraphiteTargetCheckerTest {
     
     @Test
     public void valueIsDeterminedBySkippingNullValues() throws Exception {
-        String response = "[{\"target\": \"service.error.1MinuteRate\", \"datapoints\": [[0.17, 1337453460],[null, 1337453463]]}]";
+        JsonNode node = MAPPER.readTree("[{\"target\": \"service.error.1MinuteRate\", \"datapoints\": [[0.17, 1337453460],[null, 1337453463]]}]");
         
-        clientDriver.addExpectation(
-                onRequestTo("/render/")
-                        .withParam("from", "-11minutes")
-                        .withParam("until", "-1minutes")
-                        .withParam("uniq", Pattern.compile("[0-9]+"))
-                        .withParam("format", "json")
-                        .withParam("target", "service.error.1MinuteRate"),
-                giveResponse(response, "application/json"));
+        when(mockGraphiteHttpClient.getTargetJson("service.error.1MinuteRate")).thenReturn(node);
         
         Map<String, Optional<BigDecimal>> values = checker.check(check());
         
@@ -123,16 +101,9 @@ public class GraphiteTargetCheckerTest {
     
     @Test
     public void targetWhichOnlyHasNullValuesIsAbsent() throws Exception {
-        String response = "[{\"target\": \"service.error.1MinuteRate\", \"datapoints\": [[null, 1337453460],[null, 1337453463]]}]";
+        JsonNode node = MAPPER.readTree("[{\"target\": \"service.error.1MinuteRate\", \"datapoints\": [[null, 1337453460],[null, 1337453463]]}]");
         
-        clientDriver.addExpectation(
-                onRequestTo("/render/")
-                        .withParam("from", "-11minutes")
-                        .withParam("until", "-1minutes")
-                        .withParam("uniq", Pattern.compile("[0-9]+"))
-                        .withParam("format", "json")
-                        .withParam("target", "service.error.1MinuteRate"),
-                giveResponse(response, "application/json"));
+        when(mockGraphiteHttpClient.getTargetJson("service.error.1MinuteRate")).thenReturn(node);
         
         Map<String, Optional<BigDecimal>> values = checker.check(check());
         
@@ -141,19 +112,12 @@ public class GraphiteTargetCheckerTest {
     
     @Test
     public void multipleTargetsAreHandledCorrectly() throws Exception {
-        String response = "[" +
+        JsonNode node = MAPPER.readTree("[" +
                     "{\"target\": \"service.error.1MinuteRate\", \"datapoints\": [[0.20, 1337453460],[0.01, 1337453463]]}," +
                     "{\"target\": \"service.warn.1MinuteRate\", \"datapoints\": [[0.56, 1337453460],[0.78, 1337453463]]}" +
-                "]";
+                "]");
         
-        clientDriver.addExpectation(
-                onRequestTo("/render/")
-                        .withParam("from", "-11minutes")
-                        .withParam("until", "-1minutes")
-                        .withParam("uniq", Pattern.compile("[0-9]+"))
-                        .withParam("format", "json")
-                        .withParam("target", "service.*.1MinuteRate"),
-                giveResponse(response, "application/json"));
+        when(mockGraphiteHttpClient.getTargetJson("service.*.1MinuteRate")).thenReturn(node);
         
         Map<String, Optional<BigDecimal>> values = checker.check(checkWithTarget("service.*.1MinuteRate"));
         
@@ -164,37 +128,11 @@ public class GraphiteTargetCheckerTest {
     
     @Test
     public void exceptionGettingDataFromGraphiteIsHandled() throws Exception {
-        checker = new GraphiteTargetChecker(seyrenConfig("http://unknown"));
-        checker.check(checkWithTarget("service.*.1MinuteRate"));
-    }
-    
-    @Test
-    public void authIsAddedWhenUsernameAndPasswordAreProvided() throws Exception {
-        System.setProperty("GRAPHITE_USERNAME", "seyren");
-        System.setProperty("GRAPHITE_PASSWORD", "s3yr3N");
-        checker = new GraphiteTargetChecker(seyrenConfig(clientDriver.getBaseUrl()));
+        when(mockGraphiteHttpClient.getTargetJson("service.*.1MinuteRate")).thenThrow(new GraphiteReadException("Graphite bad times", new RuntimeException("Bad times")));
         
-        String response = "[{\"target\": \"service.error.1MinuteRate\", \"datapoints\": [[0.20, 1337453460],[0.01, 1337453463]]}]";
+        Map<String, Optional<BigDecimal>> values = checker.check(checkWithTarget("service.*.1MinuteRate"));
         
-        clientDriver.addExpectation(
-                onRequestTo("/render/")
-                        .withParam("from", "-11minutes")
-                        .withParam("until", "-1minutes")
-                        .withParam("uniq", Pattern.compile("[0-9]+"))
-                        .withParam("format", "json")
-                        .withParam("target", "service.error.1MinuteRate")
-                        .withHeader("Authorization", "Basic c2V5cmVuOnMzeXIzTg=="),
-                giveResponse(response, "application/json"));
-        
-        checker.check(checkWithTarget("service.error.1MinuteRate"));
-        
-        System.clearProperty("GRAPHITE_USERNAME");
-        System.clearProperty("GRAPHITE_PASSWORD");
-    }
-    
-    private SeyrenConfig seyrenConfig(String graphiteUrl) {
-        System.setProperty("GRAPHITE_URL", graphiteUrl);
-        return new SeyrenConfig();
+        assertThat(values.size(), is(0));
     }
     
     private Check check() {
