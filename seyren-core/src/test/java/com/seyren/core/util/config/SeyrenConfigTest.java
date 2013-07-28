@@ -22,11 +22,11 @@ public class SeyrenConfigTest {
     @Test
     public void test_default_seyren_config() {
         SeyrenConfig config = new SeyrenConfig();
-
+        
         // Base
         assertThat(config.getBaseUrl(), is("http://localhost:8080/seyren"));
         assertThat(config.getMongoUrl(), is("mongodb://localhost:27017/seyren"));
-
+        
         // Graphite
         assertThat(config.getGraphiteUrl(), is("http://localhost:80"));
         assertThat(config.getGraphiteUsername(), is(""));
@@ -37,7 +37,7 @@ public class SeyrenConfigTest {
         assertThat(config.getGraphiteKeyStore(), is(""));
         assertThat(config.getGraphiteKeyStorePassword(), is(""));
         assertThat(config.getGraphiteTrustStore(), is(""));
-
+        
         // SMTP
         assertThat(config.getSmtpFrom(), is("alert@seyren"));
         assertThat(config.getSmtpUsername(), is(""));
@@ -45,17 +45,17 @@ public class SeyrenConfigTest {
         assertThat(config.getSmtpHost(), is("localhost"));
         assertThat(config.getSmtpProtocol(), is("smtp"));
         assertThat(config.getSmtpPort(), is(25));
-
+        
         // HipChat
         assertThat(config.getHipChatAuthToken(), is(""));
         assertThat(config.getHipChatUsername(), is("Seyren Alert"));
-
+        
         // PagerDuty
         assertThat(config.getPagerDutyDomain(), is(""));
-
+        
         // Hubot
         assertThat(config.getHubotUrl(), is(""));
-
+        
         // Flowdock
         assertThat(config.getFlowdockExternalUsername(), is("Seyren"));
         assertThat(config.getFlowdockTags(), is(""));

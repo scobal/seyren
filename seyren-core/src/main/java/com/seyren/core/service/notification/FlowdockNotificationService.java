@@ -48,45 +48,45 @@ import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 @Named
 public class FlowdockNotificationService implements NotificationService {
     private static final Logger LOGGER = LoggerFactory.getLogger(FlowdockNotificationService.class);
-
+    
     private final SeyrenConfig seyrenConfig;
     private final String baseUrl;
-
+    
     @Inject
     public FlowdockNotificationService(SeyrenConfig seyrenConfig) {
         this.seyrenConfig = seyrenConfig;
         this.baseUrl = "https://api.flowdock.com";
     }
-
+    
     protected FlowdockNotificationService(SeyrenConfig seyrenConfig, String baseUrl) {
         this.seyrenConfig = seyrenConfig;
         this.baseUrl = baseUrl;
     }
-
+    
     @Override
     public void sendNotification(Check check, Subscription subscription, List<Alert> alerts) throws NotificationFailedException {
         String token = subscription.getTarget();
         String externalUsername = seyrenConfig.getFlowdockExternalUsername();
-
+        
         List<String> tags = Lists.newArrayList(
-            Splitter.on(',').omitEmptyStrings().trimResults().split(seyrenConfig.getFlowdockTags())
-        );
+                Splitter.on(',').omitEmptyStrings().trimResults().split(seyrenConfig.getFlowdockTags())
+                );
         List<String> emojis = Lists.newArrayList(
-            Splitter.on(',').omitEmptyStrings().trimResults().split(seyrenConfig.getFlowdockEmojis())
-        );
-
+                Splitter.on(',').omitEmptyStrings().trimResults().split(seyrenConfig.getFlowdockEmojis())
+                );
+        
         String url = String.format("%s/v1/messages/chat/%s", baseUrl, token);
         HttpClient client = new DefaultHttpClient();
         HttpPost post = new HttpPost(url);
         post.addHeader("Content-Type", "application/json");
         post.addHeader("accept", "application/json");
-
+        
         ObjectMapper mapper = new ObjectMapper();
         Map<String, Object> dataToSend = new HashMap<String, Object>();
         dataToSend.put("content", formatContent(emojis, check, subscription, alerts));
         dataToSend.put("external_user_name", externalUsername);
         dataToSend.put("tags", formatTags(tags, check, subscription, alerts));
-
+        
         try {
             String data = StringEscapeUtils.unescapeJava(mapper.writeValueAsString(dataToSend));
             post.setEntity(new StringEntity(data, APPLICATION_JSON));
@@ -96,14 +96,14 @@ public class FlowdockNotificationService implements NotificationService {
         } finally {
             post.releaseConnection();
         }
-
+        
     }
-
+    
     @Override
     public boolean canHandle(SubscriptionType subscriptionType) {
         return subscriptionType == SubscriptionType.FLOWDOCK;
     }
-
+    
     private String formatContent(List<String> emojis, Check check, Subscription subscription, List<Alert> alerts) {
         String url = String.format("%s/#/checks/%s", seyrenConfig.getBaseUrl(), check.getId());
         String alertsString = Joiner.on(", ").join(transform(alerts, new Function<Alert, String>() {
@@ -113,15 +113,15 @@ public class FlowdockNotificationService implements NotificationService {
             }
         }));
         return String.format("%s %s has entered its %s state - [%s] - %s - %s",
-            Iterables.get(emojis, check.getState().ordinal(), ""),
-            check.getName(),
-            check.getState().toString(),
-            alertsString,
-            Iterables.getFirst(alerts, null).getTimestamp(),
-            url
-        );
+                Iterables.get(emojis, check.getState().ordinal(), ""),
+                check.getName(),
+                check.getState().toString(),
+                alertsString,
+                Iterables.getFirst(alerts, null).getTimestamp(),
+                url
+                );
     }
-
+    
     private ImmutableList<Object> formatTags(List<String> tags, Check check, Subscription subscription, List<Alert> alerts) {
         return ImmutableList.builder().add(check.getState().toString()).addAll(tags).build();
     }

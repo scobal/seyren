@@ -150,21 +150,21 @@ public class Check {
     public void setState(AlertType state) {
         this.state = state;
     }
-
+    
     @JsonSerialize(using = DateTimeSerializer.class)
     public DateTime getLastCheck() {
         return lastCheck;
     }
-
+    
     public void setLastCheck(DateTime lastCheck) {
         this.lastCheck = lastCheck;
     }
-
+    
     public Check withLastCheck(DateTime lastCheck) {
         setLastCheck(lastCheck);
         return this;
     }
-
+    
     public Check withState(AlertType state) {
         setState(state);
         return this;

@@ -60,7 +60,7 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
             throw new RuntimeException(e);
         }
     }
-
+    
     public MongoStore(DB mongo) {
         this.mongo = mongo;
     }
@@ -228,5 +228,5 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
         DBObject updateObject = object("$set", object("subscriptions.$", subscriptionObject));
         getChecksCollection().update(checkFindObject, updateObject);
     }
-
+    
 }

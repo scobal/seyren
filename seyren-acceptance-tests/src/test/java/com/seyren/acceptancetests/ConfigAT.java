@@ -34,5 +34,5 @@ public class ConfigAT {
         assertThat(response.asJson().size(), is(1));
         assertThat(response.asJson(), hasJsonPath("$.baseUrl", is("http://localhost:8080/seyren")));
     }
-
+    
 }

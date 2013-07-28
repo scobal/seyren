@@ -44,10 +44,10 @@ import com.seyren.core.util.config.SeyrenConfig;
 public class FlowdockNotificationServiceTest {
     private NotificationService notificationService;
     private SeyrenConfig mockSeyrenConfig;
-
+    
     @Rule
     public ClientDriverRule clientDriver = new ClientDriverRule();
-
+    
     @Before
     public void before() {
         mockSeyrenConfig = mock(SeyrenConfig.class);
@@ -57,12 +57,12 @@ public class FlowdockNotificationServiceTest {
         when(mockSeyrenConfig.getFlowdockTags()).thenReturn("");
         notificationService = new FlowdockNotificationService(mockSeyrenConfig, clientDriver.getBaseUrl());
     }
-
+    
     @After
     public void after() {
         System.setProperty("FLOWDOCK_EXTERNAL_USERNAME", "");
     }
-
+    
     @Test
     public void notifcationServiceCanOnlyHandleFlowdockSubscription() {
         assertThat(notificationService.canHandle(SubscriptionType.FLOWDOCK), is(true));
@@ -73,39 +73,39 @@ public class FlowdockNotificationServiceTest {
             assertThat(notificationService.canHandle(type), is(false));
         }
     }
-
+    
     @Test
     public void basicFlowdockTest() {
         Check check = new Check()
-            .withId("123")
-            .withEnabled(true)
-            .withName("test-check")
-            .withState(AlertType.ERROR);
+                .withId("123")
+                .withEnabled(true)
+                .withName("test-check")
+                .withState(AlertType.ERROR);
         Subscription subscription = new Subscription()
-            .withEnabled(true)
-            .withType(SubscriptionType.FLOWDOCK)
-            .withTarget("target");
+                .withEnabled(true)
+                .withType(SubscriptionType.FLOWDOCK)
+                .withTarget("target");
         Alert alert = new Alert()
-            .withValue(new BigDecimal("1.0"))
-            .withTimestamp(new DateTime())
-            .withFromType(AlertType.OK)
-            .withToType(AlertType.ERROR);
+                .withValue(new BigDecimal("1.0"))
+                .withTimestamp(new DateTime())
+                .withFromType(AlertType.OK)
+                .withToType(AlertType.ERROR);
         List<Alert> alerts = Arrays.asList(alert);
-
+        
         BodyCapture<JsonNode> bodyCapture = new JsonBodyCapture();
-
+        
         clientDriver.addExpectation(
-            onRequestTo("/v1/messages/chat/target")
-                .withMethod(ClientDriverRequest.Method.POST)
-                .capturingBodyIn(bodyCapture)
-                .withHeader("Content-Type", "application/json")
-                .withHeader("accept", "application/json"),
-            giveEmptyResponse());
-
+                onRequestTo("/v1/messages/chat/target")
+                        .withMethod(ClientDriverRequest.Method.POST)
+                        .capturingBodyIn(bodyCapture)
+                        .withHeader("Content-Type", "application/json")
+                        .withHeader("accept", "application/json"),
+                giveEmptyResponse());
+        
         notificationService.sendNotification(check, subscription, alerts);
-
+        
         JsonNode node = bodyCapture.getContent();
-
+        
         assertThat(node, hasJsonPath("$.content", containsString("test-check")));
         assertThat(node, hasJsonPath("$.content", containsString("ERROR")));
         assertThat(node, hasJsonPath("$.content", containsString("1.000000")));
@@ -113,12 +113,12 @@ public class FlowdockNotificationServiceTest {
         assertThat(node, hasJsonPath("$.external_user_name", is("Seyren")));
         assertThat(node, hasJsonPath("$.tags", hasSize(1)));
         assertThat(node, hasJsonPath("$.tags[0]", is("ERROR")));
-
+        
         verify(mockSeyrenConfig).getFlowdockExternalUsername();
         verify(mockSeyrenConfig).getFlowdockEmojis();
         verify(mockSeyrenConfig).getFlowdockTags();
         verify(mockSeyrenConfig).getBaseUrl();
-
+        
     }
-
+    
 }

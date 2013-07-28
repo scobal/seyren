@@ -78,18 +78,18 @@ public class PagerDutyNotificationService implements NotificationService {
     }
     
     private PagerDutyClient createPagerDutyClient() {
-// Awaiting merge of https://github.com/webmetrics/pagerduty-java/pull/2 to allow token auth.
-//        if (null != seyrenConfig.getPagerDutyToken() && !seyrenConfig.getPagerDutyToken().isEmpty()) {
-//            return new PagerDutyClient(seyrenConfig.getPagerDutyDomain(),
-//                                         seyrenConfig.getPagerDutyToken());
-//        } else {
-//            return new PagerDutyClient(seyrenConfig.getPagerDutyDomain(),
-//                                         seyrenConfig.getPagerDutyUsername(),
-//                                         seyrenConfig.getPagerDutyPassword());
-//        }
+        // Awaiting merge of https://github.com/webmetrics/pagerduty-java/pull/2 to allow token auth.
+        // if (null != seyrenConfig.getPagerDutyToken() && !seyrenConfig.getPagerDutyToken().isEmpty()) {
+        // return new PagerDutyClient(seyrenConfig.getPagerDutyDomain(),
+        // seyrenConfig.getPagerDutyToken());
+        // } else {
+        // return new PagerDutyClient(seyrenConfig.getPagerDutyDomain(),
+        // seyrenConfig.getPagerDutyUsername(),
+        // seyrenConfig.getPagerDutyPassword());
+        // }
         return new PagerDutyClient(seyrenConfig.getPagerDutyDomain(),
-                                   seyrenConfig.getPagerDutyUsername(),
-                                   seyrenConfig.getPagerDutyPassword());
+                seyrenConfig.getPagerDutyUsername(),
+                seyrenConfig.getPagerDutyPassword());
     }
-
+    
 }

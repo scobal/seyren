@@ -98,11 +98,11 @@ public class GraphiteHttpClient {
     public JsonNode getTargetJson(String target) throws Exception {
         URI baseUri = new URI(graphiteScheme, graphiteHost, graphitePath + "/render/", null, null);
         URI uri = new URIBuilder(baseUri)
-            .addParameter("from", "-11minutes")
-            .addParameter("until", "-1minutes")
-            .addParameter("uniq", String.valueOf(new DateTime().getMillis()))
-            .addParameter("format", "json")
-            .addParameter("target", target).build();
+                .addParameter("from", "-11minutes")
+                .addParameter("until", "-1minutes")
+                .addParameter("uniq", String.valueOf(new DateTime().getMillis()))
+                .addParameter("format", "json")
+                .addParameter("target", target).build();
         
         HttpGet get = new HttpGet(uri);
         
@@ -118,18 +118,18 @@ public class GraphiteHttpClient {
     public byte[] getChart(String target, int width, int height, String from, String to, LegendState legendState, AxesState axesState) throws Exception {
         return getChart(target, width, height, from, to, legendState, axesState, null, null);
     }
-
+    
     public byte[] getChart(String target, int width, int height, String from, String to, LegendState legendState, AxesState axesState,
             BigDecimal warnThreshold, BigDecimal errorThreshold) throws Exception {
         URI baseUri = new URI(graphiteScheme, graphiteHost, graphitePath + "/render/", null, null);
         URIBuilder uriBuilder = new URIBuilder(baseUri)
-            .addParameter("target", target)
-            .addParameter("from", from)
-            .addParameter("width", String.valueOf(width))
-            .addParameter("height", String.valueOf(height))
-            .addParameter("uniq", String.valueOf(new DateTime().getMillis()))
-            .addParameter("hideLegend", legendState == LegendState.HIDE ? "true" : "false")
-            .addParameter("hideAxes", axesState == AxesState.HIDE ? "true" : "false");
+                .addParameter("target", target)
+                .addParameter("from", from)
+                .addParameter("width", String.valueOf(width))
+                .addParameter("height", String.valueOf(height))
+                .addParameter("uniq", String.valueOf(new DateTime().getMillis()))
+                .addParameter("hideLegend", legendState == LegendState.HIDE ? "true" : "false")
+                .addParameter("hideAxes", axesState == AxesState.HIDE ? "true" : "false");
         
         if (warnThreshold != null) {
             uriBuilder.addParameter("target", String.format(THRESHOLD_TARGET, warnThreshold, "yellow", "warn level"));
@@ -161,25 +161,25 @@ public class GraphiteHttpClient {
             context.setAttribute("preemptive-auth", new BasicScheme());
             client.addRequestInterceptor(new PreemptiveAuth(), 0);
         }
-
+        
         // Set SSL configuration if keystore and truststore are provided
         if ("https".equals(graphiteScheme) && !StringUtils.isEmpty(graphiteKeyStore) && !StringUtils.isEmpty(graphiteKeyStorePassword) && !StringUtils.isEmpty(graphiteTrustStore)) {
             try {
                 // Read the keystore and trustore
                 KeyStore keyStore = loadKeyStore(graphiteKeyStore, graphiteKeyStorePassword);
                 KeyStore trustStore = loadKeyStore(graphiteTrustStore, null);
-
+                
                 KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
                 keyManagerFactory.init(keyStore, graphiteKeyStorePassword.toCharArray());
                 KeyManager[] keyManagers = keyManagerFactory.getKeyManagers();
-
+                
                 TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
                 trustManagerFactory.init(trustStore);
                 TrustManager[] trustManagers = trustManagerFactory.getTrustManagers();
-
+                
                 SSLContext sslContext = SSLContext.getInstance("SSL");
-                sslContext.init(keyManagers,trustManagers, null);
-
+                sslContext.init(keyManagers, trustManagers, null);
+                
                 SSLSocketFactory socketFactory = new SSLSocketFactory(sslContext);
                 Scheme scheme = new Scheme(graphiteScheme, graphiteSSLPort, socketFactory);
                 client.getConnectionManager().getSchemeRegistry().register(scheme);
@@ -189,7 +189,7 @@ public class GraphiteHttpClient {
         }
         return client;
     }
-
+    
     private KeyStore loadKeyStore(String keyStorePath, String password) throws Exception {
         FileInputStream keyStoreInput = null;
         try {
@@ -198,18 +198,19 @@ public class GraphiteHttpClient {
             keyStore.load(keyStoreInput, password == null ? null : password.toCharArray());
             return keyStore;
         } catch (Exception e) {
-          LOGGER.warn("A problem occurs when loading keystore {}", keyStorePath);
-          throw e;
+            LOGGER.warn("A problem occurs when loading keystore {}", keyStorePath);
+            throw e;
         } finally {
-          if (keyStoreInput != null) {
-              try {
-                keyStoreInput.close();
-              } catch (IOException e) {}
+            if (keyStoreInput != null) {
+                try {
+                    keyStoreInput.close();
+                } catch (IOException e) {
+                }
             }
         }
     }
-
-  private ClientConnectionManager createConnectionManager() {
+    
+    private ClientConnectionManager createConnectionManager() {
         PoolingClientConnectionManager manager = new PoolingClientConnectionManager();
         manager.setDefaultMaxPerRoute(MAX_CONNECTIONS_PER_ROUTE);
         return manager;

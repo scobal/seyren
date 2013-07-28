@@ -42,18 +42,18 @@ public class GraphiteTargetCheckerTest {
     
     private GraphiteHttpClient mockGraphiteHttpClient;
     private GraphiteTargetChecker checker;
-
+    
     @Before
     public void before() {
         mockGraphiteHttpClient = mock(GraphiteHttpClient.class);
         checker = new GraphiteTargetChecker(mockGraphiteHttpClient);
     }
-
+    
     @After
     public void after() {
         System.clearProperty("GRAPHITE_URL");
     }
-
+    
     @Test
     public void singleValidTargetIsPresent() throws Exception {
         JsonNode node = MAPPER.readTree("[{\"target\": \"service.error.1MinuteRate\", \"datapoints\": [[0.06, 1337453460]]}]");
@@ -113,8 +113,8 @@ public class GraphiteTargetCheckerTest {
     @Test
     public void multipleTargetsAreHandledCorrectly() throws Exception {
         JsonNode node = MAPPER.readTree("[" +
-                    "{\"target\": \"service.error.1MinuteRate\", \"datapoints\": [[0.20, 1337453460],[0.01, 1337453463]]}," +
-                    "{\"target\": \"service.warn.1MinuteRate\", \"datapoints\": [[0.56, 1337453460],[0.78, 1337453463]]}" +
+                "{\"target\": \"service.error.1MinuteRate\", \"datapoints\": [[0.20, 1337453460],[0.01, 1337453463]]}," +
+                "{\"target\": \"service.warn.1MinuteRate\", \"datapoints\": [[0.56, 1337453460],[0.78, 1337453463]]}" +
                 "]");
         
         when(mockGraphiteHttpClient.getTargetJson("service.*.1MinuteRate")).thenReturn(node);

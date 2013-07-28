@@ -33,15 +33,15 @@ public class SeyrenMailSender extends JavaMailSenderImpl {
     
     @Inject
     public SeyrenMailSender(SeyrenConfig seyrenConfig) {
-    	
-    	int port = seyrenConfig.getSmtpPort();
-    	String host = seyrenConfig.getSmtpHost();
-    	String username = seyrenConfig.getSmtpUsername();
-    	String password = seyrenConfig.getSmtpPassword();
-    	String protocol = seyrenConfig.getSmtpProtocol();
         
-		setPort(port);
-		setHost(host);
+        int port = seyrenConfig.getSmtpPort();
+        String host = seyrenConfig.getSmtpHost();
+        String username = seyrenConfig.getSmtpUsername();
+        String password = seyrenConfig.getSmtpPassword();
+        String protocol = seyrenConfig.getSmtpProtocol();
+        
+        setPort(port);
+        setHost(host);
         
         Properties props = new Properties();
         if (StringUtils.isNotEmpty(username) && StringUtils.isNotEmpty(password)) {
@@ -73,5 +73,5 @@ public class SeyrenMailSender extends JavaMailSenderImpl {
         setPort(port);
         return this;
     }
-
+    
 }
