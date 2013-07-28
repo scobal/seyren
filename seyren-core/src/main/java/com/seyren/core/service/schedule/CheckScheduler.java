@@ -169,14 +169,14 @@ public class CheckScheduler {
                             try {
                                 notificationService.sendNotification(check, subscription, interestingAlerts);
                             } catch (Exception e) {
-                                LOGGER.warn("Notifying " + subscription.getTarget() + " by " + subscription.getType() + " failed.", e);
+                                LOGGER.warn("Notifying {} by {} failed.", subscription.getTarget(), subscription.getType(), e);
                             }
                         }
                     }
                 }
                 
             } catch (Exception e) {
-                LOGGER.warn(check.getName() + " failed", e);
+                LOGGER.warn("{} failed", check.getName(), e);
             }
         }
         

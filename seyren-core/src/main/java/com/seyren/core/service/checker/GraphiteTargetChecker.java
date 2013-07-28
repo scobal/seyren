@@ -116,14 +116,14 @@ public class GraphiteTargetChecker implements TargetChecker {
                     targetValues.put(target, Optional.of(value));
                 } catch (InvalidGraphiteValueException e) {
                     // Silence these - we don't know what's causing Graphite to return null values
-                    LOGGER.warn(check.getName() + " failed to read from Graphite", e);
+                    LOGGER.warn("{} failed to read from Graphite", check.getName(), e);
                     targetValues.put(target, Optional.<BigDecimal> absent());
                 }
             }
         } catch (JsonParseException e) {
-            LOGGER.warn("A problem occurs when parsing http response as json for check %s", check.getName(), e);
+            LOGGER.warn("A problem occurred when parsing HTTP response as JSON for check {}", check.getName(), e);
         } catch (Exception e) {
-            LOGGER.warn(check.getName() + " failed to read from Graphite", e);
+            LOGGER.warn("{} failed to read from Graphite", check.getName(), e);
         } finally {
             get.releaseConnection();
         }
@@ -183,7 +183,7 @@ public class GraphiteTargetChecker implements TargetChecker {
                 Scheme scheme = new Scheme(graphiteScheme, graphiteSSLPort, socketFactory);
                 client.getConnectionManager().getSchemeRegistry().register(scheme);
             } catch (Exception e) {
-                LOGGER.warn("A problem occurs when building SSLSocketFactory", e);
+                LOGGER.warn("A problem occurred when building SSLSocketFactory", e);
             }
         }
         return client;
@@ -197,7 +197,7 @@ public class GraphiteTargetChecker implements TargetChecker {
             keyStore.load(keyStoreInput, password == null ? null : password.toCharArray());
             return keyStore;
         } catch (Exception e) {
-          LOGGER.warn("A problem occurs when loading keystore {}", keyStorePath);
+          LOGGER.warn("A problem occurred when loading keystore {}", keyStorePath);
           throw e;
         } finally {
           if (keyStoreInput != null) {

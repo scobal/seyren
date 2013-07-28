@@ -60,7 +60,7 @@ public class SeyrenMailSender extends JavaMailSenderImpl {
         
         setProtocol(protocol);
         
-        LOGGER.info(username + ":" + password + "@" + host);
+        LOGGER.info("{}:{}@{}", username, password, host);
         
     }
     
