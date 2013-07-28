@@ -15,6 +15,7 @@ package com.seyren.core.util.graphite;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.URI;
 import java.security.KeyStore;
 
@@ -40,6 +41,7 @@ import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.protocol.ClientContext;
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.ssl.SSLSocketFactory;
@@ -61,10 +63,11 @@ import com.seyren.core.util.config.SeyrenConfig;
 public class GraphiteHttpClient {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(GraphiteHttpClient.class);
-    private static final String QUERY_STRING = "from=-11minutes&until=-1minutes&uniq=%s&format=json&target=%s";
+    private static final String THRESHOLD_TARGET = "alias(dashed(color(constantLine(%.1f),\"%s\")),\"%s\")";
     private static final int MAX_CONNECTIONS_PER_ROUTE = 20;
     
-    private final JsonNodeResponseHandler handler = new JsonNodeResponseHandler();
+    private final JsonNodeResponseHandler jsonNodeHandler = new JsonNodeResponseHandler();
+    private final ByteArrayResponseHandler chartBytesHandler = new ByteArrayResponseHandler();
     private final String graphiteScheme;
     private final String graphiteHost;
     private final String graphitePath;
@@ -93,12 +96,53 @@ public class GraphiteHttpClient {
     }
     
     public JsonNode getTargetJson(String target) throws Exception {
-        String formattedQuery = String.format(QUERY_STRING, new DateTime().getMillis(), target);
-        URI uri = new URI(graphiteScheme, graphiteHost, graphitePath + "/render/", formattedQuery, null);
+        URI baseUri = new URI(graphiteScheme, graphiteHost, graphitePath + "/render/", null, null);
+        URI uri = new URIBuilder(baseUri)
+            .addParameter("from", "-11minutes")
+            .addParameter("until", "-1minutes")
+            .addParameter("uniq", String.valueOf(new DateTime().getMillis()))
+            .addParameter("format", "json")
+            .addParameter("target", target).build();
+        
         HttpGet get = new HttpGet(uri);
         
         try {
-            return client.execute(get, handler, context);
+            return client.execute(get, jsonNodeHandler, context);
+        } catch (Exception e) {
+            throw new GraphiteReadException("Failed to read from Graphite", e);
+        } finally {
+            get.releaseConnection();
+        }
+    }
+    
+    public byte[] getChart(String target, int width, int height, String from, String to, LegendState legendState, AxesState axesState) throws Exception {
+        return getChart(target, width, height, from, to, legendState, axesState, null, null);
+    }
+
+    public byte[] getChart(String target, int width, int height, String from, String to, LegendState legendState, AxesState axesState,
+            BigDecimal warnThreshold, BigDecimal errorThreshold) throws Exception {
+        URI baseUri = new URI(graphiteScheme, graphiteHost, graphitePath + "/render/", null, null);
+        URIBuilder uriBuilder = new URIBuilder(baseUri)
+            .addParameter("target", target)
+            .addParameter("from", from)
+            .addParameter("width", String.valueOf(width))
+            .addParameter("height", String.valueOf(height))
+            .addParameter("uniq", String.valueOf(new DateTime().getMillis()))
+            .addParameter("hideLegend", legendState == LegendState.HIDE ? "true" : "false")
+            .addParameter("hideAxes", axesState == AxesState.HIDE ? "true" : "false");
+        
+        if (warnThreshold != null) {
+            uriBuilder.addParameter("target", String.format(THRESHOLD_TARGET, warnThreshold, "yellow", "warn level"));
+        }
+        
+        if (errorThreshold != null) {
+            uriBuilder.addParameter("target", String.format(THRESHOLD_TARGET, errorThreshold, "red", "error level"));
+        }
+        
+        HttpGet get = new HttpGet(uriBuilder.build());
+        
+        try {
+            return client.execute(get, chartBytesHandler, context);
         } catch (Exception e) {
             throw new GraphiteReadException("Failed to read from Graphite", e);
         } finally {
