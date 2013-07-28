@@ -31,15 +31,8 @@ public class ConfigAT {
         assertThat(response, hasStatusCode(200));
         
         // Base
-        assertThat(response.asJson().size(), is(6));
+        assertThat(response.asJson().size(), is(1));
         assertThat(response.asJson(), hasJsonPath("$.baseUrl", is("http://localhost:8080/seyren")));
-
-        // Graphite
-        assertThat(response.asJson(), hasJsonPath("$.graphiteUrl", is("http://localhost:80")));
-        assertThat(response.asJson(), hasJsonPath("$.graphiteScheme", is("http")));
-        assertThat(response.asJson(), hasJsonPath("$.graphiteHost", is("localhost:80")));
-        assertThat(response.asJson(), hasJsonPath("$.graphitePath", is("")));
-        assertThat(response.asJson(), hasJsonPath("$.graphiteSSLPort", is(80)));
     }
 
 }

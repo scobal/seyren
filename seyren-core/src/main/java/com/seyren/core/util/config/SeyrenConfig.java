@@ -13,15 +13,14 @@
  */
 package com.seyren.core.util.config;
 
+import static org.apache.commons.lang.StringUtils.*;
+
 import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Named;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import static org.apache.commons.lang.StringUtils.isNotEmpty;
-import static org.apache.commons.lang.StringUtils.stripEnd;
 
 @Named
 public class SeyrenConfig {
@@ -42,17 +41,17 @@ public class SeyrenConfig {
     private final String hipChatUsername;
     private final String hubotUrl;
     private final String smtpFrom;
-	private final String smtpUsername;
-	private final String smtpPassword;
-	private final String smtpHost;
-	private final String smtpProtocol;
-	private final Integer smtpPort;
+    private final String smtpUsername;
+    private final String smtpPassword;
+    private final String smtpHost;
+    private final String smtpProtocol;
+    private final Integer smtpPort;
     private final String flowdockExternalUsername;
     private final String flowdockTags;
     // Icon mapped check sate (AlertType) see http://apps.timwhitlock.info/emoji/tables/unicode
     // question, sunny, cloud, voltage exclamation should be: \u2753,\u2600,\u2601,\u26A1,\u2757
     private final String flowdockEmojis;
-
+    
     public SeyrenConfig() {
         
         // Base
@@ -66,7 +65,7 @@ public class SeyrenConfig {
         this.graphiteKeyStore = configOrDefault("GRAPHITE_KEYSTORE", "");
         this.graphiteKeyStorePassword = configOrDefault("GRAPHITE_KEYSTORE_PASSWORD", "");
         this.graphiteTrustStore = configOrDefault("GRAPHITE_TRUSTSTORE", "");
-
+        
         // SMTP
         this.smtpFrom = configOrDefault(list("SMTP_FROM", "SEYREN_FROM_EMAIL"), "alert@seyren");
         this.smtpUsername = configOrDefault("SMTP_USERNAME", "");
@@ -74,7 +73,7 @@ public class SeyrenConfig {
         this.smtpHost = configOrDefault("SMTP_HOST", "localhost");
         this.smtpProtocol = configOrDefault("SMTP_PROTOCOL", "smtp");
         this.smtpPort = Integer.parseInt(configOrDefault("SMTP_PORT", "25"));
-
+        
         // HipChat
         this.hipChatAuthToken = configOrDefault(list("HIPCHAT_AUTHTOKEN", "HIPCHAT_AUTH_TOKEN"), "");
         this.hipChatUsername = configOrDefault(list("HIPCHAT_USERNAME", "HIPCHAT_USER_NAME"), "Seyren Alert");
@@ -87,172 +86,177 @@ public class SeyrenConfig {
         
         // Hubot
         this.hubotUrl = configOrDefault(list("HUBOT_URL", "SEYREN_HUBOT_URL"), "");
-
+        
         // Flowdock
         this.flowdockExternalUsername = configOrDefault("FLOWDOCK_EXTERNAL_USERNAME", "Seyren");
         this.flowdockTags = configOrDefault("FLOWDOCK_TAGS", "");
         this.flowdockEmojis = configOrDefault("FLOWDOCK_EMOJIS", "");
     }
     
-	public String getBaseUrl() {
+    public String getBaseUrl() {
         return baseUrl;
     }
-
+    
     @JsonIgnore
     public String getMongoUrl() {
-		return mongoUrl;
-	}
-
+        return mongoUrl;
+    }
+    
     @JsonIgnore
     public String getPagerDutyDomain() {
         return pagerDutyDomain;
     }
-
+    
     @JsonIgnore
     public String getPagerDutyToken() {
         return pagerDutyToken;
     }
-
+    
     @JsonIgnore
     public String getPagerDutyUsername() {
         return pagerDutyUsername;
     }
-
+    
     @JsonIgnore
     public String getPagerDutyPassword() {
         return pagerDutyPassword;
     }
-
+    
     @JsonIgnore
     public String getHipChatAuthToken() {
         return hipChatAuthToken;
     }
-
+    
     @JsonIgnore
     public String getHipChatUsername() {
         return hipChatUsername;
     }
-
+    
     @JsonIgnore
     public String getHubotUrl() {
         return hubotUrl;
     }
-
+    
     @JsonIgnore
     public String getFlowdockExternalUsername() {
         return flowdockExternalUsername;
     }
-
+    
     @JsonIgnore
     public String getFlowdockTags() {
         return flowdockTags;
     }
-
+    
     @JsonIgnore
     public String getFlowdockEmojis() {
         return flowdockEmojis;
     }
-
+    
     @JsonIgnore
     public String getSmtpFrom() {
         return smtpFrom;
     }
-
+    
     @JsonIgnore
     public String getSmtpUsername() {
-		return smtpUsername;
-	}
-
+        return smtpUsername;
+    }
+    
     @JsonIgnore
-	public String getSmtpPassword() {
-		return smtpPassword;
-	}
-
+    public String getSmtpPassword() {
+        return smtpPassword;
+    }
+    
     @JsonIgnore
-	public String getSmtpHost() {
-		return smtpHost;
-	}
-
+    public String getSmtpHost() {
+        return smtpHost;
+    }
+    
     @JsonIgnore
-	public String getSmtpProtocol() {
-		return smtpProtocol;
-	}
-
+    public String getSmtpProtocol() {
+        return smtpProtocol;
+    }
+    
     @JsonIgnore
-	public Integer getSmtpPort() {
-		return smtpPort;
-	}
-	
-	public String getGraphiteUrl() {
-		return graphiteUrl;
-	}
-
+    public Integer getSmtpPort() {
+        return smtpPort;
+    }
+    
     @JsonIgnore
-	public String getGraphiteUsername() {
-		return graphiteUsername;
-	}
-
+    public String getGraphiteUrl() {
+        return graphiteUrl;
+    }
+    
     @JsonIgnore
-	public String getGraphitePassword() {
-		return graphitePassword;
-	}
-
-	public String getGraphiteScheme() {
-		return splitBaseUrl(graphiteUrl)[0];
-	}
-
+    public String getGraphiteUsername() {
+        return graphiteUsername;
+    }
+    
+    @JsonIgnore
+    public String getGraphitePassword() {
+        return graphitePassword;
+    }
+    
+    @JsonIgnore
+    public String getGraphiteScheme() {
+        return splitBaseUrl(graphiteUrl)[0];
+    }
+    
+    @JsonIgnore
     public int getGraphiteSSLPort() {
         return Integer.valueOf(splitBaseUrl(graphiteUrl)[1]);
     }
-
+    
+    @JsonIgnore
     public String getGraphiteHost() {
-		return splitBaseUrl(graphiteUrl)[2];
-	}
-	
-	public String getGraphitePath() {
-		return splitBaseUrl(graphiteUrl)[3];
-	}
-
+        return splitBaseUrl(graphiteUrl)[2];
+    }
+    
+    @JsonIgnore
+    public String getGraphitePath() {
+        return splitBaseUrl(graphiteUrl)[3];
+    }
+    
     @JsonIgnore
     public String getGraphiteKeyStore() {
         return graphiteKeyStore;
     }
-
+    
     @JsonIgnore
     public String getGraphiteKeyStorePassword() {
         return graphiteKeyStorePassword;
     }
-
+    
     @JsonIgnore
     public String getGraphiteTrustStore() {
         return graphiteTrustStore;
     }
-
-  private static String configOrDefault(String propertyName, String defaultValue) {
-    	return configOrDefault(list(propertyName), defaultValue);
+    
+    private static String configOrDefault(String propertyName, String defaultValue) {
+        return configOrDefault(list(propertyName), defaultValue);
     }
-
-	private static String configOrDefault(List<String> propertyNames, String defaultValue) {
-		
-		for (String propertyName : propertyNames) {
-			
-			String value = System.getProperty(propertyName);
-	        if (isNotEmpty(value)) {
-	            return value;
-	        }
-	        
-	        value = System.getenv(propertyName);
-	        if (isNotEmpty(value)) {
-	            return value;
-	        }
-		}
-		
+    
+    private static String configOrDefault(List<String> propertyNames, String defaultValue) {
+        
+        for (String propertyName : propertyNames) {
+            
+            String value = System.getProperty(propertyName);
+            if (isNotEmpty(value)) {
+                return value;
+            }
+            
+            value = System.getenv(propertyName);
+            if (isNotEmpty(value)) {
+                return value;
+            }
+        }
+        
         return defaultValue;
-	}
-	
-	private static List<String> list(String... propertyNames) {
-		return Arrays.asList(propertyNames);
-	}
+    }
+    
+    private static List<String> list(String... propertyNames) {
+        return Arrays.asList(propertyNames);
+    }
     
     private static String[] splitBaseUrl(String baseUrl) {
         String[] baseParts = new String[4];
@@ -263,13 +267,13 @@ public class SeyrenConfig {
         } else {
             baseParts[0] = "http";
         }
-
+        
         if (baseUrl.contains(":")) {
-          baseParts[1] = baseUrl.split(":")[1];
+            baseParts[1] = baseUrl.split(":")[1];
         } else {
-          baseParts[1] = "443";
+            baseParts[1] = "443";
         }
-
+        
         if (baseUrl.contains("/")) {
             baseParts[2] = baseUrl.split("/")[0];
             baseParts[3] = "/" + baseUrl.split("/", 2)[1];
