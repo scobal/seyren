@@ -13,14 +13,26 @@
  */
 package com.seyren.core.util.config;
 
+import com.seyren.core.util.velocity.Slf4jLogChute;
+import junit.framework.Assert;
+import org.apache.velocity.app.Velocity;
+import org.apache.velocity.runtime.log.Log;
+import org.hamcrest.Matchers;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
+import org.springframework.util.ReflectionUtils;
+
+import java.lang.reflect.Field;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 
 public class SeyrenConfigTest {
     @Test
-    public void test_default_seyren_config() {
+    public void test_default_seyren_config() throws IllegalAccessException {
         SeyrenConfig config = new SeyrenConfig();
         
         // Base
@@ -60,5 +72,11 @@ public class SeyrenConfigTest {
         assertThat(config.getFlowdockExternalUsername(), is("Seyren"));
         assertThat(config.getFlowdockTags(), is(""));
         assertThat(config.getFlowdockEmojis(), is(""));
+
+        //Velocity logging
+        config.init();
+        Field chuteField = ReflectionUtils.findField(Log.class, "chute");
+        chuteField.setAccessible(true);
+        assertThat(chuteField.get(Velocity.getLog()) , is(instanceOf(Slf4jLogChute.class)));
     }
 }
