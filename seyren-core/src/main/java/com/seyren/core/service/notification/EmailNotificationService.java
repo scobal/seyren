@@ -50,7 +50,6 @@ public class EmailNotificationService implements NotificationService {
     public EmailNotificationService(JavaMailSender mailSender, SeyrenConfig seyrenConfig) {
         this.mailSender = mailSender;
         this.seyrenConfig = seyrenConfig;
-        Velocity.init();
     }
     
     @Override
