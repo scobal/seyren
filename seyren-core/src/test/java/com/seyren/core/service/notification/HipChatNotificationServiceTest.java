@@ -68,13 +68,12 @@ public class HipChatNotificationServiceTest {
         clientDriver.addExpectation(
                 onRequestTo("/v1/rooms/message")
                         .withMethod(Method.POST)
-                        .withParam("auth_token", "")
-                        .withParam("from", "Seyren Alert")
-                        .withParam("room_id", "target")
-                        .withParam("message", "Check <a href=http://localhost:8080/seyren/#/checks/null>test-check</a> has entered its ERROR state.")
-                        .withParam("color", "red")
-                        .withParam("notify", "1")
-                        .withHeader("Content-Type", "application/x-www-form-urlencoded"),
+                        .withBody(is("auth_token="
+                                + "&from=Seyren+Alert"
+                                + "&room_id=target"
+                                + "&message=Check+%3Ca+href%3Dhttp%3A%2F%2Flocalhost%3A8080%2Fseyren%2F%23%2Fchecks%2Fnull%3Etest-check%3C%2Fa%3E+has+entered+its+ERROR+state."
+                                + "&color=red"
+                                + "&notify=1"), "application/x-www-form-urlencoded"),
                 giveEmptyResponse());
         
         notificationService.sendNotification(check, subscription, alerts);
