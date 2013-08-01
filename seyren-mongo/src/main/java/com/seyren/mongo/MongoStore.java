@@ -47,6 +47,7 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
     private MongoMapper mapper = new MongoMapper();
     private DB mongo;
     
+    @SuppressWarnings("deprecation")
     @Inject
     public MongoStore(SeyrenConfig seyrenConfig) {
         try {
