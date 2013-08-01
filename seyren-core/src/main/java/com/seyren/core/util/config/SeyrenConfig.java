@@ -18,9 +18,13 @@ import static org.apache.commons.lang.StringUtils.*;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Named;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.seyren.core.util.velocity.Slf4jLogChute;
+import org.apache.velocity.app.Velocity;
+import org.apache.velocity.runtime.RuntimeConstants;
 
 @Named
 public class SeyrenConfig {
@@ -91,7 +95,16 @@ public class SeyrenConfig {
         this.flowdockExternalUsername = configOrDefault("FLOWDOCK_EXTERNAL_USERNAME", "Seyren");
         this.flowdockTags = configOrDefault("FLOWDOCK_TAGS", "");
         this.flowdockEmojis = configOrDefault("FLOWDOCK_EMOJIS", "");
+
+
     }
+
+    @PostConstruct
+    public void init(){
+        Velocity.setProperty(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM , new Slf4jLogChute());
+        Velocity.init();
+    }
+
     
     public String getBaseUrl() {
         return baseUrl;
