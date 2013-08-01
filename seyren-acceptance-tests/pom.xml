@@ -98,6 +98,12 @@
                 <configuration>
                     <skip>${jetty.skip}</skip>
                     <scanIntervalSeconds>1</scanIntervalSeconds>
+                    <systemProperties>
+                        <systemProperty>
+                            <name>console.log.level</name>
+                            <value>warn</value>
+                        </systemProperty>
+                    </systemProperties>
                     <webApp>
                         <contextPath>/seyren</contextPath>
                         <baseResource implementation="org.eclipse.jetty.util.resource.ResourceCollection">
