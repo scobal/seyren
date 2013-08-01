@@ -45,7 +45,7 @@ open http://localhost:8080/seyren
 
 #### HipChat
 * `HIPCHAT_AUTHTOKEN` - The hipchat api auth token. Default: ``
-* `HIPCHAT_USERNAME` - The username that messages will be sent from to a hipchat room. Default: `Seyren Alert`
+* `HIPCHAT_USERNAME` - The username that messages will be sent from. Default: `Seyren Alert`
 
 #### PagerDuty
 * `PAGERDUTY_DOMAIN` - The PagerDuty domain to be notified. Default: ``
