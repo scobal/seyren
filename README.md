@@ -1,8 +1,6 @@
-#Seyren ([/ˈsaɪ.rʌn/](http://en.wikipedia.org/wiki/Wikipedia:IPA_for_English#Key))
+<img src="http://i.imgur.com/Ae5gQJZ.png" height="60" width="250" />
 
-[![Build Status](https://secure.travis-ci.org/scobal/seyren.png?branch=master)](http://travis-ci.org/scobal/seyren)
-
-An alerting dashboard for Graphite
+Seyren ([/ˈsaɪ.rʌn/](http://en.wikipedia.org/wiki/Wikipedia:IPA_for_English#Key)) is an alerting dashboard for Graphite.
 
 <img src="http://i.imgur.com/hyAEH.png" height="490" width="800" />
 
@@ -65,6 +63,8 @@ open http://localhost:8080/seyren
 If you are running on amazon infrastructure use this [Cloud Formation Template](https://gist.github.com/5922231) to bring up a single instance of any size. All the environment variables required for Seyren are specified as properties to the cloud formation template and a fully configured Seyren instance should come up with no other intervention.
 
 ##Development
+
+[![Build Status](https://secure.travis-ci.org/scobal/seyren.png?branch=master)](http://travis-ci.org/scobal/seyren)
 
 To run the acceptance tests with Maven:
 
