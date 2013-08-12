@@ -29,7 +29,7 @@ import com.seyren.core.util.config.SeyrenConfig;
 @Named
 public class SeyrenMailSender extends JavaMailSenderImpl {
     
-    private static final Logger LOGGER = LoggerFactory.getLogger(CheckScheduler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SeyrenMailSender.class);
     
     @Inject
     public SeyrenMailSender(SeyrenConfig seyrenConfig) {
