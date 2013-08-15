@@ -71,6 +71,11 @@ To run the acceptance tests with Maven:
 ```
 mvn clean verify
 ```
+To run the integration tests with Maven:
+
+```
+mvn clean verify -Pkarma
+```
 
 To fire-up the app using Maven and wait (meaning you can run the tests separately from your IDE):
 
@@ -79,3 +84,4 @@ mvn clean verify -Dwait
 ```
 
 You should then be able to browse to `http://localhost:8080/seyren` and have a play.
+

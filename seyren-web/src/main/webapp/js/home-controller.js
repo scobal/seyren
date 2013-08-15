@@ -1,69 +1,45 @@
-/*global console*/
+/*global seyrenApp,console,$ */
+(function () {
+    'use strict';
 
-function HomeController() {
-    this.$xhr.defaults.headers.put['Content-Type'] = 'application/json';
-    
-    this.pollAlertsInSeconds = 5;
-    this.secondsToUpdateAlerts = this.pollAlertsInSeconds;
-    this.$defer(this.countdownToRefresh, 1000);
-    
-}
+    seyrenApp.controller('HomeController', function HomeController($scope, $rootScope, $location, Checks, Alerts) {
+        $scope.pollAlertsInSeconds = 5;
 
-HomeController.prototype = {
-    
-    loadUnhealthyChecks : function () {
-        this.$xhr('GET', this.seyrenBaseUrl + '/api/checks?state=ERROR&state=WARN&state=EXCEPTION&state=UNKNOWN&enabled=true', this.loadUnhealthyChecksSuccess, this.loadUnhealthyChecksFailure);
-    },
-        
-    loadUnhealthyChecksSuccess : function (code, response) {
-        this.unhealthyChecks = response;
-    },
-        
-    loadUnhealthyChecksFailure : function (code, response) {
-        console.log('Loading unhealthy checks failed');
-    },
-    
-    loadAlertStream : function () {
-        this.$xhr('GET', this.seyrenBaseUrl + '/api/alerts?items=10', this.loadAlertStreamSuccess, this.loadAlertStreamFailure);
-    },
-        
-    loadAlertStreamSuccess : function (code, response) {
-        this.alertStream = response.values;
-    },
-        
-    loadAlertStreamFailure : function (code, response) {
-        console.log('Loading alert stream failed');
-    },
-    
-    selectCheck : function (id) {
-        this.$location.updateHash('/checks/' + id);
-    },
-    
-    countdownToRefresh : function() {
-        this.secondsToUpdateAlerts--;
-        if (this.secondsToUpdateAlerts <= 0) {
-            this.secondsToUpdateAlerts = this.pollAlertsInSeconds;
-            this.loadUnhealthyChecks();
-            this.loadAlertStream();
-        } 
-        this.$defer(this.countdownToRefresh, 1000);
-    },
-    
-    saveCheck : function (check) {
-        this.$xhr('PUT', this.seyrenBaseUrl + '/api/checks/' + check.id, check, this.saveCheckSuccess, this.saveCheckFailure);
-    },
-    
-    saveCheckSuccess : function (code, response) {
-        this.loadUnhealthyChecks();
-    },
-    
-    saveCheckFailure : function (code, response) {
-        console.log('Saving check failed');
-    },
-    
-    swapEnabled : function (check) {
-        check.enabled = !check.enabled;
-        this.saveCheck(check);
-    }
+        $scope.loadUnhealthyChecks = function () {
+            Checks.query({state: ['ERROR', 'WARN', 'EXCEPTION', 'UNKNOWN'], enabled: true}, function(data) {
+                $scope.unhealthyChecks = data;
+            }, function (err) {
+                console.log('Loading unhealthy checks failed');
+            });
+        };
 
-};
+        $scope.loadAlertStream = function () {
+            Alerts.query({items: 10}, function (data) {
+                $scope.alertStream = data;
+            }, function (err) {
+                console.log('Loading alert stream failed');
+            });
+        };
+
+        $scope.selectCheck = function (id) {
+            $location.path('/checks/' + id);
+        };
+
+        $scope.countdownToRefresh = function () {
+            $scope.loadUnhealthyChecks();
+            $scope.loadAlertStream();
+        };
+        $scope.countdownToRefresh();
+
+        // karma hangs with $timeout
+        $scope.timerId = setInterval(function () {
+            $scope.countdownToRefresh();
+            $scope.$apply();
+        }, $scope.pollAlertsInSeconds * 1000);
+
+        $scope.$on("$locationChangeStart", function () {
+            clearInterval($scope.timerId);
+        });
+
+    });
+}());

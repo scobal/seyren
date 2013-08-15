@@ -1,112 +1,52 @@
-<div ng:controller="ChecksController" ng:init="loadChecks()">
+<div>
     <div class="row-fluid">
-        <div class="span11">
+        <div class="span10">
             <h1>Checks</h1>
         </div>
-        <div class="span1">
-            <a class="btn btn-primary" data-toggle="modal" data-show="true" href="#createCheckModal" >Create check</a>
+        <div class="span2">
+            <p></p><p><button id="createNewCheckButton" class="btn btn-success" data-keyboard="true" data-toggle="modal" data-show="true" href="#editCheckModal" ng-click="editCheck('new')"><i class="icon-check icon-white"></i>&nbsp;Create check</button></p>
         </div>
     </div>
     <br/>
     <div class="row-fluid">
         <div class="span3">
-            <input name="filter" type="text" placeholder="Filter..." class="input-xlarge"/>
+            <input name="filter" ng-model="filter" type="text" placeholder="Filter..." class="input-xlarge"/>
         </div>
     </div>
     <div class="row-fluid">
         <div class="span12">
-            <table class="table table-bordered table-striped" ng:show="checks.values.length > 0" ng:init="predicate=sortByState;reverse=true">
+            <table class="table table-bordered table-striped table-hover" ng-show="checks.values.length > 0" ng-init="predicate=sortByState;reverse=true">
                 <thead>
                     <tr>
-                        <th><a href="" ng:click="predicate='name';reverse=!reverse">Name</a></th>
-                        <th><a href="" ng:click="predicate='target';reverse=!reverse">Target</a></th>
-                        <th><a href="" ng:click="predicate=sortByState;reverse=!reverse">State</a></th>
-                        <th><a href="" ng:click="predicate='warn';reverse=!reverse">Warn</a></th>
-                        <th><a href="" ng:click="predicate='error';reverse=!reverse">Error</a></th>
-                        <th><a href="" ng:click="predicate='enabled';reverse=!reverse">Enabled</a></th>
+                        <th><a href="" ng-click="predicate='name';reverse=!reverse">Name</a></th>
+                        <th><a href="" ng-click="predicate='target';reverse=!reverse">Target</a></th>
+                        <th><a href="" ng-click="predicate=sortByState;reverse=!reverse">State</a></th>
+                        <th><a href="" ng-click="predicate='warn';reverse=!reverse">Warn</a></th>
+                        <th><a href="" ng-click="predicate='error';reverse=!reverse">Error</a></th>
+                        <th><a href="" ng-click="predicate='enabled';reverse=!reverse">Enabled</a></th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng:repeat="check in checks.values.$filter(filter).$orderBy(predicate,reverse)" ng:click="selectCheck(check.id)" style="cursor: pointer;">
+                    <tr ng-repeat="check in checks.values  | filter:filter | orderBy:predicate:reverse" ng-click="selectCheck(check.id)" style="cursor: pointer;">
                         <td>{{ check.name }}</td>
                         <td>{{ check.target }}</td>
                         <td>
-                            <span ng:show="check.state == 'UNKNOWN'" class="label">{{ check.state }}</span>
-                            <span ng:show="check.state == 'OK'" class="label label-success">{{ check.state }}</span>
-                            <span ng:show="check.state == 'WARN'" class="label label-warning">{{ check.state }}</span>
-                            <span ng:show="check.state == 'ERROR'" class="label label-important">{{ check.state }}</span>
-                            <span ng:show="check.state == 'EXCEPTION'" class="label label-inverse">{{ check.state }}</span>
+                            <span ng-show="check.state == 'UNKNOWN'" class="label">{{ check.state }}</span>
+                            <span ng-show="check.state == 'OK'" class="label label-success">{{ check.state }}</span>
+                            <span ng-show="check.state == 'WARN'" class="label label-warning">{{ check.state }}</span>
+                            <span ng-show="check.state == 'ERROR'" class="label label-important">{{ check.state }}</span>
+                            <span ng-show="check.state == 'EXCEPTION'" class="label label-inverse">{{ check.state }}</span>
                         </td>
                         <td>{{ check.warn }}</td>
                         <td>{{ check.error }}</td>
-                        <td><input type="checkbox" ng:checked="{{ check.enabled }}" ng:click="swapEnabled(check)" /></td>
+                        <td><input type="checkbox" ng-checked="check.enabled" ng-click="swapCheckEnabled(check); $event.stopPropagation();" /></td>
                     </tr>
                 </tbody>
             </table>
-            <p ng:hide="checks.values.length > 0">We've got no checks. Why not create one?</p>
+            <p ng-hide="checks.values.length > 0">We've got no checks. Why not create one?</p>
         </div>
         
-        <div class="modal hide" id="createCheckModal">
-            <div class="modal-header">
-                <button class="close" data-dismiss="modal">x</button>
-                <h3>Create check</h3>
-            </div>
-            <div class="modal-body">
-                <form ng:submit="createCheck()" class="well form-horizontal">
-                    <fieldset>
-                        <div class="control-group">
-                            <label class="control-label" for="newcheck.name">Name</label>
-                            <div class="controls">
-                                <input id="newcheck.name" class="input-xlarge" name="newcheck.name" type="text" />
-                            </div>
-                        </div>
-                        <div class="control-group">
-                            <label class="control-label" for="newcheck.description">Description</label>
-                            <div class="controls">
-                                <input id="newcheck.description" class="input-xlarge" name="newcheck.description" type="text" />
-                            </div>
-                        </div>
-                        <div class="control-group">
-                            <label class="control-label" for="newcheck.target">Target</label>
-                            <div class="controls">
-                                <input id="newcheck.target" class="input-xlarge"  name="newcheck.target" type="text" />
-                            </div>
-                        </div>
-                        <div class="control-group">
-                            <label class="control-label" for="newcheck.warn">Warn
-                                level</label>
-                            <div class="controls">
-                                <input id="newcheck.warn" class="input-small" name="newcheck.warn" type="text" />
-                            </div>
-                        </div>
-                        <div class="control-group">
-                            <label class="control-label" for="newcheck.error">Error
-                                level</label>
-                            <div class="controls">
-                                <input id="newcheck.error" class="input-small" name="newcheck.error" type="text" />
-                            </div>
-                        </div>
-                        <div class="control-group">
-                            <label class="control-label" for="newcheck.enabled">Enabled</label>
-                            <div class="controls">
-                                <input id="newcheck.enabled" class="input-medium" name="newcheck.enabled" type="checkbox" checked="checked">
-                            </div>
-                        </div>
-                        <div class="control-group">
-                            <label class="control-label" for="newcheck.enabled"></label>
-                            <div class="controls">
-                                <img ng:src="{{ getSmallGraphUrl() }}" />
-                            </div>
-                        </div>
-                        <div class="control-group">
-                            <div class="controls">
-                                <button type="submit" id="createCheckButton" class="btn btn-primary">Create check</button>
-                            </div>
-                        </div>
-                    </fieldset>
-                </form>
-            </div>
+        <div class="modal hide" tabindex="-1" ng-include="'./html/modal-partial-check.html'" id="editCheckModal">
         </div>
-        
     </div>
 </div>

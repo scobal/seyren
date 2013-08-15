@@ -1,0 +1,59 @@
+<div ng-controller="CheckEditModalController">
+    <div class="modal-header">
+        <button class="close" data-dismiss="modal">x</button>
+        <h3 ng-show="newCheck">Create check</h3>
+        <h3 ng-hide="newCheck">Edit check</h3>
+    </div>
+    <div class="modal-body">
+        <form name="checkForm" class="well form-horizontal" novalidate>
+            <fieldset>
+                <div ng-class="{ 'control-group': true, 'error': checkForm['check.name'].$invalid }">
+                    <label class="control-label" for="check.name">Name</label>
+                    <div class="controls">
+                        <input id="check.name" class="input-xlarge" name="check.name" ng-model="check.name" type="text" required />
+                    </div>
+                </div>
+                <div ng-class="{ 'control-group': true, 'error': checkForm['check.description'].$invalid }">
+                    <label class="control-label" for="check.description">Description</label>
+                    <div class="controls">
+                        <input id="check.description" class="input-xlarge" name="check.description" ng-model="check.description" type="text" />
+                    </div>
+                </div>
+                <div ng-class="{ 'control-group': true, 'error': checkForm['check.target'].$invalid }">
+                    <label class="control-label" for="check.target">Target</label>
+                    <div class="controls">
+                        <input id="check.target" class="input-xlarge"  name="check.target" ng-model="check.target" type="text" required />
+                    </div>
+                </div>
+                <div ng-class="{ 'control-group': true, 'error': checkForm['check.warn'].$invalid }">
+                    <label class="control-label" for="check.warn">Warn level</label>
+                    <div class="controls">
+                        <input id="check.warn" class="input-small"  name="check.warn" ng-model="check.warn" type="text" ng-pattern="/^-?[0-9]+(.[0-9]+)?$/" required />
+                    </div>
+                </div>
+                <div ng-class="{ 'control-group': true, 'error': checkForm['check.error'].$invalid }">
+                    <label class="control-label" for="check.error">Error level</label>
+                    <div class="controls">
+                        <input id="check.error" class="input-small" name="check.error" ng-model="check.error" type="text" ng-pattern="/^-?[0-9]+(.[0-9]+)?$/" required />
+                    </div>
+                </div>
+                <div ng-class="{ 'control-group': true, 'error': checkForm['check.enabled'].$invalid }">
+                    <label class="control-label" for="check.enabled">Enabled</label>
+                    <div class="controls">
+                        <input id="check.enabled" class="input-medium" name="check.enabled" ng-model="check.enabled" type="checkbox" ng-checked="check.enabled">
+                    </div>
+                </div>
+                <div class="control-group">
+                    <div class="controls">
+                        <img ng-src="{{ previewImage() }}" />
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn pull-left" data-dismiss="modal" id="cancelCheckButton"><i class="icon-remove"></i>&nbsp;&nbsp;Cancel</button>
+        <button type="submit" class="btn btn-primary" ng-show="newCheck" id="createCheckButton" ng-click="create()" ng-disabled="checkForm.$invalid"><i class="icon-ok icon-white"></i>&nbsp;&nbsp;Create check</button>
+        <button type="submit" class="btn btn-primary" ng-hide="newCheck" id="updateCheckButton" ng-click="update()" ng-disabled="checkForm.$invalid"><i class="icon-ok icon-white"></i>&nbsp;&nbsp;Save changes</button>
+    </div>
+</div>
