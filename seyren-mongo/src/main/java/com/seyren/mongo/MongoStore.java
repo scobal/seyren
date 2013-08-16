@@ -16,6 +16,7 @@ package com.seyren.mongo;
 import static com.seyren.mongo.NiceDBObject.*;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -23,6 +24,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.bson.types.ObjectId;
+import org.joda.time.DateTime;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
@@ -45,6 +47,7 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
     private MongoMapper mapper = new MongoMapper();
     private DB mongo;
     
+    @SuppressWarnings("deprecation")
     @Inject
     public MongoStore(SeyrenConfig seyrenConfig) {
         try {
@@ -59,7 +62,7 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
             throw new RuntimeException(e);
         }
     }
-
+    
     public MongoStore(DB mongo) {
         this.mongo = mongo;
         bootstrapMongo();
@@ -140,12 +143,15 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
     public Check saveCheck(Check check) {
         DBObject findObject = forId(check.getId());
         
+        DateTime lastCheck = check.getLastCheck();
+        
         DBObject updateObject = object("name", check.getName())
                 .with("description", check.getDescription())
                 .with("target", check.getTarget())
                 .with("warn", check.getWarn().toPlainString())
                 .with("error", check.getError().toPlainString())
                 .with("enabled", check.isEnabled())
+                .with("lastCheck", lastCheck == null ? null : new Date(lastCheck.getMillis()))
                 .with("state", check.getState().toString());
         
         DBObject setObject = object("$set", updateObject);
@@ -231,5 +237,5 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
         DBObject updateObject = object("$set", object("subscriptions.$", subscriptionObject));
         getChecksCollection().update(checkFindObject, updateObject);
     }
-
+    
 }

@@ -14,25 +14,12 @@
 package com.seyren.core.service.checker;
 
 import java.math.BigDecimal;
-import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.CredentialsProvider;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.impl.client.AbstractHttpClient;
-import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.PoolingClientConnectionManager;
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,64 +27,43 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Optional;
 import com.seyren.core.domain.Check;
 import com.seyren.core.exception.InvalidGraphiteValueException;
-import com.seyren.core.util.config.SeyrenConfig;
+import com.seyren.core.util.graphite.GraphiteHttpClient;
+import com.seyren.core.util.graphite.GraphiteReadException;
 
 @Named
 public class GraphiteTargetChecker implements TargetChecker {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(GraphiteTargetChecker.class);
-    private static final String QUERY_STRING = "from=-11minutes&until=-1minutes&uniq=%s&format=json&target=%s";
-    private static final int MAX_CONNECTIONS_PER_ROUTE = 20;
     
-    private final HttpClient client;
-    private final String graphiteScheme;
-    private final String graphiteHost;
-    private final String graphitePath;
-    private final String graphiteUsername;
-    private final String graphitePassword;
-    private final JsonNodeResponseHandler handler = new JsonNodeResponseHandler();
+    private final GraphiteHttpClient graphiteHttpClient;
     
     @Inject
-    public GraphiteTargetChecker(SeyrenConfig seyrenConfig) {
-        this.graphiteScheme = seyrenConfig.getGraphiteScheme();
-        this.graphiteHost = seyrenConfig.getGraphiteHost();
-        this.graphitePath = seyrenConfig.getGraphitePath();
-        this.graphiteUsername = seyrenConfig.getGraphiteUsername();
-        this.graphitePassword = seyrenConfig.getGraphitePassword();
-        this.client = new DefaultHttpClient(createConnectionManager());
-        setAuthHeadersIfNecessary();
+    public GraphiteTargetChecker(GraphiteHttpClient graphiteHttpClient) {
+        this.graphiteHttpClient = graphiteHttpClient;
     }
     
     @Override
     public Map<String, Optional<BigDecimal>> check(Check check) throws Exception {
-        
-        String formattedQuery = String.format(QUERY_STRING, new DateTime().getMillis(), check.getTarget());
-        URI uri = new URI(graphiteScheme, graphiteHost, graphitePath + "/render/", formattedQuery, null);
-        HttpGet get = new HttpGet(uri);
         Map<String, Optional<BigDecimal>> targetValues = new HashMap<String, Optional<BigDecimal>>();
         
         try {
-            JsonNode response = client.execute(get, handler);
-            for (JsonNode metric : response) {
+            JsonNode node = graphiteHttpClient.getTargetJson(check.getTarget());
+            for (JsonNode metric : node) {
                 String target = metric.path("target").asText();
-                
                 try {
                     BigDecimal value = getLatestValue(metric);
                     targetValues.put(target, Optional.of(value));
                 } catch (InvalidGraphiteValueException e) {
                     // Silence these - we don't know what's causing Graphite to return null values
-                    LOGGER.warn(check.getName() + " failed to read from Graphite", e);
+                    LOGGER.warn("{} failed to read from Graphite", check.getName(), e);
                     targetValues.put(target, Optional.<BigDecimal> absent());
                 }
             }
-        } catch (Exception e) {
+        } catch (GraphiteReadException e) {
             LOGGER.warn(check.getName() + " failed to read from Graphite", e);
-        } finally {
-            get.releaseConnection();
         }
         
         return targetValues;
-        
     }
     
     /**
@@ -115,27 +81,6 @@ public class GraphiteTargetChecker implements TargetChecker {
         
         LOGGER.warn("{}", node);
         throw new InvalidGraphiteValueException("Could not find a valid datapoint for target: " + node.get("target"));
-    }
-    
-    private ClientConnectionManager createConnectionManager() {
-        PoolingClientConnectionManager manager = new PoolingClientConnectionManager();
-        manager.setDefaultMaxPerRoute(MAX_CONNECTIONS_PER_ROUTE);
-        return manager;
-    }
-    
-    /**
-     * Set auth header for graphite if username and password are provided
-     */
-    private void setAuthHeadersIfNecessary() {
-        if (!StringUtils.isEmpty(graphiteUsername) && !StringUtils.isEmpty(graphitePassword)) {
-            CredentialsProvider credsProvider = new BasicCredentialsProvider();
-            credsProvider.setCredentials(
-                    new AuthScope(graphiteHost, AuthScope.ANY_PORT),
-                    new UsernamePasswordCredentials(graphiteUsername, graphitePassword));
-            if (client instanceof AbstractHttpClient) {
-                ((AbstractHttpClient) client).setCredentialsProvider(credsProvider);
-            }
-        }
     }
     
 }

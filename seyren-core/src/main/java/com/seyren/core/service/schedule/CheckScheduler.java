@@ -26,13 +26,13 @@ import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import com.google.common.base.Optional;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.seyren.core.domain.Alert;
 import com.seyren.core.domain.AlertType;
 import com.seyren.core.domain.Check;
@@ -152,6 +152,7 @@ public class CheckScheduler {
                 }
                 
                 check.setState(worstState);
+                check.setLastCheck(DateTime.now());
                 checksStore.saveCheck(check);
                 
                 if (interestingAlerts.isEmpty()) {
@@ -168,14 +169,14 @@ public class CheckScheduler {
                             try {
                                 notificationService.sendNotification(check, subscription, interestingAlerts);
                             } catch (Exception e) {
-                                LOGGER.warn("Notifying " + subscription.getTarget() + " by " + subscription.getType() + " failed.", e);
+                                LOGGER.warn("Notifying {} by {} failed.", subscription.getTarget(), subscription.getType(), e);
                             }
                         }
                     }
                 }
                 
             } catch (Exception e) {
-                LOGGER.warn(check.getName() + " failed", e);
+                LOGGER.warn("{} failed", check.getName(), e);
             }
         }
         
@@ -199,7 +200,7 @@ public class CheckScheduler {
                 .withToType(to)
                 .withTimestamp(now);
     }
-
+    
     @PreDestroy
     public void preDestroy() throws InterruptedException {
         executor.shutdown();

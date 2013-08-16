@@ -47,8 +47,8 @@ public class PagerDutyNotificationService implements NotificationService {
     
     @Override
     public void sendNotification(Check check, Subscription subscription, List<Alert> alerts) throws NotificationFailedException {
+        PagerDutyClient client = createPagerDutyClient();
         
-        PagerDutyClient client = new PagerDutyClient(seyrenConfig.getPagerDutyDomain(), "username", "password");
         try {
             Map<String, Object> details = createNotificationDetails(check, alerts);
             
@@ -57,7 +57,7 @@ public class PagerDutyNotificationService implements NotificationService {
             } else if (check.getState() == AlertType.OK) {
                 client.resolve(subscription.getTarget(), "Check " + check.getName() + " has been resolved. " + seyrenConfig.getBaseUrl() + "/#/checks/" + check.getId(), "MonitoringAlerts_" + check.getId(), details);
             } else {
-                LOGGER.warn("Did not send notification to PagerDuty for check in state: " + check.getState());
+                LOGGER.warn("Did not send notification to PagerDuty for check in state: {}", check.getState());
             }
         } catch (Exception e) {
             throw new NotificationFailedException("Failed to send notification to PagerDuty", e);
@@ -75,6 +75,21 @@ public class PagerDutyNotificationService implements NotificationService {
         details.put("ALERTS", alerts);
         details.put("SEYREN_URL", seyrenConfig.getBaseUrl());
         return details;
+    }
+    
+    private PagerDutyClient createPagerDutyClient() {
+        // Awaiting merge of https://github.com/webmetrics/pagerduty-java/pull/2 to allow token auth.
+        // if (null != seyrenConfig.getPagerDutyToken() && !seyrenConfig.getPagerDutyToken().isEmpty()) {
+        // return new PagerDutyClient(seyrenConfig.getPagerDutyDomain(),
+        // seyrenConfig.getPagerDutyToken());
+        // } else {
+        // return new PagerDutyClient(seyrenConfig.getPagerDutyDomain(),
+        // seyrenConfig.getPagerDutyUsername(),
+        // seyrenConfig.getPagerDutyPassword());
+        // }
+        return new PagerDutyClient(seyrenConfig.getPagerDutyDomain(),
+                seyrenConfig.getPagerDutyUsername(),
+                seyrenConfig.getPagerDutyPassword());
     }
     
 }

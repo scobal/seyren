@@ -17,10 +17,13 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.joda.time.DateTime;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.deser.std.NumberDeserializers.BigDecimalDeserializer;
+import com.fasterxml.jackson.datatype.joda.ser.DateTimeSerializer;
 import com.seyren.core.util.math.BigDecimalSerializer;
 
 /**
@@ -42,6 +45,7 @@ public class Check {
     private BigDecimal error;
     private boolean enabled;
     private AlertType state;
+    private DateTime lastCheck;
     private List<Subscription> subscriptions = new ArrayList<Subscription>();
     
     public String getId() {
@@ -145,6 +149,20 @@ public class Check {
     
     public void setState(AlertType state) {
         this.state = state;
+    }
+    
+    @JsonSerialize(using = DateTimeSerializer.class)
+    public DateTime getLastCheck() {
+        return lastCheck;
+    }
+    
+    public void setLastCheck(DateTime lastCheck) {
+        this.lastCheck = lastCheck;
+    }
+    
+    public Check withLastCheck(DateTime lastCheck) {
+        setLastCheck(lastCheck);
+        return this;
     }
     
     public Check withState(AlertType state) {

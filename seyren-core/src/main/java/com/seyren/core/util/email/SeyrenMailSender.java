@@ -18,35 +18,35 @@ import java.util.Properties;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
-import com.seyren.core.service.schedule.CheckScheduler;
 import com.seyren.core.util.config.SeyrenConfig;
 
 @Named
 public class SeyrenMailSender extends JavaMailSenderImpl {
     
-    private static final Logger LOGGER = LoggerFactory.getLogger(CheckScheduler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SeyrenMailSender.class);
     
     @Inject
     public SeyrenMailSender(SeyrenConfig seyrenConfig) {
-    	
-    	int port = seyrenConfig.getSmtpPort();
-    	String host = seyrenConfig.getSmtpHost();
-    	String username = seyrenConfig.getSmtpUsername();
-    	String password = seyrenConfig.getSmtpPassword();
-    	String protocol = seyrenConfig.getSmtpProtocol();
         
-		setPort(port);
-		setHost(host);
-		setUsername(username);
-		setPassword(password);
+        int port = seyrenConfig.getSmtpPort();
+        String host = seyrenConfig.getSmtpHost();
+        String username = seyrenConfig.getSmtpUsername();
+        String password = seyrenConfig.getSmtpPassword();
+        String protocol = seyrenConfig.getSmtpProtocol();
+        
+        setPort(port);
+        setHost(host);
         
         Properties props = new Properties();
-        if (username != "" && password != "") {
+        if (StringUtils.isNotEmpty(username) && StringUtils.isNotEmpty(password)) {
             props.setProperty("mail.smtp.auth", "true");
+            setUsername(username);
+            setPassword(password);
         }
         
         if (getPort() == 587) {
@@ -59,7 +59,7 @@ public class SeyrenMailSender extends JavaMailSenderImpl {
         
         setProtocol(protocol);
         
-        LOGGER.info(username + ":" + password + "@" + host);
+        LOGGER.info("{}:{}@{}", username, password, host);
         
     }
     
@@ -72,5 +72,5 @@ public class SeyrenMailSender extends JavaMailSenderImpl {
         setPort(port);
         return this;
     }
-
+    
 }

@@ -1,13 +1,13 @@
-<div ng:controller="CheckController" ng:init="loadCheck()">
+<div>
     <div class="row-fluid">
         <div class="span12">
             <ul class="thumbnails">
-                <li class="span3" ng:repeat="graph in graphs">
+                <li class="span3" ng-repeat="graph in graphs">
                     <div class="thumbnail">
-                        <a href="{{ getBigGraphUrl(graph.minutes) }}" target="_blank"> 
-                            <img ng:src="{{ getSmallGraphUrl(graph.minutes) }}" /> 
+                        <a href="{{ liveLink(check, graph.minutes) }}" target="_blank">
+                            <img ng:src="{{ liveImage(check, graph.minutes) }}" />
                         </a>
-                        <h5>{{ graph.description }}</h5>
+                        <h6 style="margin: 0px 0;">{{ graph.description }}</h6>
                     </div>
                 </li>
             </ul>
@@ -16,7 +16,7 @@
     <div class="row-fluid">
         <div class="span7">
             <div class="row-fluid">
-                <h2>Details <small>[<a class="" data-toggle="modal" data-show="true" href="#editCheckModal">edit</a>]</small></h2>
+                <h2>Details <small>[<a class="" data-keyboard="true" data-toggle="modal" data-show="true" href="" ng-click="editCheck(check)">edit</a>]</small></h2>
             </div>
             <div class="row-fluid">
                 <span class="span2">Name:</span>
@@ -29,11 +29,11 @@
             <div class="row-fluid">
                 <span class="span2">State:</span>
                 <span class="span10">
-                    <span ng:show="check.state == 'UNKNOWN'" class="label">{{ check.state }}</span>
-                    <span ng:show="check.state == 'OK'" class="label label-success">{{ check.state }}</span>
-                    <span ng:show="check.state == 'WARN'" class="label label-warning">{{ check.state }}</span>
-                    <span ng:show="check.state == 'ERROR'" class="label label-important">{{ check.state }}</span>
-                    <span ng:show="check.state == 'EXCEPTION'" class="label label-inverse">{{ check.state }}</span>
+                    <span ng-show="check.state == 'UNKNOWN'" class="label">{{ check.state }}</span>
+                    <span ng-show="check.state == 'OK'" class="label label-success">{{ check.state }}</span>
+                    <span ng-show="check.state == 'WARN'" class="label label-warning">{{ check.state }}</span>
+                    <span ng-show="check.state == 'ERROR'" class="label label-important">{{ check.state }}</span>
+                    <span ng-show="check.state == 'EXCEPTION'" class="label label-inverse">{{ check.state }}</span>
                 </span>
             </div>
             <div class="row-fluid">
@@ -50,22 +50,26 @@
             </div>
             <div class="row-fluid">
                 <span class="span2">Enabled:</span>
-                <span class="span10"><input type="checkbox" ng:checked="{{ check.enabled }}" ng:click="swapCheckEnabled()" /> </span>
+                <span class="span10"><input type="checkbox" ng-checked="check.enabled" ng-click="swapCheckEnabled(check)" /> </span>
+            </div>
+            <div class="row-fluid">
+                <span class="span2">Last check:</span>
+                <span class="span10">{{check.lastCheck | date: 'yyyy-MM-dd HH:mm:ss'}}</span>
             </div>
         </div>
         <div class="span5">
             <div class="row-fluid">
-                <div class="span9">
+                <div class="span8">
                     <h2>Subscriptions</h2>
                 </div>
-                <div class="span3 pull-right">
-                    <a class="btn btn-primary" data-toggle="modal" data-show="true" href="#addSubscriptionModal">Add subscription</a>
+                <div class="span4 pull-right">
+                    <p></p><p><button id="editSubscaddriptionButton" class="btn btn-success" data-keyboard="true" data-toggle="modal" data-show="true" href="#editSubscriptionModal" ng-click="editSubscription(check, 'new')"><i class="icon-volume-up icon-white"></i>&nbsp;Add subscription</button></p>
                 </div>
             </div>
             <div class="row-fluid">
                 <div class="span12">
-                    <div ng:hide="check.subscriptions">This check has no subscriptions</div>
-                    <table class="table table-bordered table-striped" ng:show="check.subscriptions">
+                    <div ng-hide="check.subscriptions">This check has no subscriptions</div>
+                    <table class="table table-bordered table-striped table-hover" ng-show="check.subscriptions" style="cursor: pointer;">
                         <thead>
                             <tr>
                                 <th>Target</th>
@@ -74,27 +78,31 @@
                                 <th>Time</th>
                                 <th>Enabled</th>
                                 <th>&nbsp;</th>
+                                <th>&nbsp;</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr ng:repeat="subscription in check.subscriptions">
+                            <tr ng-repeat="subscription in check.subscriptions">
                                 <td>{{ subscription.target }}</td>
                                 <td>{{ subscription.type }}</td>
                                 <td>
-                                    <span ng:show="subscription.su">Su </span> 
-                                    <span ng:show="subscription.mo">Mo </span> 
-                                    <span ng:show="subscription.tu">Tu </span> 
-                                    <span ng:show="subscription.we">We </span> 
-                                    <span ng:show="subscription.th">Th </span> 
-                                    <span ng:show="subscription.fr">Fr </span> 
-                                    <span ng:show="subscription.sa">Sa </span>
+                                    <span ng-show="subscription.su">Su </span>
+                                    <span ng-show="subscription.mo">Mo </span>
+                                    <span ng-show="subscription.tu">Tu </span>
+                                    <span ng-show="subscription.we">We </span>
+                                    <span ng-show="subscription.th">Th </span>
+                                    <span ng-show="subscription.fr">Fr </span>
+                                    <span ng-show="subscription.sa">Sa </span>
                                 </td>
-                                <td>{{ subscription.fromTime}} to {{ subscription.toTime }}</td>
+                                <td>{{ subscription.fromTime }} to {{ subscription.toTime }}</td>
                                 <td>
-                                    <input type="checkbox" ng:checked="{{ subscription.enabled }}" ng:click="swapSubscriptionEnabled(subscription)" />
+                                    <input type="checkbox" ng-checked="subscription.enabled" ng-click="swapSubscriptionEnabled(check, subscription)" />
                                 </td>
                                 <td>
-                                    <button type="submit" class="btn btn-danger btn-mini" ng:click="deleteSubscription(subscription.id)">Delete</button>
+                                    <button type="submit" class="btn btn-danger btn-mini" ng-click="deleteSubscription(check, subscription)">Delete</button>
+                                </td>
+                                <td>
+                                    <button class="btn btn-primary btn-mini" data-keyboard="true" data-toggle="modal" data-show="true" href="#editSubscriptionModal" ng-click="editSubscription(check, subscription)">Edit</button>
                                 </td>
                             </tr>
                         </tbody>
@@ -103,17 +111,17 @@
             </div>
         </div>
     </div>
-    <div class="row-fluid" ng:init="loadAlerts()">
+    <div class="row-fluid">
         <h2>
             Alerts <small>( {{alerts.start}} of {{alerts.total}} )</small>
         </h2>
         <div class="pagination">
             <ul>
-                <li><a ng:click="loadOlderAlerts()">&larr; Older</a></li>
-                <li><a ng:click="loadNewerAlerts()">Newer &rarr;</a></li>
+                <li><a ng-click="loadOlderAlerts()">&larr; Older</a></li>
+                <li><a ng-click="loadNewerAlerts()">Newer &rarr;</a></li>
             </ul>
         </div>
-        <table class="table table-bordered table-striped" ng:show="alerts.values">
+        <table class="table table-bordered table-striped table-hover" ng-show="alerts.values">
             <thead>
                 <tr>
                     <th>Timestamp</th>
@@ -126,25 +134,25 @@
                 </tr>
             </thead>
             <tbody>
-                <tr ng:repeat="alert in alerts.values">
+                <tr ng-repeat="alert in alerts.values">
                     <td>{{ alert.timestamp | date: 'yyyy-MM-dd HH:mm:ss' }}</td>
                     <td>{{ alert.target }}</td>
                     <td>{{ alert.value }}</td>
                     <td>{{ alert.warn }}</td>
                     <td>{{ alert.error }}</td>
                     <td>
-                        <span ng:show="alert.fromType == 'UNKNOWN'" class="label">{{ alert.fromType }}</span>
-                        <span ng:show="alert.fromType == 'OK'" class="label label-success">{{ alert.fromType }}</span>
-                        <span ng:show="alert.fromType == 'WARN'" class="label label-warning">{{ alert.fromType }}</span>
-                        <span ng:show="alert.fromType == 'ERROR'" class="label label-important">{{ alert.fromType }}</span>
-                        <span ng:show="alert.fromType == 'EXCEPTION'" class="label label-inverse">{{ alert.fromType }}</span>
+                        <span ng-show="alert.fromType == 'UNKNOWN'" class="label">{{ alert.fromType }}</span>
+                        <span ng-show="alert.fromType == 'OK'" class="label label-success">{{ alert.fromType }}</span>
+                        <span ng-show="alert.fromType == 'WARN'" class="label label-warning">{{ alert.fromType }}</span>
+                        <span ng-show="alert.fromType == 'ERROR'" class="label label-important">{{ alert.fromType }}</span>
+                        <span ng-show="alert.fromType == 'EXCEPTION'" class="label label-inverse">{{ alert.fromType }}</span>
                     </td>
                     <td>
-                        <span ng:show="alert.toType == 'UNKNOWN'" class="label">{{ alert.toType }}</span>
-                        <span ng:show="alert.toType == 'OK'" class="label label-success">{{ alert.toType }}</span>
-                        <span ng:show="alert.toType == 'WARN'" class="label label-warning">{{ alert.toType }}</span>
-                        <span ng:show="alert.toType == 'ERROR'" class="label label-important">{{ alert.toType }}</span>
-                        <span ng:show="alert.toType == 'EXCEPTION'" class="label label-inverse">{{ alert.toType }}</span>
+                        <span ng-show="alert.toType == 'UNKNOWN'" class="label">{{ alert.toType }}</span>
+                        <span ng-show="alert.toType == 'OK'" class="label label-success">{{ alert.toType }}</span>
+                        <span ng-show="alert.toType == 'WARN'" class="label label-warning">{{ alert.toType }}</span>
+                        <span ng-show="alert.toType == 'ERROR'" class="label label-important">{{ alert.toType }}</span>
+                        <span ng-show="alert.toType == 'EXCEPTION'" class="label label-inverse">{{ alert.toType }}</span>
                     </td>
                 </tr>
             </tbody>
@@ -153,87 +161,12 @@
     <div class="row-fluid">
         <div class="span12">
             <div class="pull-right">
-                <a class="btn btn-danger" data-toggle="modal" data-show="true" href="#confirmCheckDeleteModal">Delete check</a>
+                <button class="btn btn-danger" data-keyboard="true" data-toggle="modal" data-show="true"  id="deleteCheckButton" href="#confirmCheckDeleteModal">Delete check</button>
             </div>
         </div>
     </div>
-    
-    <div class="modal hide" id="addSubscriptionModal">
-        <div class="modal-header">
-            <button class="close" data-dismiss="modal">x</button>
-            <h3>Add subscription</h3>
-        </div>
-        <div class="modal-body">
-            <form ng:submit="createSubscription()" class="well form-horizontal">
-                <fieldset>
-                    <div class="control-group">
-                        <label class="control-label" for="newsubscription.target">Target</label>
-                        <div class="controls">
-                            <input id="newsubscription.target" class="input-xlarge" name="newsubscription.target" type="text" />
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label" for="newsubscription.type">Type</label>
-                        <div class="controls">
-                            <select id="newsubscription.type" class="input-medium" name="newsubscription.type">
-                                <option value="EMAIL">Email</option>
-                                <option value="HIPCHAT">HipChat</option>
-                                <option value="PAGERDUTY">PagerDuty</option>
-                                <option value="HUBOT">Hubot</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label">Days</label>
-                        <div class="controls">
-                            <label class="checkbox inline"> 
-                                <input id="newsubscription.su" class="input-medium" name="newsubscription.su" type="checkbox" checked="checked">Su 
-                            </label> 
-                            <label class="checkbox inline"> 
-                                <input id="newsubscription.mo" class="input-medium" name="newsubscription.mo" type="checkbox" checked="checked">Mo 
-                            </label> 
-                            <label class="checkbox inline"> 
-                                <input id="newsubscription.tu" class="input-medium" name="newsubscription.tu" type="checkbox" checked="checked">Tu 
-                            </label> 
-                            <label class="checkbox inline"> 
-                                <input id="newsubscription.we" class="input-medium" name="newsubscription.we" type="checkbox" checked="checked">We 
-                            </label> 
-                            <label class="checkbox inline"> 
-                                <input id="newsubscription.th" class="input-medium" name="newsubscription.th" type="checkbox" checked="checked">Th 
-                            </label> 
-                            <label class="checkbox inline"> 
-                                <input id="newsubscription.fr" class="input-medium" name="newsubscription.fr" type="checkbox" checked="checked">Fr 
-                            </label> 
-                            <label class="checkbox inline"> 
-                                <input id="newsubscription.sa" class="input-medium" name="newsubscription.sa" type="checkbox" checked="checked">Sa 
-                            </label>
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label" for="newsubscription.fromTime">From</label>
-                        <div class="controls">
-                            <input id="newsubscription.fromTime" class="input-small" name="newsubscription.fromTime" type="text" value="0000"> 
-                            &nbsp;to&nbsp; 
-                            <input id="newsubscription.toTime" class="input-small" name="newsubscription.toTime" type="text" value="2359">
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label" for="newsubscription.enabled">Enabled</label>
-                        <div class="controls">
-                            <input id="newsubscription.enabled" name="newsubscription.enabled" type="checkbox" checked="checked" />
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <div class="controls">
-                            <button type="submit" id="createSubscriptionButton" class="btn btn-primary">Add</button>
-                        </div>
-                    </div>
-                </fieldset>
-            </form>
-        </div>
-    </div>
-    
-    <div class="modal hide" id="confirmCheckDeleteModal">
+
+    <div class="modal hide" tabindex="-1" id="confirmCheckDeleteModal">
         <div class="modal-header">
             <button class="close" data-dismiss="modal">x</button>
             <h4>Are you sure?</h4>
@@ -241,63 +174,15 @@
         <div class="modal-body">
             <div class="pull-right">
                 <button class="btn" data-dismiss="modal">Cancel</button>
-                <button class="btn btn-primary" id="confirmDeleteCheckButton" ng:click="deleteCheck()">Ok</button>
+                <button class="btn btn-primary" id="confirmDeleteCheckButton" ng-click="deleteCheck(check)">Ok</button>
             </div>
         </div>
     </div>
-    
-    <div class="modal hide" id="editCheckModal">
-        <div class="modal-header">
-            <button class="close" data-dismiss="modal">x</button>
-            <h3>Edit check</h3>
-        </div>
-        <div class="modal-body">
-            <form ng:submit="submitEditCheck()" class="well form-horizontal">
-                <fieldset>
-                    <div class="control-group">
-                        <label class="control-label" for="editcheck.name">Name</label>
-                        <div class="controls">
-                            <input id="editcheck.name" class="input-xlarge" name="editcheck.name" type="text" />
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label" for="editcheck.description">Description</label>
-                        <div class="controls">
-                            <input id="editcheck.description" class="input-xlarge" name="editcheck.description" type="text" />
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label" for="editcheck.target">Target</label>
-                        <div class="controls">
-                            <input id="editcheck.target" class="input-xlarge" name="editcheck.target" type="text" />
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label" for="editcheck.warn">Warn level</label>
-                        <div class="controls">
-                            <input id="editcheck.warn" class="input-small" name="editcheck.warn" type="text" />
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label" for="editcheck.error">Error level</label>
-                        <div class="controls">
-                            <input id="editcheck.error" class="input-small" name="editcheck.error" type="text" />
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label" for="editcheck.enabled">Enabled</label>
-                        <div class="controls">
-                            <input id="editcheck.enabled" class="input-medium" name="editcheck.enabled" type="checkbox">
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <div class="controls">
-                            <button type="submit" class="btn btn-primary">Save check</button>
-                        </div>
-                    </div>
-                </fieldset>
-            </form>
-        </div>
+
+    <div class="modal hide" tabindex="-1" ng-include="'./html/modal-partial-subscription.html'" id="editSubscriptionModal">
+    </div>
+
+    <div class="modal hide" tabindex="-1" ng-include="'./html/modal-partial-check.html'" id="editCheckModal">
     </div>
     
 </div>
