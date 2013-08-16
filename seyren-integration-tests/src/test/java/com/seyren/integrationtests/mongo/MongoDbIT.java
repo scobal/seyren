@@ -25,9 +25,9 @@ import org.junit.Test;
 
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.Mongo;
+import com.mongodb.MongoClient;
 import com.mongodb.util.JSON;
 
 /**
@@ -36,31 +36,31 @@ import com.mongodb.util.JSON;
 public class MongoDbIT {
     @Test
     public void testPopulateMongoDb() throws Exception {
-        Mongo mongo = new Mongo("localhost", 27017);
+        Mongo mongo = new MongoClient("localhost", 27017);
         DB db = mongo.getDB("seyren");
-
+        
         File[] collections = readCollectionDirectory();
-        for(File collection: collections) {
+        for (File collection : collections) {
             Collection<File> jsonFiles = readJsonFiles(collection);
             loadJsonFiles(collection, jsonFiles, db);
         }
-
+        
     }
-
+    
     private File[] readCollectionDirectory() {
         return new File(this.getClass().getResource(".").getPath()).listFiles((FileFilter) FileFilterUtils.directoryFileFilter());
     }
-
+    
     private Collection<File> readJsonFiles(File collection) {
         Collection<File> files = FileUtils.listFiles(
-            collection,
-            new SuffixFileFilter(".json"),
-            DirectoryFileFilter.DIRECTORY
-        );
+                collection,
+                new SuffixFileFilter(".json"),
+                DirectoryFileFilter.DIRECTORY
+                );
         System.out.println(files);
         return files;
     }
-
+    
     private void loadJsonFiles(File collection, Collection<File> jsonFiles, DB db) throws Exception {
         String collectionName = collection.getName();
         DBCollection collectionMongoDb = db.getCollection(collectionName);
@@ -69,10 +69,10 @@ public class MongoDbIT {
             DBObject dbObject = (DBObject) JSON.parse(json);
             collectionMongoDb.insert(dbObject);
         }
-        //DBCursor cursorDoc = collectionMongoDb.find();
-        //while (cursorDoc.hasNext()) {
-        //    System.out.println(cursorDoc.next());
-        //}
+        // DBCursor cursorDoc = collectionMongoDb.find();
+        // while (cursorDoc.hasNext()) {
+        // System.out.println(cursorDoc.next());
+        // }
     }
-
+    
 }
