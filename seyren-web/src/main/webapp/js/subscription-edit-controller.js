@@ -16,9 +16,12 @@
             $scope.subscription.ignoreError = !$scope.subscription.notifyOnError;
         };
 
+        $scope.notifyOnOkClicked = function () {
+            $scope.subscription.ignoreOk = !$scope.subscription.notifyOnOk;
+        };
+
         $scope.create = function () {
             $("#createSubscriptionButton").addClass("disabled");
-            console.log($scope.subscription);
             Subscriptions.create({checkId: $scope.check.id}, $scope.subscription, function () {
                 $("#createSubscriptionButton").removeClass("disabled");
                 $("#editSubscriptionModal").modal("hide");
@@ -31,7 +34,6 @@
 
         $scope.update = function () {
             $("#updateSubscriptionButton").addClass("disabled");
-            console.log($scope.subscription);
             Subscriptions.update({checkId: $scope.check.id, subscriptionId: $scope.subscription.id}, $scope.subscription, function () {
                 $("#updateSubscriptionButton").removeClass("disabled");
                 $("#editSubscriptionModal").modal("hide");
@@ -48,6 +50,7 @@
                 $scope.subscription = editSubscription;
                 $scope.subscription.notifyOnWarn = !$scope.subscription.ignoreWarn;
                 $scope.subscription.notifyOnError = !$scope.subscription.ignoreError;
+                $scope.subscription.notifyOnOk = !$scope.subscription.ignoreOk;
             } else {
                 $scope.newSubscription = true;
                 $scope.subscription = {};
@@ -57,8 +60,10 @@
                 $scope.subscription.enabled = true;
                 $scope.subscription.ignoreWarn = false;
                 $scope.subscription.ignoreError = false;
+                $scope.subscription.ignoreOk = false;
                 $scope.subscription.notifyOnWarn = true;
                 $scope.subscription.notifyOnError = true;
+                $scope.subscription.notifyOnOk = true;
                 $scope.subscription.su = true;
                 $scope.subscription.mo = true;
                 $scope.subscription.tu = true;

@@ -75,6 +75,7 @@ public class MongoMapper {
         boolean sa = getBoolean(dbo, "sa");
         boolean ignoreWarn = getOptionalBoolean(dbo, "ignoreWarn", false);
         boolean ignoreError = getOptionalBoolean(dbo, "ignoreError", false);
+        boolean ignoreOk = getOptionalBoolean(dbo, "ignoreOk", false);
         LocalTime fromTime = getLocalTime(dbo, "fromHour", "fromMin");
         LocalTime toTime = getLocalTime(dbo, "toHour", "toMin");
         boolean enabled = getBoolean(dbo, "enabled");
@@ -92,6 +93,7 @@ public class MongoMapper {
                 .withSa(sa)
                 .withIgnoreWarn(ignoreWarn)
                 .withIgnoreError(ignoreError)
+                .withIgnoreOk(ignoreOk)
                 .withFromTime(fromTime)
                 .withToTime(toTime)
                 .withEnabled(enabled);
@@ -170,6 +172,7 @@ public class MongoMapper {
         map.put("sa", subscription.isSa());
         map.put("ignoreWarn", subscription.isIgnoreWarn());
         map.put("ignoreError", subscription.isIgnoreError());
+        map.put("ignoreOk", subscription.isIgnoreOk());
         if (subscription.getFromTime() != null) {
             map.put("fromHour", subscription.getFromTime().getHourOfDay());
             map.put("fromMin", subscription.getFromTime().getMinuteOfHour());

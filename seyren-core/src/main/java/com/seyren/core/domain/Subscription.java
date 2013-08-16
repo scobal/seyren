@@ -35,7 +35,7 @@ public class Subscription {
     private String target;
     private SubscriptionType type;
     private boolean su, mo, tu, we, th, fr, sa;
-    private boolean ignoreWarn, ignoreError;
+    private boolean ignoreWarn, ignoreError, ignoreOk;
     private LocalTime fromTime;
     private LocalTime toTime;
     private boolean enabled;
@@ -196,6 +196,19 @@ public class Subscription {
         return this;
     }
     
+    public boolean isIgnoreOk() {
+        return ignoreOk;
+    }
+    
+    public void setIgnoreOk(boolean ignoreOk) {
+        this.ignoreOk = ignoreOk;
+    }
+    
+    public Subscription withIgnoreOk(boolean ignoreOk) {
+        setIgnoreOk(ignoreOk);
+        return this;
+    }
+    
     @JsonSerialize(using = LocalTimeSerializer.class)
     public LocalTime getFromTime() {
         return fromTime;
@@ -255,6 +268,10 @@ public class Subscription {
         }
         
         if (alertType == AlertType.WARN && ignoreWarn) {
+            return false;
+        }
+        
+        if (alertType == AlertType.OK && ignoreOk) {
             return false;
         }
         

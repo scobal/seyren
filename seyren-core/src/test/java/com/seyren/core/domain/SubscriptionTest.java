@@ -60,7 +60,8 @@ public class SubscriptionTest {
                 .withToTime(localTime("1100"))
                 .withSu(true)
                 .withIgnoreError(false)
-                .withIgnoreWarn(false);
+                .withIgnoreWarn(false)
+                .withIgnoreOk(false);
         assertThat(sub.shouldNotify(dateTime("1015"), AlertType.ERROR), is(true));
     }
     
@@ -72,32 +73,61 @@ public class SubscriptionTest {
                 .withToTime(localTime("1100"))
                 .withSu(true)
                 .withIgnoreError(false)
-                .withIgnoreWarn(false);
+                .withIgnoreWarn(false)
+                .withIgnoreOk(false);
         assertThat(sub.shouldNotify(dateTime("1015"), AlertType.WARN), is(true));
     }
     
     @Test
-    public void subscriptionShouldNotNotifyOfErrorWhenNotIgnoringError() {
+    public void subscriptionShouldNotNotifyOfErrorWhenIgnoringError() {
         Subscription sub = new Subscription()
                 .withEnabled(true)
                 .withFromTime(localTime("1000"))
                 .withToTime(localTime("1100"))
                 .withSu(true)
                 .withIgnoreError(true)
-                .withIgnoreWarn(false);
+                .withIgnoreWarn(false)
+                .withIgnoreOk(false);
         assertThat(sub.shouldNotify(dateTime("1015"), AlertType.ERROR), is(false));
     }
     
     @Test
-    public void subscriptionShouldNotifyOfWarningWhenNotIgnoringWarning() {
+    public void subscriptionShouldNotNotifyOfWarningWhenIgnoringWarning() {
         Subscription sub = new Subscription()
                 .withEnabled(true)
                 .withFromTime(localTime("1000"))
                 .withToTime(localTime("1100"))
                 .withSu(true)
                 .withIgnoreError(false)
-                .withIgnoreWarn(true);
+                .withIgnoreWarn(true)
+                .withIgnoreOk(false);
         assertThat(sub.shouldNotify(dateTime("1015"), AlertType.WARN), is(false));
+    }
+    
+    @Test
+    public void subscriptionShouldNotNotifyOfOkWhenIgnoringOk() {
+        Subscription sub = new Subscription()
+                .withEnabled(true)
+                .withFromTime(localTime("1000"))
+                .withToTime(localTime("1100"))
+                .withSu(true)
+                .withIgnoreWarn(false)
+                .withIgnoreError(false)
+                .withIgnoreOk(true);
+        assertThat(sub.shouldNotify(dateTime("1015"), AlertType.OK), is(false));
+    }
+    
+    @Test
+    public void subscriptionShouldNotifyOfOkWhenNotIgnoringOk() {
+        Subscription sub = new Subscription()
+                .withEnabled(true)
+                .withFromTime(localTime("1000"))
+                .withToTime(localTime("1100"))
+                .withSu(true)
+                .withIgnoreWarn(false)
+                .withIgnoreError(false)
+                .withIgnoreOk(false);
+        assertThat(sub.shouldNotify(dateTime("1015"), AlertType.OK), is(true));
     }
     
     private DateTime dateTime(String time) {
