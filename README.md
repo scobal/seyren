@@ -2,7 +2,7 @@
 
 Seyren ([/ˈsaɪ.rʌn/](http://en.wikipedia.org/wiki/Wikipedia:IPA_for_English#Key)) is an alerting dashboard for Graphite.
 
-<img src="http://i.imgur.com/hyAEH.png" height="490" width="800" />
+[<img src="http://i.imgur.com/66lXcBk.png" height="465" width="700" />](http://i.imgur.com/XTpxmKI.png)
 
 ##Run
 
