@@ -25,12 +25,15 @@ import javax.inject.Named;
 
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
+import com.mongodb.MongoException;
 import com.mongodb.MongoURI;
 import com.seyren.core.domain.Alert;
 import com.seyren.core.domain.Check;
@@ -43,6 +46,8 @@ import com.seyren.core.util.config.SeyrenConfig;
 
 @Named
 public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(MongoStore.class);
     
     private MongoMapper mapper = new MongoMapper();
     private DB mongo;
@@ -58,6 +63,7 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
                 mongo.authenticate(mongoUri.getUsername(), mongoUri.getPassword());
             }
             this.mongo = mongo;
+            bootstrapMongo();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -69,7 +75,19 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
     }
     
     private void bootstrapMongo() {
-        getChecksCollection().ensureIndex(new BasicDBObject("name", 1), new BasicDBObject("unique", true));
+        LOGGER.info("Bootstrapping Mongo indexes. Depending on the number of checks and alerts you've got it may take a little while.");
+        try {
+            getChecksCollection().ensureIndex(new BasicDBObject("name", 1), new BasicDBObject("unique", true));
+            getChecksCollection().ensureIndex(new BasicDBObject("enabled", 1));
+            getAlertsCollection().ensureIndex(new BasicDBObject("timestamp", -1));
+            getAlertsCollection().ensureIndex(new BasicDBObject("checkId", 1).append("target", 1));
+        } catch (MongoException e) {
+            LOGGER.error("Failure while bootstrapping Mongo indexes.\n"
+                    + "If you've hit this problem it's possible that you have two checks which are named the same and violate an index which we've tried to add.\n"
+                    + "Please correct the problem by removing the clash. If it's something else, please let us know on Github!", e);
+            throw new RuntimeException("Failed to bootstrap Mongo indexes. Please refer to the logs for more information.", e);
+        }
+        LOGGER.info("Done bootstrapping Mongo indexes.");
     }
     
     private DBCollection getChecksCollection() {
