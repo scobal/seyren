@@ -28,7 +28,8 @@
                 <div ng-class="{ 'control-group': true, 'error': checkForm['check.warn'].$invalid }">
                     <label class="control-label" for="check.warn">Warn level</label>
                     <div class="controls">
-                        <input id="check.warn" class="input-small"  name="check.warn" ng-model="check.warn" type="text" ng-pattern="/^-?[0-9]+(.[0-9]+)?$/" required />
+                        <input id="check.warn" class="input-small" name="check.warn" ng-model="check.warn" type="text" ng-pattern="/^-?[0-9]+(.[0-9]+)?$/" required />
+                        <i id="check.warn.hint" class="icon-question-sign"></i>
                     </div>
                 </div>
                 <div ng-class="{ 'control-group': true, 'error': checkForm['check.error'].$invalid }">

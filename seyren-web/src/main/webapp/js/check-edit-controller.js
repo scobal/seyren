@@ -6,6 +6,10 @@
 
         $('#editCheckModal').on('shown', function () {
             $('#check\\.name').focus();
+            $('#check\\.warn\\.hint').tooltip({
+                placement: 'right',
+                title: 'Setting your warn level higher than your error level will result in Seyren generating alerts when the target value goes below the threshold.'
+            });
         });
 
         $scope.create = function () {
