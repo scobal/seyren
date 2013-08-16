@@ -1,0 +1,11 @@
+{
+    "_id": "51e00f9fccf2ab3395bea61e",
+    "timestamp": { "$date": "2013-07-12T14:15:59.497Z"},
+    "warn" : "0.5",
+    "checkId" : "5205121fccf2a07eacba64da",
+    "error" : "2.0",
+    "value" : "0.8",
+    "target" : "prod.host1.load.longterm",
+    "toType" : "OK",
+    "fromType" : "WARN"
+}
