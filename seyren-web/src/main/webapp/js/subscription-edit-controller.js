@@ -8,8 +8,17 @@
             $('#subscription\\.target').focus();
         });
 
+        $scope.notifyOnWarnClicked = function () {
+            $scope.subscription.ignoreWarn = !$scope.subscription.notifyOnWarn;
+        };
+
+        $scope.notifyOnErrorClicked = function () {
+            $scope.subscription.ignoreError = !$scope.subscription.notifyOnError;
+        };
+
         $scope.create = function () {
             $("#createSubscriptionButton").addClass("disabled");
+            console.log($scope.subscription);
             Subscriptions.create({checkId: $scope.check.id}, $scope.subscription, function () {
                 $("#createSubscriptionButton").removeClass("disabled");
                 $("#editSubscriptionModal").modal("hide");
@@ -22,6 +31,7 @@
 
         $scope.update = function () {
             $("#updateSubscriptionButton").addClass("disabled");
+            console.log($scope.subscription);
             Subscriptions.update({checkId: $scope.check.id, subscriptionId: $scope.subscription.id}, $scope.subscription, function () {
                 $("#updateSubscriptionButton").removeClass("disabled");
                 $("#editSubscriptionModal").modal("hide");
@@ -36,6 +46,8 @@
             if (editSubscription) {
                 $scope.newSubscription = false;
                 $scope.subscription = editSubscription;
+                $scope.subscription.notifyOnWarn = !$scope.subscription.ignoreWarn;
+                $scope.subscription.notifyOnError = !$scope.subscription.ignoreError;
             } else {
                 $scope.newSubscription = true;
                 $scope.subscription = {};
@@ -43,6 +55,10 @@
                 $scope.subscription.toTime = "2359";
                 $scope.subscription.type = "EMAIL";
                 $scope.subscription.enabled = true;
+                $scope.subscription.ignoreWarn = false;
+                $scope.subscription.ignoreError = false;
+                $scope.subscription.notifyOnWarn = true;
+                $scope.subscription.notifyOnError = true;
                 $scope.subscription.su = true;
                 $scope.subscription.mo = true;
                 $scope.subscription.tu = true;

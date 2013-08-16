@@ -73,6 +73,8 @@ public class MongoMapper {
         boolean th = getBoolean(dbo, "th");
         boolean fr = getBoolean(dbo, "fr");
         boolean sa = getBoolean(dbo, "sa");
+        boolean ignoreWarn = getOptionalBoolean(dbo, "ignoreWarn", false);
+        boolean ignoreError = getOptionalBoolean(dbo, "ignoreError", false);
         LocalTime fromTime = getLocalTime(dbo, "fromHour", "fromMin");
         LocalTime toTime = getLocalTime(dbo, "toHour", "toMin");
         boolean enabled = getBoolean(dbo, "enabled");
@@ -88,6 +90,8 @@ public class MongoMapper {
                 .withTh(th)
                 .withFr(fr)
                 .withSa(sa)
+                .withIgnoreWarn(ignoreWarn)
+                .withIgnoreError(ignoreError)
                 .withFromTime(fromTime)
                 .withToTime(toTime)
                 .withEnabled(enabled);
@@ -164,6 +168,8 @@ public class MongoMapper {
         map.put("th", subscription.isTh());
         map.put("fr", subscription.isFr());
         map.put("sa", subscription.isSa());
+        map.put("ignoreWarn", subscription.isIgnoreWarn());
+        map.put("ignoreError", subscription.isIgnoreError());
         if (subscription.getFromTime() != null) {
             map.put("fromHour", subscription.getFromTime().getHourOfDay());
             map.put("fromMin", subscription.getFromTime().getMinuteOfHour());
@@ -199,6 +205,14 @@ public class MongoMapper {
     
     private boolean getBoolean(DBObject dbo, String key) {
         return (Boolean) dbo.get(key);
+    }
+    
+    private boolean getOptionalBoolean(DBObject dbo, String key, boolean defaultValue) {
+        Object value = dbo.get(key);
+        if (value == null) {
+            return defaultValue;
+        }
+        return (Boolean) value;
     }
     
     private DateTime getDateTime(DBObject dbo, String key) {

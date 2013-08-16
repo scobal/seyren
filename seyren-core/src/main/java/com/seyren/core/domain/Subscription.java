@@ -35,6 +35,7 @@ public class Subscription {
     private String target;
     private SubscriptionType type;
     private boolean su, mo, tu, we, th, fr, sa;
+    private boolean ignoreWarn, ignoreError;
     private LocalTime fromTime;
     private LocalTime toTime;
     private boolean enabled;
@@ -169,6 +170,32 @@ public class Subscription {
         return this;
     }
     
+    public boolean isIgnoreWarn() {
+        return ignoreWarn;
+    }
+    
+    public void setIgnoreWarn(boolean ignoreWarn) {
+        this.ignoreWarn = ignoreWarn;
+    }
+    
+    public Subscription withIgnoreWarn(boolean ignoreWarn) {
+        setIgnoreWarn(ignoreWarn);
+        return this;
+    }
+    
+    public boolean isIgnoreError() {
+        return ignoreError;
+    }
+    
+    public void setIgnoreError(boolean ignoreError) {
+        this.ignoreError = ignoreError;
+    }
+    
+    public Subscription withIgnoreError(boolean ignoreError) {
+        setIgnoreError(ignoreError);
+        return this;
+    }
+    
     @JsonSerialize(using = LocalTimeSerializer.class)
     public LocalTime getFromTime() {
         return fromTime;
@@ -212,8 +239,26 @@ public class Subscription {
         return this;
     }
     
-    public boolean shouldNotify(DateTime time) {
-        return isEnabled() && isCorrectDayOfWeek(time) && isCorrectHourOfDay(time);
+    public boolean shouldNotify(DateTime time, AlertType alertType) {
+        if (!isEnabled()) {
+            return false;
+        }
+        
+        boolean isTimeGood = isCorrectDayOfWeek(time) && isCorrectHourOfDay(time);
+        
+        if (!isTimeGood) {
+            return false;
+        }
+        
+        if (alertType == AlertType.ERROR && ignoreError) {
+            return false;
+        }
+        
+        if (alertType == AlertType.WARN && ignoreWarn) {
+            return false;
+        }
+        
+        return true;
     }
     
     private boolean isCorrectHourOfDay(DateTime time) {
@@ -239,4 +284,5 @@ public class Subscription {
             return true;
         return false;
     }
+    
 }

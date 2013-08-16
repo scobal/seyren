@@ -23,33 +23,81 @@ import org.junit.Test;
 public class SubscriptionTest {
     
     @Test
-    public void testShouldNotify() {
+    public void subscriptionShouldNotifyWhenTimeAndDateAreGood() {
         Subscription sub = new Subscription().withEnabled(true).withFromTime(localTime("1000")).withToTime(localTime("1100")).withSu(true);
-        assertThat(sub.shouldNotify(dateTime("1030")), is(equalTo(true)));
+        assertThat(sub.shouldNotify(dateTime("1030"), AlertType.ERROR), is(true));
     }
     
     @Test
-    public void testShouldNotifyAfterTime() {
-        Subscription sub = new Subscription().withFromTime(localTime("1000")).withToTime(localTime("1100")).withSu(true);
-        assertThat(sub.shouldNotify(dateTime("1200")), is(equalTo(false)));
+    public void subscriptionShouldNotNotifyAfterTime() {
+        Subscription sub = new Subscription().withEnabled(true).withFromTime(localTime("1000")).withToTime(localTime("1100")).withSu(true);
+        assertThat(sub.shouldNotify(dateTime("1200"), AlertType.ERROR), is(false));
     }
     
     @Test
-    public void testShouldNotifyBeforeTime() {
-        Subscription sub = new Subscription().withFromTime(localTime("1000")).withToTime(localTime("1100")).withSu(true);
-        assertThat(sub.shouldNotify(dateTime("0900")), is(equalTo(false)));
+    public void subscriptionShouldNotNotifyBeforeTime() {
+        Subscription sub = new Subscription().withEnabled(true).withFromTime(localTime("1000")).withToTime(localTime("1100")).withSu(true);
+        assertThat(sub.shouldNotify(dateTime("0900"), AlertType.ERROR), is(false));
     }
     
     @Test
-    public void testShouldNotifyIncorrectDay() {
-        Subscription sub = new Subscription();
-        assertThat(sub.shouldNotify(dateTime("1015")), is(equalTo(false)));
+    public void subscriptionShouldNotNotifyOnTheWrongDay() {
+        Subscription sub = new Subscription().withEnabled(true);
+        assertThat(sub.shouldNotify(dateTime("1015"), AlertType.ERROR), is(false));
     }
     
     @Test
-    public void shouldNotNotifyWhenNotEnabled() {
+    public void subscriptionShouldNotNotifyWhenNotEnabled() {
         Subscription sub = new Subscription().withEnabled(false);
-        assertThat(sub.shouldNotify(dateTime("1015")), is(equalTo(false)));
+        assertThat(sub.shouldNotify(dateTime("1015"), AlertType.ERROR), is(false));
+    }
+    
+    @Test
+    public void subscriptionShouldNotifyOfErrorWhenNotIgnoringErrorOrWarning() {
+        Subscription sub = new Subscription()
+                .withEnabled(true)
+                .withFromTime(localTime("1000"))
+                .withToTime(localTime("1100"))
+                .withSu(true)
+                .withIgnoreError(false)
+                .withIgnoreWarn(false);
+        assertThat(sub.shouldNotify(dateTime("1015"), AlertType.ERROR), is(true));
+    }
+    
+    @Test
+    public void subscriptionShouldNotifyOfWarningWhenNotIgnoringErrorOrWarning() {
+        Subscription sub = new Subscription()
+                .withEnabled(true)
+                .withFromTime(localTime("1000"))
+                .withToTime(localTime("1100"))
+                .withSu(true)
+                .withIgnoreError(false)
+                .withIgnoreWarn(false);
+        assertThat(sub.shouldNotify(dateTime("1015"), AlertType.WARN), is(true));
+    }
+    
+    @Test
+    public void subscriptionShouldNotNotifyOfErrorWhenNotIgnoringError() {
+        Subscription sub = new Subscription()
+                .withEnabled(true)
+                .withFromTime(localTime("1000"))
+                .withToTime(localTime("1100"))
+                .withSu(true)
+                .withIgnoreError(true)
+                .withIgnoreWarn(false);
+        assertThat(sub.shouldNotify(dateTime("1015"), AlertType.ERROR), is(false));
+    }
+    
+    @Test
+    public void subscriptionShouldNotifyOfWarningWhenNotIgnoringWarning() {
+        Subscription sub = new Subscription()
+                .withEnabled(true)
+                .withFromTime(localTime("1000"))
+                .withToTime(localTime("1100"))
+                .withSu(true)
+                .withIgnoreError(false)
+                .withIgnoreWarn(true);
+        assertThat(sub.shouldNotify(dateTime("1015"), AlertType.WARN), is(false));
     }
     
     private DateTime dateTime(String time) {
