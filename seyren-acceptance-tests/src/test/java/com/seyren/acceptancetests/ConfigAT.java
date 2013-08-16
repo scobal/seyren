@@ -16,7 +16,7 @@ package com.seyren.acceptancetests;
 import static com.github.restdriver.serverdriver.Matchers.*;
 import static com.github.restdriver.serverdriver.RestServerDriver.*;
 import static com.seyren.acceptancetests.util.SeyrenDriver.*;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.Matchers.*;
 
 import org.junit.Test;

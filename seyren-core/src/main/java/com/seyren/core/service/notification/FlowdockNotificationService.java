@@ -13,6 +13,9 @@
  */
 package com.seyren.core.service.notification;
 
+import static com.google.common.collect.Iterables.*;
+import static org.apache.http.entity.ContentType.*;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,9 +44,6 @@ import com.seyren.core.domain.Subscription;
 import com.seyren.core.domain.SubscriptionType;
 import com.seyren.core.exception.NotificationFailedException;
 import com.seyren.core.util.config.SeyrenConfig;
-
-import static com.google.common.collect.Iterables.transform;
-import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 
 @Named
 public class FlowdockNotificationService implements NotificationService {

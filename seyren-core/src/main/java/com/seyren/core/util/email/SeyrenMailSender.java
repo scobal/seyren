@@ -23,7 +23,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
-import com.seyren.core.service.schedule.CheckScheduler;
 import com.seyren.core.util.config.SeyrenConfig;
 
 @Named

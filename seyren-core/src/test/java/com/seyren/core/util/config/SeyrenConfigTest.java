@@ -68,12 +68,12 @@ public class SeyrenConfigTest {
         assertThat(config.getFlowdockExternalUsername(), is("Seyren"));
         assertThat(config.getFlowdockTags(), is(""));
         assertThat(config.getFlowdockEmojis(), is(""));
-
-        //Velocity logging
+        
+        // Velocity logging
         config.init();
         Field chuteField = ReflectionUtils.findField(Log.class, "chute");
         chuteField.setAccessible(true);
-        assertThat(chuteField.get(Velocity.getLog()) , is(instanceOf(Slf4jLogChute.class)));
+        assertThat(chuteField.get(Velocity.getLog()), is(instanceOf(Slf4jLogChute.class)));
     }
     
 }
