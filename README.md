@@ -15,8 +15,8 @@ Seyren ([/ˈsaɪ.rʌn/](http://en.wikipedia.org/wiki/Wikipedia:IPA_for_English#K
 ###Stand alone
 
 ```
-export GRAPHITE_URL=http://graphite.foohost.com:80
 mvn clean package
+export GRAPHITE_URL=http://graphite.foohost.com:80
 java -jar seyren-web/target/dependency/jetty-runner.jar --path /seyren seyren-web/target/*.war
 open http://localhost:8080/seyren
 ```
