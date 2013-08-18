@@ -2,7 +2,7 @@
 (function () {
     'use strict';
 
-    seyrenApp.controller('CheckEditModalController', function CheckEditModalController($scope, $rootScope, Checks, Seyren, Graph) {
+    seyrenApp.controller('CheckEditModalController', function CheckEditModalController($scope, $rootScope, Checks, Seyren, Graph, Metrics) {
 
         $('#editCheckModal').on('shown', function () {
             $('#check\\.name').focus();
@@ -44,12 +44,25 @@
                 $scope.newCheck = true;
                 $scope.check = {};
                 $scope.check.enabled = true;
+                $scope.check.totalMetric = '-';
             }
         });
 
         $scope.previewImage = function () {
             return Graph.previewImage($scope.check);
         };
+
+
+        $scope.$watch('check.target', function(value) {
+            if (value !== undefined) {
+                Metrics.totalMetric({target: value}, function (data) {
+                    $scope.check.totalMetric = data[value];
+                }, function () {
+                    console.log('Metrics count failed');
+                    $scope.check.totalMetric = '-';
+                });
+            }
+        });
 
     });
 
