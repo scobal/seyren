@@ -1,8 +1,18 @@
-/*global seyrenApp,console,$ */
+/*global angular,seyrenApp,console,$ */
 (function () {
     'use strict';
 
     seyrenApp.controller('CheckEditModalController', function CheckEditModalController($scope, $rootScope, Checks, Seyren, Graph) {
+        $scope.master = {
+            name: null,
+            description: null,
+            target: null,
+            warn: null,
+            error: null,
+            previewImage: "./img/preview-nodata.png",
+            enabled: true,
+            totalMetric: '-'
+        };
 
         $('#editCheckModal').on('shown', function () {
             $('#check\\.name').focus();
@@ -35,6 +45,10 @@
             });
         };
 
+        $scope.reset = function () {
+            $scope.check = angular.copy($scope.master);
+        };
+
         $rootScope.$on('check:edit', function () {
             var editCheck = Seyren.checkBeingEdited();
             if (editCheck) {
@@ -42,14 +56,17 @@
                 $scope.check = editCheck;
             } else {
                 $scope.newCheck = true;
-                $scope.check = {};
-                $scope.check.enabled = true;
+                $scope.reset();
             }
         });
 
-        $scope.previewImage = function () {
-            return Graph.previewImage($scope.check);
-        };
+        $scope.$watch('check.target + check.warn + check.error', function (value) {
+            if (value !== undefined) {
+                $scope.check.previewImage = Graph.previewImage($scope.check);
+            } else {
+                return "./img/preview-nodata.png";
+            }
+        });
 
     });
 
