@@ -56,13 +56,7 @@
                 $scope.check = editCheck;
             } else {
                 $scope.newCheck = true;
-<<<<<<< HEAD
                 $scope.reset();
-=======
-                $scope.check = {};
-                $scope.check.enabled = true;
-                $scope.check.totalMetric = '-';
->>>>>>> 87d00c68e5b489641e656cf2402ba679ec234653
             }
         });
 
