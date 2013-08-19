@@ -46,14 +46,14 @@
                 </div>
                 <div class="control-group">
                     <div class="controls">
-                        <img ng-src="{{ previewImage() }}" />
+                        <img ng-src="{{ check.previewImage }}" src="./img/preview-nodata.png" />
                     </div>
                 </div>
             </fieldset>
         </form>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn pull-left" data-dismiss="modal" id="cancelCheckButton"><i class="icon-remove"></i>&nbsp;&nbsp;Cancel</button>
+        <button type="button" class="btn pull-left" data-dismiss="modal" id="cancelCheckButton" ng-click="reset()"><i class="icon-remove"></i>&nbsp;&nbsp;Cancel</button>
         <button type="submit" class="btn btn-primary" ng-show="newCheck" id="createCheckButton" ng-click="create()" ng-disabled="checkForm.$invalid"><i class="icon-ok icon-white"></i>&nbsp;&nbsp;Create check</button>
         <button type="submit" class="btn btn-primary" ng-hide="newCheck" id="updateCheckButton" ng-click="update()" ng-disabled="checkForm.$invalid"><i class="icon-ok icon-white"></i>&nbsp;&nbsp;Save changes</button>
     </div>

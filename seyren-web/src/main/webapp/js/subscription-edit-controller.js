@@ -1,8 +1,28 @@
-/*global seyrenApp,console,$ */
+/*global angular,seyrenApp,console,$ */
 (function () {
     'use strict';
 
     seyrenApp.controller('SubscriptionEditModalController', function SubscriptionEditModalController($scope, $rootScope, Subscriptions, Seyren) {
+        $scope.master = {
+            target: null,
+            type: "EMAIL",
+            ignoreWarn: false,
+            ignoreError: false,
+            ignoreOk: false,
+            notifyOnWarn: true,
+            notifyOnError: true,
+            notifyOnOk: true,
+            fromTime: "0000",
+            toTime: "2359",
+            su: true,
+            mo: true,
+            tu: true,
+            we: true,
+            th: true,
+            fr: true,
+            sa: true,
+            enabled: true
+        };
 
         $('#editSubscriptionModal').on('shown', function () {
             $('#subscription\\.target').focus();
@@ -43,6 +63,10 @@
             });
         };
 
+        $scope.reset = function () {
+            $scope.subscription = angular.copy($scope.master);
+        };
+
         $rootScope.$on('subscription:edit', function () {
             var editSubscription = Seyren.subscriptionBeingEdited();
             if (editSubscription) {
@@ -54,23 +78,7 @@
             } else {
                 $scope.newSubscription = true;
                 $scope.subscription = {};
-                $scope.subscription.fromTime = "0000";
-                $scope.subscription.toTime = "2359";
-                $scope.subscription.type = "EMAIL";
-                $scope.subscription.enabled = true;
-                $scope.subscription.ignoreWarn = false;
-                $scope.subscription.ignoreError = false;
-                $scope.subscription.ignoreOk = false;
-                $scope.subscription.notifyOnWarn = true;
-                $scope.subscription.notifyOnError = true;
-                $scope.subscription.notifyOnOk = true;
-                $scope.subscription.su = true;
-                $scope.subscription.mo = true;
-                $scope.subscription.tu = true;
-                $scope.subscription.we = true;
-                $scope.subscription.th = true;
-                $scope.subscription.fr = true;
-                $scope.subscription.sa = true;
+                $scope.reset();
             }
         });
     });
