@@ -83,7 +83,7 @@
         </form>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn pull-left" data-dismiss="modal" id="cancelSubscriptionButton"><i class="icon-remove"></i>&nbsp;&nbsp;Cancel</button>
+        <button type="button" class="btn pull-left" data-dismiss="modal" id="cancelSubscriptionButton" ng-click="reset()"><i class="icon-remove"></i>&nbsp;&nbsp;Cancel</button>
         <button type="submit" class="btn btn-primary" ng-show="newSubscription" id="createSubscriptionButton" ng-click="create()" ng-disabled="checkSubscription.$invalid"><i class="icon-ok icon-white"></i>&nbsp;&nbsp;Add</button>
         <button type="submit" class="btn btn-primary" ng-hide="newSubscription" id="updateSubscriptionButton" ng-click="update()" ng-disabled="checkSubscription.$invalid"><i class="icon-ok icon-white"></i>&nbsp;&nbsp;Save changes</button>
     </div>
