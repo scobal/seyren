@@ -17,19 +17,17 @@ describe('home page', function () {
     it('should have a \'Checks in an unhealthy state\' table', function () {
         expect(element('table:eq(0) thead tr').count()).toBe(1);
         expect(element('table:eq(0) thead tr th:eq(0)').text()).toBe('Name');
-        expect(element('table:eq(0) thead tr th:eq(1)').text()).toBe('Target');
-        expect(element('table:eq(0) thead tr th:eq(2)').text()).toBe('State');
-        expect(element('table:eq(0) thead tr th:eq(3)').text()).toBe('Warn');
-        expect(element('table:eq(0) thead tr th:eq(4)').text()).toBe('Error');
-        expect(element('table:eq(0) thead tr th:eq(5)').text()).toBe('Enabled');
+        expect(element('table:eq(0) thead tr th:eq(1)').text()).toBe('State');
+        expect(element('table:eq(0) thead tr th:eq(2)').text()).toBe('Warn');
+        expect(element('table:eq(0) thead tr th:eq(3)').text()).toBe('Error');
+        expect(element('table:eq(0) thead tr th:eq(4)').text()).toBe('Enabled');
 
         expect(element('table:eq(0) tbody tr').count()).toBe(1);
         expect(element('table:eq(0) tbody tr td:eq(0)').text()).toBe('load longterm usage');
-        expect(element('table:eq(0) tbody tr td:eq(1)').text()).toBe('prod.host1.load.longterm');
-        expect(element('table:eq(0) tbody tr td:eq(2) span:visible').text()).toBe('WARN');
-        expect(element('table:eq(0) tbody tr td:eq(3)').text()).toBe('0.5');
-        expect(element('table:eq(0) tbody tr td:eq(4)').text()).toBe('2.0');
-        expect(element('table:eq(0) tbody tr td:eq(5) input:checked').val()).toBe('on');
+        expect(element('table:eq(0) tbody tr td:eq(1) span:visible').text()).toBe('WARN');
+        expect(element('table:eq(0) tbody tr td:eq(2)').text()).toBe('0.5');
+        expect(element('table:eq(0) tbody tr td:eq(3)').text()).toBe('2.0');
+        expect(element('table:eq(0) tbody tr td:eq(4) input:checked').val()).toBe('on');
     });
 
     it('should have a \'Recent alerts\' section', function () {
@@ -39,7 +37,7 @@ describe('home page', function () {
     it('should have a \'Recent alerts\' table', function () {
         expect(element('table:eq(1) thead tr').count()).toBe(1);
         expect(element('table:eq(1) thead tr th:eq(0)').text()).toBe('Timestamp');
-        expect(element('table:eq(1) thead tr th:eq(1)').text()).toBe('Target');
+        expect(element('table:eq(1) thead tr th:eq(1)').text()).toBe('Name');
         expect(element('table:eq(1) thead tr th:eq(2)').text()).toBe('Value');
         expect(element('table:eq(1) thead tr th:eq(3)').text()).toBe('Warn');
         expect(element('table:eq(1) thead tr th:eq(4)').text()).toBe('Error');
@@ -48,7 +46,7 @@ describe('home page', function () {
 
         expect(element('table:eq(1) tbody tr').count()).toBe(1);
         expect(element('table:eq(1) tbody tr td:eq(0)').text()).toMatch('[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}');
-        expect(element('table:eq(1) tbody tr td:eq(1)').text()).toBe('prod.host1.load.longterm');
+        expect(element('table:eq(1) tbody tr td:eq(1)').text()).toBe('load longterm usage');
         expect(element('table:eq(1) tbody tr td:eq(2)').text()).toBe('0.8');
         expect(element('table:eq(1) tbody tr td:eq(3)').text()).toBe('0.5');
         expect(element('table:eq(1) tbody tr td:eq(4)').text()).toBe('2');
@@ -93,19 +91,17 @@ describe('checks page', function () {
 
         expect(element('table thead tr').count()).toBe(1);
         expect(element('table thead tr th:eq(0)').text()).toBe('Name');
-        expect(element('table thead tr th:eq(1)').text()).toBe('Target');
-        expect(element('table thead tr th:eq(2)').text()).toBe('State');
-        expect(element('table thead tr th:eq(3)').text()).toBe('Warn');
-        expect(element('table thead tr th:eq(4)').text()).toBe('Error');
-        expect(element('table thead tr th:eq(5)').text()).toBe('Enabled');
+        expect(element('table thead tr th:eq(1)').text()).toBe('State');
+        expect(element('table thead tr th:eq(2)').text()).toBe('Warn');
+        expect(element('table thead tr th:eq(3)').text()).toBe('Error');
+        expect(element('table thead tr th:eq(4)').text()).toBe('Enabled');
 
         expect(element('table tbody tr').count()).toBe(1);
         expect(element('table tbody tr td:eq(0)').text()).toBe('load longterm usage');
-        expect(element('table tbody tr td:eq(1)').text()).toBe('prod.host1.load.longterm');
-        expect(element('table tbody tr td:eq(2) span:visible').text()).toBe('WARN');
-        expect(element('table tbody tr td:eq(3)').text()).toBe('0.5');
-        expect(element('table tbody tr td:eq(4)').text()).toBe('2.0');
-        expect(element('table tbody tr td:eq(5) input:checked').val()).toBe('on');
+        expect(element('table tbody tr td:eq(1) span:visible').text()).toBe('WARN');
+        expect(element('table tbody tr td:eq(2)').text()).toBe('0.5');
+        expect(element('table tbody tr td:eq(3)').text()).toBe('2.0');
+        expect(element('table tbody tr td:eq(4) input:checked').val()).toBe('on');
     });
 
     it('click on table row', function () {

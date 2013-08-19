@@ -19,7 +19,6 @@
                 <thead>
                     <tr>
                         <th><a href="" ng-click="predicate='name';reverse=!reverse">Name</a></th>
-                        <th><a href="" ng-click="predicate='target';reverse=!reverse">Target</a></th>
                         <th><a href="" ng-click="predicate=sortByState;reverse=!reverse">State</a></th>
                         <th><a href="" ng-click="predicate='warn';reverse=!reverse">Warn</a></th>
                         <th><a href="" ng-click="predicate='error';reverse=!reverse">Error</a></th>
@@ -29,7 +28,6 @@
                 <tbody>
                     <tr ng-repeat="check in checks.values  | filter:filter | orderBy:predicate:reverse" ng-click="selectCheck(check.id)" style="cursor: pointer;">
                         <td>{{ check.name }}</td>
-                        <td>{{ check.target }}</td>
                         <td>
                             <span ng-show="check.state == 'UNKNOWN'" class="label">{{ check.state }}</span>
                             <span ng-show="check.state == 'OK'" class="label label-success">{{ check.state }}</span>

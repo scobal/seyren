@@ -4,7 +4,6 @@
         <thead>
             <tr>
                 <th>Name</th>
-                <th>Target</th>
                 <th>State</th>
                 <th>Warn</th>
                 <th>Error</th>
@@ -14,7 +13,6 @@
         <tbody>
             <tr ng-repeat="check in unhealthyChecks.values" ng-click="selectCheck(check.id)" style="cursor: pointer;">
                 <td>{{ check.name }}</td>
-                <td>{{ check.target }}</td>
                 <td>
                     <span ng-show="check.state == 'UNKNOWN'" class="label">{{ check.state }}</span>
                     <span ng-show="check.state == 'OK'" class="label label-success">{{ check.state }}</span>
@@ -37,7 +35,7 @@
         <thead>
             <tr>
                 <th>Timestamp</th>
-                <th>Target</th>
+                <th>Name</th>
                 <th>Value</th>
                 <th>Warn</th>
                 <th>Error</th>
@@ -48,7 +46,7 @@
         <tbody>
             <tr ng-repeat="alert in alertStream.values" ng-click="selectCheck(alert.checkId)" style="cursor: pointer;">
                 <td>{{ alert.timestamp | date: 'yyyy-MM-dd HH:mm:ss' }}</td>
-                <td>{{ alert.target }}</td>
+                <td>{{ checkNames[alert.checkId] }}</td>
                 <td>{{ alert.value }}</td>
                 <td>{{ alert.warn }}</td>
                 <td>{{ alert.error }}</td>
