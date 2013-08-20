@@ -255,20 +255,20 @@ describe('add subscription', function () {
         expect(element('table:eq(0) thead tr').count()).toBe(1);
         expect(element('table:eq(0) thead tr th:eq(0)').text()).toBe('Target');
         expect(element('table:eq(0) thead tr th:eq(1)').text()).toBe('Type');
-        expect(element('table:eq(0) thead tr th:eq(2)').text()).toBe('Days');
-        expect(element('table:eq(0) thead tr th:eq(3)').text()).toBe('Time');
-        expect(element('table:eq(0) thead tr th:eq(4)').text()).toBe('Enabled');
-        //expect(element('table:eq(0) thead tr th:eq(5)').text()).toBe(' ');
-        //expect(element('table:eq(0) thead tr th:eq(6)').text()).toBe(' ');
-
+        expect(element('table:eq(0) thead tr th:eq(2)').text()).toBe('Notify on');
+        expect(element('table:eq(0) thead tr th:eq(3)').text()).toBe('Days');
+        expect(element('table:eq(0) thead tr th:eq(4)').text()).toBe('Time');
+        expect(element('table:eq(0) thead tr th:eq(5)').text()).toBe('Enabled');
+        
         expect(element('table:eq(0) tbody tr').count()).toBe(1);
         expect(element('table:eq(0) tbody tr td:eq(0)').text()).toBe('my target');
         expect(element('table:eq(0) tbody tr td:eq(1)').text()).toBe('EMAIL');
-        expect(element('table:eq(0) tbody tr td:eq(2) span:visible').count()).toBe(7);
-        expect(element('table:eq(0) tbody tr td:eq(3)').text()).toBe('0000 to 2359');
-        expect(element('table:eq(0) tbody tr td:eq(4) input:checked').val()).toBe('on');
-        expect(element('table:eq(0) tbody tr td:eq(5) button').text()).toBe('Delete');
-        expect(element('table:eq(0) tbody tr td:eq(6) button').text()).toBe('Edit');
+        expect(element('table:eq(0) tbody tr td:eq(2) span:visible').count()).toBe(3);
+        expect(element('table:eq(0) tbody tr td:eq(3) span:visible').count()).toBe(7);
+        expect(element('table:eq(0) tbody tr td:eq(4)').text()).toBe('0000 to 2359');
+        expect(element('table:eq(0) tbody tr td:eq(5) input:checked').val()).toBe('on');
+        expect(element('table:eq(0) tbody tr td:eq(6) button').text()).toBe('Delete');
+        expect(element('table:eq(0) tbody tr td:eq(7) button').text()).toBe('Edit');
     });
 });
 
@@ -280,7 +280,7 @@ describe('edit subscription', function () {
     it('edit subscription', function () {
         expect(element('div#editSubscriptionModal:visible').count()).toBe(0);
         expect(element('table:eq(0) tbody tr').count()).toBe(1);
-        element('table:eq(0) tbody tr td:eq(6) button').click();
+        element('table:eq(0) tbody tr td:eq(7) button').click();
 
         expect(element('div#editSubscriptionModal:visible').count()).toBe(1);
         expect(element('button#updateSubscriptionButton:visible:enabled').count()).toEqual(1);
@@ -310,7 +310,7 @@ describe('delete subscription', function () {
     it('delete subscription', function () {
         expect(element('div#editSubscriptionModal:visible').count()).toBe(0);
         expect(element('table:eq(0) tbody tr').count()).toBe(1);
-        element('table:eq(0) tbody tr td:eq(5) button').click();
+        element('table:eq(0) tbody tr td:eq(6) button').click();
         expect(element('table:eq(0) tbody tr').count()).toBe(0);
 
     });
