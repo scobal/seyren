@@ -74,6 +74,7 @@
                             <tr>
                                 <th>Target</th>
                                 <th>Type</th>
+                                <th>Notify on</th>
                                 <th>Days</th>
                                 <th>Time</th>
                                 <th>Enabled</th>
@@ -85,6 +86,11 @@
                             <tr ng-repeat="subscription in check.subscriptions">
                                 <td>{{ subscription.target }}</td>
                                 <td>{{ subscription.type }}</td>
+                                <td>
+                                    <span class="label label-warning" ng-hide="subscription.ignoreWarn">Warn</span>
+                                    <span class="label label-important" ng-hide="subscription.ignoreError">Error</span>
+                                    <span class="label label-success" ng-hide="subscription.ignoreOk">Ok</span>
+                                </td>
                                 <td>
                                     <span class="label label-info" ng-show="subscription.su">Su</span>
                                     <span class="label label-info" ng-show="subscription.mo">Mo</span>
