@@ -13,8 +13,6 @@
  */
 package com.seyren.core.service.notification;
 
-import java.io.IOException;
-import java.io.StringWriter;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -25,9 +23,6 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMessage.RecipientType;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.Velocity;
 import org.springframework.mail.javamail.JavaMailSender;
 
 import com.seyren.core.domain.Alert;
@@ -37,57 +32,38 @@ import com.seyren.core.domain.SubscriptionType;
 import com.seyren.core.exception.NotificationFailedException;
 import com.seyren.core.util.config.SeyrenConfig;
 import com.seyren.core.util.email.Email;
+import com.seyren.core.util.email.EmailHelper;
 
 @Named
 public class EmailNotificationService implements NotificationService {
     
-    private static final String TEMPLATE_FILE_NAME = "com/seyren/core/service/notification/email-template.vm";
-    
     private final JavaMailSender mailSender;
     private final SeyrenConfig seyrenConfig;
+    private final EmailHelper emailHelper;
     
     @Inject
-    public EmailNotificationService(JavaMailSender mailSender, SeyrenConfig seyrenConfig) {
+    public EmailNotificationService(JavaMailSender mailSender, SeyrenConfig seyrenConfig, EmailHelper emailHelper) {
         this.mailSender = mailSender;
         this.seyrenConfig = seyrenConfig;
+        this.emailHelper = emailHelper;
     }
     
     @Override
     public void sendNotification(Check check, Subscription subscription, List<Alert> alerts) {
         
         try {
-            VelocityContext context = createVelocityContext(check, subscription, alerts);
-            
-            StringWriter w = new StringWriter();
-            Velocity.evaluate(context, w, "EmailNotificationService", getTemplateAsString());
-            
             Email email = new Email()
                     .withTo(subscription.getTarget())
                     .withFrom(seyrenConfig.getSmtpFrom())
-                    .withSubject(createSubject(check))
-                    .withMessage(w.getBuffer().toString());
+                    .withSubject(emailHelper.createSubject(check))
+                    .withMessage(emailHelper.createBody(check, subscription, alerts));
             
             mailSender.send(createMimeMessage(email));
             
         } catch (Exception e) {
             throw new NotificationFailedException("Failed to send notification to " + subscription.getTarget() + " from " + seyrenConfig.getSmtpFrom(), e);
         }
-    }
-    
-    private String createSubject(Check check) {
-        return "Seyren alert: " + check.getName();
-    }
-    
-    private VelocityContext createVelocityContext(Check check, Subscription subscription, List<Alert> alerts) {
-        VelocityContext result = new VelocityContext();
-        result.put("CHECK", check);
-        result.put("ALERTS", alerts);
-        result.put("SEYREN_URL", seyrenConfig.getBaseUrl());
-        return result;
-    }
-    
-    private String getTemplateAsString() throws IOException {
-        return IOUtils.toString(Thread.currentThread().getContextClassLoader().getResourceAsStream(TEMPLATE_FILE_NAME));
+        
     }
     
     private MimeMessage createMimeMessage(Email email) throws AddressException, MessagingException {
