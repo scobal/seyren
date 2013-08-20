@@ -50,6 +50,11 @@
                 'remove':    {method: 'DELETE'}
             });
         }).
+        factory('Metrics', function ($resource) {
+            return $resource('api/metrics/:target/:action', {target: "@target"}, {
+                'totalMetric':      {method: 'GET', params: {action: 'total'}}
+            });
+        }).
         factory('Graph', function ($resource) {
             var chart = function (baseurl, chart) {
                 var result = baseurl + '/?';

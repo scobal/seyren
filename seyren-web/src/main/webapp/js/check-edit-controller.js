@@ -2,7 +2,7 @@
 (function () {
     'use strict';
 
-    seyrenApp.controller('CheckEditModalController', function CheckEditModalController($scope, $rootScope, Checks, Seyren, Graph) {
+    seyrenApp.controller('CheckEditModalController', function CheckEditModalController($scope, $rootScope, Checks, Seyren, Graph, Metrics) {
         $scope.master = {
             name: null,
             description: null,
@@ -65,6 +65,18 @@
                 $scope.check.previewImage = Graph.previewImage($scope.check);
             } else {
                 return "./img/preview-nodata.png";
+            }
+        });
+
+
+        $scope.$watch('check.target', function(value) {
+            if (value !== undefined) {
+                Metrics.totalMetric({target: value}, function (data) {
+                    $scope.check.totalMetric = data[value];
+                }, function () {
+                    console.log('Metrics count failed');
+                    $scope.check.totalMetric = '-';
+                });
             }
         });
 
