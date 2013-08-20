@@ -74,6 +74,7 @@
                             <tr>
                                 <th>Target</th>
                                 <th>Type</th>
+                                <th>Notify on</th>
                                 <th>Days</th>
                                 <th>Time</th>
                                 <th>Enabled</th>
@@ -86,13 +87,18 @@
                                 <td>{{ subscription.target }}</td>
                                 <td>{{ subscription.type }}</td>
                                 <td>
-                                    <span ng-show="subscription.su">Su </span>
-                                    <span ng-show="subscription.mo">Mo </span>
-                                    <span ng-show="subscription.tu">Tu </span>
-                                    <span ng-show="subscription.we">We </span>
-                                    <span ng-show="subscription.th">Th </span>
-                                    <span ng-show="subscription.fr">Fr </span>
-                                    <span ng-show="subscription.sa">Sa </span>
+                                    <span class="label label-warning" ng-hide="subscription.ignoreWarn">Warn</span>
+                                    <span class="label label-important" ng-hide="subscription.ignoreError">Error</span>
+                                    <span class="label label-success" ng-hide="subscription.ignoreOk">Ok</span>
+                                </td>
+                                <td>
+                                    <span class="label label-info" ng-show="subscription.su">Su</span>
+                                    <span class="label label-info" ng-show="subscription.mo">Mo</span>
+                                    <span class="label label-info" ng-show="subscription.tu">Tu</span>
+                                    <span class="label label-info" ng-show="subscription.we">We</span>
+                                    <span class="label label-info" ng-show="subscription.th">Th</span>
+                                    <span class="label label-info" ng-show="subscription.fr">Fr</span>
+                                    <span class="label label-info" ng-show="subscription.sa">Sa</span>
                                 </td>
                                 <td>{{ subscription.fromTime }} to {{ subscription.toTime }}</td>
                                 <td>
