@@ -63,6 +63,7 @@ public class VelocityEmailHelperTest {
                 .withId("123")
                 .withEnabled(true)
                 .withName("test-check")
+                .withDescription("Some great description")
                 .withWarn(new BigDecimal("2.0"))
                 .withError(new BigDecimal("3.0"))
                 .withState(AlertType.ERROR);
@@ -80,10 +81,41 @@ public class VelocityEmailHelperTest {
         
         String body = emailHelper.createBody(check, subscription, alerts);
         
+        assertThat(body, containsString("test-check"));
+        assertThat(body, containsString("Some great description"));
         assertThat(body, containsString("some.value"));
         assertThat(body, containsString("2.0"));
         assertThat(body, containsString("3.0"));
         assertThat(body, containsString("4.0"));
+        
+    }
+    
+    @Test
+    public void descriptionIsNotIncludedIfEmpty() {
+        
+        Check check = new Check()
+                .withId("123")
+                .withEnabled(true)
+                .withName("test-check")
+                .withDescription("")
+                .withWarn(new BigDecimal("2.0"))
+                .withError(new BigDecimal("3.0"))
+                .withState(AlertType.ERROR);
+        Subscription subscription = new Subscription()
+                .withEnabled(true)
+                .withType(SubscriptionType.EMAIL)
+                .withTarget("some@email.com");
+        Alert alert = new Alert()
+                .withTarget("some.value")
+                .withValue(new BigDecimal("4.0"))
+                .withTimestamp(new DateTime())
+                .withFromType(AlertType.OK)
+                .withToType(AlertType.ERROR);
+        List<Alert> alerts = Arrays.asList(alert);
+        
+        String body = emailHelper.createBody(check, subscription, alerts);
+        
+        assertThat(body, not(containsString("<p></p>")));
         
     }
     

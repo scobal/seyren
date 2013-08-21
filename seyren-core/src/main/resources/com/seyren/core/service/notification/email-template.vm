@@ -13,8 +13,10 @@
 	</head>
 	<body>
 		<h3><a href="$SEYREN_URL/#/checks/$CHECK.Id">$CHECK.Name</a></h3>
-		
-#if( $ALERTS.size() == 1 )
+#if ("$!CHECK.Description" != "")
+        <p>$CHECK.Description</p>
+#end
+#if ($ALERTS.size() == 1)
 		<p>The following target has changed from its previous state:</p>
 #else
 		<p>The following targets have changed from their previous state:</p>
@@ -32,7 +34,7 @@
 				</tr>
 			</thead>
 			<tbody>
-#foreach( $ALERT in $ALERTS )
+#foreach ($ALERT in $ALERTS)
 			    <tr class="$ALERT.ToType">
                     <td>$ALERT.Timestamp.toString("yyyy-MM-dd HH:mm:ss")</td>
 			    	<td>$ALERT.Target</td>
