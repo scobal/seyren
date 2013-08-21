@@ -63,7 +63,7 @@ import com.seyren.core.util.config.SeyrenConfig;
 public class GraphiteHttpClient {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(GraphiteHttpClient.class);
-    private static final String THRESHOLD_TARGET = "alias(dashed(color(constantLine(%.1f),\"%s\")),\"%s\")";
+    private static final String THRESHOLD_TARGET = "alias(dashed(color(constantLine(%s),\"%s\")),\"%s\")";
     private static final int MAX_CONNECTIONS_PER_ROUTE = 20;
     
     private final JsonNodeResponseHandler jsonNodeHandler = new JsonNodeResponseHandler();
@@ -132,11 +132,11 @@ public class GraphiteHttpClient {
                 .addParameter("hideAxes", axesState == AxesState.HIDE ? "true" : "false");
         
         if (warnThreshold != null) {
-            uriBuilder.addParameter("target", String.format(THRESHOLD_TARGET, warnThreshold, "yellow", "warn level"));
+            uriBuilder.addParameter("target", String.format(THRESHOLD_TARGET, warnThreshold.toString(), "yellow", "warn level"));
         }
         
         if (errorThreshold != null) {
-            uriBuilder.addParameter("target", String.format(THRESHOLD_TARGET, errorThreshold, "red", "error level"));
+            uriBuilder.addParameter("target", String.format(THRESHOLD_TARGET, errorThreshold.toString(), "red", "error level"));
         }
         
         HttpGet get = new HttpGet(uriBuilder.build());

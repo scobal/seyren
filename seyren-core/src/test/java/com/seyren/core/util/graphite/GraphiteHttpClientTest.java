@@ -185,7 +185,7 @@ public class GraphiteHttpClientTest {
                         .withParam("target", "alias(dashed(color(constantLine(3.2),\"yellow\")),\"warn level\")"),
                 giveResponseAsBytes(response, "image/png"));
         
-        byte[] actualBytes = graphiteHttpClient.getChart("hello.world", 300, 200, "-1hours", null, LegendState.SHOW, AxesState.SHOW, new BigDecimal(3.2), null);
+        byte[] actualBytes = graphiteHttpClient.getChart("hello.world", 300, 200, "-1hours", null, LegendState.SHOW, AxesState.SHOW, new BigDecimal("3.2"), null);
         
         assertThat(actualBytes, is(bytes));
     }
@@ -207,7 +207,7 @@ public class GraphiteHttpClientTest {
                         .withParam("target", "alias(dashed(color(constantLine(5.6),\"red\")),\"error level\")"),
                 giveResponseAsBytes(response, "image/png"));
         
-        byte[] actualBytes = graphiteHttpClient.getChart("hello.world", 300, 200, "-1hours", null, LegendState.SHOW, AxesState.SHOW, null, new BigDecimal(5.6));
+        byte[] actualBytes = graphiteHttpClient.getChart("hello.world", 300, 200, "-1hours", null, LegendState.SHOW, AxesState.SHOW, null, new BigDecimal("5.6"));
         
         assertThat(actualBytes, is(bytes));
     }
@@ -230,7 +230,7 @@ public class GraphiteHttpClientTest {
                         .withParam("target", "alias(dashed(color(constantLine(5.6),\"red\")),\"error level\")"),
                 giveResponseAsBytes(response, "image/png"));
         
-        byte[] actualBytes = graphiteHttpClient.getChart("hello.world", 300, 200, "-1hours", null, LegendState.SHOW, AxesState.SHOW, new BigDecimal(3.2), new BigDecimal(5.6));
+        byte[] actualBytes = graphiteHttpClient.getChart("hello.world", 300, 200, "-1hours", null, LegendState.SHOW, AxesState.SHOW, new BigDecimal("3.2"), new BigDecimal("5.6"));
         
         assertThat(actualBytes, is(bytes));
     }
