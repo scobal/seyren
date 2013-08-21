@@ -258,7 +258,7 @@ describe('add subscription', function () {
         expect(element('table:eq(0) thead tr th:eq(2)').text()).toBe('Notify on');
         expect(element('table:eq(0) thead tr th:eq(3)').text()).toBe('Days');
         expect(element('table:eq(0) thead tr th:eq(4)').text()).toBe('Time');
-        expect(element('table:eq(0) thead tr th:eq(5)').text()).toBe('Enabled');
+        expect(element('table:eq(0) thead tr th:eq(5)').text()).toBe('On?');
         
         expect(element('table:eq(0) tbody tr').count()).toBe(1);
         expect(element('table:eq(0) tbody tr td:eq(0)').text()).toBe('my target');
