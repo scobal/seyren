@@ -29,29 +29,32 @@ import javax.ws.rs.core.Response;
 
 import com.seyren.core.domain.Check;
 
-@Path("/checks")
+@Path("/")
 public interface ChecksResource {
     
     @GET
+    @Path("/checks")
     @Produces(MediaType.APPLICATION_JSON)
     Response getChecks(@QueryParam("state") Set<String> states, @QueryParam("enabled") Boolean enabled);
     
     @POST
+    @Path("/checks")
     @Consumes(MediaType.APPLICATION_JSON)
     Response createCheck(Check check);
     
     @GET
-    @Path("/{checkId}")
+    @Path("/checks/{checkId}")
     @Produces(MediaType.APPLICATION_JSON)
     Response getCheck(@PathParam("checkId") String checkId);
     
     @PUT
-    @Path("/{checkId}")
+    @Path("/checks/{checkId}")
     @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     Response updateCheck(@PathParam("checkId") String checkId, Check check);
     
     @DELETE
-    @Path("/{checkId}")
+    @Path("/checks/{checkId}")
     Response deleteCheck(@PathParam("checkId") String checkId);
     
 }
