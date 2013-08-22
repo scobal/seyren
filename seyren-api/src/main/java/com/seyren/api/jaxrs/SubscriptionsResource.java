@@ -24,19 +24,20 @@ import javax.ws.rs.core.Response;
 
 import com.seyren.core.domain.Subscription;
 
-@Path("/checks/{checkId}/subscriptions")
+@Path("/")
 public interface SubscriptionsResource {
     
     @POST
+    @Path("/checks/{checkId}/subscriptions")
     @Consumes(MediaType.APPLICATION_JSON)
     Response createSubscription(@PathParam("checkId") String checkId, Subscription subscription);
     
     @PUT
-    @Path("/{subscriptionId}")
+    @Path("/checks/{checkId}/subscriptions/{subscriptionId}")
     Response updateSubscription(@PathParam("checkId") String checkId, Subscription subscription);
     
     @DELETE
-    @Path("/{subscriptionId}")
+    @Path("/checks/{checkId}/subscriptions/{subscriptionId}")
     Response deleteSubscription(@PathParam("checkId") String checkId, @PathParam("subscriptionId") String subscriptionId);
     
 }
