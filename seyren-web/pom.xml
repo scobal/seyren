@@ -35,21 +35,6 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>com.yammer.metrics</groupId>
-            <artifactId>metrics-logback</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.yammer.metrics</groupId>
-            <artifactId>metrics-servlet</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.yammer.metrics</groupId>
-            <artifactId>metrics-web</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
             <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-spring</artifactId>
             <scope>runtime</scope>
