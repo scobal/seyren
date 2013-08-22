@@ -27,4 +27,5 @@ public interface MetricsResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/metrics/{target}/total")
     Response totalMetric(@PathParam("target") String target);
+    
 }
