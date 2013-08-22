@@ -176,6 +176,11 @@ describe('check page', function () {
     it('should have \'Alerts\' section', function () {
         expect(element('h2:eq(2)').text()).toContain('Alerts');
 
+        expect(element('h2:eq(2) div button').text()).toContain('Delete alerts');
+        expect(element('h2:eq(2) div ul li:eq(0) a').text()).toBe('Older than a day');
+        expect(element('h2:eq(2) div ul li:eq(1) a').text()).toBe('Older than a week');
+        expect(element('h2:eq(2) div ul li:eq(2) a').text()).toBe('All');
+        
         expect(element('table:eq(1) thead tr').count()).toBe(1);
         expect(element('table:eq(1) thead tr th:eq(0)').text()).toBe('Timestamp');
         expect(element('table:eq(1) thead tr th:eq(1)').text()).toBe('Target');

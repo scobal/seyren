@@ -120,6 +120,17 @@
     <div class="row-fluid">
         <h2>
             Alerts <small>( {{alerts.start}} of {{alerts.total}} )</small>
+            <div class="btn-group">
+                <button class="btn btn-small btn-danger dropdown-toggle" data-toggle="dropdown">
+                    Delete alerts
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a ng-click="deleteAlerts(check, 1)">Older than a day</a></li>
+                    <li><a ng-click="deleteAlerts(check, 7)">Older than a week</a></li>
+                    <li><a ng-click="deleteAlerts(check)">All</a></li>
+                </ul>
+            </div>
         </h2>
         <div class="pagination">
             <ul>

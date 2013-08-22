@@ -11,23 +11,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.seyren.core.store;
+package com.seyren.api.util;
 
 import org.joda.time.DateTime;
+import org.springframework.util.StringUtils;
 
-import com.seyren.core.domain.Alert;
-import com.seyren.core.domain.SeyrenResponse;
-
-public interface AlertsStore {
+public class DateTimeParam {
     
-    Alert createAlert(String checkId, Alert alert);
+    private final DateTime value;
     
-    SeyrenResponse<Alert> getAlerts(String checkId, int start, int items);
+    public DateTimeParam(String value) {
+        if (StringUtils.isEmpty(value)) {
+            this.value = null;
+        } else {
+            this.value = DateTime.parse(value);
+        }
+    }
     
-    SeyrenResponse<Alert> getAlerts(int start, int items);
-    
-    void deleteAlerts(String checkId, DateTime before);
-    
-    Alert getLastAlertForTargetOfCheck(String target, String checkId);
+    public DateTime value() {
+        return value;
+    }
     
 }

@@ -148,7 +148,7 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
     @Override
     public void deleteCheck(String checkId) {
         getChecksCollection().remove(forId(checkId));
-        deleteAlerts(checkId);
+        deleteAlerts(checkId, null);
     }
     
     @Override
@@ -219,6 +219,17 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
     }
     
     @Override
+    public void deleteAlerts(String checkId, DateTime before) {
+        DBObject query = object("checkId", checkId);
+        
+        if (before != null) {
+            query.put("timestamp", object("$lt", new Date(before.getMillis())));
+        }
+        
+        getAlertsCollection().remove(query);
+    }
+    
+    @Override
     public Alert getLastAlertForTargetOfCheck(String target, String checkId) {
         DBObject query = object("checkId", checkId).with("target", target);
         DBCursor cursor = getAlertsCollection().find(query).sort(object("timestamp", -1)).limit(1);
@@ -230,10 +241,6 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
             cursor.close();
         }
         return null;
-    }
-    
-    private void deleteAlerts(String checkId) {
-        getAlertsCollection().remove(object("checkId", checkId));
     }
     
     @Override
