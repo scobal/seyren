@@ -148,6 +148,7 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
     @Override
     public void deleteCheck(String checkId) {
         getChecksCollection().remove(forId(checkId));
+        deleteAlerts(checkId);
     }
     
     @Override
@@ -229,6 +230,10 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
             cursor.close();
         }
         return null;
+    }
+    
+    private void deleteAlerts(String checkId) {
+        getAlertsCollection().remove(object("checkId", checkId));
     }
     
     @Override
