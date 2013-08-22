@@ -1,4 +1,4 @@
-/*global seyrenApp,console,$ */
+/*global angular,moment,seyrenApp,console,$ */
 (function () {
     'use strict';
 
@@ -146,8 +146,21 @@
         $scope.liveLink = function (check, minutes) {
             return Graph.liveLink(check, minutes);
         };
+
         $scope.liveImage = function (check, minutes) {
             return Graph.liveImage(check, minutes);
+        };
+
+        $scope.deleteAlerts = function (check, days) {
+            var params = {checkId: check.id};
+            if (angular.isDefined(days)) {
+                params.before = moment().subtract('days', days).format();
+            }
+            Checks.deleteAlerts(params, function() {
+                $scope.loadAlerts();
+            }, function (err) {
+                console.log('Deleting alerts failed');
+            });
         };
 
     });

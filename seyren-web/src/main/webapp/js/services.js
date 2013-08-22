@@ -30,12 +30,13 @@
         }).
         factory('Checks', function ($resource) {
             return $resource('api/checks/:checkId/:action', {checkId: "@checkId"}, {
-                'query':    {method: 'GET', isArray: false},
-                'get':      {method: 'GET'},
-                'create':   {method: 'POST'},
-                'update':   {method: 'PUT'},
-                'remove':   {method: 'DELETE'},
-                'alerts':   {method: 'GET', params: {action: "alerts"}}
+                'query':        {method: 'GET', isArray: false},
+                'get':          {method: 'GET'},
+                'create':       {method: 'POST'},
+                'update':       {method: 'PUT'},
+                'remove':       {method: 'DELETE'},
+                'alerts':       {method: 'GET', params: {action: "alerts"}},
+                'deleteAlerts': {method: 'DELETE', params: {action: "alerts"}}
             });
         }).
         factory('Config', function ($resource) {

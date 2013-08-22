@@ -13,6 +13,7 @@
  */
 package com.seyren.api.jaxrs;
 
+import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -21,6 +22,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import com.seyren.api.util.DateTimeParam;
 
 @Path("/")
 public interface AlertsResource {
@@ -31,6 +34,11 @@ public interface AlertsResource {
     Response getAlertsForCheck(@PathParam("checkId") String checkId,
             @QueryParam("start") @DefaultValue("0") int start,
             @QueryParam("items") @DefaultValue("20") int items);
+    
+    @DELETE
+    @Path("/checks/{checkId}/alerts")
+    Response deleteAlertsForCheck(@PathParam("checkId") String checkId,
+            @QueryParam("before") @DefaultValue("") DateTimeParam before);
     
     @GET
     @Produces(MediaType.APPLICATION_JSON)

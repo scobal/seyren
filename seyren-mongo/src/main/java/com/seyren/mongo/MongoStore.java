@@ -148,6 +148,7 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
     @Override
     public void deleteCheck(String checkId) {
         getChecksCollection().remove(forId(checkId));
+        deleteAlerts(checkId, null);
     }
     
     @Override
@@ -215,6 +216,17 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
                 .withItems(items)
                 .withStart(start)
                 .withTotal(dbc.count());
+    }
+    
+    @Override
+    public void deleteAlerts(String checkId, DateTime before) {
+        DBObject query = object("checkId", checkId);
+        
+        if (before != null) {
+            query.put("timestamp", object("$lt", new Date(before.getMillis())));
+        }
+        
+        getAlertsCollection().remove(query);
     }
     
     @Override

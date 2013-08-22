@@ -18,6 +18,7 @@ import javax.inject.Named;
 import javax.ws.rs.core.Response;
 
 import com.seyren.api.jaxrs.AlertsResource;
+import com.seyren.api.util.DateTimeParam;
 import com.seyren.core.domain.Alert;
 import com.seyren.core.domain.SeyrenResponse;
 import com.seyren.core.store.AlertsStore;
@@ -39,6 +40,12 @@ public class AlertsBean implements AlertsResource {
         }
         SeyrenResponse<Alert> response = alertsStore.getAlerts(checkId, start, items);
         return Response.ok(response).build();
+    }
+    
+    @Override
+    public Response deleteAlertsForCheck(String checkId, DateTimeParam before) {
+        alertsStore.deleteAlerts(checkId, before.value());
+        return Response.noContent().build();
     }
     
     @Override
