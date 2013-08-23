@@ -21,6 +21,7 @@ import java.lang.reflect.Field;
 import org.apache.velocity.app.Velocity;
 import org.apache.velocity.runtime.log.Log;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.util.ReflectionUtils;
 
@@ -155,6 +156,7 @@ public class SeyrenConfigTest {
         assertThat(config.getFlowdockEmojis(), is(""));
     }
     
+    @Ignore
     @Test
     public void velocityLoggingIsSetUp() throws IllegalAccessException {
         config.init();
