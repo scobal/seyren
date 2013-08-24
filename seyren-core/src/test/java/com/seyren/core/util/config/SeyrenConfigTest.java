@@ -16,16 +16,8 @@ package com.seyren.core.util.config;
 import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.Matchers.*;
 
-import java.lang.reflect.Field;
-
-import org.apache.velocity.app.Velocity;
-import org.apache.velocity.runtime.log.Log;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.springframework.util.ReflectionUtils;
-
-import com.seyren.core.util.velocity.Slf4jLogChute;
 
 public class SeyrenConfigTest {
     
@@ -154,15 +146,6 @@ public class SeyrenConfigTest {
     @Test
     public void defaultFlowdockEmojisIsCorrect() {
         assertThat(config.getFlowdockEmojis(), is(""));
-    }
-    
-    @Ignore
-    @Test
-    public void velocityLoggingIsSetUp() throws IllegalAccessException {
-        config.init();
-        Field chuteField = ReflectionUtils.findField(Log.class, "chute");
-        chuteField.setAccessible(true);
-        assertThat(chuteField.get(Velocity.getLog()), is(instanceOf(Slf4jLogChute.class)));
     }
     
 }
