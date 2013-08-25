@@ -17,6 +17,7 @@
 
         <jetty.daemon>true</jetty.daemon>
         <jetty.skip>false</jetty.skip>
+        <jetty.stopPort>9966</jetty.stopPort>
     </properties>
 
     <dependencies>
@@ -78,6 +79,12 @@
         <profile>
             <id>karma</id>
             <build>
+                <testResources>
+                    <testResource>
+                        <directory>src/test/resources</directory>
+                        <filtering>true</filtering>
+                    </testResource>
+                </testResources>
                 <plugins>
                     <plugin>
                         <groupId>com.github.joelittlejohn.embedmongo</groupId>
@@ -145,7 +152,10 @@
                                     <resourcesAsCSV>${project.basedir}/../seyren-web/src/main/webapp</resourcesAsCSV>
                                 </baseResource>
                             </webApp>
-                            <stopPort>9966</stopPort>
+                            <httpConnector>
+                                <port>${seyren.port}</port>
+                            </httpConnector>
+                            <stopPort>${jetty.stopPort}</stopPort>
                             <stopKey>foo</stopKey>
                         </configuration>
                         <executions>
@@ -187,7 +197,7 @@
                                     <goal>start</goal>
                                 </goals>
                                 <configuration>
-                                    <configFile>${basedir}/src/test/resources/karma-e2e.conf.js</configFile>
+                                    <configFile>${project.build.directory}/test-classes/karma-e2e.conf.js</configFile>
                                 </configuration>
                             </execution>
                         </executions>
