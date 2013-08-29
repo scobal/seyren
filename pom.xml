@@ -58,9 +58,9 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <biz.neustar.version>1.0-beta-3</biz.neustar.version>
         <ch.qos.logback.version>1.0.13</ch.qos.logback.version>
-        <com.fasterxml.jackson.databind.version>2.2.2</com.fasterxml.jackson.databind.version>
-        <com.fasterxml.jackson.datatype.version>2.2.2</com.fasterxml.jackson.datatype.version>
-        <com.fasterxml.jackson.jaxrs.version>2.2.2</com.fasterxml.jackson.jaxrs.version>
+        <com.fasterxml.jackson.databind.version>2.2.3</com.fasterxml.jackson.databind.version>
+        <com.fasterxml.jackson.datatype.version>2.2.3</com.fasterxml.jackson.datatype.version>
+        <com.fasterxml.jackson.jaxrs.version>2.2.3</com.fasterxml.jackson.jaxrs.version>
         <com.github.rest-driver.version>1.1.33</com.github.rest-driver.version>
         <com.google.guava.version>14.0.1</com.google.guava.version>
         <commons.io.version>2.4</commons.io.version>
