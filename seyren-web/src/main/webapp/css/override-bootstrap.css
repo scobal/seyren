@@ -1,5 +1,9 @@
 .modal-body {
-    max-height: 480px;
-    padding: 15px;
+	
+	/* Adding a little height since I added the Graphite base URL field to the Edit Check modal. [wwheeler] */
+/*     max-height: 480px; */
+    max-height: 520px;
+    
+	padding: 15px;
     overflow-y: auto;
 }

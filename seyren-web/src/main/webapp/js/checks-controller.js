@@ -37,6 +37,7 @@ ChecksController.prototype = {
         var check = {
             name : this.newcheck.name,
             description : this.newcheck.description,
+            graphiteBaseUrl : this.newcheck.graphiteBaseUrl,
             target : this.newcheck.target,
             warn : this.newcheck.warn,
             error : this.newcheck.error,
@@ -86,8 +87,12 @@ ChecksController.prototype = {
     },
 
     getSmallGraphUrl : function() {
-        if (this.config && this.newcheck.target) {
-            var result = this.config.graphiteUrl + '/render/?';
+    	// Don't use global Graphite base URL. [wwheeler]
+//        if (this.config && this.newcheck.target) {
+    	
+    	// Use the user-specified Graphite base URL instead. [wwheeler]
+        if (this.newcheck.graphiteBaseUrl && this.newcheck.target) {
+            var result = this.newcheck.graphiteBaseUrl + '/render/?';
             result += 'target=' + this.newcheck.target;
             result += '&target=alias(dashed(color(constantLine(' + this.newcheck.warn + '),"yellow")),"warn level")';
             result += '&target=alias(dashed(color(constantLine(' + this.newcheck.error + '),"red")),"error level")';

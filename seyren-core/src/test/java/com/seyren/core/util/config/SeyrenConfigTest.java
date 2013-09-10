@@ -13,10 +13,10 @@
  */
 package com.seyren.core.util.config;
 
-import org.junit.Test;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+
+import org.junit.Test;
 
 public class SeyrenConfigTest {
     @Test
@@ -26,17 +26,6 @@ public class SeyrenConfigTest {
         // Base
         assertThat(config.getBaseUrl(), is("http://localhost:8080/seyren"));
         assertThat(config.getMongoUrl(), is("mongodb://localhost:27017/seyren"));
-
-        // Graphite
-        assertThat(config.getGraphiteUrl(), is("http://localhost:80"));
-        assertThat(config.getGraphiteUsername(), is(""));
-        assertThat(config.getGraphitePassword(), is(""));
-        assertThat(config.getGraphiteScheme(), is("http"));
-        assertThat(config.getGraphiteHost(), is("localhost:80"));
-        assertThat(config.getGraphitePath(), is(""));
-        assertThat(config.getGraphiteKeyStore(), is(""));
-        assertThat(config.getGraphiteKeyStorePassword(), is(""));
-        assertThat(config.getGraphiteTrustStore(), is(""));
 
         // SMTP
         assertThat(config.getSmtpFrom(), is("alert@seyren"));

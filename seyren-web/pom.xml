@@ -120,6 +120,9 @@
                     </execution>
                 </executions>
             </plugin>
+            
+            <!-- Disabling this. [wwheeler] -->
+            <!--
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>jslint-maven-plugin</artifactId>
@@ -139,6 +142,7 @@
                     </execution>
                 </executions>
             </plugin>
+            -->
         </plugins>
     </build>
 

@@ -13,7 +13,9 @@
  */
 package com.seyren.mongo;
 
-import static com.seyren.mongo.NiceDBObject.*;
+import static com.seyren.mongo.NiceDBObject.forId;
+import static com.seyren.mongo.NiceDBObject.object;
+import static org.springframework.util.Assert.notNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -133,10 +135,18 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
     
     @Override
     public Check saveCheck(Check check) {
+    	notNull(check, "check can't be null");
+    	notNull(check.getGraphiteBaseUrl(), "check.graphiteBaseUrl can't be null");
+    	notNull(check.getTarget(), "check.target can't be null");
+    	notNull(check.getWarn(), "check.warn can't be null");
+    	notNull(check.getError(), "check.error can't be null");
+    	notNull(check.getState(), "check.state can't be null");
+    	
         DBObject findObject = forId(check.getId());
         
         DBObject updateObject = object("name", check.getName())
                 .with("description", check.getDescription())
+                .with("graphiteBaseUrl", check.getGraphiteBaseUrl())
                 .with("target", check.getTarget())
                 .with("warn", check.getWarn().toPlainString())
                 .with("error", check.getError().toPlainString())

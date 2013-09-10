@@ -37,6 +37,7 @@ public class Check {
     private String id;
     private String name;
     private String description;
+    private String graphiteBaseUrl;
     private String target;
     private BigDecimal warn;
     private BigDecimal error;
@@ -81,6 +82,19 @@ public class Check {
     public Check withDescription(String description) {
         this.description = description;
         return this;
+    }
+    
+    public String getGraphiteBaseUrl() {
+    	return graphiteBaseUrl;
+    }
+    
+    public void setGraphiteBaseUrl(String graphiteBaseUrl) {
+    	this.graphiteBaseUrl = graphiteBaseUrl;
+    }
+    
+    public Check withGraphiteBaseUrl(String graphiteBaseUrl) {
+    	setGraphiteBaseUrl(graphiteBaseUrl);
+    	return this;
     }
     
     public String getTarget() {
