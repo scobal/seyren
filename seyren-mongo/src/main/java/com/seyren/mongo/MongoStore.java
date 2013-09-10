@@ -13,7 +13,8 @@
  */
 package com.seyren.mongo;
 
-import static com.seyren.mongo.NiceDBObject.*;
+import static com.seyren.mongo.NiceDBObject.forId;
+import static com.seyren.mongo.NiceDBObject.object;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -37,15 +38,17 @@ import com.mongodb.MongoException;
 import com.mongodb.MongoURI;
 import com.seyren.core.domain.Alert;
 import com.seyren.core.domain.Check;
+import com.seyren.core.domain.GraphiteInstance;
 import com.seyren.core.domain.SeyrenResponse;
 import com.seyren.core.domain.Subscription;
 import com.seyren.core.store.AlertsStore;
 import com.seyren.core.store.ChecksStore;
+import com.seyren.core.store.GraphiteInstancesStore;
 import com.seyren.core.store.SubscriptionsStore;
 import com.seyren.core.util.config.SeyrenConfig;
 
 @Named
-public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore {
+public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore, GraphiteInstancesStore {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(MongoStore.class);
     
@@ -266,6 +269,63 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
         DBObject checkFindObject = forId(checkId).with("subscriptions", object("$elemMatch", subscriptionFindObject));
         DBObject updateObject = object("$set", object("subscriptions.$", subscriptionObject));
         getChecksCollection().update(checkFindObject, updateObject);
+    }
+
+    @Override
+    public GraphiteInstance createGraphiteInstance(GraphiteInstance graphiteInstance) {
+        graphiteInstance.setId(ObjectId.get().toString());
+        getGraphiteInstancesCollection().insert(mapper.graphiteInstanceToDBObject(graphiteInstance));
+        return graphiteInstance;
+    }
+
+    @Override
+    public SeyrenResponse<GraphiteInstance> getGraphiteInstances() {
+        List<GraphiteInstance> insts = new ArrayList<GraphiteInstance>();
+        DBCursor dbc = getGraphiteInstancesCollection().find();
+        while (dbc.hasNext()) {
+            insts.add(mapper.graphiteInstanceFrom(dbc.next()));
+        }
+        return new SeyrenResponse<GraphiteInstance>()
+                .withValues(insts)
+                .withTotal(dbc.count());
+    }
+
+    @Override
+    public GraphiteInstance getGraphiteInstance(String graphiteInstanceId) {
+        DBObject dbo = getGraphiteInstancesCollection().findOne(object("_id", graphiteInstanceId));
+        if (dbo == null) {
+            return null;
+        }
+        return mapper.graphiteInstanceFrom(dbo);
+    }
+
+    @Override
+    public GraphiteInstance updateGraphiteInstance(GraphiteInstance graphiteInstance) {
+        DBObject findObject = forId(graphiteInstance.getId());
+        
+        DBObject updateObject = object("name", graphiteInstance.getName())
+                .with("baseUrl", graphiteInstance.getBaseUrl())
+                .with("username", graphiteInstance.getUsername())
+                .with("password", graphiteInstance.getPassword())
+                .with("keyStore", graphiteInstance.getKeyStore())
+                .with("keyStorePassword", graphiteInstance.getKeyStorePassword())
+                .with("trustStore", graphiteInstance.getTrustStore());
+        
+        DBObject setObject = object("$set", updateObject);
+        getGraphiteInstancesCollection().update(findObject, setObject);
+        return graphiteInstance;
+    }
+
+    @Override
+    public void deleteGraphiteInstance(String graphiteInstanceId) {
+        
+        // TODO This will leave dangling references from any associated checks.
+        // Should we cascade deletes here? [WLW]
+        getGraphiteInstancesCollection().remove(forId(graphiteInstanceId));
+    }
+    
+    private DBCollection getGraphiteInstancesCollection() {
+        return mongo.getCollection("graphiteInstances");
     }
     
 }
