@@ -37,6 +37,10 @@
                 </span>
             </div>
             <div class="row-fluid">
+                <span class="span2">Graphite Base URL:</span>
+                <span class="span10">{{check.graphiteBaseUrl}}</span>
+            </div>
+            <div class="row-fluid">
                 <span class="span2">Target:</span>
                 <span class="span10">{{check.target}}</span>
             </div>
@@ -265,6 +269,12 @@
                         <label class="control-label" for="editcheck.description">Description</label>
                         <div class="controls">
                             <input id="editcheck.description" class="input-xlarge" name="editcheck.description" type="text" />
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="editcheck.graphiteBaseUrl">Graphite base URL</label>
+                        <div class="controls">
+                            <input id="editcheck.graphiteBaseUrl" class="input-xlarge" name="editcheck.graphiteBaseUrl" type="text" />
                         </div>
                     </div>
                     <div class="control-group">

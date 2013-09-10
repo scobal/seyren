@@ -213,8 +213,15 @@ CheckController.prototype = {
     
     getBaseGraphUrl : function(minutes, alternativeCheck) {
       if (this.config && this.check) {
-            var result = this.config.graphiteUrl + '/render/?',
-                currentCheck = alternativeCheck || this.check;
+    	  
+    	    // This is based on the global graphite URL. [wwheeler]
+//            var result = this.config.graphiteUrl + '/render/?',
+//              currentCheck = alternativeCheck || this.check;
+    	    
+            // ...which we don't want. Use the current check's Graphite base URL. [wwheeler]
+    	    var currentCheck = alternativeCheck || this.check;
+            var result = currentCheck.graphiteBaseUrl + '/render/?';
+            
             result += 'target=' + currentCheck.target;
             result += '&from=' + minutes + 'Minutes';
             result += '&target=alias(dashed(color(constantLine(' + currentCheck.warn + '),"yellow")),"warn level")';
@@ -227,6 +234,7 @@ CheckController.prototype = {
         this.editcheck = {
             name : this.check.name,
             description : this.check.description,
+            graphiteBaseUrl : this.check.graphiteBaseUrl,
             target : this.check.target,
             warn : this.check.warn,
             error : this.check.error,
@@ -237,6 +245,7 @@ CheckController.prototype = {
     submitEditCheck : function() {
         this.check.name = this.editcheck.name;
         this.check.description = this.editcheck.description;
+        this.check.graphiteBaseUrl = this.editcheck.graphiteBaseUrl;
         this.check.target = this.editcheck.target;
         this.check.warn = this.editcheck.warn;
         this.check.error = this.editcheck.error;
