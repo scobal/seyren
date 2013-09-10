@@ -29,6 +29,7 @@ import com.mongodb.DBObject;
 import com.seyren.core.domain.Alert;
 import com.seyren.core.domain.AlertType;
 import com.seyren.core.domain.Check;
+import com.seyren.core.domain.GraphiteInstance;
 import com.seyren.core.domain.Subscription;
 import com.seyren.core.domain.SubscriptionType;
 
@@ -243,4 +244,12 @@ public class MongoMapper {
         return value == null ? null : SubscriptionType.valueOf(value);
     }
     
+    public GraphiteInstance graphiteInstanceFrom(DBObject dbo) {
+    	String id = dbo.get("_id").toString();
+    	String name = getString(dbo, "name");
+    	String baseUrl = getString(dbo, "baseUrl");
+    	return new GraphiteInstance().withId(id)
+    			.withName(name)
+    			.withBaseUrl(baseUrl);
+    }
 }
