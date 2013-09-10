@@ -13,7 +13,8 @@
  */
 package com.seyren.core.util.config;
 
-import static org.apache.commons.lang.StringUtils.*;
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
+import static org.apache.commons.lang.StringUtils.stripEnd;
 
 import java.util.Arrays;
 import java.util.List;
@@ -25,6 +26,7 @@ import org.apache.velocity.app.Velocity;
 import org.apache.velocity.runtime.RuntimeConstants;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.seyren.core.domain.GraphiteInstance;
 import com.seyren.core.util.velocity.Slf4jLogChute;
 
 @Named
@@ -32,12 +34,7 @@ public class SeyrenConfig {
     
     private final String baseUrl;
     private final String mongoUrl;
-    private final String graphiteUrl;
-    private final String graphiteUsername;
-    private final String graphitePassword;
-    private final String graphiteKeyStore;
-    private final String graphiteKeyStorePassword;
-    private final String graphiteTrustStore;
+    private final GraphiteInstance graphiteInstance;
     private final String pagerDutyDomain;
     private final String pagerDutyToken;
     private final String pagerDutyUsername;
@@ -64,12 +61,13 @@ public class SeyrenConfig {
         this.mongoUrl = configOrDefault("MONGO_URL", "mongodb://localhost:27017/seyren");
         
         // Graphite
-        this.graphiteUrl = stripEnd(configOrDefault("GRAPHITE_URL", "http://localhost:80"), "/");
-        this.graphiteUsername = configOrDefault("GRAPHITE_USERNAME", "");
-        this.graphitePassword = configOrDefault("GRAPHITE_PASSWORD", "");
-        this.graphiteKeyStore = configOrDefault("GRAPHITE_KEYSTORE", "");
-        this.graphiteKeyStorePassword = configOrDefault("GRAPHITE_KEYSTORE_PASSWORD", "");
-        this.graphiteTrustStore = configOrDefault("GRAPHITE_TRUSTSTORE", "");
+        this.graphiteInstance = new GraphiteInstance()
+                .withBaseUrl(stripEnd(configOrDefault("GRAPHITE_URL", "http://localhost:80"), "/"))
+                .withUsername(configOrDefault("GRAPHITE_USERNAME", ""))
+                .withPassword(configOrDefault("GRAPHITE_PASSWORD", ""))
+                .withKeyStore(configOrDefault("GRAPHITE_KEYSTORE", ""))
+                .withKeyStorePassword(configOrDefault("GRAPHITE_KEYSTORE_PASSWORD", ""))
+                .withTrustStore(configOrDefault("GRAPHITE_TRUSTSTORE", ""));
         
         // SMTP
         this.smtpFrom = configOrDefault(list("SMTP_FROM", "SEYREN_FROM_EMAIL"), "alert@seyren");
@@ -196,52 +194,52 @@ public class SeyrenConfig {
     
     @JsonIgnore
     public String getGraphiteUrl() {
-        return graphiteUrl;
+        return graphiteInstance.getBaseUrl();
     }
     
     @JsonIgnore
     public String getGraphiteUsername() {
-        return graphiteUsername;
+        return graphiteInstance.getUsername();
     }
     
     @JsonIgnore
     public String getGraphitePassword() {
-        return graphitePassword;
+        return graphiteInstance.getPassword();
     }
     
     @JsonIgnore
     public String getGraphiteScheme() {
-        return splitBaseUrl(graphiteUrl)[0];
+        return splitBaseUrl(getGraphiteUrl())[0];
     }
     
     @JsonIgnore
     public int getGraphiteSSLPort() {
-        return Integer.valueOf(splitBaseUrl(graphiteUrl)[1]);
+        return Integer.valueOf(splitBaseUrl(getGraphiteUrl())[1]);
     }
     
     @JsonIgnore
     public String getGraphiteHost() {
-        return splitBaseUrl(graphiteUrl)[2];
+        return splitBaseUrl(getGraphiteUrl())[2];
     }
     
     @JsonIgnore
     public String getGraphitePath() {
-        return splitBaseUrl(graphiteUrl)[3];
+        return splitBaseUrl(getGraphiteUrl())[3];
     }
     
     @JsonIgnore
     public String getGraphiteKeyStore() {
-        return graphiteKeyStore;
+        return graphiteInstance.getKeyStore();
     }
     
     @JsonIgnore
     public String getGraphiteKeyStorePassword() {
-        return graphiteKeyStorePassword;
+        return graphiteInstance.getKeyStorePassword();
     }
     
     @JsonIgnore
     public String getGraphiteTrustStore() {
-        return graphiteTrustStore;
+        return graphiteInstance.getTrustStore();
     }
     
     private static String configOrDefault(String propertyName, String defaultValue) {
