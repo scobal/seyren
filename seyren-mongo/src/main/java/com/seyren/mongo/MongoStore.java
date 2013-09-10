@@ -34,15 +34,17 @@ import com.mongodb.DBObject;
 import com.mongodb.MongoURI;
 import com.seyren.core.domain.Alert;
 import com.seyren.core.domain.Check;
+import com.seyren.core.domain.GraphiteInstance;
 import com.seyren.core.domain.SeyrenResponse;
 import com.seyren.core.domain.Subscription;
 import com.seyren.core.store.AlertsStore;
 import com.seyren.core.store.ChecksStore;
+import com.seyren.core.store.GraphiteInstancesStore;
 import com.seyren.core.store.SubscriptionsStore;
 import com.seyren.core.util.config.SeyrenConfig;
 
 @Named
-public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore {
+public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore, GraphiteInstancesStore {
     
     private MongoMapper mapper = new MongoMapper();
     private DB mongo;
@@ -237,4 +239,19 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
         getChecksCollection().update(checkFindObject, updateObject);
     }
 
+	@Override
+	public SeyrenResponse<GraphiteInstance> getGraphiteInstances() {
+        List<GraphiteInstance> insts = new ArrayList<GraphiteInstance>();
+        DBCursor dbc = getGraphiteInstancesCollection().find();
+        while (dbc.hasNext()) {
+            insts.add(mapper.graphiteInstanceFrom(dbc.next()));
+        }
+        return new SeyrenResponse<GraphiteInstance>()
+                .withValues(insts)
+                .withTotal(dbc.count());
+	}
+	
+    private DBCollection getGraphiteInstancesCollection() {
+        return mongo.getCollection("graphiteInstances");
+    }
 }
