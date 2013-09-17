@@ -201,8 +201,10 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore,
     }
     
     @Override
-    public Alert getLastAlertForTargetOfCheck(String target, String checkId) {
-        DBObject query = object("checkId", checkId).with("target", target);
+    public Alert getLastAlertForTargetOfCheck(String graphiteBaseUrl, String target, String checkId) {
+        DBObject query = object("checkId", checkId)
+        		.with("graphiteBaseUrl", graphiteBaseUrl)
+        		.with("target", target);
         DBCursor cursor = getAlertsCollection().find(query).sort(object("timestamp", -1)).limit(1);
         try {
             while (cursor.hasNext()) {

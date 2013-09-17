@@ -38,12 +38,15 @@ public class Alert {
     private String id;
     private String checkId;
     private BigDecimal value;
+    private String graphiteBaseUrl;
     private String target;
     private BigDecimal warn;
     private BigDecimal error;
     private AlertType fromType;
     private AlertType toType;
     private DateTime timestamp;
+    
+    public Alert() { }
     
     public String getId() {
         return id;
@@ -82,6 +85,19 @@ public class Alert {
     public Alert withValue(BigDecimal value) {
         setValue(value);
         return this;
+    }
+    
+    public String getGraphiteBaseUrl() {
+    	return graphiteBaseUrl;
+    }
+    
+    public void setGraphiteBaseUrl(String graphiteBaseUrl) {
+    	this.graphiteBaseUrl = graphiteBaseUrl;
+    }
+    
+    public Alert withGraphiteBaseUrl(String graphiteBaseUrl) {
+    	setGraphiteBaseUrl(graphiteBaseUrl);
+    	return this;
     }
     
     public String getTarget() {

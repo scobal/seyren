@@ -26,13 +26,13 @@ import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import com.google.common.base.Optional;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.seyren.core.domain.Alert;
 import com.seyren.core.domain.AlertType;
 import com.seyren.core.domain.Check;
@@ -118,7 +118,7 @@ public class CheckScheduler {
                     
                     BigDecimal currentValue = value.get();
                     
-                    Alert lastAlert = alertsStore.getLastAlertForTargetOfCheck(target, check.getId());
+                    Alert lastAlert = alertsStore.getLastAlertForTargetOfCheck(check.getGraphiteBaseUrl(), target, check.getId());
                     
                     AlertType lastState;
                     
@@ -138,7 +138,7 @@ public class CheckScheduler {
                         continue;
                     }
                     
-                    Alert alert = createAlert(target, currentValue, warn, error, lastState, currentState, now);
+                    Alert alert = createAlert(check.getGraphiteBaseUrl(), target, currentValue, warn, error, lastState, currentState, now);
                     
                     alertsStore.createAlert(check.getId(), alert);
                     
@@ -189,8 +189,9 @@ public class CheckScheduler {
         return last == current;
     }
     
-    private Alert createAlert(String target, BigDecimal value, BigDecimal warn, BigDecimal error, AlertType from, AlertType to, DateTime now) {
+    private Alert createAlert(String graphiteBaseUrl, String target, BigDecimal value, BigDecimal warn, BigDecimal error, AlertType from, AlertType to, DateTime now) {
         return new Alert()
+        		.withGraphiteBaseUrl(graphiteBaseUrl)
                 .withTarget(target)
                 .withValue(value)
                 .withWarn(warn)

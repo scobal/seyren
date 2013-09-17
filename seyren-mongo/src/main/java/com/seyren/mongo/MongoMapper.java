@@ -95,11 +95,11 @@ public class MongoMapper {
                 .withEnabled(enabled);
     }
     
-    // FIXME Need to add the graphiteBaseUrl to the alert as well.
     public Alert alertFrom(DBObject dbo) {
         String id = dbo.get("_id").toString();
         String checkId = getString(dbo, "checkId");
         BigDecimal value = getBigDecimal(dbo, "value");
+        String graphiteBaseUrl = getString(dbo, "graphiteBaseUrl");
         String target = getString(dbo, "target");
         BigDecimal warn = getBigDecimal(dbo, "warn");
         BigDecimal error = getBigDecimal(dbo, "error");
@@ -111,6 +111,7 @@ public class MongoMapper {
                 .withId(id)
                 .withCheckId(checkId)
                 .withValue(value)
+                .withGraphiteBaseUrl(graphiteBaseUrl)
                 .withTarget(target)
                 .withWarn(warn)
                 .withError(error)
@@ -182,6 +183,7 @@ public class MongoMapper {
         Map map = new HashMap();
         map.put("_id", alert.getId());
         map.put("checkId", alert.getCheckId());
+        map.put("graphiteBaseUrl", alert.getGraphiteBaseUrl());
         map.put("target", alert.getTarget());
         if (alert.getValue() != null) {
             map.put("value", alert.getValue().toPlainString());

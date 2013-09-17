@@ -24,6 +24,6 @@ public interface AlertsStore {
     
     SeyrenResponse<Alert> getAlerts(int start, int items);
     
-    Alert getLastAlertForTargetOfCheck(String target, String checkId);
+    Alert getLastAlertForTargetOfCheck(String graphiteBaseUrl, String target, String checkId);
     
 }

@@ -63,8 +63,9 @@ public class GraphiteTargetChecker implements TargetChecker {
 	@Override
 	public Map<String, Optional<BigDecimal>> check(Check check) throws Exception {
 		String formattedQuery = String.format(QUERY_STRING, new DateTime().getMillis(), check.getTarget());
-		URI uri = new URI(check.getGraphiteBaseUrl() + "/render/" + formattedQuery);
+		URI uri = new URI(check.getGraphiteBaseUrl() + "/render/?" + formattedQuery);
 		LOGGER.info("uri={}", uri);
+		System.out.println("*** URI is " + uri + " ***");
 
 		HttpGet get = new HttpGet(uri);
 		Map<String, Optional<BigDecimal>> targetValues = new HashMap<String, Optional<BigDecimal>>();
