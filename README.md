@@ -24,14 +24,14 @@ open http://localhost:8080/seyren
 ###Environment variables
 
 #### Base
-* `GRAPHITE_URL` - The location of your graphite server. Default: `http://localhost:80`
-* `GRAPHITE_USERNAME` - The Http Basic auth username for the graphite server. Default: ``
-* `GRAPHITE_PASSWORD` - The Http Basic auth password for the graphite server. Default: ``
-* `GRAPHITE_KEYSTORE` - The Http KeyStore path for the https graphite server. Default: ``
-* `GRAPHITE_KEYSTORE_PASSWORD` - The Http KeyStore password for the https graphite server. Default: ``
-* `GRAPHITE_TRUSTSTORE` - The Http TrustStore path for the https graphite server. Default: ``
-* `MONGO_URL` - The mongo connection string. Default: `mongodb://localhost:27017/seyren`
-* `SEYREN_URL` - The location of your seyren instance. Default: `http://localhost:8080/seyren`
+* `GRAPHITE_URL` - The location of your Graphite server. Default: `http://localhost:80`
+* `GRAPHITE_USERNAME` - The HTTP Basic auth username for the Graphite server. Default: ``
+* `GRAPHITE_PASSWORD` - The HTTP Basic auth password for the Graphite server. Default: ``
+* `GRAPHITE_KEYSTORE` - The HTTP KeyStore path for the https Graphite server. Default: ``
+* `GRAPHITE_KEYSTORE_PASSWORD` - The HTTP KeyStore password for the HTTPS Graphite server. Default: ``
+* `GRAPHITE_TRUSTSTORE` - The HTTP TrustStore path for the https Graphite server. Default: ``
+* `MONGO_URL` - The Mongo [connection string](http://docs.mongodb.org/manual/reference/connection-string/). Default: `mongodb://localhost:27017/seyren`
+* `SEYREN_URL` - The location of your Seyren instance. Default: `http://localhost:8080/seyren`
 
 #### SMTP
 * `SMTP_HOST` - The smtp server to send email notifications from. Default: `localhost`
