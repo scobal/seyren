@@ -38,25 +38,25 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Named
-public class WebhookNotificationService implements NotificationService {
+public class HttpNotificationService implements NotificationService {
     
-    private static final Logger LOGGER = LoggerFactory.getLogger(WebhookNotificationService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(HttpNotificationService.class);
     private static final ObjectMapper MAPPER = new ObjectMapper();
     
     private final SeyrenConfig seyrenConfig;    
     
     @Inject
-    public WebhookNotificationService(SeyrenConfig seyrenConfig) {
+    public HttpNotificationService(SeyrenConfig seyrenConfig) {
         this.seyrenConfig = seyrenConfig;
     }
     
     @Override
     public void sendNotification(Check check, Subscription subscription, List<Alert> alerts) throws NotificationFailedException {
         
-        String webHookUrl = StringUtils.trimToNull(subscription.getTarget());
+        String httpUrl = StringUtils.trimToNull(subscription.getTarget());
         
-        if (webHookUrl == null) {
-            LOGGER.warn("WebHook URL needs to be set before sending notifications to webhook");
+        if (httpUrl == null) {
+            LOGGER.warn("URL needs to be set before sending notifications to HTTP");
             return;
         }
         Map<String, Object> body = new HashMap<String, Object>();
@@ -78,7 +78,7 @@ public class WebhookNotificationService implements NotificationService {
                 LOGGER.info("Response : {} ", EntityUtils.toString(responseEntity));
             }
         } catch (Exception e) {
-            throw new NotificationFailedException("Failed to send notification to WebHook", e);           
+            throw new NotificationFailedException("Failed to send notification to HTTP", e);
         } finally {
             post.releaseConnection();
         }
@@ -86,7 +86,7 @@ public class WebhookNotificationService implements NotificationService {
     
     @Override
     public boolean canHandle(SubscriptionType subscriptionType) {
-        return subscriptionType == SubscriptionType.WEBHOOK;
+        return subscriptionType == SubscriptionType.HTTP;
     }
    
     private String getPreviewImage(Check check)

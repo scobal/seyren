@@ -36,7 +36,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import static org.mockito.Mockito.*;
 
-public class WebhookNotificationServiceTest {
+public class HttpNotificationServiceTest {
     
     private SeyrenConfig mockSeyrenConfig;
     private NotificationService service;
@@ -47,14 +47,14 @@ public class WebhookNotificationServiceTest {
     @Before
     public void before() {
         mockSeyrenConfig = mock(SeyrenConfig.class);
-        service = new WebhookNotificationService(mockSeyrenConfig);
+        service = new HttpNotificationService(mockSeyrenConfig);
     }
     
     @Test
-    public void notifcationServiceCanOnlyHandleWebHookSubscription() {
-        assertThat(service.canHandle(SubscriptionType.WEBHOOK), is(true));
+    public void notifcationServiceCanOnlyHandleHttpSubscription() {
+        assertThat(service.canHandle(SubscriptionType.HTTP), is(true));
         for (SubscriptionType type : SubscriptionType.values()) {
-            if (type == SubscriptionType.WEBHOOK) {
+            if (type == SubscriptionType.HTTP) {
                 continue;
             }
             assertThat(service.canHandle(type), is(false));
@@ -78,8 +78,8 @@ public class WebhookNotificationServiceTest {
                 .withError(BigDecimal.TEN);
         
         Subscription subscription = new Subscription()
-                .withType(SubscriptionType.WEBHOOK)
-                .withTarget(clientDriver.getBaseUrl() + "/myWebHook/thatdoesstuff");
+                .withType(SubscriptionType.HTTP)
+                .withTarget(clientDriver.getBaseUrl() + "/myendpoint/thatdoesstuff");
         
         Alert alert = new Alert()
                 .withTarget("the.target.name")
@@ -94,7 +94,7 @@ public class WebhookNotificationServiceTest {
         BodyCapture<JsonNode> bodyCapture = new JsonBodyCapture();
         
         clientDriver.addExpectation(
-                onRequestTo("/myWebHook/thatdoesstuff")
+                onRequestTo("/myendpoint/thatdoesstuff")
                         .withMethod(Method.POST)
                         .capturingBodyIn(bodyCapture),
                 giveResponse("success", "text/plain"));
