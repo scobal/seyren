@@ -6,6 +6,7 @@
         $scope.master = {
             name: null,
             description: null,
+            graphiteInstanceId: null,
             target: null,
             warn: null,
             error: null,

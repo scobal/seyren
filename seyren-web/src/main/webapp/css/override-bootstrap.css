@@ -3,7 +3,7 @@ body {
 }
 
 .modal-body {
-    max-height: 480px;
+    max-height: 520px;
     padding: 15px;
     overflow-y: auto;
 }
