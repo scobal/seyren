@@ -50,10 +50,6 @@ public final class SeyrenDriver {
         return new Url(checkLocation.getValue()).withPath("/subscriptions");
     }
     
-    public static Url graphiteInstances() {
-        return baseUri().withPath("graphite-instances");
-    }
-    
     private static Url baseUri() {
         return new Url("http://" + host() + ":" + port() + "/" + contextRoot()).withPath("api");
     }
