@@ -93,7 +93,7 @@
             return {
                 previewImage: function (check) {
                     if (check && check.target) {
-                        return chart('./api/chart/' + check.target, {
+                        return chart('./api/chart/' + check.id, {
                             target: check.target,
                             width: 365,
                             height: 70,

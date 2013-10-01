@@ -7,3 +7,4 @@
 .settings/
 META-INF/
 target/
+setenv.sh

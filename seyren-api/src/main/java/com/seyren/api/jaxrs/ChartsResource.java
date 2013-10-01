@@ -38,8 +38,8 @@ public interface ChartsResource {
     
     @GET
     @Produces("image/png")
-    @Path("/chart/{checkId}")
-    Response getCustomChart(@PathParam("checkId") String checkId,
+    @Path("/chart/{target}")
+    Response getCustomChart(@PathParam("target") String target,
             @QueryParam("width") @DefaultValue("1200") int width,
             @QueryParam("height") @DefaultValue("350") int height,
             @QueryParam("from") @DefaultValue("-24hours") String from,

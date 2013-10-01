@@ -24,25 +24,22 @@ import org.springframework.util.StringUtils;
 
 import com.seyren.api.jaxrs.ChartsResource;
 import com.seyren.core.domain.Check;
-import com.seyren.core.domain.GraphiteInstance;
 import com.seyren.core.store.ChecksStore;
-import com.seyren.core.store.GraphiteInstancesStore;
 import com.seyren.core.util.graphite.AxesState;
 import com.seyren.core.util.graphite.GraphiteHttpClient;
+import com.seyren.core.util.graphite.GraphiteManager;
 import com.seyren.core.util.graphite.LegendState;
 
 @Named
 public class ChartsBean implements ChartsResource {
-    
+	
     private final ChecksStore checksStore;
-    private final GraphiteInstancesStore graphiteInstancesStore;
-    private final GraphiteHttpClient graphiteHttpClient;
+    private final GraphiteManager graphiteManager;
     
     @Inject
-    public ChartsBean(ChecksStore checksStore, GraphiteInstancesStore graphiteInstancesStore, GraphiteHttpClient graphiteHttpClient) {
+    public ChartsBean(ChecksStore checksStore, GraphiteManager graphiteManager) {
         this.checksStore = checksStore;
-        this.graphiteInstancesStore = graphiteInstancesStore;
-        this.graphiteHttpClient = graphiteHttpClient;
+        this.graphiteManager = graphiteManager;
     }
     
     @Override
@@ -61,8 +58,8 @@ public class ChartsBean implements ChartsResource {
     }
     
     @Override
-    public Response getCustomChart(String checkId, int width, int height, String from, String to, String warnThreshold, String errorThreshold, boolean hideLegend, boolean hideAxes) {
-        Check check = checksStore.getCheck(checkId);
+    public Response getCustomChart(String target, int width, int height, String from, String to, String warnThreshold, String errorThreshold, boolean hideLegend, boolean hideAxes) {
+        Check check = checksStore.getCheck(target);
         if (check == null) {
             return Response.status(Status.NOT_FOUND).build();
         }
@@ -86,6 +83,7 @@ public class ChartsBean implements ChartsResource {
     }
     
     private Response getChart(Check check, int width, int height, String from, String to, BigDecimal warnThreshold, BigDecimal errorThreshold, boolean hideLegend, boolean hideAxes) {
+    	
         LegendState legendState;
         if (hideLegend) {
             legendState = LegendState.HIDE;
@@ -100,14 +98,12 @@ public class ChartsBean implements ChartsResource {
             axesState = AxesState.SHOW;
         }
         
-        // Load the GraphiteInstance here so GraphiteHttpClient doesn't have to know about stores. [WLW]
         String graphiteInstanceId = check.getGraphiteInstanceId();
-        GraphiteInstance graphiteInstance = graphiteInstancesStore.getGraphiteInstance(graphiteInstanceId);
-        
+        GraphiteHttpClient graphiteHttpClient = graphiteManager.getGraphiteHttpClient(graphiteInstanceId);
         String target = check.getTarget();
         
         try {
-            byte[] bytes = graphiteHttpClient.getChart(graphiteInstance, target, width, height, from, to, legendState, axesState, warnThreshold, errorThreshold);
+            byte[] bytes = graphiteHttpClient.getChart(target, width, height, from, to, legendState, axesState, warnThreshold, errorThreshold);
             return Response.ok(bytes, "image/png").build();
         } catch (Exception e) {
             return Response.serverError().build();

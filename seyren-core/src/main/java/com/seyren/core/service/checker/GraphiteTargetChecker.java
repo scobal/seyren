@@ -26,10 +26,9 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Optional;
 import com.seyren.core.domain.Check;
-import com.seyren.core.domain.GraphiteInstance;
 import com.seyren.core.exception.InvalidGraphiteValueException;
-import com.seyren.core.store.GraphiteInstancesStore;
 import com.seyren.core.util.graphite.GraphiteHttpClient;
+import com.seyren.core.util.graphite.GraphiteManager;
 import com.seyren.core.util.graphite.GraphiteReadException;
 
 @Named
@@ -37,24 +36,21 @@ public class GraphiteTargetChecker implements TargetChecker {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(GraphiteTargetChecker.class);
     
-    private final GraphiteInstancesStore graphiteInstancesStore;
-    private final GraphiteHttpClient graphiteHttpClient;
+    private GraphiteManager graphiteManager;
     
     @Inject
-    public GraphiteTargetChecker(GraphiteInstancesStore graphiteInstancesStore, GraphiteHttpClient graphiteHttpClient) {
-        this.graphiteInstancesStore = graphiteInstancesStore;
-        this.graphiteHttpClient = graphiteHttpClient;
+    public GraphiteTargetChecker(GraphiteManager graphiteManager) {
+    	this.graphiteManager = graphiteManager;
     }
     
     @Override
     public Map<String, Optional<BigDecimal>> check(Check check) throws Exception {
-        String graphiteInstanceId = check.getGraphiteInstanceId();
-        GraphiteInstance graphiteInstance = graphiteInstancesStore.getGraphiteInstance(graphiteInstanceId);
-        
         Map<String, Optional<BigDecimal>> targetValues = new HashMap<String, Optional<BigDecimal>>();
+        String graphiteInstanceId = check.getGraphiteInstanceId();
+        GraphiteHttpClient graphiteHttpClient = graphiteManager.getGraphiteHttpClient(graphiteInstanceId);
         
         try {
-            JsonNode node = graphiteHttpClient.getTargetJson(graphiteInstance, check.getTarget());
+            JsonNode node = graphiteHttpClient.getTargetJson(check.getTarget());
             for (JsonNode metric : node) {
                 String target = metric.path("target").asText();
                 try {

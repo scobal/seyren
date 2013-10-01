@@ -29,7 +29,6 @@ import com.mongodb.DBObject;
 import com.seyren.core.domain.Alert;
 import com.seyren.core.domain.AlertType;
 import com.seyren.core.domain.Check;
-import com.seyren.core.domain.GraphiteInstance;
 import com.seyren.core.domain.Subscription;
 import com.seyren.core.domain.SubscriptionType;
 
@@ -125,27 +124,6 @@ public class MongoMapper {
                 .withTimestamp(timestamp);
     }
     
-    public GraphiteInstance graphiteInstanceFrom(DBObject dbo) {
-        String id = dbo.get("_id").toString();
-        String name = getString(dbo, "name");
-        String baseUrl = getString(dbo, "baseUrl");
-        String username = getString(dbo, "username");
-        String password = getString(dbo, "password");
-        String keyStore = getString(dbo, "keyStore");
-        String keyStorePassword = getString(dbo, "keyStorePassword");
-        String trustStore = getString(dbo, "trustStore");
-        
-        return new GraphiteInstance()
-                .withId(id)
-                .withName(name)
-                .withBaseUrl(baseUrl)
-                .withUsername(username)
-                .withPassword(password)
-                .withKeyStore(keyStore)
-                .withKeyStorePassword(keyStorePassword)
-                .withTrustStore(trustStore);
-    }
-    
     public DBObject checkToDBObject(Check check) {
         return new BasicDBObject(propertiesToMap(check));
     }
@@ -156,10 +134,6 @@ public class MongoMapper {
     
     public DBObject alertToDBObject(Alert alert) {
         return new BasicDBObject(propertiesToMap(alert));
-    }
-    
-    public DBObject graphiteInstanceToDBObject(GraphiteInstance graphiteInstance) {
-        return new BasicDBObject(propertiesToMap(graphiteInstance));
     }
     
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -232,20 +206,6 @@ public class MongoMapper {
         map.put("fromType", alert.getFromType().toString());
         map.put("toType", alert.getToType().toString());
         map.put("timestamp", new Date(alert.getTimestamp().getMillis()));
-        return map;
-    }
-    
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    private Map propertiesToMap(GraphiteInstance graphiteInstance) {
-        Map map = new HashMap();
-        map.put("_id", graphiteInstance.getId());
-        map.put("name", graphiteInstance.getName());
-        map.put("baseUrl", graphiteInstance.getBaseUrl());
-        map.put("username", graphiteInstance.getUsername());
-        map.put("password", graphiteInstance.getPassword());
-        map.put("keyStore", graphiteInstance.getKeyStore());
-        map.put("keyStorePassword", graphiteInstance.getKeyStorePassword());
-        map.put("trustStore", graphiteInstance.getTrustStore());
         return map;
     }
     

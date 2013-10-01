@@ -19,8 +19,6 @@ import java.math.BigDecimal;
 import java.net.URI;
 import java.security.KeyStore;
 
-import javax.inject.Inject;
-import javax.inject.Named;
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
@@ -57,9 +55,11 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.seyren.core.service.checker.JsonNodeResponseHandler;
-import com.seyren.core.util.config.SeyrenConfig;
+import com.seyren.core.util.config.GraphiteInstanceConfig;
 
-@Named
+// No longer component-scanning this. GraphiteManager creates GraphiteHttpClients based on the SeyrenConfig.
+// [williewheeler]
+//@Named
 public class GraphiteHttpClient {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(GraphiteHttpClient.class);
@@ -68,35 +68,18 @@ public class GraphiteHttpClient {
     
     private final JsonNodeResponseHandler jsonNodeHandler = new JsonNodeResponseHandler();
     private final ByteArrayResponseHandler chartBytesHandler = new ByteArrayResponseHandler();
-    private final String graphiteScheme;
-    private final String graphiteHost;
-    private final String graphitePath;
-    private final String graphiteUsername;
-    private final String graphitePassword;
-    private final String graphiteKeyStore;
-    private final String graphiteKeyStorePassword;
-    private final String graphiteTrustStore;
-    private final int graphiteSSLPort;
+    private final GraphiteInstanceConfig graphiteInstanceConfig;
     private final HttpClient client;
     private final HttpContext context;
     
-    @Inject
-    public GraphiteHttpClient(SeyrenConfig seyrenConfig) {
-        this.graphiteScheme = seyrenConfig.getGraphiteScheme();
-        this.graphiteHost = seyrenConfig.getGraphiteHost();
-        this.graphitePath = seyrenConfig.getGraphitePath();
-        this.graphiteUsername = seyrenConfig.getGraphiteUsername();
-        this.graphitePassword = seyrenConfig.getGraphitePassword();
-        this.graphiteKeyStore = seyrenConfig.getGraphiteKeyStore();
-        this.graphiteKeyStorePassword = seyrenConfig.getGraphiteKeyStorePassword();
-        this.graphiteTrustStore = seyrenConfig.getGraphiteTrustStore();
-        this.graphiteSSLPort = seyrenConfig.getGraphiteSSLPort();
+    public GraphiteHttpClient(GraphiteInstanceConfig graphiteInstanceConfig) {
+    	this.graphiteInstanceConfig = graphiteInstanceConfig;
         this.context = new BasicHttpContext();
         this.client = createHttpClient();
     }
     
     public JsonNode getTargetJson(String target) throws Exception {
-        URI baseUri = new URI(graphiteScheme, graphiteHost, graphitePath + "/render/", null, null);
+    	URI baseUri = new URI(graphiteInstanceConfig.getBaseUrl() + "/render/");
         URI uri = new URIBuilder(baseUri)
                 .addParameter("from", "-11minutes")
                 .addParameter("until", "-1minutes")
@@ -121,7 +104,7 @@ public class GraphiteHttpClient {
     
     public byte[] getChart(String target, int width, int height, String from, String to, LegendState legendState, AxesState axesState,
             BigDecimal warnThreshold, BigDecimal errorThreshold) throws Exception {
-        URI baseUri = new URI(graphiteScheme, graphiteHost, graphitePath + "/render/", null, null);
+    	URI baseUri = new URI(graphiteInstanceConfig.getBaseUrl() + "/render/");
         URIBuilder uriBuilder = new URIBuilder(baseUri)
                 .addParameter("target", target)
                 .addParameter("from", from)
@@ -153,6 +136,15 @@ public class GraphiteHttpClient {
     private HttpClient createHttpClient() {
         DefaultHttpClient client = new DefaultHttpClient(createConnectionManager());
         
+        String graphiteBaseUrl = graphiteInstanceConfig.getBaseUrl();
+        String graphiteUsername = graphiteInstanceConfig.getUsername();
+        String graphitePassword = graphiteInstanceConfig.getPassword();
+        String graphiteKeyStore = graphiteInstanceConfig.getKeyStore();
+        String graphiteKeyStorePassword = graphiteInstanceConfig.getKeyStorePassword();
+        String graphiteTrustStore = graphiteInstanceConfig.getTrustStore();
+        
+        boolean usingSSL = graphiteBaseUrl.startsWith("https:");
+        
         // Set auth header for graphite if username and password are provided
         if (!StringUtils.isEmpty(graphiteUsername) && !StringUtils.isEmpty(graphitePassword)) {
             client.getCredentialsProvider().setCredentials(
@@ -163,8 +155,12 @@ public class GraphiteHttpClient {
         }
         
         // Set SSL configuration if keystore and truststore are provided
-        if ("https".equals(graphiteScheme) && !StringUtils.isEmpty(graphiteKeyStore) && !StringUtils.isEmpty(graphiteKeyStorePassword) && !StringUtils.isEmpty(graphiteTrustStore)) {
+        if (usingSSL && !StringUtils.isEmpty(graphiteKeyStore) && !StringUtils.isEmpty(graphiteKeyStorePassword) && !StringUtils.isEmpty(graphiteTrustStore)) {
             try {
+            	URI graphiteBaseUri = new URI(graphiteBaseUrl);
+            	String graphiteScheme = graphiteBaseUri.getScheme();
+            	int graphiteSSLPort = graphiteBaseUri.getPort();
+            	
                 // Read the keystore and trustore
                 KeyStore keyStore = loadKeyStore(graphiteKeyStore, graphiteKeyStorePassword);
                 KeyStore trustStore = loadKeyStore(graphiteTrustStore, null);

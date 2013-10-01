@@ -16,6 +16,7 @@ package com.seyren.core.util.config;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
 import static org.apache.commons.lang.StringUtils.stripEnd;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -51,6 +52,7 @@ public class SeyrenConfig {
     // Icon mapped check sate (AlertType) see http://apps.timwhitlock.info/emoji/tables/unicode
     // question, sunny, cloud, voltage exclamation should be: \u2753,\u2600,\u2601,\u26A1,\u2757
     private final String flowdockEmojis;
+    private final List<GraphiteInstanceConfig> graphiteInstanceConfigs = new ArrayList<GraphiteInstanceConfig>();
     
     public SeyrenConfig() {
         
@@ -84,6 +86,25 @@ public class SeyrenConfig {
         this.flowdockTags = configOrDefault("FLOWDOCK_TAGS", "");
         this.flowdockEmojis = configOrDefault("FLOWDOCK_EMOJIS", "");
         
+        buildGraphiteInstanceConfigs();
+    }
+    
+    private void buildGraphiteInstanceConfigs() {
+    	
+    	// For now, just read in a single Graphite instance so Mark and Neil can decide how they want to handle
+    	// configuration generally. Once they have that, we can read in the multiple Graphite instance configs.
+    	// [williewheeler]
+    	GraphiteInstanceConfig graphiteInstanceConfig = new GraphiteInstanceConfig();
+    	graphiteInstanceConfig.setId("the-one-graphite-instance");
+    	graphiteInstanceConfig.setName("The One Graphite Instance");
+    	graphiteInstanceConfig.setBaseUrl(stripEnd(configOrDefault("GRAPHITE_URL", "http://localhost:80"), "/"));
+        graphiteInstanceConfig.setUsername(configOrDefault("GRAPHITE_USERNAME", ""));
+        graphiteInstanceConfig.setPassword(configOrDefault("GRAPHITE_PASSWORD", ""));
+        graphiteInstanceConfig.setKeyStore(configOrDefault("GRAPHITE_KEYSTORE", ""));
+        graphiteInstanceConfig.setKeyStorePassword(configOrDefault("GRAPHITE_KEYSTORE_PASSWORD", ""));
+        graphiteInstanceConfig.setTrustStore(configOrDefault("GRAPHITE_TRUSTSTORE", ""));
+        
+        graphiteInstanceConfigs.add(graphiteInstanceConfig);
     }
     
     @PostConstruct
@@ -94,6 +115,19 @@ public class SeyrenConfig {
     
     public String getBaseUrl() {
         return baseUrl;
+    }
+    
+    public List<GraphiteInstanceConfig> getGraphiteInstanceConfigs() {
+    	return graphiteInstanceConfigs;
+    }
+    
+    public GraphiteInstanceConfig getGraphiteInstanceConfig(String graphiteInstanceId) {
+    	for (GraphiteInstanceConfig graphiteInstanceConfig : graphiteInstanceConfigs) {
+    		if (graphiteInstanceId.equals(graphiteInstanceConfig.getId())) {
+    			return graphiteInstanceConfig;
+    		}
+    	}
+    	throw new RuntimeException("No such Graphite instance: id=" + graphiteInstanceId);
     }
     
     @JsonIgnore

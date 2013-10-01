@@ -11,13 +11,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.seyren.core.domain;
+package com.seyren.core.util.config;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * <p>
- * Represents a Graphite instance.
+ * A Graphite instance configuration.
  * </p>
  * <p>
  * The intent is to provide a way to consume multiple Graphite instances from a single Seyren instance.
@@ -26,7 +27,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  * @author Willie Wheeler (willie.wheeler@gmail.com)
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class GraphiteInstance {
+public class GraphiteInstanceConfig {
     private String id;
     private String name;
     private String baseUrl;
@@ -35,18 +36,13 @@ public class GraphiteInstance {
     private String keyStore;
     private String keyStorePassword;
     private String trustStore;
-
+    
     public String getId() {
         return id;
     }
 
     public void setId(String id) {
         this.id = id;
-    }
-    
-    public GraphiteInstance withId(String id) {
-        setId(id);
-        return this;
     }
     
     public String getName() {
@@ -56,11 +52,6 @@ public class GraphiteInstance {
     public void setName(String name) {
         this.name = name;
     }
-    
-    public GraphiteInstance withName(String name) {
-        setName(name);
-        return this;
-    }
 
     public String getBaseUrl() {
         return baseUrl;
@@ -69,12 +60,8 @@ public class GraphiteInstance {
     public void setBaseUrl(String baseUrl) {
         this.baseUrl = baseUrl;
     }
-    
-    public GraphiteInstance withBaseUrl(String baseUrl) {
-        setBaseUrl(baseUrl);
-        return this;
-    }
 
+    @JsonIgnore
     public String getUsername() {
         return username;
     }
@@ -82,12 +69,8 @@ public class GraphiteInstance {
     public void setUsername(String username) {
         this.username = username;
     }
-    
-    public GraphiteInstance withUsername(String username) {
-        setUsername(username);
-        return this;
-    }
 
+    @JsonIgnore
     public String getPassword() {
         return password;
     }
@@ -95,12 +78,8 @@ public class GraphiteInstance {
     public void setPassword(String password) {
         this.password = password;
     }
-    
-    public GraphiteInstance withPassword(String password) {
-        setPassword(password);
-        return this;
-    }
 
+    @JsonIgnore
     public String getKeyStore() {
         return keyStore;
     }
@@ -108,12 +87,8 @@ public class GraphiteInstance {
     public void setKeyStore(String keyStore) {
         this.keyStore = keyStore;
     }
-    
-    public GraphiteInstance withKeyStore(String keyStore) {
-        setKeyStore(keyStore);
-        return this;
-    }
 
+    @JsonIgnore
     public String getKeyStorePassword() {
         return keyStorePassword;
     }
@@ -121,23 +96,14 @@ public class GraphiteInstance {
     public void setKeyStorePassword(String keyStorePassword) {
         this.keyStorePassword = keyStorePassword;
     }
-    
-    public GraphiteInstance withKeyStorePassword(String keyStorePassword) {
-        setKeyStorePassword(keyStorePassword);
-        return this;
-    }
 
+    @JsonIgnore
     public String getTrustStore() {
         return trustStore;
     }
 
     public void setTrustStore(String trustStore) {
         this.trustStore = trustStore;
-    }
-    
-    public GraphiteInstance withTrustStore(String trustStore) {
-        setTrustStore(trustStore);
-        return this;
     }
 
 }
