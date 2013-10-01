@@ -127,7 +127,7 @@ describe('check page', function () {
     });
 
     it('should have a \'Details\' informations', function () {
-        expect(element('div.span7 div.row-fluid').count()).toBe(9);
+        expect(element('div.span7 div.row-fluid').count()).toBe(10);
 
         expect(element('div.span7 div.row-fluid:eq(1) span.span2').text()).toBe('Name:');
         expect(element('div.span7 div.row-fluid:eq(1) span.span10').text()).toBe('load longterm usage');
@@ -204,7 +204,7 @@ describe('edit check', function () {
     });
 
     it('edit and submit check', function () {
-        expect(element('div.span7 div.row-fluid').count()).toBe(9);
+        expect(element('div.span7 div.row-fluid').count()).toBe(10);
 
         expect(element('a:contains("edit")').count()).toBe(1);
         expect(element('div#editCheckModal:visible').count()).toBe(0);
@@ -358,11 +358,13 @@ describe('create new check', function () {
         expect(element('div#editCheckModal h3:visible').text()).toBe('Create check');
         input('check\\.name').enter('Name of karma.metric');
         input('check\\.description').enter('Description of karma.metric');
+        input('check\\.graphiteInstanceId').enter('my-graphite-instance');
         input('check\\.target').enter('karma.metric');
         input('check\\.warn').enter('2.0');
         input('check\\.error').enter('4.0');
         input('check\\.enabled').check();
-
+        
+        // FIXME Oh, there's no check ID here yet. [williewheeler]
         expect(element('div#editCheckModal img').attr('src')).toBe('./api/chart/karma.metric/?&width=365&height=70&from=-1day&warn=2.0&error=4.0&hideLegend=true');
 
         expect(element('button#createCheckButton:visible:enabled').count()).toEqual(1);

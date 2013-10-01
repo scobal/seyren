@@ -58,7 +58,7 @@
         }).
         factory('Graph', function ($resource) {
             var chart = function (baseurl, chart) {
-                var result = baseurl + '/?';
+                var result = baseurl + '/?graphiteInstanceId=' + chart.graphiteInstanceId + '&target=' + chart.target;
                 if (chart.width) {
                     result += '&width=' + chart.width;
                 }
@@ -92,8 +92,9 @@
             };
             return {
                 previewImage: function (check) {
-                    if (check && check.target) {
-                        return chart('./api/chart/' + check.id, {
+                    if (check && check.graphiteInstanceId && check.target) {
+                        return chart('./api/chart', {
+                            graphiteInstanceId: check.graphiteInstanceId,
                             target: check.target,
                             width: 365,
                             height: 70,

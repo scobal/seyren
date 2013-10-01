@@ -49,20 +49,19 @@ public class ChartsBean implements ChartsResource {
             return Response.status(Status.NOT_FOUND).build();
         }
         
+        String graphiteInstanceId = check.getGraphiteInstanceId();
+        String target = check.getTarget();
+        
         if (hideThresholds) {
-            return getChart(check, width, height, from, to, null, null, hideLegend, hideAxes);
+            return getChart(graphiteInstanceId, target, width, height, from, to, null, null, hideLegend, hideAxes);
         } else {
-            return getChart(check, width, height, from, to, check.getWarn(), check.getError(), hideLegend, hideAxes);
+            return getChart(graphiteInstanceId, target, width, height, from, to, check.getWarn(), check.getError(), hideLegend, hideAxes);
         }
         
     }
     
     @Override
-    public Response getCustomChart(String target, int width, int height, String from, String to, String warnThreshold, String errorThreshold, boolean hideLegend, boolean hideAxes) {
-        Check check = checksStore.getCheck(target);
-        if (check == null) {
-            return Response.status(Status.NOT_FOUND).build();
-        }
+    public Response getCustomChart(String graphiteInstanceId, String target, int width, int height, String from, String to, String warnThreshold, String errorThreshold, boolean hideLegend, boolean hideAxes) {
         
         BigDecimal warn;
         if (StringUtils.isEmpty(warnThreshold)) {
@@ -78,11 +77,16 @@ public class ChartsBean implements ChartsResource {
             error = new BigDecimal(errorThreshold);
         }
         
-        return getChart(check, width, height, from, to, warn, error, hideLegend, hideAxes);
+        return getChart(graphiteInstanceId, target, width, height, from, to, warn, error, hideLegend, hideAxes);
         
     }
     
-    private Response getChart(Check check, int width, int height, String from, String to, BigDecimal warnThreshold, BigDecimal errorThreshold, boolean hideLegend, boolean hideAxes) {
+    /**
+     * This method takes a Graphite instance ID and a target instead of taking a check, since we want to display a
+     * preview for a new check that we're currently creating. Such a check has a Graphite instance ID and a target, but
+     * no check ID.
+     */
+    private Response getChart(String graphiteInstanceId, String target, int width, int height, String from, String to, BigDecimal warnThreshold, BigDecimal errorThreshold, boolean hideLegend, boolean hideAxes) {
     	
         LegendState legendState;
         if (hideLegend) {
@@ -98,9 +102,7 @@ public class ChartsBean implements ChartsResource {
             axesState = AxesState.SHOW;
         }
         
-        String graphiteInstanceId = check.getGraphiteInstanceId();
         GraphiteHttpClient graphiteHttpClient = graphiteManager.getGraphiteHttpClient(graphiteInstanceId);
-        String target = check.getTarget();
         
         try {
             byte[] bytes = graphiteHttpClient.getChart(target, width, height, from, to, legendState, axesState, warnThreshold, errorThreshold);

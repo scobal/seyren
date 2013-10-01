@@ -38,8 +38,12 @@ public interface ChartsResource {
     
     @GET
     @Produces("image/png")
-    @Path("/chart/{target}")
-    Response getCustomChart(@PathParam("target") String target,
+//    @Path("/chart/{target}")
+    @Path("/chart")
+    Response getCustomChart(
+//    		@PathParam("target") String target,
+    		@QueryParam("graphiteInstanceId") String graphiteInstanceId,
+    		@QueryParam("target") String target,
             @QueryParam("width") @DefaultValue("1200") int width,
             @QueryParam("height") @DefaultValue("350") int height,
             @QueryParam("from") @DefaultValue("-24hours") String from,
