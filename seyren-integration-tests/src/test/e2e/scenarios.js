@@ -138,20 +138,23 @@ describe('check page', function () {
         expect(element('div.span7 div.row-fluid:eq(3) span.span2').text()).toBe('State:');
         expect(element('div.span7 div.row-fluid:eq(3) span.span10 span:visible').text()).toBe('WARN');
 
-        expect(element('div.span7 div.row-fluid:eq(4) span.span2').text()).toBe('Target:');
-        expect(element('div.span7 div.row-fluid:eq(4) span.span10').text()).toBe('prod.host1.load.longterm');
+        expect(element('div.span7 div.row-fluid:eq(4) span.span2').text()).toBe('Graphite instance:');
+        expect(element('div.span7 div.row-fluid:eq(4) span.span10').text()).toBe('my-graphite-instance');
 
-        expect(element('div.span7 div.row-fluid:eq(5) span.span2').text()).toBe('Warn:');
-        expect(element('div.span7 div.row-fluid:eq(5) span.span10').text()).toBe('0.5');
+        expect(element('div.span7 div.row-fluid:eq(5) span.span2').text()).toBe('Target:');
+        expect(element('div.span7 div.row-fluid:eq(5) span.span10').text()).toBe('prod.host1.load.longterm');
 
-        expect(element('div.span7 div.row-fluid:eq(6) span.span2').text()).toBe('Error:');
-        expect(element('div.span7 div.row-fluid:eq(6) span.span10').text()).toBe('2.0');
+        expect(element('div.span7 div.row-fluid:eq(6) span.span2').text()).toBe('Warn:');
+        expect(element('div.span7 div.row-fluid:eq(6) span.span10').text()).toBe('0.5');
 
-        expect(element('div.span7 div.row-fluid:eq(7) span.span2').text()).toBe('Enabled:');
-        expect(element('div.span7 div.row-fluid:eq(7) span.span10 input:checked').val()).toBe('on');
+        expect(element('div.span7 div.row-fluid:eq(7) span.span2').text()).toBe('Error:');
+        expect(element('div.span7 div.row-fluid:eq(7) span.span10').text()).toBe('2.0');
 
-        expect(element('div.span7 div.row-fluid:eq(8) span.span2').text()).toBe('Last check:');
-        expect(element('div.span7 div.row-fluid:eq(8) span.span10').text()).toMatch('[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}');
+        expect(element('div.span7 div.row-fluid:eq(8) span.span2').text()).toBe('Enabled:');
+        expect(element('div.span7 div.row-fluid:eq(8) span.span10 input:checked').val()).toBe('on');
+
+        expect(element('div.span7 div.row-fluid:eq(9) span.span2').text()).toBe('Last check:');
+        expect(element('div.span7 div.row-fluid:eq(9) span.span10').text()).toMatch('[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}');
     });
 
     it('should have \'Graphs\' thumbnail', function () {
@@ -364,8 +367,7 @@ describe('create new check', function () {
         input('check\\.error').enter('4.0');
         input('check\\.enabled').check();
         
-        // FIXME Oh, there's no check ID here yet. [williewheeler]
-        expect(element('div#editCheckModal img').attr('src')).toBe('./api/chart/karma.metric/?&width=365&height=70&from=-1day&warn=2.0&error=4.0&hideLegend=true');
+        expect(element('div#editCheckModal img').attr('src')).toBe('./api/chart/?&graphiteInstanceId=my-graphite-instance&target=karma.metric&width=365&height=70&from=-1day&warn=2.0&error=4.0&hideLegend=true');
 
         expect(element('button#createCheckButton:visible:enabled').count()).toEqual(1);
         expect(element('button#cancelCheckButton:visible:enabled').count()).toEqual(1);
