@@ -44,7 +44,7 @@ public class ChecksBean implements ChecksResource {
         if (states != null && !states.isEmpty()) {
             checks = checksStore.getChecksByState(states, enabled);
         } else {
-            checks = checksStore.getChecks(enabled);
+            checks = checksStore.getChecks(enabled, null);
         }
         return Response.ok(checks).build();
     }

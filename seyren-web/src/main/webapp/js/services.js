@@ -171,6 +171,14 @@
                     }, function (err) {
                         console.log('Saving subscription failed');
                     });
+                },
+                swapCheckLiveEnabled: function (check) {
+                    check.live = !check.live;
+                    Checks.update({ checkId:  check.id}, check, function (data) {
+                        $rootScope.$broadcast('check:swapCheckLiveEnabled');
+                    }, function (err) {
+                        console.log('Saving check failed');
+                    });
                 }
             };
         });
