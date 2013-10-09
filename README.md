@@ -24,11 +24,10 @@ open http://localhost:8080/seyren
 If you want to change the port seyren runs on, you can use the jetty parameter:
 
 ```
-mvn clean package
-export GRAPHITE_URL=http://graphite.foohost.com:80
 java -jar seyren-web/target/dependency/jetty-runner.jar --port 9999 --path /seyren seyren-web/target/*.war
-open http://localhost:9999
 ```
+
+An example shell script of to run seyren is included as `run_seyren.sh`
 
 ###Environment variables
 
