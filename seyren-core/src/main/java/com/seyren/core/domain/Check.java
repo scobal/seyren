@@ -44,6 +44,7 @@ public class Check {
     private BigDecimal warn;
     private BigDecimal error;
     private boolean enabled;
+    private boolean live;
     private AlertType state;
     private DateTime lastCheck;
     private List<Subscription> subscriptions = new ArrayList<Subscription>();
@@ -129,20 +130,33 @@ public class Check {
         setError(error);
         return this;
     }
-    
+
     public boolean isEnabled() {
         return enabled;
     }
-    
+
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
-    
+
     public Check withEnabled(boolean enabled) {
         setEnabled(enabled);
         return this;
     }
-    
+
+    public boolean isLive() {
+        return live;
+    }
+
+    public void setLive(boolean live) {
+        this.live = live;
+    }
+
+    public Check withLive(boolean live) {
+        setLive(live);
+        return this;
+    }
+
     public AlertType getState() {
         return state;
     }

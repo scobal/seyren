@@ -33,6 +33,10 @@ open http://localhost:8080/seyren
 * `MONGO_URL` - The Mongo [connection string](http://docs.mongodb.org/manual/reference/connection-string/). Default: `mongodb://localhost:27017/seyren`
 * `SEYREN_URL` - The location of your Seyren instance. Default: `http://localhost:8080/seyren`
 
+#### [Live feature](https://github.com/scobal/seyren/pull/142) (disabled by default)
+* `GRAPHITE_CARBON_PICKLE_ENABLE` - Enable a TCP server to listen Carbon relay [pickle protocol](http://graphite.readthedocs.org/en/latest/feeding-carbon.html). Default: `false`
+* `GRAPHITE_CARBON_PICKLE_PORT` - The TCP server port. Default: `2004`
+
 #### SMTP
 * `SMTP_HOST` - The smtp server to send email notifications from. Default: `localhost`
 * `SMTP_PORT` - The smtp server port. Default: `25`

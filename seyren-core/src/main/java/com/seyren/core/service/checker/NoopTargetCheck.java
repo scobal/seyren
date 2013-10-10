@@ -11,25 +11,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.seyren.core.store;
+package com.seyren.core.service.checker;
 
-import java.util.Set;
+import java.math.BigDecimal;
+import java.util.Map;
 
+import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableMap;
 import com.seyren.core.domain.Check;
-import com.seyren.core.domain.SeyrenResponse;
+import com.seyren.core.service.checker.TargetChecker;
 
-public interface ChecksStore {
-    
-    SeyrenResponse<Check> getChecks(Boolean enabled, Boolean live);
-    
-    SeyrenResponse<Check> getChecksByState(Set<String> states, Boolean enabled);
-    
-    Check getCheck(String checkId);
-    
-    void deleteCheck(String checkId);
-    
-    Check createCheck(Check check);
-    
-    Check saveCheck(Check check);
-    
+public class NoopTargetCheck implements TargetChecker {
+    private BigDecimal value;
+
+    public NoopTargetCheck(BigDecimal value) {
+        this.value = value;
+    }
+
+    @Override
+    public Map<String, Optional<BigDecimal>> check(Check check) throws Exception {
+        return ImmutableMap.of(check.getTarget(), Optional.<BigDecimal>of(value));
+    }
 }
