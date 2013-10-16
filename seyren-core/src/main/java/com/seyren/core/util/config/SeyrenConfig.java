@@ -30,6 +30,8 @@ import com.seyren.core.util.velocity.Slf4jLogChute;
 @Named
 public class SeyrenConfig {
     
+    private static final String DEFAULT_BASE_URL = "http://localhost:8080/seyren";
+
     private final String baseUrl;
     private final String mongoUrl;
     private final String graphiteUrl;
@@ -64,7 +66,7 @@ public class SeyrenConfig {
     public SeyrenConfig() {
         
         // Base
-        this.baseUrl = stripEnd(configOrDefault("SEYREN_URL", "http://localhost:8080/seyren"), "/");
+        this.baseUrl = stripEnd(configOrDefault("SEYREN_URL", DEFAULT_BASE_URL), "/");
         this.mongoUrl = configOrDefault("MONGO_URL", "mongodb://localhost:27017/seyren");
         
         // Graphite
@@ -116,6 +118,11 @@ public class SeyrenConfig {
     
     public String getBaseUrl() {
         return baseUrl;
+    }
+
+    @JsonIgnore
+    public boolean isBaseUrlSetToDefault() {
+        return getBaseUrl().equals(DEFAULT_BASE_URL);
     }
     
     @JsonIgnore
