@@ -38,6 +38,8 @@ public class SeyrenConfig {
     private final String graphiteKeyStore;
     private final String graphiteKeyStorePassword;
     private final String graphiteTrustStore;
+    private final String graphiteCarbonPickleEnable;
+    private final String graphiteCarbonPicklePort;
     private final String pagerDutyDomain;
     private final String pagerDutyToken;
     private final String pagerDutyUsername;
@@ -56,7 +58,7 @@ public class SeyrenConfig {
     // Icon mapped check sate (AlertType) see http://apps.timwhitlock.info/emoji/tables/unicode
     // question, sunny, cloud, voltage exclamation should be: \u2753,\u2600,\u2601,\u26A1,\u2757
     private final String flowdockEmojis;
-    
+
     public SeyrenConfig() {
         
         // Base
@@ -70,7 +72,8 @@ public class SeyrenConfig {
         this.graphiteKeyStore = configOrDefault("GRAPHITE_KEYSTORE", "");
         this.graphiteKeyStorePassword = configOrDefault("GRAPHITE_KEYSTORE_PASSWORD", "");
         this.graphiteTrustStore = configOrDefault("GRAPHITE_TRUSTSTORE", "");
-        
+        this.graphiteCarbonPickleEnable = configOrDefault("GRAPHITE_CARBON_PICKLE_ENABLE", "false");
+        this.graphiteCarbonPicklePort = configOrDefault("GRAPHITE_CARBON_PICKLE_PORT", "2004");
         // SMTP
         this.smtpFrom = configOrDefault(list("SMTP_FROM", "SEYREN_FROM_EMAIL"), "alert@seyren");
         this.smtpUsername = configOrDefault("SMTP_USERNAME", "");
@@ -238,12 +241,22 @@ public class SeyrenConfig {
     public String getGraphiteKeyStorePassword() {
         return graphiteKeyStorePassword;
     }
-    
+
     @JsonIgnore
     public String getGraphiteTrustStore() {
         return graphiteTrustStore;
     }
-    
+
+    @JsonIgnore
+    public int getGraphiteCarbonPicklePort() {
+        return Integer.valueOf(graphiteCarbonPicklePort);
+    }
+
+    @JsonIgnore
+    public boolean getGraphiteCarbonPickleEnable() {
+        return Boolean.valueOf(graphiteCarbonPickleEnable);
+    }
+
     private static String configOrDefault(String propertyName, String defaultValue) {
         return configOrDefault(list(propertyName), defaultValue);
     }

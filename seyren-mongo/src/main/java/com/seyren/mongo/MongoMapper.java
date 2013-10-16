@@ -42,6 +42,7 @@ public class MongoMapper {
         BigDecimal warn = getBigDecimal(dbo, "warn");
         BigDecimal error = getBigDecimal(dbo, "error");
         boolean enabled = getBoolean(dbo, "enabled");
+        boolean live = getOptionalBoolean(dbo, "live", false);
         AlertType state = AlertType.valueOf(getString(dbo, "state"));
         DateTime lastCheck = getDateTime(dbo, "lastCheck");
         List<Subscription> subscriptions = new ArrayList<Subscription>();
@@ -57,6 +58,7 @@ public class MongoMapper {
                 .withWarn(warn)
                 .withError(error)
                 .withEnabled(enabled)
+                .withLive(live)
                 .withState(state)
                 .withLastCheck(lastCheck)
                 .withSubscriptions(subscriptions);
@@ -148,6 +150,7 @@ public class MongoMapper {
             map.put("error", check.getError().toPlainString());
         }
         map.put("enabled", check.isEnabled());
+        map.put("live", check.isLive());
         map.put("state", check.getState().toString());
         if (check.getLastCheck() != null) {
             map.put("lastCheck", new Date(check.getLastCheck().getMillis()));
