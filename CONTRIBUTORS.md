@@ -7,3 +7,4 @@
 * Olivier Bazoud (obazoud)
 * Marcus Kielly (sunwukung)
 * Kevin Pullin (kppullin)
+* Guillaume Lederrey (gehel)

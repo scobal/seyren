@@ -58,6 +58,8 @@ public class SeyrenConfig {
     // Icon mapped check sate (AlertType) see http://apps.timwhitlock.info/emoji/tables/unicode
     // question, sunny, cloud, voltage exclamation should be: \u2753,\u2600,\u2601,\u26A1,\u2757
     private final String flowdockEmojis;
+    private final String ircCatHost;
+    private final String ircCatPort;
 
     public SeyrenConfig() {
         
@@ -99,6 +101,10 @@ public class SeyrenConfig {
         this.flowdockExternalUsername = configOrDefault("FLOWDOCK_EXTERNAL_USERNAME", "Seyren");
         this.flowdockTags = configOrDefault("FLOWDOCK_TAGS", "");
         this.flowdockEmojis = configOrDefault("FLOWDOCK_EMOJIS", "");
+
+        // IrcCat
+        this.ircCatHost = configOrDefault("IRCCAT_HOST", "localhost");
+        this.ircCatPort = configOrDefault("IRCCAT_PORT", "12345");
         
     }
     
@@ -166,7 +172,17 @@ public class SeyrenConfig {
     public String getFlowdockEmojis() {
         return flowdockEmojis;
     }
-    
+
+    @JsonIgnore
+    public String getIrcCatHost() {
+        return this.ircCatHost;
+    }
+
+    @JsonIgnore
+    public int getIrcCatPort() {
+        return Integer.valueOf(this.ircCatPort);
+    }
+
     @JsonIgnore
     public String getSmtpFrom() {
         return smtpFrom;
