@@ -13,12 +13,14 @@
  */
 package com.seyren.core.service.schedule;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import com.seyren.core.domain.Check;
+import com.seyren.core.service.checker.NoopTargetCheck;
 import com.seyren.core.service.checker.TargetChecker;
 import com.seyren.core.service.checker.ValueChecker;
 import com.seyren.core.service.notification.NotificationService;
@@ -43,9 +45,13 @@ public class CheckRunnerFactory {
         this.valueChecker = valueChecker;
         this.notificationServices = notificationServices;
     }
-    
+
     public CheckRunner create(Check check) {
         return new CheckRunner(check, alertsStore, checksStore, targetChecker, valueChecker, notificationServices);
     }
-    
+
+    public CheckRunner create(Check check, BigDecimal value) {
+        return new CheckRunner(check, alertsStore, checksStore, new NoopTargetCheck(value), valueChecker, notificationServices);
+    }
+
 }

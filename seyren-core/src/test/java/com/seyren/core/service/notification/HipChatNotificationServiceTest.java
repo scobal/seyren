@@ -17,6 +17,7 @@ import static com.github.restdriver.clientdriver.RestClientDriver.*;
 import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.Matchers.*;
 
+import java.net.*;
 import java.util.Arrays;
 import java.util.List;
 
@@ -35,6 +36,7 @@ import com.seyren.core.util.config.SeyrenConfig;
 
 public class HipChatNotificationServiceTest {
     
+    private SeyrenConfig seyrenConfig;
     private NotificationService notificationService;
     
     @Rule
@@ -42,7 +44,8 @@ public class HipChatNotificationServiceTest {
     
     @Before
     public void before() {
-        notificationService = new HipChatNotificationService(new SeyrenConfig(), clientDriver.getBaseUrl());
+        seyrenConfig = new SeyrenConfig();
+        notificationService = new HipChatNotificationService(seyrenConfig, clientDriver.getBaseUrl());
     }
     
     @Test
@@ -51,7 +54,7 @@ public class HipChatNotificationServiceTest {
     }
     
     @Test
-    public void basicHappyPathTest() {
+    public void basicHappyPathTest() throws Exception {
         Check check = new Check()
                 .withEnabled(true)
                 .withName("test-check")
@@ -64,14 +67,15 @@ public class HipChatNotificationServiceTest {
                 .withFromType(AlertType.OK)
                 .withToType(AlertType.ERROR);
         List<Alert> alerts = Arrays.asList(alert);
-        
+
+        String seyrenUrl = URLEncoder.encode(seyrenConfig.getBaseUrl(), "UTF-8");
         clientDriver.addExpectation(
                 onRequestTo("/v1/rooms/message")
                         .withMethod(Method.POST)
                         .withBody(is("auth_token="
                                 + "&from=Seyren+Alert"
                                 + "&room_id=target"
-                                + "&message=Check+%3Ca+href%3Dhttp%3A%2F%2Flocalhost%3A8080%2Fseyren%2F%23%2Fchecks%2Fnull%3Etest-check%3C%2Fa%3E+has+entered+its+ERROR+state."
+                                + "&message=Check+%3Ca+href%3D" + seyrenUrl + "%2F%23%2Fchecks%2Fnull%3Etest-check%3C%2Fa%3E+has+entered+its+ERROR+state."
                                 + "&color=red"
                                 + "&notify=1"), "application/x-www-form-urlencoded"),
                 giveEmptyResponse());

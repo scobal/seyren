@@ -16,8 +16,7 @@ package com.seyren.core.util.config;
 import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.Matchers.*;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 
 public class SeyrenConfigTest {
     
@@ -30,7 +29,9 @@ public class SeyrenConfigTest {
     
     @Test
     public void defaultBaseUrlIsCorrect() {
-        assertThat(config.getBaseUrl(), is("http://localhost:8080/seyren"));
+        if (config.isBaseUrlSetToDefault()) {
+            assertThat(config.getBaseUrl(), is("http://localhost:8080/seyren"));
+        }
     }
     
     @Test

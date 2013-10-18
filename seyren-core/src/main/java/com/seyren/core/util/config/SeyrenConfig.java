@@ -30,6 +30,8 @@ import com.seyren.core.util.velocity.Slf4jLogChute;
 @Named
 public class SeyrenConfig {
     
+    private static final String DEFAULT_BASE_URL = "http://localhost:8080/seyren";
+
     private final String baseUrl;
     private final String mongoUrl;
     private final String graphiteUrl;
@@ -38,6 +40,8 @@ public class SeyrenConfig {
     private final String graphiteKeyStore;
     private final String graphiteKeyStorePassword;
     private final String graphiteTrustStore;
+    private final String graphiteCarbonPickleEnable;
+    private final String graphiteCarbonPicklePort;
     private final String pagerDutyDomain;
     private final String pagerDutyToken;
     private final String pagerDutyUsername;
@@ -56,11 +60,13 @@ public class SeyrenConfig {
     // Icon mapped check sate (AlertType) see http://apps.timwhitlock.info/emoji/tables/unicode
     // question, sunny, cloud, voltage exclamation should be: \u2753,\u2600,\u2601,\u26A1,\u2757
     private final String flowdockEmojis;
-    
+    private final String ircCatHost;
+    private final String ircCatPort;
+
     public SeyrenConfig() {
         
         // Base
-        this.baseUrl = stripEnd(configOrDefault("SEYREN_URL", "http://localhost:8080/seyren"), "/");
+        this.baseUrl = stripEnd(configOrDefault("SEYREN_URL", DEFAULT_BASE_URL), "/");
         this.mongoUrl = configOrDefault("MONGO_URL", "mongodb://localhost:27017/seyren");
         
         // Graphite
@@ -70,7 +76,8 @@ public class SeyrenConfig {
         this.graphiteKeyStore = configOrDefault("GRAPHITE_KEYSTORE", "");
         this.graphiteKeyStorePassword = configOrDefault("GRAPHITE_KEYSTORE_PASSWORD", "");
         this.graphiteTrustStore = configOrDefault("GRAPHITE_TRUSTSTORE", "");
-        
+        this.graphiteCarbonPickleEnable = configOrDefault("GRAPHITE_CARBON_PICKLE_ENABLE", "false");
+        this.graphiteCarbonPicklePort = configOrDefault("GRAPHITE_CARBON_PICKLE_PORT", "2004");
         // SMTP
         this.smtpFrom = configOrDefault(list("SMTP_FROM", "SEYREN_FROM_EMAIL"), "alert@seyren");
         this.smtpUsername = configOrDefault("SMTP_USERNAME", "");
@@ -96,6 +103,10 @@ public class SeyrenConfig {
         this.flowdockExternalUsername = configOrDefault("FLOWDOCK_EXTERNAL_USERNAME", "Seyren");
         this.flowdockTags = configOrDefault("FLOWDOCK_TAGS", "");
         this.flowdockEmojis = configOrDefault("FLOWDOCK_EMOJIS", "");
+
+        // IrcCat
+        this.ircCatHost = configOrDefault("IRCCAT_HOST", "localhost");
+        this.ircCatPort = configOrDefault("IRCCAT_PORT", "12345");
         
     }
     
@@ -107,6 +118,11 @@ public class SeyrenConfig {
     
     public String getBaseUrl() {
         return baseUrl;
+    }
+
+    @JsonIgnore
+    public boolean isBaseUrlSetToDefault() {
+        return getBaseUrl().equals(DEFAULT_BASE_URL);
     }
     
     @JsonIgnore
@@ -163,7 +179,17 @@ public class SeyrenConfig {
     public String getFlowdockEmojis() {
         return flowdockEmojis;
     }
-    
+
+    @JsonIgnore
+    public String getIrcCatHost() {
+        return this.ircCatHost;
+    }
+
+    @JsonIgnore
+    public int getIrcCatPort() {
+        return Integer.valueOf(this.ircCatPort);
+    }
+
     @JsonIgnore
     public String getSmtpFrom() {
         return smtpFrom;
@@ -238,12 +264,22 @@ public class SeyrenConfig {
     public String getGraphiteKeyStorePassword() {
         return graphiteKeyStorePassword;
     }
-    
+
     @JsonIgnore
     public String getGraphiteTrustStore() {
         return graphiteTrustStore;
     }
-    
+
+    @JsonIgnore
+    public int getGraphiteCarbonPicklePort() {
+        return Integer.valueOf(graphiteCarbonPicklePort);
+    }
+
+    @JsonIgnore
+    public boolean getGraphiteCarbonPickleEnable() {
+        return Boolean.valueOf(graphiteCarbonPickleEnable);
+    }
+
     private static String configOrDefault(String propertyName, String defaultValue) {
         return configOrDefault(list(propertyName), defaultValue);
     }

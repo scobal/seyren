@@ -11,6 +11,7 @@
             error: null,
             previewImage: "./img/preview-nodata.png",
             enabled: true,
+            live: false,
             totalMetric: '-'
         };
 

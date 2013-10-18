@@ -76,6 +76,8 @@ public class FlowdockNotificationServiceTest {
     
     @Test
     public void basicFlowdockTest() {
+        BigDecimal value = new BigDecimal("1.0");
+
         Check check = new Check()
                 .withId("123")
                 .withEnabled(true)
@@ -86,7 +88,7 @@ public class FlowdockNotificationServiceTest {
                 .withType(SubscriptionType.FLOWDOCK)
                 .withTarget("target");
         Alert alert = new Alert()
-                .withValue(new BigDecimal("1.0"))
+                .withValue(value)
                 .withTimestamp(new DateTime())
                 .withFromType(AlertType.OK)
                 .withToType(AlertType.ERROR);
@@ -108,7 +110,7 @@ public class FlowdockNotificationServiceTest {
         
         assertThat(node, hasJsonPath("$.content", containsString("test-check")));
         assertThat(node, hasJsonPath("$.content", containsString("ERROR")));
-        assertThat(node, hasJsonPath("$.content", containsString("1.000000")));
+        assertThat(node, hasJsonPath("$.content", containsString(value.toString())));
         assertThat(node, hasJsonPath("$.content", containsString("/#/checks/123")));
         assertThat(node, hasJsonPath("$.external_user_name", is("Seyren")));
         assertThat(node, hasJsonPath("$.tags", hasSize(1)));
