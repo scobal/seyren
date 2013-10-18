@@ -109,7 +109,7 @@ public class FlowdockNotificationService implements NotificationService {
         String alertsString = Joiner.on(", ").join(transform(alerts, new Function<Alert, String>() {
             @Override
             public String apply(Alert input) {
-                return String.format("%s: %f", input.getTarget(), input.getValue());
+                return String.format("%s: %s", input.getTarget(), input.getValue().toString());
             }
         }));
         return String.format("%s %s has entered its %s state - [%s] - %s - %s",
