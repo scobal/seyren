@@ -105,6 +105,7 @@ public class MongoMapper {
         String id = dbo.get("_id").toString();
         String checkId = getString(dbo, "checkId");
         BigDecimal value = getBigDecimal(dbo, "value");
+        String graphiteInstanceId = getString(dbo, "graphiteInstanceId");
         String target = getString(dbo, "target");
         BigDecimal warn = getBigDecimal(dbo, "warn");
         BigDecimal error = getBigDecimal(dbo, "error");
@@ -116,6 +117,7 @@ public class MongoMapper {
                 .withId(id)
                 .withCheckId(checkId)
                 .withValue(value)
+                .withGraphiteInstanceId(graphiteInstanceId)
                 .withTarget(target)
                 .withWarn(warn)
                 .withError(error)
@@ -193,6 +195,7 @@ public class MongoMapper {
         Map map = new HashMap();
         map.put("_id", alert.getId());
         map.put("checkId", alert.getCheckId());
+        map.put("graphiteInstanceId", alert.getGraphiteInstanceId());
         map.put("target", alert.getTarget());
         if (alert.getValue() != null) {
             map.put("value", alert.getValue().toPlainString());

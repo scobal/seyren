@@ -28,6 +28,6 @@ public interface AlertsStore {
     
     void deleteAlerts(String checkId, DateTime before);
     
-    Alert getLastAlertForTargetOfCheck(String target, String checkId);
+    Alert getLastAlertForTargetOfCheck(String graphiteInstanceId, String target, String checkId);
     
 }

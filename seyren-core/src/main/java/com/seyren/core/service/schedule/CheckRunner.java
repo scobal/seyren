@@ -57,9 +57,12 @@ public class CheckRunner implements Runnable {
     
     @Override
     public final void run() {
+    	
         if (!check.isEnabled()) {
             return;
         }
+        
+        String graphiteInstanceId = check.getGraphiteInstanceId();
         
         try {
             Map<String, Optional<BigDecimal>> targetValues = targetChecker.check(check);
@@ -82,13 +85,13 @@ public class CheckRunner implements Runnable {
                 Optional<BigDecimal> value = entry.getValue();
                 
                 if (!value.isPresent()) {
-                    LOGGER.warn("No value present for {}", target);
+                    LOGGER.warn("No value present for graphiteInstanceId={}, target={}", graphiteInstanceId, target);
                     continue;
                 }
                 
                 BigDecimal currentValue = value.get();
                 
-                Alert lastAlert = alertsStore.getLastAlertForTargetOfCheck(target, check.getId());
+                Alert lastAlert = alertsStore.getLastAlertForTargetOfCheck(graphiteInstanceId, target, check.getId());
                 
                 AlertType lastState;
                 
@@ -108,7 +111,7 @@ public class CheckRunner implements Runnable {
                     continue;
                 }
                 
-                Alert alert = createAlert(target, currentValue, warn, error, lastState, currentState, now);
+                Alert alert = createAlert(graphiteInstanceId, target, currentValue, warn, error, lastState, currentState, now);
                 
                 alertsStore.createAlert(check.getId(), alert);
                 
@@ -158,8 +161,9 @@ public class CheckRunner implements Runnable {
         return last == current;
     }
     
-    private Alert createAlert(String target, BigDecimal value, BigDecimal warn, BigDecimal error, AlertType from, AlertType to, DateTime now) {
+    private Alert createAlert(String graphiteInstanceId, String target, BigDecimal value, BigDecimal warn, BigDecimal error, AlertType from, AlertType to, DateTime now) {
         return new Alert()
+        		.withGraphiteInstanceId(graphiteInstanceId)
                 .withTarget(target)
                 .withValue(value)
                 .withWarn(warn)
