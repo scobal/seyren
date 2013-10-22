@@ -110,6 +110,10 @@
             $scope.loadCheck();
         });
 
+        $scope.$on('check:swapCheckLiveEnabled', function () {
+            $scope.loadCheck();
+        });
+
         $scope.swapCheckEnabled = function (check) {
             Seyren.swapCheckEnabled(check);
         };
@@ -118,10 +122,13 @@
             Seyren.swapSubscriptionEnabled(check, subscription);
         };
 
+        $scope.swapCheckLiveEnabled = function (check) {
+            Seyren.swapCheckLiveEnabled(check);
+        };
+
         $scope.editSubscription = function (check, subscription) {
             Seyren.editSubscription(check, subscription);
         };
-
 
         $scope.deleteSubscription = function (check, subscription) {
             Subscriptions.remove({checkId: check.id, subscriptionId: subscription.id}, subscription, function () {

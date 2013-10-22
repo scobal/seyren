@@ -16,8 +16,7 @@ package com.seyren.core.util.config;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 
 public class SeyrenConfigTest {
     
@@ -31,7 +30,9 @@ public class SeyrenConfigTest {
     // FIXME This fails when SEYREN_URL is set to something else. [WLW]
     @Test
     public void defaultBaseUrlIsCorrect() {
-        assertThat(config.getBaseUrl(), is("http://localhost:8080/seyren"));
+        if (config.isBaseUrlSetToDefault()) {
+            assertThat(config.getBaseUrl(), is("http://localhost:8080/seyren"));
+        }
     }
     
     // FIXME This fails when MONGO_URL is set to something else. [WLW]

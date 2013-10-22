@@ -36,6 +36,8 @@ public class GraphiteInstanceConfig {
     private String keyStore;
     private String keyStorePassword;
     private String trustStore;
+    private int carbonPicklePort;
+    private boolean carbonPickleEnable;
     
     public String getId() {
         return id;
@@ -105,5 +107,22 @@ public class GraphiteInstanceConfig {
     public void setTrustStore(String trustStore) {
         this.trustStore = trustStore;
     }
-
+    
+    @JsonIgnore
+    public int getCarbonPicklePort() {
+    	return carbonPicklePort;
+    }
+    
+    public void setCarbonPicklePort(int carbonPicklePort) {
+    	this.carbonPicklePort = carbonPicklePort;
+    }
+    
+    @JsonIgnore
+    public boolean getCarbonPickleEnable() {
+    	return carbonPickleEnable;
+    }
+    
+    public void setCarbonPickleEnable(boolean carbonPickleEnable) {
+    	this.carbonPickleEnable = carbonPickleEnable;
+    }
 }

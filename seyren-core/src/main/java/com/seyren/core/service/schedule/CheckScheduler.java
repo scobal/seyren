@@ -43,7 +43,7 @@ public class CheckScheduler {
     
     @Scheduled(fixedRate = 60000)
     public void performChecks() {
-        List<Check> checks = checksStore.getChecks(true).getValues();
+        List<Check> checks = checksStore.getChecks(true, false).getValues();
         for (final Check check : checks) {
             executor.execute(checkRunnerFactory.create(check));
         }

@@ -32,6 +32,8 @@ import com.seyren.core.util.velocity.Slf4jLogChute;
 @Named
 public class SeyrenConfig {
     
+    private static final String DEFAULT_BASE_URL = "http://localhost:8080/seyren";
+
     private final String baseUrl;
     private final String mongoUrl;
     private final String pagerDutyDomain;
@@ -53,11 +55,13 @@ public class SeyrenConfig {
     // question, sunny, cloud, voltage exclamation should be: \u2753,\u2600,\u2601,\u26A1,\u2757
     private final String flowdockEmojis;
     private final List<GraphiteInstanceConfig> graphiteInstanceConfigs = new ArrayList<GraphiteInstanceConfig>();
-    
+    private final String ircCatHost;
+    private final String ircCatPort;
+
     public SeyrenConfig() {
         
         // Base
-        this.baseUrl = stripEnd(configOrDefault("SEYREN_URL", "http://localhost:8080/seyren"), "/");
+        this.baseUrl = stripEnd(configOrDefault("SEYREN_URL", DEFAULT_BASE_URL), "/");
         this.mongoUrl = configOrDefault("MONGO_URL", "mongodb://localhost:27017/seyren");
         
         // SMTP
@@ -85,6 +89,10 @@ public class SeyrenConfig {
         this.flowdockExternalUsername = configOrDefault("FLOWDOCK_EXTERNAL_USERNAME", "Seyren");
         this.flowdockTags = configOrDefault("FLOWDOCK_TAGS", "");
         this.flowdockEmojis = configOrDefault("FLOWDOCK_EMOJIS", "");
+
+        // IrcCat
+        this.ircCatHost = configOrDefault("IRCCAT_HOST", "localhost");
+        this.ircCatPort = configOrDefault("IRCCAT_PORT", "12345");
         
         buildGraphiteInstanceConfigs();
     }
@@ -103,6 +111,8 @@ public class SeyrenConfig {
         graphiteInstanceConfig.setKeyStore(configOrDefault("GRAPHITE_KEYSTORE", ""));
         graphiteInstanceConfig.setKeyStorePassword(configOrDefault("GRAPHITE_KEYSTORE_PASSWORD", ""));
         graphiteInstanceConfig.setTrustStore(configOrDefault("GRAPHITE_TRUSTSTORE", ""));
+        graphiteInstanceConfig.setCarbonPickleEnable(Boolean.parseBoolean(configOrDefault("GRAPHITE_CARBON_PICKLE_ENABLE", "false")));
+        graphiteInstanceConfig.setCarbonPicklePort(Integer.parseInt(configOrDefault("GRAPHITE_CARBON_PICKLE_PORT", "2004")));
         
         graphiteInstanceConfigs.add(graphiteInstanceConfig);
     }
@@ -115,6 +125,11 @@ public class SeyrenConfig {
     
     public String getBaseUrl() {
         return baseUrl;
+    }
+
+    @JsonIgnore
+    public boolean isBaseUrlSetToDefault() {
+        return getBaseUrl().equals(DEFAULT_BASE_URL);
     }
     
     public List<GraphiteInstanceConfig> getGraphiteInstanceConfigs() {
@@ -184,7 +199,17 @@ public class SeyrenConfig {
     public String getFlowdockEmojis() {
         return flowdockEmojis;
     }
-    
+
+    @JsonIgnore
+    public String getIrcCatHost() {
+        return this.ircCatHost;
+    }
+
+    @JsonIgnore
+    public int getIrcCatPort() {
+        return Integer.valueOf(this.ircCatPort);
+    }
+
     @JsonIgnore
     public String getSmtpFrom() {
         return smtpFrom;

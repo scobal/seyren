@@ -53,6 +53,12 @@
                         <input id="check.enabled" class="input-medium" name="check.enabled" ng-model="check.enabled" type="checkbox" ng-checked="check.enabled">
                     </div>
                 </div>
+                <div ng-class="{ 'control-group': true, 'error': checkForm['check.live'].$invalid }">
+                    <label class="control-label" for="check.live">Live</label>
+                    <div class="controls">
+                        <input id="check.live" class="input-medium" name="check.live" ng-model="check.live" type="checkbox" ng-checked="check.live">
+                    </div>
+                </div>
                 <div class="control-group">
                     <div class="controls">
                         <img ng-src="{{ check.previewImage }}" src="./img/preview-nodata.png" />

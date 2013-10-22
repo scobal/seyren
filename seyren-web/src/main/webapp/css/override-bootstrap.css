@@ -31,3 +31,7 @@ body {
 .footer-links li:first-child {
     padding-left: 0;
 }
+
+.absolute {
+    position: absolute;
+}

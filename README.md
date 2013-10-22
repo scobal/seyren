@@ -33,6 +33,10 @@ open http://localhost:8080/seyren
 * `MONGO_URL` - The Mongo [connection string](http://docs.mongodb.org/manual/reference/connection-string/). Default: `mongodb://localhost:27017/seyren`
 * `SEYREN_URL` - The location of your Seyren instance. Default: `http://localhost:8080/seyren`
 
+#### [Real-time metrics](https://github.com/scobal/seyren/pull/142)
+* `GRAPHITE_CARBON_PICKLE_ENABLE` - Enable a TCP server to listen Carbon relay [pickle protocol](http://graphite.readthedocs.org/en/latest/feeding-carbon.html). Default: `false`
+* `GRAPHITE_CARBON_PICKLE_PORT` - The TCP server port. Default: `2004`
+
 #### SMTP
 * `SMTP_HOST` - The smtp server to send email notifications from. Default: `localhost`
 * `SMTP_PORT` - The smtp server port. Default: `25`
@@ -57,6 +61,10 @@ open http://localhost:8080/seyren
 * `FLOWDOCK_EXTERNAL_USERNAME` - The username that messages will be sent from to a flow. Default: `Seyren`
 * `FLOWDOCK_TAGS` -  Special tags to add to all messages. Default: ``
 * `FLOWDOCK_EMOJIS` - Mapping between state and emojis unicode. Default: ``
+
+#### [IRCcat](https://github.com/RJ/irccat)
+* `IRCCAT_HOST` - The hostname of the server where IRCcat is running. Default: `localhost`
+* `IRCCAT_PORT` - The port on which IRCcat is running. Default: `12345`
 
 ###Cloud Formation
 

@@ -80,6 +80,7 @@
         <org.mongodb.version>2.11.2</org.mongodb.version>
         <org.slf4j.version>1.7.5</org.slf4j.version>
         <org.springframework.version>3.2.4.RELEASE</org.springframework.version>
+        <org.python.version>2.5.3</org.python.version>
     </properties>
     
     <prerequisites>
@@ -127,7 +128,7 @@
                 <plugin>
                     <groupId>com.kelveden</groupId>
                     <artifactId>maven-karma-plugin</artifactId>
-                    <version>1.3</version>
+                    <version>1.5</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -151,8 +152,10 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.0</version>
                 <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
+                	<!-- Changed this from 1.6 to 1.7, as PickleHandler depends upon Java-1.7-only
+                	     java.nio.charset.StandardCharsets [williewheeler]-->
+                    <source>1.7</source>
+                    <target>1.7</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -369,6 +372,11 @@
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-web</artifactId>
                 <version>${org.springframework.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.python</groupId>
+                <artifactId>jython-standalone</artifactId>
+                <version>${org.python.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

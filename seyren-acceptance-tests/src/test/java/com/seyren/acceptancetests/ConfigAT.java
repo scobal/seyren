@@ -33,7 +33,7 @@ public class ConfigAT {
         // Base
         // response.asJson() includes baseUrl and graphiteInstancesConfigs, so the size is 2.
         assertThat(response.asJson().size(), is(2));
-        assertThat(response.asJson(), hasJsonPath("$.baseUrl", is("http://localhost:8080/seyren")));
+        assertThat(response.asJson(), hasJsonPath("$.baseUrl", not(isEmptyOrNullString())));
     }
     
 }

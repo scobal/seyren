@@ -100,14 +100,16 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
     }
     
     @Override
-    public SeyrenResponse<Check> getChecks(Boolean enabled) {
+    public SeyrenResponse<Check> getChecks(Boolean enabled, Boolean live) {
         List<Check> checks = new ArrayList<Check>();
-        DBCursor dbc;
+        DBObject query = new BasicDBObject();
         if (enabled != null) {
-            dbc = getChecksCollection().find(object("enabled", enabled));
-        } else {
-            dbc = getChecksCollection().find();
+            query.put("enabled", enabled);
         }
+        if (live != null) {
+            query.put("live", live);
+        }
+        DBCursor dbc = getChecksCollection().find(query);
         while (dbc.hasNext()) {
             checks.add(mapper.checkFrom(dbc.next()));
         }
@@ -172,6 +174,7 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
                 .with("warn", check.getWarn().toPlainString())
                 .with("error", check.getError().toPlainString())
                 .with("enabled", check.isEnabled())
+                .with("live", check.isLive())
                 .with("lastCheck", lastCheck == null ? null : new Date(lastCheck.getMillis()))
                 .with("state", check.getState().toString());
         

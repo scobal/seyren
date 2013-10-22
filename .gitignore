@@ -8,3 +8,4 @@
 META-INF/
 target/
 setenv.sh
+node_modules/

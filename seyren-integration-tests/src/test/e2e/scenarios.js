@@ -152,9 +152,12 @@ describe('check page', function () {
 
         expect(element('div.span7 div.row-fluid:eq(8) span.span2').text()).toBe('Enabled:');
         expect(element('div.span7 div.row-fluid:eq(8) span.span10 input:checked').val()).toBe('on');
+        
+        expect(element('div.span7 div.row-fluid:eq(9) span.span2').text()).toBe('Live:');
+        expect(element('div.span7 div.row-fluid:eq(9) span.span10 input:not(:checked)').val()).toBe('on');
 
-        expect(element('div.span7 div.row-fluid:eq(9) span.span2').text()).toBe('Last check:');
-        expect(element('div.span7 div.row-fluid:eq(9) span.span10').text()).toMatch('[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}');
+        expect(element('div.span7 div.row-fluid:eq(10) span.span2').text()).toBe('Last check:');
+        expect(element('div.span7 div.row-fluid:eq(10) span.span10').text()).toMatch('[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}');
     });
 
     it('should have \'Graphs\' thumbnail', function () {
