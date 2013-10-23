@@ -18,8 +18,6 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.Socket;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Executor;
@@ -46,7 +44,7 @@ import static org.python.google.common.collect.ImmutableSet.copyOf;
  */
 public class PickleHandler implements Runnable {
     private static final Logger LOGGER = LoggerFactory.getLogger(PickleHandler.class);
-    private static final Charset ISO_8859_1 = Charset.forName(StandardCharsets.ISO_8859_1.name());
+    private static final String ISO_8859_1 = "ISO-8859-1";
 
     private Socket socket;
     private Executor executor;

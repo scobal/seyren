@@ -120,7 +120,13 @@ public class IrcCatNotificationServiceTest {
                         }
                     } catch (IOException ioe) {
                     } finally {
-                        Closeables.closeQuietly(serverSocket);
+                        if (serverSocket != null && !serverSocket.isClosed()) {
+                            try {
+                                serverSocket.close();
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
                     }
                 }
             });
