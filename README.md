@@ -18,7 +18,7 @@ Seyren ([/ˈsaɪ.rʌn/](http://en.wikipedia.org/wiki/Wikipedia:IPA_for_English#K
 mvn clean package
 export GRAPHITE_URL=http://graphite.foohost.com:80
 java -jar seyren-web/target/seyren-web-*-war-exec.jar
-open http://localhost:8080/seyren
+open http://localhost:8080
 ```
 
 ###Environment variables
