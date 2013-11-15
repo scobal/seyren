@@ -25,6 +25,7 @@ open http://localhost:8080
 
 #### Base
 * `GRAPHITE_URL` - The location of your Graphite server. Default: `http://localhost:80`
+* `GRAPHITE_REFRESH` - The fixed period (in ms) between checks. Default: 60000
 * `GRAPHITE_USERNAME` - The HTTP Basic auth username for the Graphite server. Default: ``
 * `GRAPHITE_PASSWORD` - The HTTP Basic auth password for the Graphite server. Default: ``
 * `GRAPHITE_KEYSTORE` - The HTTP KeyStore path for the https Graphite server. Default: ``
