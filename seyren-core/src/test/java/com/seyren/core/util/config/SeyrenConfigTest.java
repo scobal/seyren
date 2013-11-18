@@ -13,8 +13,8 @@
  */
 package com.seyren.core.util.config;
 
-import static org.hamcrest.MatcherAssert.*;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
 import org.junit.*;
 
@@ -27,6 +27,7 @@ public class SeyrenConfigTest {
         config = new SeyrenConfig();
     }
     
+    // FIXME This fails when SEYREN_URL is set to something else. [WLW]
     @Test
     public void defaultBaseUrlIsCorrect() {
         if (config.isBaseUrlSetToDefault()) {
@@ -34,54 +35,10 @@ public class SeyrenConfigTest {
         }
     }
     
+    // FIXME This fails when MONGO_URL is set to something else. [WLW]
     @Test
     public void defaultMongoUrlIsCorrect() {
         assertThat(config.getMongoUrl(), is("mongodb://localhost:27017/seyren"));
-    }
-    
-    @Test
-    public void defaultGraphiteUrlIsCorrect() {
-        assertThat(config.getGraphiteUrl(), is("http://localhost:80"));
-    }
-    
-    @Test
-    public void defaultGraphiteUsernameIsCorrect() {
-        assertThat(config.getGraphiteUsername(), is(""));
-    }
-    
-    @Test
-    public void defaultGraphitePasswordIsCorrect() {
-        assertThat(config.getGraphitePassword(), is(""));
-    }
-    
-    @Test
-    public void defaultGraphiteSchemeIsCorrect() {
-        assertThat(config.getGraphiteScheme(), is("http"));
-    }
-    
-    @Test
-    public void defaultGraphiteHostIsCorrect() {
-        assertThat(config.getGraphiteHost(), is("localhost:80"));
-    }
-    
-    @Test
-    public void defaultGraphitePathIsCorrect() {
-        assertThat(config.getGraphitePath(), is(""));
-    }
-    
-    @Test
-    public void defaultGraphiteKeyStoreIsCorrect() {
-        assertThat(config.getGraphiteKeyStore(), is(""));
-    }
-    
-    @Test
-    public void defaultGraphiteKeyStorePasswordIsCorrect() {
-        assertThat(config.getGraphiteKeyStorePassword(), is(""));
-    }
-    
-    @Test
-    public void defaultGraphiteTrustStoreIsCorrect() {
-        assertThat(config.getGraphiteTrustStore(), is(""));
     }
     
     @Test

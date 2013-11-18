@@ -13,9 +13,11 @@
  */
 package com.seyren.core.util.graphite;
 
-import static com.github.restdriver.clientdriver.RestClientDriver.*;
-import static org.hamcrest.MatcherAssert.*;
-import static org.hamcrest.Matchers.*;
+import static com.github.restdriver.clientdriver.RestClientDriver.giveResponse;
+import static com.github.restdriver.clientdriver.RestClientDriver.giveResponseAsBytes;
+import static com.github.restdriver.clientdriver.RestClientDriver.onRequestTo;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -31,7 +33,7 @@ import org.junit.rules.ExpectedException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.restdriver.clientdriver.ClientDriverRule;
-import com.seyren.core.util.config.SeyrenConfig;
+import com.seyren.core.util.config.GraphiteInstanceConfig;
 
 public class GraphiteHttpClientTest {
     
@@ -47,7 +49,7 @@ public class GraphiteHttpClientTest {
     
     @Before
     public void before() {
-        graphiteHttpClient = new GraphiteHttpClient(seyrenConfig(clientDriver.getBaseUrl()));
+        graphiteHttpClient = new GraphiteHttpClient(graphiteInstanceConfig(clientDriver.getBaseUrl(), null, null));
     }
     
     @After
@@ -77,15 +79,13 @@ public class GraphiteHttpClientTest {
     public void exceptionGettingDataFromGraphiteIsHandled() throws Exception {
         thrown.expect(GraphiteReadException.class);
         
-        graphiteHttpClient = new GraphiteHttpClient(seyrenConfig("http://unknown"));
+        graphiteHttpClient = new GraphiteHttpClient(graphiteInstanceConfig("http://unknown", null, null));
         graphiteHttpClient.getTargetJson("service.*.1MinuteRate");
     }
     
     @Test
     public void authIsAddedWhenUsernameAndPasswordAreProvided() throws Exception {
-        System.setProperty("GRAPHITE_USERNAME", "seyren");
-        System.setProperty("GRAPHITE_PASSWORD", "s3yr3N");
-        graphiteHttpClient = new GraphiteHttpClient(seyrenConfig(clientDriver.getBaseUrl()));
+        graphiteHttpClient = new GraphiteHttpClient(graphiteInstanceConfig(clientDriver.getBaseUrl(), "seyren", "s3yr3N"));
         
         String response = "[{\"target\": \"service.error.1MinuteRate\", \"datapoints\": [[0.20, 1337453460],[0.01, 1337453463]]}]";
         
@@ -237,9 +237,7 @@ public class GraphiteHttpClientTest {
     
     @Test
     public void authIsUsedGettingChartFromGraphite() throws Exception {
-        System.setProperty("GRAPHITE_USERNAME", "seyren");
-        System.setProperty("GRAPHITE_PASSWORD", "s3yr3N");
-        graphiteHttpClient = new GraphiteHttpClient(seyrenConfig(clientDriver.getBaseUrl()));
+        graphiteHttpClient = new GraphiteHttpClient(graphiteInstanceConfig(clientDriver.getBaseUrl(), "seyren", "s3yr3N"));
         
         byte[] bytes = new byte[] { 12, 12, 24, 34 };
         InputStream response = new ByteArrayInputStream(bytes);
@@ -264,9 +262,22 @@ public class GraphiteHttpClientTest {
         System.clearProperty("GRAPHITE_PASSWORD");
     }
     
-    private SeyrenConfig seyrenConfig(String graphiteUrl) {
-        System.setProperty("GRAPHITE_URL", graphiteUrl);
-        return new SeyrenConfig();
+    private GraphiteInstanceConfig graphiteInstanceConfig(String graphiteUrl, String graphiteUsername, String graphitePassword) {
+        
+        // I don't think we're using these anymore (there are now multiple Graphite instances), but leaving then here
+        // just in case. [williewheeler]
+//        System.setProperty("GRAPHITE_URL", graphiteUrl);
+//        if (graphiteUsername != null) {
+//            System.setProperty("GRAPHITE_USERNAME", graphiteUsername);
+//        }
+//        if (graphitePassword != null) {
+//            System.setProperty("GRAPHITE_PASSWORD", graphitePassword);
+//        }
+        
+        GraphiteInstanceConfig graphiteInstanceConfig = new GraphiteInstanceConfig();
+        graphiteInstanceConfig.setBaseUrl(graphiteUrl);
+        graphiteInstanceConfig.setUsername(graphiteUsername);
+        graphiteInstanceConfig.setPassword(graphitePassword);
+        return graphiteInstanceConfig;
     }
-    
 }

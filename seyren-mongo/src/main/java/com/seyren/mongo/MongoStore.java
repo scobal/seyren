@@ -13,7 +13,8 @@
  */
 package com.seyren.mongo;
 
-import static com.seyren.mongo.NiceDBObject.*;
+import static com.seyren.mongo.NiceDBObject.forId;
+import static com.seyren.mongo.NiceDBObject.object;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -168,6 +169,7 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
         
         DBObject updateObject = object("name", check.getName())
                 .with("description", check.getDescription())
+                .with("graphiteInstanceId", check.getGraphiteInstanceId())
                 .with("target", check.getTarget())
                 .with("warn", check.getWarn().toPlainString())
                 .with("error", check.getError().toPlainString())
@@ -233,8 +235,8 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
     }
     
     @Override
-    public Alert getLastAlertForTargetOfCheck(String target, String checkId) {
-        DBObject query = object("checkId", checkId).with("target", target);
+    public Alert getLastAlertForTargetOfCheck(String graphiteInstanceId, String target, String checkId) {
+        DBObject query = object("checkId", checkId).with("graphiteInstanceId", graphiteInstanceId).with("target", target);
         DBCursor cursor = getAlertsCollection().find(query).sort(object("timestamp", -1)).limit(1);
         try {
             while (cursor.hasNext()) {

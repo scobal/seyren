@@ -13,32 +13,44 @@
  */
 package com.seyren.core.service.notification;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import static com.github.restdriver.Matchers.hasJsonPath;
-import com.github.restdriver.clientdriver.ClientDriverRequest.Method;
-import com.github.restdriver.clientdriver.ClientDriverRule;
 import static com.github.restdriver.clientdriver.RestClientDriver.giveResponse;
 import static com.github.restdriver.clientdriver.RestClientDriver.onRequestTo;
-import com.github.restdriver.clientdriver.capture.BodyCapture;
-import com.github.restdriver.clientdriver.capture.JsonBodyCapture;
-import com.seyren.core.domain.*;
-import com.seyren.core.util.config.SeyrenConfig;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.startsWith;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.startsWith;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import static org.mockito.Mockito.*;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.github.restdriver.clientdriver.ClientDriverRequest.Method;
+import com.github.restdriver.clientdriver.ClientDriverRule;
+import com.github.restdriver.clientdriver.capture.BodyCapture;
+import com.github.restdriver.clientdriver.capture.JsonBodyCapture;
+import com.seyren.core.domain.Alert;
+import com.seyren.core.domain.AlertType;
+import com.seyren.core.domain.Check;
+import com.seyren.core.domain.Subscription;
+import com.seyren.core.domain.SubscriptionType;
+import com.seyren.core.util.config.GraphiteInstanceConfig;
+import com.seyren.core.util.config.SeyrenConfig;
 
 public class HttpNotificationServiceTest {
     
     private SeyrenConfig mockSeyrenConfig;
+    private GraphiteInstanceConfig mockGraphiteInstanceConfig;
     private NotificationService service;
     
     @Rule
@@ -47,6 +59,8 @@ public class HttpNotificationServiceTest {
     @Before
     public void before() {
         mockSeyrenConfig = mock(SeyrenConfig.class);
+        mockGraphiteInstanceConfig = mock(GraphiteInstanceConfig.class);
+        when(mockSeyrenConfig.getGraphiteInstanceConfig(anyString())).thenReturn(mockGraphiteInstanceConfig);
         service = new HttpNotificationService(mockSeyrenConfig);
     }
     
@@ -66,7 +80,7 @@ public class HttpNotificationServiceTest {
         
         String seyrenUrl = clientDriver.getBaseUrl() + "/seyren";
         
-        when(mockSeyrenConfig.getGraphiteUrl()).thenReturn(clientDriver.getBaseUrl() + "/graphite");
+        when(mockGraphiteInstanceConfig.getBaseUrl()).thenReturn(clientDriver.getBaseUrl() + "/graphite");
         when(mockSeyrenConfig.getBaseUrl()).thenReturn(seyrenUrl);
         
         Check check = new Check()
@@ -117,7 +131,7 @@ public class HttpNotificationServiceTest {
         assertThat(node, hasJsonPath("$.preview", startsWith("<br />")));
         assertThat(node, hasJsonPath("$.preview", containsString(check.getTarget())));
         
-        verify(mockSeyrenConfig).getGraphiteUrl();
+        verify(mockGraphiteInstanceConfig).getBaseUrl();
         verify(mockSeyrenConfig).getBaseUrl();
         
     }

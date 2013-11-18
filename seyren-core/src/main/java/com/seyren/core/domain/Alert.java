@@ -38,6 +38,7 @@ public class Alert {
     private String id;
     private String checkId;
     private BigDecimal value;
+    private String graphiteInstanceId;
     private String target;
     private BigDecimal warn;
     private BigDecimal error;
@@ -82,6 +83,19 @@ public class Alert {
     public Alert withValue(BigDecimal value) {
         setValue(value);
         return this;
+    }
+    
+    public String getGraphiteInstanceId() {
+    	return graphiteInstanceId;
+    }
+    
+    public void setGraphiteInstanceId(String graphiteInstanceId) {
+    	this.graphiteInstanceId = graphiteInstanceId;
+    }
+    
+    public Alert withGraphiteInstanceId(String graphiteInstanceId) {
+    	setGraphiteInstanceId(graphiteInstanceId);
+    	return this;
     }
     
     public String getTarget() {

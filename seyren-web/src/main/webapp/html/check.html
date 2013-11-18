@@ -37,6 +37,10 @@
                 </span>
             </div>
             <div class="row-fluid">
+                <span class="span2">Graphite instance:</span>
+                <span class="span10">{{check.graphiteInstanceId}}</span>
+            </div>
+            <div class="row-fluid">
                 <span class="span2">Target:</span>
                 <span class="span10">{{check.target}}</span>
             </div>
@@ -146,6 +150,7 @@
             <thead>
                 <tr>
                     <th>Timestamp</th>
+                    <th>Graphite instance</th>
                     <th>Target</th>
                     <th>Value</th>
                     <th>Warn level</th>
@@ -157,6 +162,7 @@
             <tbody>
                 <tr ng-repeat="alert in alerts.values">
                     <td>{{ alert.timestamp | date: 'yyyy-MM-dd HH:mm:ss' }}</td>
+                    <td>{{ alert.graphiteInstanceId }}</td>
                     <td>{{ alert.target }}</td>
                     <td>{{ alert.value }}</td>
                     <td>{{ alert.warn }}</td>

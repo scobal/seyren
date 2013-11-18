@@ -19,6 +19,15 @@
                         <input id="check.description" class="input-xlarge" name="check.description" ng-model="check.description" type="text" />
                     </div>
                 </div>
+                
+                <!-- FIXME Use a dropdown with the instance names here [WLW] -->
+                <div ng-class="{ 'control-group': true, 'error': checkForm['check.graphiteInstanceId'].$invalid }">
+                    <label class="control-label" for="check.graphiteInstanceId">Graphite instance</label>
+                    <div class="controls">
+                        <input id="check.graphiteInstanceId" class="input-xlarge"  name="check.graphiteInstanceId" ng-model="check.graphiteInstanceId" type="text" required />
+                    </div>
+                </div>
+                
                 <div ng-class="{ 'control-group': true, 'error': checkForm['check.target'].$invalid }">
                     <label class="control-label" for="check.target">Target</label>
                     <div class="controls">

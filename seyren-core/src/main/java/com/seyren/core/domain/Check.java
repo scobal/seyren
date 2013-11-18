@@ -40,6 +40,7 @@ public class Check {
     private String id;
     private String name;
     private String description;
+    private String graphiteInstanceId;
     private String target;
     private BigDecimal warn;
     private BigDecimal error;
@@ -85,6 +86,19 @@ public class Check {
     
     public Check withDescription(String description) {
         this.description = description;
+        return this;
+    }
+    
+    public String getGraphiteInstanceId() {
+        return graphiteInstanceId;
+    }
+    
+    public void setGraphiteInstanceId(String graphiteInstanceId) {
+        this.graphiteInstanceId = graphiteInstanceId;
+    }
+    
+    public Check withGraphiteInstanceId(String graphiteInstanceId) {
+        setGraphiteInstanceId(graphiteInstanceId);
         return this;
     }
     

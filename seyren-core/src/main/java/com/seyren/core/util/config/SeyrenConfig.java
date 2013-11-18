@@ -13,8 +13,10 @@
  */
 package com.seyren.core.util.config;
 
-import static org.apache.commons.lang.StringUtils.*;
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
+import static org.apache.commons.lang.StringUtils.stripEnd;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -34,14 +36,6 @@ public class SeyrenConfig {
 
     private final String baseUrl;
     private final String mongoUrl;
-    private final String graphiteUrl;
-    private final String graphiteUsername;
-    private final String graphitePassword;
-    private final String graphiteKeyStore;
-    private final String graphiteKeyStorePassword;
-    private final String graphiteTrustStore;
-    private final String graphiteCarbonPickleEnable;
-    private final String graphiteCarbonPicklePort;
     private final String pagerDutyDomain;
     private final String pagerDutyToken;
     private final String pagerDutyUsername;
@@ -60,6 +54,7 @@ public class SeyrenConfig {
     // Icon mapped check sate (AlertType) see http://apps.timwhitlock.info/emoji/tables/unicode
     // question, sunny, cloud, voltage exclamation should be: \u2753,\u2600,\u2601,\u26A1,\u2757
     private final String flowdockEmojis;
+    private final List<GraphiteInstanceConfig> graphiteInstanceConfigs = new ArrayList<GraphiteInstanceConfig>();
     private final String ircCatHost;
     private final String ircCatPort;
 
@@ -69,15 +64,6 @@ public class SeyrenConfig {
         this.baseUrl = stripEnd(configOrDefault("SEYREN_URL", DEFAULT_BASE_URL), "/");
         this.mongoUrl = configOrDefault("MONGO_URL", "mongodb://localhost:27017/seyren");
         
-        // Graphite
-        this.graphiteUrl = stripEnd(configOrDefault("GRAPHITE_URL", "http://localhost:80"), "/");
-        this.graphiteUsername = configOrDefault("GRAPHITE_USERNAME", "");
-        this.graphitePassword = configOrDefault("GRAPHITE_PASSWORD", "");
-        this.graphiteKeyStore = configOrDefault("GRAPHITE_KEYSTORE", "");
-        this.graphiteKeyStorePassword = configOrDefault("GRAPHITE_KEYSTORE_PASSWORD", "");
-        this.graphiteTrustStore = configOrDefault("GRAPHITE_TRUSTSTORE", "");
-        this.graphiteCarbonPickleEnable = configOrDefault("GRAPHITE_CARBON_PICKLE_ENABLE", "false");
-        this.graphiteCarbonPicklePort = configOrDefault("GRAPHITE_CARBON_PICKLE_PORT", "2004");
         // SMTP
         this.smtpFrom = configOrDefault(list("SMTP_FROM", "SEYREN_FROM_EMAIL"), "alert@seyren");
         this.smtpUsername = configOrDefault("SMTP_USERNAME", "");
@@ -108,6 +94,27 @@ public class SeyrenConfig {
         this.ircCatHost = configOrDefault("IRCCAT_HOST", "localhost");
         this.ircCatPort = configOrDefault("IRCCAT_PORT", "12345");
         
+        buildGraphiteInstanceConfigs();
+    }
+    
+    private void buildGraphiteInstanceConfigs() {
+    	
+    	// For now, just read in a single Graphite instance so Mark and Neil can decide how they want to handle
+    	// configuration generally. Once they have that, we can read in the multiple Graphite instance configs.
+    	// [williewheeler]
+    	GraphiteInstanceConfig graphiteInstanceConfig = new GraphiteInstanceConfig();
+    	graphiteInstanceConfig.setId("the-one-graphite-instance");
+    	graphiteInstanceConfig.setName("The One Graphite Instance");
+    	graphiteInstanceConfig.setBaseUrl(stripEnd(configOrDefault("GRAPHITE_URL", "http://localhost:80"), "/"));
+        graphiteInstanceConfig.setUsername(configOrDefault("GRAPHITE_USERNAME", ""));
+        graphiteInstanceConfig.setPassword(configOrDefault("GRAPHITE_PASSWORD", ""));
+        graphiteInstanceConfig.setKeyStore(configOrDefault("GRAPHITE_KEYSTORE", ""));
+        graphiteInstanceConfig.setKeyStorePassword(configOrDefault("GRAPHITE_KEYSTORE_PASSWORD", ""));
+        graphiteInstanceConfig.setTrustStore(configOrDefault("GRAPHITE_TRUSTSTORE", ""));
+        graphiteInstanceConfig.setCarbonPickleEnable(Boolean.parseBoolean(configOrDefault("GRAPHITE_CARBON_PICKLE_ENABLE", "false")));
+        graphiteInstanceConfig.setCarbonPicklePort(Integer.parseInt(configOrDefault("GRAPHITE_CARBON_PICKLE_PORT", "2004")));
+        
+        graphiteInstanceConfigs.add(graphiteInstanceConfig);
     }
     
     @PostConstruct
@@ -123,6 +130,19 @@ public class SeyrenConfig {
     @JsonIgnore
     public boolean isBaseUrlSetToDefault() {
         return getBaseUrl().equals(DEFAULT_BASE_URL);
+    }
+    
+    public List<GraphiteInstanceConfig> getGraphiteInstanceConfigs() {
+    	return graphiteInstanceConfigs;
+    }
+    
+    public GraphiteInstanceConfig getGraphiteInstanceConfig(String graphiteInstanceId) {
+    	for (GraphiteInstanceConfig graphiteInstanceConfig : graphiteInstanceConfigs) {
+    		if (graphiteInstanceId.equals(graphiteInstanceConfig.getId())) {
+    			return graphiteInstanceConfig;
+    		}
+    	}
+    	throw new RuntimeException("No such Graphite instance: id=" + graphiteInstanceId);
     }
     
     @JsonIgnore
@@ -220,66 +240,6 @@ public class SeyrenConfig {
         return smtpPort;
     }
     
-    @JsonIgnore
-    public String getGraphiteUrl() {
-        return graphiteUrl;
-    }
-    
-    @JsonIgnore
-    public String getGraphiteUsername() {
-        return graphiteUsername;
-    }
-    
-    @JsonIgnore
-    public String getGraphitePassword() {
-        return graphitePassword;
-    }
-    
-    @JsonIgnore
-    public String getGraphiteScheme() {
-        return splitBaseUrl(graphiteUrl)[0];
-    }
-    
-    @JsonIgnore
-    public int getGraphiteSSLPort() {
-        return Integer.valueOf(splitBaseUrl(graphiteUrl)[1]);
-    }
-    
-    @JsonIgnore
-    public String getGraphiteHost() {
-        return splitBaseUrl(graphiteUrl)[2];
-    }
-    
-    @JsonIgnore
-    public String getGraphitePath() {
-        return splitBaseUrl(graphiteUrl)[3];
-    }
-    
-    @JsonIgnore
-    public String getGraphiteKeyStore() {
-        return graphiteKeyStore;
-    }
-    
-    @JsonIgnore
-    public String getGraphiteKeyStorePassword() {
-        return graphiteKeyStorePassword;
-    }
-
-    @JsonIgnore
-    public String getGraphiteTrustStore() {
-        return graphiteTrustStore;
-    }
-
-    @JsonIgnore
-    public int getGraphiteCarbonPicklePort() {
-        return Integer.valueOf(graphiteCarbonPicklePort);
-    }
-
-    @JsonIgnore
-    public boolean getGraphiteCarbonPickleEnable() {
-        return Boolean.valueOf(graphiteCarbonPickleEnable);
-    }
-
     private static String configOrDefault(String propertyName, String defaultValue) {
         return configOrDefault(list(propertyName), defaultValue);
     }
@@ -304,32 +264,5 @@ public class SeyrenConfig {
     
     private static List<String> list(String... propertyNames) {
         return Arrays.asList(propertyNames);
-    }
-    
-    private static String[] splitBaseUrl(String baseUrl) {
-        String[] baseParts = new String[4];
-        
-        if (baseUrl.toString().contains("://")) {
-            baseParts[0] = baseUrl.toString().split("://")[0];
-            baseUrl = baseUrl.toString().split("://")[1];
-        } else {
-            baseParts[0] = "http";
-        }
-        
-        if (baseUrl.contains(":")) {
-            baseParts[1] = baseUrl.split(":")[1];
-        } else {
-            baseParts[1] = "443";
-        }
-        
-        if (baseUrl.contains("/")) {
-            baseParts[2] = baseUrl.split("/")[0];
-            baseParts[3] = "/" + baseUrl.split("/", 2)[1];
-        } else {
-            baseParts[2] = baseUrl;
-            baseParts[3] = "";
-        }
-        
-        return baseParts;
     }
 }

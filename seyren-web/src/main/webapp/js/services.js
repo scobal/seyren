@@ -59,6 +59,12 @@
         factory('Graph', function ($resource) {
             var chart = function (baseurl, chart) {
                 var result = baseurl + '/?';
+                if (chart.graphiteInstanceId) {
+                    result += '&graphiteInstanceId=' + chart.graphiteInstanceId;
+                }
+                if (chart.target) {
+                    result += '&target=' + chart.target;
+                }
                 if (chart.width) {
                     result += '&width=' + chart.width;
                 }
@@ -92,8 +98,9 @@
             };
             return {
                 previewImage: function (check) {
-                    if (check && check.target) {
-                        return chart('./api/chart/' + check.target, {
+                    if (check && check.graphiteInstanceId && check.target) {
+                        return chart('./api/chart', {
+                            graphiteInstanceId: check.graphiteInstanceId,
                             target: check.target,
                             width: 365,
                             height: 70,
@@ -106,7 +113,6 @@
                 liveLink: function (check, minutes) {
                     if (check && check.id) {
                         return chart('./api/checks/' + check.id + '/image', {
-                            target: check.target,
                             width: 1200,
                             height: 350,
                             from: minutes
@@ -116,7 +122,6 @@
                 liveImage: function (check, minutes) {
                     if (check && check.id) {
                         return chart('./api/checks/' + check.id + '/image', {
-                            target: check.target,
                             width: 365,
                             height: 70,
                             from: minutes,

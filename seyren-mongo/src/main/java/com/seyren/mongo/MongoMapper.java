@@ -38,6 +38,7 @@ public class MongoMapper {
         String id = dbo.get("_id").toString();
         String name = getString(dbo, "name");
         String description = getString(dbo, "description");
+        String graphiteInstanceId = getString(dbo, "graphiteInstanceId");
         String target = getString(dbo, "target");
         BigDecimal warn = getBigDecimal(dbo, "warn");
         BigDecimal error = getBigDecimal(dbo, "error");
@@ -54,6 +55,7 @@ public class MongoMapper {
         return new Check().withId(id)
                 .withName(name)
                 .withDescription(description)
+                .withGraphiteInstanceId(graphiteInstanceId)
                 .withTarget(target)
                 .withWarn(warn)
                 .withError(error)
@@ -105,6 +107,7 @@ public class MongoMapper {
         String id = dbo.get("_id").toString();
         String checkId = getString(dbo, "checkId");
         BigDecimal value = getBigDecimal(dbo, "value");
+        String graphiteInstanceId = getString(dbo, "graphiteInstanceId");
         String target = getString(dbo, "target");
         BigDecimal warn = getBigDecimal(dbo, "warn");
         BigDecimal error = getBigDecimal(dbo, "error");
@@ -116,6 +119,7 @@ public class MongoMapper {
                 .withId(id)
                 .withCheckId(checkId)
                 .withValue(value)
+                .withGraphiteInstanceId(graphiteInstanceId)
                 .withTarget(target)
                 .withWarn(warn)
                 .withError(error)
@@ -142,6 +146,7 @@ public class MongoMapper {
         map.put("_id", check.getId());
         map.put("name", check.getName());
         map.put("description", check.getDescription());
+        map.put("graphiteInstanceId", check.getGraphiteInstanceId());
         map.put("target", check.getTarget());
         if (check.getWarn() != null) {
             map.put("warn", check.getWarn().toPlainString());
@@ -193,6 +198,7 @@ public class MongoMapper {
         Map map = new HashMap();
         map.put("_id", alert.getId());
         map.put("checkId", alert.getCheckId());
+        map.put("graphiteInstanceId", alert.getGraphiteInstanceId());
         map.put("target", alert.getTarget());
         if (alert.getValue() != null) {
             map.put("value", alert.getValue().toPlainString());

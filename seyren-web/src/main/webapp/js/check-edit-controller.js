@@ -6,6 +6,7 @@
         $scope.master = {
             name: null,
             description: null,
+            graphiteInstanceId: null,
             target: null,
             warn: null,
             error: null,
@@ -61,7 +62,7 @@
             }
         });
 
-        $scope.$watch('check.target + check.warn + check.error', function (value) {
+        $scope.$watch('check.graphiteInstanceId + check.target + check.warn + check.error', function (value) {
             if (value !== undefined) {
                 $scope.check.previewImage = Graph.previewImage($scope.check);
             } else {

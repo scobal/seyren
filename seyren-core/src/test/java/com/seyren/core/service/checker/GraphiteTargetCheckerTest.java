@@ -13,9 +13,13 @@
  */
 package com.seyren.core.service.checker;
 
-import static org.hamcrest.MatcherAssert.*;
-import static org.hamcrest.Matchers.*;
-import static org.mockito.Mockito.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasKey;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 import java.util.Map;
@@ -31,6 +35,7 @@ import com.github.restdriver.clientdriver.ClientDriverRule;
 import com.google.common.base.Optional;
 import com.seyren.core.domain.Check;
 import com.seyren.core.util.graphite.GraphiteHttpClient;
+import com.seyren.core.util.graphite.GraphiteManager;
 import com.seyren.core.util.graphite.GraphiteReadException;
 
 public class GraphiteTargetCheckerTest {
@@ -40,13 +45,18 @@ public class GraphiteTargetCheckerTest {
     @Rule
     public ClientDriverRule clientDriver = new ClientDriverRule();
     
+    private GraphiteManager mockGraphiteManager;
     private GraphiteHttpClient mockGraphiteHttpClient;
     private GraphiteTargetChecker checker;
     
     @Before
     public void before() {
         mockGraphiteHttpClient = mock(GraphiteHttpClient.class);
-        checker = new GraphiteTargetChecker(mockGraphiteHttpClient);
+    	mockGraphiteManager = mock(GraphiteManager.class);
+    	
+    	when(mockGraphiteManager.getGraphiteHttpClient(anyString())).thenReturn(mockGraphiteHttpClient);
+    	
+        checker = new GraphiteTargetChecker(mockGraphiteManager);
     }
     
     @After

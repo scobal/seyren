@@ -5,6 +5,7 @@
     "checkId" : "5205121fccf2a07eacba64da",
     "error" : "2.0",
     "value" : "0.8",
+    "graphiteInstanceId" : "my-graphite-instance",
     "target" : "prod.host1.load.longterm",
     "toType" : "OK",
     "fromType" : "WARN"
