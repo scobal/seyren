@@ -67,6 +67,9 @@ open http://localhost:8080
 * `IRCCAT_HOST` - The hostname of the server where IRCcat is running. Default: `localhost`
 * `IRCCAT_PORT` - The port on which IRCcat is running. Default: `12345`
 
+#### Pushover
+* `PUSHOVER_APP_API_TOKEN` - Your pushover App API Token
+
 ###Cloud Formation
 
 If you are running on amazon infrastructure use this [Cloud Formation Template](https://gist.github.com/5922231) to bring up a single instance of any size. All the environment variables required for Seyren are specified as properties to the cloud formation template and a fully configured Seyren instance should come up with no other intervention.
