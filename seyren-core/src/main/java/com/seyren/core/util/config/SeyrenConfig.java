@@ -110,7 +110,7 @@ public class SeyrenConfig {
         this.ircCatPort = configOrDefault("IRCCAT_PORT", "12345");
 
         // PushOver
-        this.pushoverAppApiToken = configOrDefault(list("PUSHOVER_APP_API_TOKEN", "PUSHOVER_APP_API_TOKEN"), "");
+        this.pushoverAppApiToken = configOrDefault("PUSHOVER_APP_API_TOKEN", "");
     }
     
     @PostConstruct
