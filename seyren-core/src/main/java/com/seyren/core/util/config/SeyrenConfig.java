@@ -62,6 +62,7 @@ public class SeyrenConfig {
     private final String flowdockEmojis;
     private final String ircCatHost;
     private final String ircCatPort;
+    private final String pushoverAppApiToken;
 
     public SeyrenConfig() {
         
@@ -107,7 +108,9 @@ public class SeyrenConfig {
         // IrcCat
         this.ircCatHost = configOrDefault("IRCCAT_HOST", "localhost");
         this.ircCatPort = configOrDefault("IRCCAT_PORT", "12345");
-        
+
+        // PushOver
+        this.pushoverAppApiToken = configOrDefault(list("PUSHOVER_APP_API_TOKEN", "PUSHOVER_APP_API_TOKEN"), "");
     }
     
     @PostConstruct
@@ -188,6 +191,11 @@ public class SeyrenConfig {
     @JsonIgnore
     public int getIrcCatPort() {
         return Integer.valueOf(this.ircCatPort);
+    }
+
+    @JsonIgnore
+    public String getPushoverAppApiToken() {
+        return this.pushoverAppApiToken;
     }
 
     @JsonIgnore
