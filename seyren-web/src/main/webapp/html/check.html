@@ -1,31 +1,37 @@
 <div>
-    <div class="row-fluid">
+    <div class="row-fluid check-header">
         <div class="span12">
-            <ul class="thumbnails">
-                <li class="span3" ng-repeat="graph in graphs">
-                    <div class="thumbnail">
-                        <a href="{{ liveLink(check, graph.minutes) }}" target="_blank">
-                            <img ng:src="{{ liveImage(check, graph.minutes) }}" />
-                        </a>
-                        <h6 style="margin: 0px 0;">{{ graph.description }}</h6>
-                    </div>
-                </li>
-            </ul>
+            <div class="row-fluid">
+                <h2>{{check.name}}
+                  <div class="btn-group">
+                      <button class="btn btn-small dropdown-toggle" data-toggle="dropdown">
+                          <i class="icon-wrench"></i>
+                          <!--<span class="caret"></span>-->
+                      </button>
+                      <ul class="dropdown-menu">
+                          <li><a data-keyboard="true" data-toggle="modal" data-show="true" href="" ng-click="editCheck(check)"><i class="icon-pencil"></i> Edit check</a></li>
+                          <li><a data-keyboard="true" data-toggle="modal" data-show="true" href="#editSubscriptionModal" ng-click="editSubscription(check, 'new');$event.preventDefault()"><i class="icon-bullhorn"></i> Add subscription</a></li>
+                          <li class="divider"></li>
+                          <li class="dropdown-submenu">
+                              <a tabindex="-1" href="#"><i class="icon-filter"></i> Clear alerts</a>
+                              <ul class="dropdown-menu">
+                                  <li><a ng-click="deleteAlerts(check, 1)">Older than a day</a></li>
+                                  <li><a ng-click="deleteAlerts(check, 7)">Older than a week</a></li>
+                                  <li><a ng-click="deleteAlerts(check)">All</a></li>
+                              </ul>
+                          </li>
+                      </ul>
+                  </div>
+                  <small>({{check.description}})</small>
+                </h2>
+            </div>
         </div>
     </div>
+
+
+
     <div class="row-fluid">
-        <div class="span7">
-            <div class="row-fluid">
-                <h2>Details <small>[<a class="" data-keyboard="true" data-toggle="modal" data-show="true" href="" ng-click="editCheck(check)">edit</a>]</small></h2>
-            </div>
-            <div class="row-fluid">
-                <span class="span2">Name:</span>
-                <span class="span10">{{check.name}}</span>
-            </div>
-            <div class="row-fluid">
-                <span class="span2">Description:</span>
-                <span class="span10">{{check.description}}</span>
-            </div>
+         <div class="span6">
             <div class="row-fluid">
                 <span class="span2">State:</span>
                 <span class="span10">
@@ -61,88 +67,24 @@
                 <span class="span10">{{check.lastCheck | date: 'yyyy-MM-dd HH:mm:ss'}}</span>
             </div>
         </div>
-        <div class="span5">
-            <div class="row-fluid">
-                <div class="span8">
-                    <h2>Subscriptions</h2>
-                </div>
-                <div class="span4 pull-right">
-                    <p></p><p><button id="editSubscaddriptionButton" class="btn btn-success" data-keyboard="true" data-toggle="modal" data-show="true" href="#editSubscriptionModal" ng-click="editSubscription(check, 'new')"><i class="icon-volume-up icon-white"></i>&nbsp;Add subscription</button></p>
-                </div>
-            </div>
-            <div class="row-fluid">
-                <div class="span12">
-                    <div ng-hide="check.subscriptions">This check has no subscriptions</div>
-                    <table class="table table-bordered table-striped table-hover" ng-show="check.subscriptions" style="cursor: pointer;">
-                        <thead>
-                            <tr>
-                                <th>Target</th>
-                                <th>Type</th>
-                                <th>Notify on</th>
-                                <th>Days</th>
-                                <th>Time</th>
-                                <th>On?</th>
-                                <th>&nbsp;</th>
-                                <th>&nbsp;</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr ng-repeat="subscription in check.subscriptions">
-                                <td>{{ subscription.target }}</td>
-                                <td>{{ subscription.type }}</td>
-                                <td>
-                                    <span class="label label-warning" ng-hide="subscription.ignoreWarn">Warn</span>
-                                    <span class="label label-important" ng-hide="subscription.ignoreError">Error</span>
-                                    <span class="label label-success" ng-hide="subscription.ignoreOk">Ok</span>
-                                </td>
-                                <td>
-                                    <span class="label label-info" ng-show="subscription.su">Su</span>
-                                    <span class="label label-info" ng-show="subscription.mo">Mo</span>
-                                    <span class="label label-info" ng-show="subscription.tu">Tu</span>
-                                    <span class="label label-info" ng-show="subscription.we">We</span>
-                                    <span class="label label-info" ng-show="subscription.th">Th</span>
-                                    <span class="label label-info" ng-show="subscription.fr">Fr</span>
-                                    <span class="label label-info" ng-show="subscription.sa">Sa</span>
-                                </td>
-                                <td>{{ subscription.fromTime }} to {{ subscription.toTime }}</td>
-                                <td>
-                                    <input type="checkbox" ng-checked="subscription.enabled" ng-click="swapSubscriptionEnabled(check, subscription)" />
-                                </td>
-                                <td>
-                                    <button type="submit" class="btn btn-danger btn-mini" ng-click="deleteSubscription(check, subscription)">Delete</button>
-                                </td>
-                                <td>
-                                    <button class="btn btn-primary btn-mini" data-keyboard="true" data-toggle="modal" data-show="true" href="#editSubscriptionModal" ng-click="editSubscription(check, subscription)">Edit</button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row-fluid">
-        <h2>
-            Alerts <small>( {{alerts.start}} of {{alerts.total}} )</small>
-            <div class="btn-group">
-                <button class="btn btn-small btn-danger dropdown-toggle" data-toggle="dropdown">
-                    Delete alerts
-                    <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu">
-                    <li><a ng-click="deleteAlerts(check, 1)">Older than a day</a></li>
-                    <li><a ng-click="deleteAlerts(check, 7)">Older than a week</a></li>
-                    <li><a ng-click="deleteAlerts(check)">All</a></li>
-                </ul>
-            </div>
-        </h2>
-        <div class="pagination">
-            <ul>
-                <li><a ng-click="loadOlderAlerts()">&larr; Older</a></li>
-                <li><a ng-click="loadNewerAlerts()">Newer &rarr;</a></li>
+
+        <div class="span6">
+            <ul class="thumbnails">
+                <li class="span6 graph" ng-repeat="graph in graphs">
+                    <div class="thumbnail">
+                        <a href="{{ liveLink(check, graph.minutes) }}" target="_blank">
+                            <img ng:src="{{ liveImage(check, graph.minutes) }}" />
+                        </a>
+                        <h6 style="margin: 0px 0;">{{ graph.description }}</h6>
+                    </div>
+                </li>
             </ul>
         </div>
-        <table class="table table-bordered table-striped table-hover" ng-show="alerts.values">
+    </div>
+
+    <div class="row-fluid">
+        <h3>Alerts <small>( {{alerts.start}} of {{alerts.total}} )</small></h3>
+        <table class="table table-bordered table-striped table-hover table-condensed" ng-show="alerts.values">
             <thead>
                 <tr>
                     <th>Timestamp</th>
@@ -178,11 +120,75 @@
                 </tr>
             </tbody>
         </table>
+
+        <div class="pagination">
+            <ul>
+                <li><a class="pointer" ng-click="loadOlderAlerts()">&larr; Older</a></li>
+                <li><a class="pointer" ng-click="loadNewerAlerts()">Newer &rarr;</a></li>
+            </ul>
+        </div>
     </div>
+
     <div class="row-fluid">
         <div class="span12">
+            <div class="row-fluid">
+                <div class="span8">
+                    <h3>Subscriptions</h3>
+                </div>
+            </div>
+            <div class="row-fluid">
+                <div class="span12">
+                    <div ng-hide="check.subscriptions">This check has no subscriptions</div>
+                    <table class="table table-bordered table-striped table-hover table-condensed" ng-show="check.subscriptions" style="cursor: pointer;">
+                        <thead>
+                            <tr>
+                                <th>Target</th>
+                                <th>Type</th>
+                                <th>Notify on</th>
+                                <th>Days</th>
+                                <th>Time</th>
+                                <th>On?</th>
+                                <th>&nbsp;</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="subscription in check.subscriptions">
+                                <td>{{ subscription.target }}</td>
+                                <td>{{ subscription.type }}</td>
+                                <td>
+                                    <span class="label label-warning" ng-hide="subscription.ignoreWarn">Warn</span>
+                                    <span class="label label-important" ng-hide="subscription.ignoreError">Error</span>
+                                    <span class="label label-success" ng-hide="subscription.ignoreOk">Ok</span>
+                                </td>
+                                <td>
+                                    <span class="label label-default" ng-show="subscription.su">Su</span>
+                                    <span class="label label-default" ng-show="subscription.mo">Mo</span>
+                                    <span class="label label-default" ng-show="subscription.tu">Tu</span>
+                                    <span class="label label-default" ng-show="subscription.we">We</span>
+                                    <span class="label label-default" ng-show="subscription.th">Th</span>
+                                    <span class="label label-default" ng-show="subscription.fr">Fr</span>
+                                    <span class="label label-default" ng-show="subscription.sa">Sa</span>
+                                </td>
+                                <td>{{ subscription.fromTime }} to {{ subscription.toTime }}</td>
+                                <td>
+                                    <input type="checkbox" ng-checked="subscription.enabled" ng-click="swapSubscriptionEnabled(check, subscription)" />
+                                </td>
+                                <td>
+                                    <button class="btn btn-mini" data-keyboard="true" data-toggle="modal" data-show="true" href="#editSubscriptionModal" ng-click="editSubscription(check, subscription)"><i class=" icon-pencil">&nbsp;</i></button>
+                                    <button type="submit" class="btn btn-danger btn-mini" ng-click="deleteSubscription(check, subscription)"><i class="icon-trash icon-white">&nbsp;</i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row-fluid dangerroom">
+        <div class="span12">
             <div class="pull-right">
-                <button class="btn btn-danger" data-keyboard="true" data-toggle="modal" data-show="true"  id="deleteCheckButton" href="#confirmCheckDeleteModal">Delete check</button>
+                <button class="btn btn-danger" data-keyboard="true" data-toggle="modal" data-show="true"  id="deleteCheckButton" href="#confirmCheckDeleteModal"><i class="icon-exclamation-sign icon-white"></i> Delete check</button>
             </div>
         </div>
     </div>
@@ -205,7 +211,6 @@
 
     <div class="absolute modal hide" tabindex="-1" ng-include="'./html/modal-partial-check.html'" id="editCheckModal">
     </div>
-
 </div>
 
 
