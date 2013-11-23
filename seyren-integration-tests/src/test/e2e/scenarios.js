@@ -115,20 +115,13 @@ describe('check page', function () {
         browser().navigateTo('/#/checks/5205121fccf2a07eacba64da');
     });
 
-    it('should have a \'Details\' section', function () {
-        expect(element('h2:eq(0)').count()).toBe(1);
-        expect(element('h2:eq(0)').text()).toBe('Details [edit]');
-    });
-
     it('should have a \'Subscriptions\' section', function () {
-        expect(element('h2:eq(1)').count()).toBe(1);
-        expect(element('h2:eq(1)').text()).toBe('Subscriptions');
+        expect(element('h3:eq(1)').count()).toBe(1);
+        expect(element('h3:eq(1)').text()).toBe('Subscriptions');
         expect(element('div.span12:eq(1) div').text()).toBe('This check has no subscriptions');
     });
 
     it('should have a \'Details\' informations', function () {
-        expect(element('div.span7 div.row-fluid').count()).toBe(10);
-
         expect(element('div.span7 div.row-fluid:eq(1) span.span2').text()).toBe('Name:');
         expect(element('div.span7 div.row-fluid:eq(1) span.span10').text()).toBe('load longterm usage');
 
@@ -173,13 +166,8 @@ describe('check page', function () {
     });
 
     it('should have \'Alerts\' section', function () {
-        expect(element('h2:eq(2)').text()).toContain('Alerts');
+        expect(element('h3:eq(2)').text()).toContain('Alerts');
 
-        expect(element('h2:eq(2) div button').text()).toContain('Delete alerts');
-        expect(element('h2:eq(2) div ul li:eq(0) a').text()).toBe('Older than a day');
-        expect(element('h2:eq(2) div ul li:eq(1) a').text()).toBe('Older than a week');
-        expect(element('h2:eq(2) div ul li:eq(2) a').text()).toBe('All');
-        
         expect(element('table:eq(1) thead tr').count()).toBe(1);
         expect(element('table:eq(1) thead tr th:eq(0)').text()).toBe('Timestamp');
         expect(element('table:eq(1) thead tr th:eq(1)').text()).toBe('Target');
@@ -207,8 +195,6 @@ describe('edit check', function () {
     });
 
     it('edit and submit check', function () {
-        expect(element('div.span7 div.row-fluid').count()).toBe(10);
-
         expect(element('a:contains("edit")').count()).toBe(1);
         expect(element('div#editCheckModal:visible').count()).toBe(0);
 
@@ -235,10 +221,10 @@ describe('add subscription', function () {
     });
 
     it('add subscription', function () {
-        expect(element('button#editSubscaddriptionButton').count()).toEqual(1);
+        expect(element('a#editSubscriptionModal').count()).toEqual(1);
         expect(element('div#editSubscriptionModal:visible').count()).toBe(0);
 
-        element('button#editSubscaddriptionButton').click();
+        element('a#editSubscriptionModal').click();
 
         expect(element('div#editSubscriptionModal:visible').count()).toBe(1);
         expect(element('button#updateSubscriptionButton:visible').count()).toEqual(0);
@@ -284,7 +270,7 @@ describe('edit subscription', function () {
     it('edit subscription', function () {
         expect(element('div#editSubscriptionModal:visible').count()).toBe(0);
         expect(element('table:eq(0) tbody tr').count()).toBe(1);
-        element('table:eq(0) tbody tr td:eq(7) button').click();
+        element('table:eq(0) tbody tr td:eq(6) button:eq(0)').click();
 
         expect(element('div#editSubscriptionModal:visible').count()).toBe(1);
         expect(element('button#updateSubscriptionButton:visible:enabled').count()).toEqual(1);
@@ -314,7 +300,7 @@ describe('delete subscription', function () {
     it('delete subscription', function () {
         expect(element('div#editSubscriptionModal:visible').count()).toBe(0);
         expect(element('table:eq(0) tbody tr').count()).toBe(1);
-        element('table:eq(0) tbody tr td:eq(6) button').click();
+        element('table:eq(0) tbody tr td:eq(6) button:eq(1)').click();
         expect(element('table:eq(0) tbody tr').count()).toBe(0);
 
     });

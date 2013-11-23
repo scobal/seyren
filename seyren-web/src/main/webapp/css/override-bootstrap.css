@@ -1,7 +1,6 @@
 body {
     padding-top: 50px;
 }
-
 .modal-body {
     max-height: 480px;
     padding: 15px;
@@ -34,4 +33,20 @@ body {
 
 .absolute {
     position: absolute;
+}
+
+ul.thumbnails>li.graph {
+    margin: 0 0 1px 1px !important;
+}
+
+div.check-header {
+    margin-bottom: 25px;
+}
+
+div.dangerroom {
+    margin-top: 40px;
+}
+
+.pointer {
+  cursor: pointer;
 }
