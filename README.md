@@ -10,7 +10,7 @@ Seyren ([/ˈsaɪ.rʌn/](http://en.wikipedia.org/wiki/Wikipedia:IPA_for_English#K
 
 * Maven
 * An instance of Graphite
-* Mongodb ([Install instructions](http://docs.mongodb.org/manual/installation/#installation-guides Installing MongoDB))
+* MongoDB ([Install instructions](http://docs.mongodb.org/manual/installation/#installation-guides Installing MongoDB))
 
 ###Stand alone
 
@@ -25,7 +25,7 @@ open http://localhost:8080
 
 #### Base
 * `GRAPHITE_URL` - The location of your Graphite server. Default: `http://localhost:80`
-* `GRAPHITE_REFRESH` - The fixed period (in ms) between checks. Default: 60000
+* `GRAPHITE_REFRESH` - The fixed period (in ms) between checks. Default: `60000`
 * `GRAPHITE_USERNAME` - The HTTP Basic auth username for the Graphite server. Default: ``
 * `GRAPHITE_PASSWORD` - The HTTP Basic auth password for the Graphite server. Default: ``
 * `GRAPHITE_KEYSTORE` - The HTTP KeyStore path for the https Graphite server. Default: ``
