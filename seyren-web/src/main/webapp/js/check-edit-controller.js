@@ -15,7 +15,7 @@
             totalMetric: '-'
         };
 
-        $('#editCheckModal').on('shown', function () {
+        $('#editCheckModal').on('shown.bs.modal', function () {
             $('#check\\.name').focus();
             $('#check\\.warn\\.hint').tooltip({
                 placement: 'right',
