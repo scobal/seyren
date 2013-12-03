@@ -1,5 +1,6 @@
-<div class="row-fluid">
-    <h2>Checks in an unhealthy state</h2>
+<div class="row">
+<div class="col-lg-12">
+    <h2><strong>Checks in an unhealthy state</strong></h2>
     <table class="table table-bordered table-striped" ng-show="unhealthyChecks.values.length > 0">
         <thead>
             <tr>
@@ -29,8 +30,8 @@
     <p ng-hide="unhealthyChecks.values.length > 0">No checks in an unhealthy state</p>
 </div>
 
-<div class="row-fluid">
-    <h2>Recent alerts</h2>
+<div class="col-lg-12">
+    <h2><strong>Recent alerts</strong></h2>
     <table class="table table-bordered table-striped table-hover" ng-show="alertStream.values.length > 0">
         <thead>
             <tr>
@@ -68,4 +69,5 @@
         </tbody>
     </table>
     <p ng-hide="alertStream.values.length > 0">You've had no previous alerts</p>
+</div>
 </div>

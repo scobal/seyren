@@ -1,14 +1,24 @@
 body {
-    padding-top: 50px;
+    padding-top: 45px;
 }
+.container { margin-left: 20px; width: auto; }
 
+.modal-dialog { width: 560px; }
 .modal-body {
     max-height: 480px;
     padding: 15px;
     overflow-y: auto;
 }
-.logo { padding: 3px 8px 0 0;}
-.navbar-inner { padding: 7px 0 0 0;}
+
+.navbar-header { padding: 6px 0 0 0; }
+.navbar { min-height: 45px !important; margin-bottom: 0px; }
+.navbar-nav>li>a { padding: 10px 15px 10px 15px;}
+
+.glyphicon-white, .glyphicon-white a { color: #fff; }
+
+.detail-form { margin-bottom: 2px; }
+
+.col-lg-3.graph { padding: 5px 10px 0 0; }
 
 .footer {
     text-align: center;

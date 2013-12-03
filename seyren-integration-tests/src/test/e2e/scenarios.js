@@ -6,8 +6,8 @@ describe('home page', function () {
     });
 
     it('should have a nav bar', function () {
-        expect(element('div.navbar div.navbar-inner img').count()).toBe(1);
-        expect(element('div.navbar div.navbar-inner ul.nav li a').text()).toBe('Checks');
+        expect(element('div.navbar img').count()).toBe(1);
+        expect(element('div.navbar ul li a').text()).toBe('Checks');
     });
 
     it('should have a \'Checks in an unhealthy state\' section', function () {
@@ -123,38 +123,38 @@ describe('check page', function () {
     it('should have a \'Subscriptions\' section', function () {
         expect(element('h2:eq(1)').count()).toBe(1);
         expect(element('h2:eq(1)').text()).toBe('Subscriptions');
-        expect(element('div.span12:eq(1) div').text()).toBe('This check has no subscriptions');
+        expect(element('div.col-lg-12:eq(2) div').text()).toBe('This check has no subscriptions');
     });
 
     it('should have a \'Details\' informations', function () {
-        expect(element('div.span7 div.row-fluid').count()).toBe(10);
+        expect(element('div.col-lg-6 div.col-lg-10').count()).toBe(9);
 
-        expect(element('div.span7 div.row-fluid:eq(1) span.span2').text()).toBe('Name:');
-        expect(element('div.span7 div.row-fluid:eq(1) span.span10').text()).toBe('load longterm usage');
+        expect(element('div.col-lg-6 div.detail-form:eq(0) label').text()).toBe('Name:');
+        expect(element('div.col-lg-6 div.detail-form:eq(0) p').text()).toBe('load longterm usage');
 
-        expect(element('div.span7 div.row-fluid:eq(2) span.span2').text()).toBe('Description:');
-        expect(element('div.span7 div.row-fluid:eq(2) span.span10').text()).toBe('Load longterm of host host1');
+        expect(element('div.col-lg-6 div.detail-form:eq(1) label').text()).toBe('Description:');
+        expect(element('div.col-lg-6 div.detail-form:eq(1) p').text()).toBe('Load longterm of host host1');
 
-        expect(element('div.span7 div.row-fluid:eq(3) span.span2').text()).toBe('State:');
-        expect(element('div.span7 div.row-fluid:eq(3) span.span10 span:visible').text()).toBe('WARN');
+        expect(element('div.col-lg-6 div.detail-form:eq(2) label').text()).toBe('State:');
+        expect(element('div.col-lg-6 div.detail-form:eq(2) p span:visible').text()).toBe('WARN');
 
-        expect(element('div.span7 div.row-fluid:eq(4) span.span2').text()).toBe('Target:');
-        expect(element('div.span7 div.row-fluid:eq(4) span.span10').text()).toBe('prod.host1.load.longterm');
+        expect(element('div.col-lg-6 div.detail-form:eq(3) label').text()).toBe('Target:');
+        expect(element('div.col-lg-6 div.detail-form:eq(3) p').text()).toBe('prod.host1.load.longterm');
 
-        expect(element('div.span7 div.row-fluid:eq(5) span.span2').text()).toBe('Warn:');
-        expect(element('div.span7 div.row-fluid:eq(5) span.span10').text()).toBe('0.5');
+        expect(element('div.col-lg-6 div.detail-form:eq(4) label').text()).toBe('Warn:');
+        expect(element('div.col-lg-6 div.detail-form:eq(4) p').text()).toBe('0.5');
 
-        expect(element('div.span7 div.row-fluid:eq(6) span.span2').text()).toBe('Error:');
-        expect(element('div.span7 div.row-fluid:eq(6) span.span10').text()).toBe('2.0');
+        expect(element('div.col-lg-6 div.detail-form:eq(5) label').text()).toBe('Error:');
+        expect(element('div.col-lg-6 div.detail-form:eq(5) p').text()).toBe('2.0');
 
-        expect(element('div.span7 div.row-fluid:eq(7) span.span2').text()).toBe('Enabled:');
-        expect(element('div.span7 div.row-fluid:eq(7) span.span10 input:checked').val()).toBe('on');
+        expect(element('div.col-lg-6 div.detail-form:eq(6) label').text()).toBe('Enabled:');
+        expect(element('div.col-lg-6 div.detail-form:eq(6) p input:checked').val()).toBe('on');
 
-        expect(element('div.span7 div.row-fluid:eq(8) span.span2').text()).toBe('Live:');
-        expect(element('div.span7 div.row-fluid:eq(8) span.span10 input:not(:checked)').val()).toBe('on');
+        expect(element('div.col-lg-6 div.detail-form:eq(7) label').text()).toBe('Live:');
+        expect(element('div.col-lg-6 div.detail-form:eq(7) p input:not(:checked)').val()).toBe('on');
 
-        expect(element('div.span7 div.row-fluid:eq(9) span.span2').text()).toBe('Last check:');
-        expect(element('div.span7 div.row-fluid:eq(9) span.span10').text()).toMatch('[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}');
+        expect(element('div.col-lg-6 div.detail-form:eq(8) label').text()).toBe('Last check:');
+        expect(element('div.col-lg-6 div.detail-form:eq(8) p').text()).toMatch('[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}');
     });
 
     it('should have \'Graphs\' thumbnail', function () {
@@ -207,7 +207,7 @@ describe('edit check', function () {
     });
 
     it('edit and submit check', function () {
-        expect(element('div.span7 div.row-fluid').count()).toBe(10);
+        expect(element('div.col-lg-6 div.col-lg-10').count()).toBe(9);
 
         expect(element('a:contains("edit")').count()).toBe(1);
         expect(element('div#editCheckModal:visible').count()).toBe(0);
@@ -224,7 +224,7 @@ describe('edit check', function () {
         element('button#updateCheckButton:visible:enabled', 'Save changes').click();
 
         expect(element('div#editCheckModal:visible').count()).toBe(0);
-        expect(element('div.span7 div.row-fluid:eq(2) span.span10').text()).toBe('New description');
+        expect(element('div.col-lg-6 div.detail-form:eq(1) p').text()).toBe('New description');
     });
 
 });
