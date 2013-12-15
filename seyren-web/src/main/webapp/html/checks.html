@@ -1,50 +1,51 @@
-<div>
-    <div class="row-fluid">
-        <div class="span10">
-            <h1>Checks</h1>
-        </div>
-        <div class="span2">
-            <p></p><p><button id="createNewCheckButton" class="btn btn-success" data-keyboard="true" data-toggle="modal" data-show="true" href="#editCheckModal" ng-click="editCheck('new')"><i class="icon-check icon-white"></i>&nbsp;Create check</button></p>
-        </div>
+<div class="row">
+    <div class="col-lg-10">
+        <h1><strong>Checks</strong></h1>
     </div>
+    <div class="col-lg-2">
+        <p></p><p><button id="createNewCheckButton" class="btn btn-success" data-keyboard="true" data-toggle="modal" data-show="true" data-target="#editCheckModal" ng-click="editCheck('new')"><span class="glyphicon glyphicon-check glyphicon-white"></span>&nbsp;Create check</button></p>
+    </div>
+</div>
+<div class="row">
     <br/>
-    <div class="row-fluid">
-        <div class="span3">
-            <input name="filter" ng-model="filter" type="text" placeholder="Filter..." class="input-xlarge"/>
+    <div class="col-lg-2">
+        <div class="form-group">
+            <input name="filter" ng-model="filter" type="text" placeholder="Filter..." class="form-control input-sm" />
         </div>
     </div>
-    <div class="row-fluid">
-        <div class="span12">
-            <table class="table table-bordered table-striped table-hover" ng-show="checks.values.length > 0" ng-init="predicate=sortByState;reverse=true">
-                <thead>
-                    <tr>
-                        <th><a href="" ng-click="predicate='name';reverse=!reverse">Name</a></th>
-                        <th><a href="" ng-click="predicate=sortByState;reverse=!reverse">State</a></th>
-                        <th><a href="" ng-click="predicate='warn';reverse=!reverse">Warn</a></th>
-                        <th><a href="" ng-click="predicate='error';reverse=!reverse">Error</a></th>
-                        <th><a href="" ng-click="predicate='enabled';reverse=!reverse">Enabled</a></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr ng-repeat="check in checks.values  | filter:filter | orderBy:predicate:reverse" ng-click="selectCheck(check.id)" style="cursor: pointer;">
-                        <td title="{{ check.target }}">{{ check.name }}</td>
-                        <td>
-                            <span ng-show="check.state == 'UNKNOWN'" class="label">{{ check.state }}</span>
-                            <span ng-show="check.state == 'OK'" class="label label-success">{{ check.state }}</span>
-                            <span ng-show="check.state == 'WARN'" class="label label-warning">{{ check.state }}</span>
-                            <span ng-show="check.state == 'ERROR'" class="label label-important">{{ check.state }}</span>
-                            <span ng-show="check.state == 'EXCEPTION'" class="label label-inverse">{{ check.state }}</span>
-                        </td>
-                        <td>{{ check.warn }}</td>
-                        <td>{{ check.error }}</td>
-                        <td><input type="checkbox" ng-checked="check.enabled" ng-click="swapCheckEnabled(check); $event.stopPropagation();" /></td>
-                    </tr>
-                </tbody>
-            </table>
-            <p ng-hide="checks.values.length > 0">We've got no checks. Why not create one?</p>
-        </div>
+</div>
+<div class="row">
+    <div class="col-lg-12">
+        <table class="table table-bordered table-striped table-hover" ng-show="checks.values.length > 0" ng-init="predicate=sortByState;reverse=true">
+            <thead>
+                <tr>
+                    <th><a href="" ng-click="predicate='name';reverse=!reverse">Name</a></th>
+                    <th><a href="" ng-click="predicate=sortByState;reverse=!reverse">State</a></th>
+                    <th><a href="" ng-click="predicate='warn';reverse=!reverse">Warn</a></th>
+                    <th><a href="" ng-click="predicate='error';reverse=!reverse">Error</a></th>
+                    <th><a href="" ng-click="predicate='enabled';reverse=!reverse">Enabled</a></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="check in checks.values  | filter:filter | orderBy:predicate:reverse" ng-click="selectCheck(check.id)" style="cursor: pointer;">
+                    <td title="{{ check.target }}">{{ check.name }}</td>
+                    <td>
+                        <span ng-show="check.state == 'UNKNOWN'" class="label">{{ check.state }}</span>
+                        <span ng-show="check.state == 'OK'" class="label label-success">{{ check.state }}</span>
+                        <span ng-show="check.state == 'WARN'" class="label label-warning">{{ check.state }}</span>
+                        <span ng-show="check.state == 'ERROR'" class="label label-important">{{ check.state }}</span>
+                        <span ng-show="check.state == 'EXCEPTION'" class="label label-inverse">{{ check.state }}</span>
+                    </td>
+                    <td>{{ check.warn }}</td>
+                    <td>{{ check.error }}</td>
+                    <td><input type="checkbox" ng-checked="check.enabled" ng-click="swapCheckEnabled(check); $event.stopPropagation();" /></td>
+                </tr>
+            </tbody>
+        </table>
+        <p ng-hide="checks.values.length > 0">We've got no checks. Why not create one?</p>
+    </div>
 
-        <div class="absolute modal hide" tabindex="-1" ng-include="'./html/modal-partial-check.html'" id="editCheckModal">
-        </div>
-    </div>
+</div>
+
+<div class="absolute modal" tabindex="-1" role="dialog" ng-include="'./html/modal-partial-check.html'" id="editCheckModal">
 </div>

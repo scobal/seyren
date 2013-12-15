@@ -41,7 +41,7 @@ public class CheckScheduler {
         this.checkRunnerFactory = checkRunnerFactory;
     }
     
-    @Scheduled(fixedRate = 60000)
+    @Scheduled(fixedRateString = "${GRAPHITE_REFRESH:60000}")
     public void performChecks() {
         List<Check> checks = checksStore.getChecks(true, false).getValues();
         for (final Check check : checks) {
