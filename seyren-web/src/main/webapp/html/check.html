@@ -34,10 +34,10 @@
                 <label class="col-lg-2 control-label">State:</label>
                 <div class="col-lg-10">
                     <p class="form-control-static">
-                    <span ng-show="check.state == 'UNKNOWN'" class="label">{{ check.state }}</span>
+                    <span ng-show="check.state == 'UNKNOWN'" class="label label-default">{{ check.state }}</span>
                     <span ng-show="check.state == 'OK'" class="label label-success">{{ check.state }}</span>
                     <span ng-show="check.state == 'WARN'" class="label label-warning">{{ check.state }}</span>
-                    <span ng-show="check.state == 'ERROR'" class="label label-important">{{ check.state }}</span>
+                    <span ng-show="check.state == 'ERROR'" class="label label-danger">{{ check.state }}</span>
                     <span ng-show="check.state == 'EXCEPTION'" class="label label-inverse">{{ check.state }}</span>
                     </p>
                 </div>
@@ -182,17 +182,17 @@
                     <td>{{ alert.warn }}</td>
                     <td>{{ alert.error }}</td>
                     <td>
-                        <span ng-show="alert.fromType == 'UNKNOWN'" class="label">{{ alert.fromType }}</span>
+                        <span ng-show="alert.fromType == 'UNKNOWN'" class="label label-default">{{ alert.fromType }}</span>
                         <span ng-show="alert.fromType == 'OK'" class="label label-success">{{ alert.fromType }}</span>
                         <span ng-show="alert.fromType == 'WARN'" class="label label-warning">{{ alert.fromType }}</span>
-                        <span ng-show="alert.fromType == 'ERROR'" class="label label-important">{{ alert.fromType }}</span>
+                        <span ng-show="alert.fromType == 'ERROR'" class="label label-danger">{{ alert.fromType }}</span>
                         <span ng-show="alert.fromType == 'EXCEPTION'" class="label label-inverse">{{ alert.fromType }}</span>
                     </td>
                     <td>
-                        <span ng-show="alert.toType == 'UNKNOWN'" class="label">{{ alert.toType }}</span>
+                        <span ng-show="alert.toType == 'UNKNOWN'" class="label label-default">{{ alert.toType }}</span>
                         <span ng-show="alert.toType == 'OK'" class="label label-success">{{ alert.toType }}</span>
                         <span ng-show="alert.toType == 'WARN'" class="label label-warning">{{ alert.toType }}</span>
-                        <span ng-show="alert.toType == 'ERROR'" class="label label-important">{{ alert.toType }}</span>
+                        <span ng-show="alert.toType == 'ERROR'" class="label label-danger">{{ alert.toType }}</span>
                         <span ng-show="alert.toType == 'EXCEPTION'" class="label label-inverse">{{ alert.toType }}</span>
                     </td>
                 </tr>
