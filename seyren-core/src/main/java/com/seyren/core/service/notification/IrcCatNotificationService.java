@@ -13,18 +13,28 @@
  */
 package com.seyren.core.service.notification;
 
-import com.google.common.io.*;
-import com.seyren.core.domain.*;
-import com.seyren.core.exception.*;
-import com.seyren.core.util.config.*;
-import org.slf4j.*;
-
-import javax.inject.*;
-import java.io.*;
-import java.net.*;
-import java.util.*;
-
 import static java.lang.String.*;
+
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.net.Socket;
+import java.util.Arrays;
+import java.util.List;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.slf4j.LoggerFactory;
+
+import com.google.common.io.Closeables;
+import com.seyren.core.domain.Alert;
+import com.seyren.core.domain.AlertType;
+import com.seyren.core.domain.Check;
+import com.seyren.core.domain.Subscription;
+import com.seyren.core.domain.SubscriptionType;
+import com.seyren.core.exception.NotificationFailedException;
+import com.seyren.core.util.config.SeyrenConfig;
 
 @Named
 public class IrcCatNotificationService implements NotificationService {

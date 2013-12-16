@@ -13,20 +13,30 @@
  */
 package com.seyren.core.service.notification;
 
-import com.google.common.io.*;
-import com.seyren.core.domain.*;
-import com.seyren.core.util.config.*;
-import org.junit.*;
-
-import java.io.*;
-import java.math.*;
-import java.net.*;
-import java.util.*;
-import java.util.concurrent.*;
-
 import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.*;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.math.BigDecimal;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import com.google.common.io.Closeables;
+import com.seyren.core.domain.Alert;
+import com.seyren.core.domain.AlertType;
+import com.seyren.core.domain.Check;
+import com.seyren.core.domain.Subscription;
+import com.seyren.core.domain.SubscriptionType;
+import com.seyren.core.util.config.SeyrenConfig;
 
 public class IrcCatNotificationServiceTest {
 

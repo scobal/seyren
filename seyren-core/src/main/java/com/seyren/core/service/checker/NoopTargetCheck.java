@@ -19,7 +19,6 @@ import java.util.Map;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import com.seyren.core.domain.Check;
-import com.seyren.core.service.checker.TargetChecker;
 
 public class NoopTargetCheck implements TargetChecker {
     private BigDecimal value;

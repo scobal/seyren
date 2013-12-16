@@ -17,7 +17,7 @@ import static com.github.restdriver.clientdriver.RestClientDriver.*;
 import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.Matchers.*;
 
-import java.net.*;
+import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.List;
 

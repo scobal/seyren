@@ -13,28 +13,32 @@
  */
 package com.seyren.core.service.notification;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import static com.github.restdriver.Matchers.hasJsonPath;
-import com.github.restdriver.clientdriver.ClientDriverRequest.Method;
-import com.github.restdriver.clientdriver.ClientDriverRule;
-import static com.github.restdriver.clientdriver.RestClientDriver.giveResponse;
-import static com.github.restdriver.clientdriver.RestClientDriver.onRequestTo;
-import com.github.restdriver.clientdriver.capture.BodyCapture;
-import com.github.restdriver.clientdriver.capture.JsonBodyCapture;
-import com.seyren.core.domain.*;
-import com.seyren.core.util.config.SeyrenConfig;
+import static com.github.restdriver.Matchers.*;
+import static com.github.restdriver.clientdriver.RestClientDriver.*;
+import static org.hamcrest.MatcherAssert.*;
+import static org.hamcrest.Matchers.*;
+import static org.mockito.Mockito.*;
+
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.startsWith;
+
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import static org.mockito.Mockito.*;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.github.restdriver.clientdriver.ClientDriverRequest.Method;
+import com.github.restdriver.clientdriver.ClientDriverRule;
+import com.github.restdriver.clientdriver.capture.BodyCapture;
+import com.github.restdriver.clientdriver.capture.JsonBodyCapture;
+import com.seyren.core.domain.Alert;
+import com.seyren.core.domain.AlertType;
+import com.seyren.core.domain.Check;
+import com.seyren.core.domain.Subscription;
+import com.seyren.core.domain.SubscriptionType;
+import com.seyren.core.util.config.SeyrenConfig;
 
 public class HttpNotificationServiceTest {
     
@@ -114,7 +118,7 @@ public class HttpNotificationServiceTest {
         assertThat(node, hasJsonPath("$.alerts[0].error", is(10)));
         assertThat(node, hasJsonPath("$.alerts[0].fromType", is("WARN")));
         assertThat(node, hasJsonPath("$.alerts[0].toType", is("ERROR")));
-        assertThat(node, hasJsonPath("$.preview", startsWith("<br />")));
+        assertThat(node, hasJsonPath("$.preview", Matchers.startsWith("<br />")));
         assertThat(node, hasJsonPath("$.preview", containsString(check.getTarget())));
         
         verify(mockSeyrenConfig).getGraphiteUrl();

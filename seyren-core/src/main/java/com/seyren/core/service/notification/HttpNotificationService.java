@@ -14,16 +14,16 @@
 package com.seyren.core.service.notification;
 
 
-import com.seyren.core.domain.Alert;
-import com.seyren.core.domain.Check;
-import com.seyren.core.domain.Subscription;
-import com.seyren.core.domain.SubscriptionType;
-import com.seyren.core.exception.NotificationFailedException;
-import com.seyren.core.util.config.SeyrenConfig;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.inject.Inject;
 import javax.inject.Named;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -36,6 +36,13 @@ import org.apache.http.util.EntityUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.seyren.core.domain.Alert;
+import com.seyren.core.domain.Check;
+import com.seyren.core.domain.Subscription;
+import com.seyren.core.domain.SubscriptionType;
+import com.seyren.core.exception.NotificationFailedException;
+import com.seyren.core.util.config.SeyrenConfig;
 
 @Named
 public class HttpNotificationService implements NotificationService {

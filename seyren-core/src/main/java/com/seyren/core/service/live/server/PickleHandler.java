@@ -13,6 +13,8 @@
  */
 package com.seyren.core.service.live.server;
 
+import static org.python.google.common.collect.ImmutableSet.*;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -32,12 +34,10 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
-import com.seyren.core.service.schedule.CheckRunnerFactory;
-import com.seyren.core.store.ChecksStore;
 import com.seyren.core.service.live.Metric;
 import com.seyren.core.service.live.MetricsTask;
-
-import static org.python.google.common.collect.ImmutableSet.copyOf;
+import com.seyren.core.service.schedule.CheckRunnerFactory;
+import com.seyren.core.store.ChecksStore;
 
 /**
  * See http://graphite.readthedocs.org/en/latest/feeding-carbon.html

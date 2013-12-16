@@ -16,7 +16,8 @@ package com.seyren.core.util.config;
 import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.Matchers.*;
 
-import org.junit.*;
+import org.junit.Before;
+import org.junit.Test;
 
 public class SeyrenConfigTest {
     

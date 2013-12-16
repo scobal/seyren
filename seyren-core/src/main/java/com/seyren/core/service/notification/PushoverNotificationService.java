@@ -13,29 +13,32 @@
  */
 package com.seyren.core.service.notification;
 
-import com.seyren.core.domain.*;
-import com.seyren.core.exception.*;
-import com.seyren.core.util.config.*;
+import static java.lang.String.*;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.util.*;
-import javax.inject.Inject;
-import javax.inject.Named;
-
-
-import static java.lang.String.*;
+import com.seyren.core.domain.Alert;
+import com.seyren.core.domain.AlertType;
+import com.seyren.core.domain.Check;
+import com.seyren.core.domain.Subscription;
+import com.seyren.core.domain.SubscriptionType;
+import com.seyren.core.exception.NotificationFailedException;
+import com.seyren.core.util.config.SeyrenConfig;
 
 @Named
 public class PushoverNotificationService implements NotificationService {
