@@ -25,6 +25,7 @@ import org.apache.velocity.app.Velocity;
 import org.apache.velocity.runtime.RuntimeConstants;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.seyren.core.util.velocity.Slf4jLogChute;
 
 @Named
@@ -79,6 +80,7 @@ public class SeyrenConfig {
         this.graphiteTrustStore = configOrDefault("GRAPHITE_TRUSTSTORE", "");
         this.graphiteCarbonPickleEnable = configOrDefault("GRAPHITE_CARBON_PICKLE_ENABLE", "false");
         this.graphiteCarbonPicklePort = configOrDefault("GRAPHITE_CARBON_PICKLE_PORT", "2004");
+        
         // SMTP
         this.smtpFrom = configOrDefault(list("SMTP_FROM", "SEYREN_FROM_EMAIL"), "alert@seyren");
         this.smtpUsername = configOrDefault("SMTP_USERNAME", "");
@@ -283,7 +285,7 @@ public class SeyrenConfig {
         return Integer.valueOf(graphiteCarbonPicklePort);
     }
 
-    @JsonIgnore
+    @JsonProperty("graphiteCarbonPickleEnabled")
     public boolean getGraphiteCarbonPickleEnable() {
         return Boolean.valueOf(graphiteCarbonPickleEnable);
     }

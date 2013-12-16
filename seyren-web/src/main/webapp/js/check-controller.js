@@ -158,6 +158,10 @@
             return Graph.liveImage(check, minutes);
         };
 
+        $scope.liveEnabled = function () {
+            return $scope.config.graphiteCarbonPickleEnabled;
+        };
+
         $scope.deleteAlerts = function (check, days) {
             var params = {checkId: check.id};
             if (angular.isDefined(days)) {

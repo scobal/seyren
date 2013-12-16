@@ -49,7 +49,7 @@
                         </label>
                     </div>
                 </div>
-                <div ng-class="{ 'form-group': true, 'has-error': checkForm['check.live'].$invalid }">
+                <div ng-class="{ 'form-group': true, 'has-error': checkForm['check.live'].$invalid }" ng-show="liveEnabled()">
                     <label class="col-sm-3 control-label" for="check.live">Live</label>
                     <div class="col-sm-1">
                         <label class="checkbox inline">
