@@ -31,6 +31,9 @@ open http://localhost:8080
 * `GRAPHITE_KEYSTORE` - The HTTP KeyStore path for the https Graphite server. Default: ``
 * `GRAPHITE_KEYSTORE_PASSWORD` - The HTTP KeyStore password for the HTTPS Graphite server. Default: ``
 * `GRAPHITE_TRUSTSTORE` - The HTTP TrustStore path for the https Graphite server. Default: ``
+* `GRAPHITE_CONNECTION_REQUEST_TIMEOUT` - The number of millisconds to wait to obtain a connection from the pool. Default: `0` (infinite)
+* `GRAPHITE_CONNECT_TIMEOUT` - The number of milliseconds to wait to establish a connection. Default: `0` (infinite)
+* `GRAPHITE_SOCKET_TIMEOUT` - The number of milliseconds to wait for request data. Default: `0` (infinite)
 * `MONGO_URL` - The Mongo [connection string](http://docs.mongodb.org/manual/reference/connection-string/). Default: `mongodb://localhost:27017/seyren`
 * `SEYREN_URL` - The location of your Seyren instance. Default: `http://localhost:8080/seyren`
 
