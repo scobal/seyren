@@ -30,7 +30,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.google.common.io.Closeables;
+import com.google.common.io.Closer;
 import com.seyren.core.domain.Alert;
 import com.seyren.core.domain.AlertType;
 import com.seyren.core.domain.Check;
@@ -39,17 +39,17 @@ import com.seyren.core.domain.SubscriptionType;
 import com.seyren.core.util.config.SeyrenConfig;
 
 public class IrcCatNotificationServiceTest {
-
+    
     private static final int IRCCAT_PORT = 12345;
     private SeyrenConfig mockSeyrenConfig;
     private NotificationService service;
-
+    
     @Before
     public void configureService() {
         mockSeyrenConfig = mock(SeyrenConfig.class);
         service = new IrcCatNotificationService(mockSeyrenConfig);
     }
-
+    
     @Test
     public void notifcationServiceCanOnlyHandleHubotSubscription() {
         assertThat(service.canHandle(SubscriptionType.IRCCAT), is(true));
@@ -60,51 +60,51 @@ public class IrcCatNotificationServiceTest {
             assertThat(service.canHandle(type), is(false));
         }
     }
-
+    
     @Test
     public void sendNotification() throws Exception {
         when(mockSeyrenConfig.getBaseUrl()).thenReturn("http://localhost");
         when(mockSeyrenConfig.getIrcCatHost()).thenReturn("localhost");
         when(mockSeyrenConfig.getIrcCatPort()).thenReturn(IRCCAT_PORT);
         TcpServer tcpServer = new TcpServer(IRCCAT_PORT).start();
-
+        
         Check check = new Check().withEnabled(true).withName("check-name")
                 .withState(AlertType.ERROR);
-
+        
         Subscription subscription = new Subscription().withType(
                 SubscriptionType.IRCCAT).withTarget("#mychannel");
-
+        
         Alert alert = new Alert().withTarget("the.target.name")
                 .withValue(BigDecimal.valueOf(12))
                 .withWarn(BigDecimal.valueOf(5))
                 .withError(BigDecimal.valueOf(10)).withFromType(AlertType.WARN)
                 .withToType(AlertType.ERROR);
-
+        
         List<Alert> alerts = Arrays.asList(alert);
-
+        
         service.sendNotification(check, subscription, alerts);
-
+        
         tcpServer.waitForNumberOfMessage(1, 1000);
-
+        
         assertThat(tcpServer.getMessages().size(), is(1));
-
+        
         verify(mockSeyrenConfig).getIrcCatHost();
         verify(mockSeyrenConfig).getIrcCatPort();
         tcpServer.stop();
     }
-
+    
     private static class TcpServer {
-
+        
         private final int port;
-
+        
         private volatile boolean shutdown = false;
         private final List<String> messages = new CopyOnWriteArrayList<String>();
         private Thread serverThread;
-
+        
         public TcpServer(int port) {
             this.port = port;
         }
-
+        
         public TcpServer start() {
             serverThread = new Thread(new Runnable() {
                 @Override
@@ -114,18 +114,19 @@ public class IrcCatNotificationServiceTest {
                         serverSocket = new ServerSocket(port);
                         while (!shutdown) {
                             Socket socket = serverSocket.accept();
-                            BufferedReader in = new BufferedReader(
-                                    new InputStreamReader(
-                                            socket.getInputStream()));
+                            Closer closer = Closer.create();
                             try {
+                                BufferedReader in = closer.register(new BufferedReader(new InputStreamReader(socket.getInputStream())));
                                 String message = in.readLine();
                                 messages.add(message);
                                 synchronized (this) {
                                     this.notifyAll();
                                 }
                             } catch (IOException ioe) {
-                                Closeables.closeQuietly(in);
                                 socket.close();
+                                closer.rethrow(ioe);
+                            } finally {
+                                closer.close();
                             }
                         }
                     } catch (IOException ioe) {
@@ -143,7 +144,7 @@ public class IrcCatNotificationServiceTest {
             serverThread.start();
             return this;
         }
-
+        
         public void waitForNumberOfMessage(int n, long timeout)
                 throws InterruptedException {
             long startTime = System.currentTimeMillis();
@@ -156,15 +157,15 @@ public class IrcCatNotificationServiceTest {
                 }
             }
         }
-
+        
         public void stop() {
             shutdown = true;
         }
-
+        
         public List<String> getMessages() {
             return this.messages;
         }
-
+        
     }
-
+    
 }

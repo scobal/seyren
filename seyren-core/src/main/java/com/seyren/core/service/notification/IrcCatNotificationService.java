@@ -27,7 +27,7 @@ import javax.inject.Named;
 
 import org.slf4j.LoggerFactory;
 
-import com.google.common.io.Closeables;
+import com.google.common.io.Closer;
 import com.seyren.core.domain.Alert;
 import com.seyren.core.domain.AlertType;
 import com.seyren.core.domain.Check;
@@ -80,13 +80,16 @@ public class IrcCatNotificationService implements NotificationService {
 
     private void sendMessage(String ircCatHost, int ircCatPort, String message, String channel) throws IOException {
         Socket socket = new Socket(ircCatHost, ircCatPort);
-        Writer out = new OutputStreamWriter(socket.getOutputStream());
+        Closer closer = Closer.create();
         try {
+            Writer out = closer.register(new OutputStreamWriter(socket.getOutputStream()));
             out.write(format("%s %s\n", channel, message));
             out.flush();
         } catch (IOException e) {
-            Closeables.closeQuietly(out);
             socket.close();
+            throw closer.rethrow(e);
+        } finally {
+            closer.close();
         }
     }
 
