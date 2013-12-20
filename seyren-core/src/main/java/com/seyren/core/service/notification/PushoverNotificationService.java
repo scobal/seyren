@@ -27,7 +27,8 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.client.utils.HttpClientUtils;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,7 +71,7 @@ public class PushoverNotificationService implements NotificationService {
         }
 
 
-        HttpClient client = new DefaultHttpClient();
+        HttpClient client = HttpClientBuilder.create().build();
         HttpPost post = new HttpPost("https://api.pushover.net/1/messages.json");
 
         try {
@@ -85,6 +86,8 @@ public class PushoverNotificationService implements NotificationService {
             client.execute(post);
         } catch (IOException e) {
             throw new NotificationFailedException("Sending notification to Pushover failed.", e);
+        } finally {
+            HttpClientUtils.closeQuietly(client);
         }
     }
 

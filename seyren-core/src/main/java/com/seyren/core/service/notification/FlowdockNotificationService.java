@@ -26,8 +26,9 @@ import javax.inject.Named;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.utils.HttpClientUtils;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,7 +77,7 @@ public class FlowdockNotificationService implements NotificationService {
                 );
         
         String url = String.format("%s/v1/messages/chat/%s", baseUrl, token);
-        HttpClient client = new DefaultHttpClient();
+        HttpClient client = HttpClientBuilder.create().build();
         HttpPost post = new HttpPost(url);
         post.addHeader("Content-Type", "application/json");
         post.addHeader("accept", "application/json");
@@ -95,6 +96,7 @@ public class FlowdockNotificationService implements NotificationService {
             LOGGER.warn("Error posting to Flowdock", e);
         } finally {
             post.releaseConnection();
+            HttpClientUtils.closeQuietly(client);
         }
         
     }

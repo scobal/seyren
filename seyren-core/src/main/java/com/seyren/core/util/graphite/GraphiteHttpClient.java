@@ -39,15 +39,19 @@ import org.apache.http.auth.Credentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.protocol.ClientContext;
+import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.conn.scheme.Scheme;
-import org.apache.http.conn.ssl.SSLSocketFactory;
+import org.apache.http.config.Registry;
+import org.apache.http.config.RegistryBuilder;
+import org.apache.http.conn.HttpClientConnectionManager;
+import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.auth.BasicScheme;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.PoolingClientConnectionManager;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpCoreContext;
@@ -76,7 +80,9 @@ public class GraphiteHttpClient {
     private final String graphiteKeyStore;
     private final String graphiteKeyStorePassword;
     private final String graphiteTrustStore;
-    private final int graphiteSSLPort;
+    private final int graphiteConnectionRequestTimeout;
+    private final int graphiteConnectTimeout;
+    private final int graphiteSocketTimeout;
     private final HttpClient client;
     private final HttpContext context;
     
@@ -90,7 +96,9 @@ public class GraphiteHttpClient {
         this.graphiteKeyStore = seyrenConfig.getGraphiteKeyStore();
         this.graphiteKeyStorePassword = seyrenConfig.getGraphiteKeyStorePassword();
         this.graphiteTrustStore = seyrenConfig.getGraphiteTrustStore();
-        this.graphiteSSLPort = seyrenConfig.getGraphiteSSLPort();
+        this.graphiteConnectionRequestTimeout = seyrenConfig.getGraphiteConnectionRequestTimeout();
+        this.graphiteConnectTimeout = seyrenConfig.getGraphiteConnectTimeout();
+        this.graphiteSocketTimeout = seyrenConfig.getGraphiteSocketTimeout();
         this.context = new BasicHttpContext();
         this.client = createHttpClient();
     }
@@ -151,21 +159,52 @@ public class GraphiteHttpClient {
     }
     
     private HttpClient createHttpClient() {
-        DefaultHttpClient client = new DefaultHttpClient(createConnectionManager());
+        HttpClientBuilder clientBuilder = HttpClientBuilder.create()
+                .setConnectionManager(createConnectionManager())
+                .setDefaultRequestConfig(RequestConfig.custom()
+                        .setConnectionRequestTimeout(graphiteConnectionRequestTimeout)
+                        .setConnectTimeout(graphiteConnectTimeout)
+                        .setSocketTimeout(graphiteSocketTimeout)
+                        .build());
         
         // Set auth header for graphite if username and password are provided
         if (!StringUtils.isEmpty(graphiteUsername) && !StringUtils.isEmpty(graphitePassword)) {
-            client.getCredentialsProvider().setCredentials(
+            CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+            credentialsProvider.setCredentials(
                     new AuthScope(AuthScope.ANY_HOST, AuthScope.ANY_PORT),
                     new UsernamePasswordCredentials(graphiteUsername, graphitePassword));
+            clientBuilder.setDefaultCredentialsProvider(credentialsProvider);
             context.setAttribute("preemptive-auth", new BasicScheme());
-            client.addRequestInterceptor(new PreemptiveAuth(), 0);
+            clientBuilder.addInterceptorFirst(new PreemptiveAuth());
         }
         
-        // Set SSL configuration if keystore and truststore are provided
+        return clientBuilder.build();
+    }
+    
+    private KeyStore loadKeyStore(String keyStorePath, String password) throws Exception {
+        FileInputStream keyStoreInput = null;
+        try {
+            KeyStore keyStore = KeyStore.getInstance("JKS");
+            keyStoreInput = new FileInputStream(keyStorePath);
+            keyStore.load(keyStoreInput, password == null ? null : password.toCharArray());
+            return keyStore;
+        } catch (Exception e) {
+            LOGGER.warn("A problem occurred when loading keystore {}", keyStorePath);
+            throw e;
+        } finally {
+            if (keyStoreInput != null) {
+                try {
+                    keyStoreInput.close();
+                } catch (IOException e) {
+                }
+            }
+        }
+    }
+    
+    private HttpClientConnectionManager createConnectionManager() {
+        PoolingHttpClientConnectionManager manager;
         if ("https".equals(graphiteScheme) && !StringUtils.isEmpty(graphiteKeyStore) && !StringUtils.isEmpty(graphiteKeyStorePassword) && !StringUtils.isEmpty(graphiteTrustStore)) {
             try {
-                // Read the keystore and trustore
                 KeyStore keyStore = loadKeyStore(graphiteKeyStore, graphiteKeyStorePassword);
                 KeyStore trustStore = loadKeyStore(graphiteTrustStore, null);
                 
@@ -180,38 +219,20 @@ public class GraphiteHttpClient {
                 SSLContext sslContext = SSLContext.getInstance("SSL");
                 sslContext.init(keyManagers, trustManagers, null);
                 
-                SSLSocketFactory socketFactory = new SSLSocketFactory(sslContext);
-                Scheme scheme = new Scheme(graphiteScheme, graphiteSSLPort, socketFactory);
-                client.getConnectionManager().getSchemeRegistry().register(scheme);
+                SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslContext);
+                
+                Registry<ConnectionSocketFactory> socketFactoryRegistry = RegistryBuilder.<ConnectionSocketFactory> create()
+                        .register("https", sslsf).build();
+                
+                manager = new PoolingHttpClientConnectionManager(socketFactoryRegistry);
             } catch (Exception e) {
-                LOGGER.warn("A problem occurs when building SSLSocketFactory", e);
+                LOGGER.warn("A problem occurred when building SSLConnectionSocketFactory", e);
+                throw new RuntimeException("Error while building SSLConnectionSocketFactory", e);
             }
+        } else {
+            manager = new PoolingHttpClientConnectionManager();
         }
-        return client;
-    }
-    
-    private KeyStore loadKeyStore(String keyStorePath, String password) throws Exception {
-        FileInputStream keyStoreInput = null;
-        try {
-            KeyStore keyStore = KeyStore.getInstance("JKS");
-            keyStoreInput = new FileInputStream(keyStorePath);
-            keyStore.load(keyStoreInput, password == null ? null : password.toCharArray());
-            return keyStore;
-        } catch (Exception e) {
-            LOGGER.warn("A problem occurs when loading keystore {}", keyStorePath);
-            throw e;
-        } finally {
-            if (keyStoreInput != null) {
-                try {
-                    keyStoreInput.close();
-                } catch (IOException e) {
-                }
-            }
-        }
-    }
-    
-    private ClientConnectionManager createConnectionManager() {
-        PoolingClientConnectionManager manager = new PoolingClientConnectionManager();
+        
         manager.setDefaultMaxPerRoute(MAX_CONNECTIONS_PER_ROUTE);
         return manager;
     }
@@ -224,7 +245,7 @@ public class GraphiteHttpClient {
      */
     private static class PreemptiveAuth implements HttpRequestInterceptor {
         public void process(HttpRequest request, HttpContext context) throws HttpException, IOException {
-            AuthState authState = (AuthState) context.getAttribute(ClientContext.TARGET_AUTH_STATE);
+            AuthState authState = (AuthState) context.getAttribute(HttpClientContext.TARGET_AUTH_STATE);
             if (authState.getAuthScheme() != null) {
                 return;
             }
@@ -232,7 +253,7 @@ public class GraphiteHttpClient {
             if (authScheme == null) {
                 return;
             }
-            CredentialsProvider credsProvider = (CredentialsProvider) context.getAttribute(ClientContext.CREDS_PROVIDER);
+            CredentialsProvider credsProvider = (CredentialsProvider) context.getAttribute(HttpClientContext.CREDS_PROVIDER);
             HttpHost targetHost = (HttpHost) context.getAttribute(HttpCoreContext.HTTP_TARGET_HOST);
             Credentials credentials = credsProvider.getCredentials(new AuthScope(targetHost.getHostName(), targetHost.getPort()));
             authState.update(authScheme, credentials);

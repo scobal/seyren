@@ -25,9 +25,10 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.utils.HttpClientUtils;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,7 +69,7 @@ public class HubotNotificationService implements NotificationService {
         body.put("alerts", alerts);
         body.put("rooms", subscription.getTarget().split(","));
         
-        HttpClient client = new DefaultHttpClient();
+        HttpClient client = HttpClientBuilder.create().build();
         
         HttpPost post = new HttpPost(hubotUrl + "/seyren/alert");
         try {
@@ -77,6 +78,8 @@ public class HubotNotificationService implements NotificationService {
             client.execute(post);
         } catch (IOException e) {
             throw new NotificationFailedException("Sending notification to Hubot at " + hubotUrl + " failed.", e);
+        } finally {
+            HttpClientUtils.closeQuietly(client);
         }
     }
     

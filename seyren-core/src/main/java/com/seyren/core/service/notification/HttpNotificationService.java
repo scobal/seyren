@@ -29,9 +29,10 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.utils.HttpClientUtils;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
@@ -73,7 +74,7 @@ public class HttpNotificationService implements NotificationService {
         body.put("alerts", alerts);        
         body.put("preview", getPreviewImage(check)); 
         
-        HttpClient client = new DefaultHttpClient();
+        HttpClient client = HttpClientBuilder.create().build();
         
         HttpPost post = new HttpPost(subscription.getTarget());
         try {
@@ -88,6 +89,7 @@ public class HttpNotificationService implements NotificationService {
             throw new NotificationFailedException("Failed to send notification to HTTP", e);
         } finally {
             post.releaseConnection();
+            HttpClientUtils.closeQuietly(client);
         }
     }
     

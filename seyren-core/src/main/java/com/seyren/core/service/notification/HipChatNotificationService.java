@@ -22,7 +22,8 @@ import javax.inject.Named;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.client.utils.HttpClientUtils;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.LoggerFactory;
 
@@ -84,7 +85,7 @@ public class HipChatNotificationService implements NotificationService {
     private void sendMessage(String message, MessageColor color, String[] roomIds, String from, String authToken, boolean notify) {
         for (String roomId : roomIds) {
             LOGGER.info("Posting: {} to {}: {} {}", from, roomId, message, color);
-            HttpClient client = new DefaultHttpClient();
+            HttpClient client = HttpClientBuilder.create().build();
             String url = baseUrl + "/v1/rooms/message";
             HttpPost post = new HttpPost(url);
             
@@ -104,6 +105,7 @@ public class HipChatNotificationService implements NotificationService {
                 LOGGER.warn("Error posting to HipChat", e);
             } finally {
                 post.releaseConnection();
+                HttpClientUtils.closeQuietly(client);
             }
         }
     }

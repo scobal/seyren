@@ -43,6 +43,9 @@ public class SeyrenConfig {
     private final String graphiteTrustStore;
     private final String graphiteCarbonPickleEnable;
     private final String graphiteCarbonPicklePort;
+    private final int graphiteConnectionRequestTimeout;
+    private final int graphiteConnectTimeout;
+    private final int graphiteSocketTimeout;
     private final String pagerDutyDomain;
     private final String pagerDutyToken;
     private final String pagerDutyUsername;
@@ -80,6 +83,9 @@ public class SeyrenConfig {
         this.graphiteTrustStore = configOrDefault("GRAPHITE_TRUSTSTORE", "");
         this.graphiteCarbonPickleEnable = configOrDefault("GRAPHITE_CARBON_PICKLE_ENABLE", "false");
         this.graphiteCarbonPicklePort = configOrDefault("GRAPHITE_CARBON_PICKLE_PORT", "2004");
+        this.graphiteConnectionRequestTimeout = Integer.parseInt(configOrDefault("GRAPHITE_CONNECTION_REQUEST_TIMEOUT", "0"));
+        this.graphiteConnectTimeout = Integer.parseInt(configOrDefault("GRAPHITE_CONNECT_TIMEOUT", "0"));
+        this.graphiteSocketTimeout = Integer.parseInt(configOrDefault("GRAPHITE_SOCKET_TIMEOUT", "0"));
         
         // SMTP
         this.smtpFrom = configOrDefault(list("SMTP_FROM", "SEYREN_FROM_EMAIL"), "alert@seyren");
@@ -288,6 +294,21 @@ public class SeyrenConfig {
     @JsonProperty("graphiteCarbonPickleEnabled")
     public boolean getGraphiteCarbonPickleEnable() {
         return Boolean.valueOf(graphiteCarbonPickleEnable);
+    }
+    
+    @JsonIgnore
+    public int getGraphiteConnectionRequestTimeout() {
+        return graphiteConnectionRequestTimeout;
+    }
+    
+    @JsonIgnore
+    public int getGraphiteConnectTimeout() {
+        return graphiteConnectTimeout;
+    }
+    
+    @JsonIgnore
+    public int getGraphiteSocketTimeout() {
+        return graphiteSocketTimeout;
     }
 
     private static String configOrDefault(String propertyName, String defaultValue) {
