@@ -80,6 +80,7 @@
         <org.slf4j.version>1.7.5</org.slf4j.version>
         <org.springframework.version>3.2.4.RELEASE</org.springframework.version>
         <org.python.version>2.5.3</org.python.version>
+        <org.snmp4j.version>2.2.3</org.snmp4j.version>
     </properties>
     
     <prerequisites>
@@ -370,12 +371,12 @@
                 <artifactId>jython-standalone</artifactId>
                 <version>${org.python.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.snmp4j</groupId>
+                <artifactId>snmp4j</artifactId>
+                <version>$org.snmp4j.version}</version>
+            </dependency>
         </dependencies>
-        <dependency>
-            <groupId>org.snmp4j</groupId>
-            <artifactId>snmp4j</artifactId>
-            <version>2.2.3</version>
-        </dependency>
     </dependencyManagement>
 
 </project>
