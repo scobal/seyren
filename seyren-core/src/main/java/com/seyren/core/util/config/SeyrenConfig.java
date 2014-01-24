@@ -67,6 +67,10 @@ public class SeyrenConfig {
     private final String ircCatHost;
     private final String ircCatPort;
     private final String pushoverAppApiToken;
+    private final String snmpHost;
+    private final Integer snmpPort;
+    private final String snmpCommunity;
+    private final String snmpOID;
 
     public SeyrenConfig() {
         
@@ -119,6 +123,13 @@ public class SeyrenConfig {
 
         // PushOver
         this.pushoverAppApiToken = configOrDefault("PUSHOVER_APP_API_TOKEN", "");
+
+        // SNMP
+        this.snmpHost = configOrDefault("SNMP_HOST", "localhost");
+        this.snmpPort = Integer.parseInt(configOrDefault("SNMP_PORT", "162"));
+        this.snmpCommunity = configOrDefault("SNMP_COMMUNITY", "public");
+        this.snmpOID = configOrDefault("SNMP_OID", "1.3.6.1.4.1.32473.1");
+
     }
     
     @PostConstruct
@@ -234,6 +245,26 @@ public class SeyrenConfig {
     @JsonIgnore
     public Integer getSmtpPort() {
         return smtpPort;
+    }
+
+    @JsonIgnore
+    public String getSnmpHost() {
+        return snmpHost;
+    }
+    
+    @JsonIgnore
+    public Integer getSnmpPort() {
+        return snmpPort;
+    }
+    
+    @JsonIgnore
+    public String getSnmpCommunity() {
+        return snmpCommunity;
+    }
+    
+    @JsonIgnore
+    public String getSnmpOID() {
+        return snmpOID;
     }
     
     @JsonIgnore
