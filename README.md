@@ -73,6 +73,12 @@ open http://localhost:8080
 * `GRAPHITE_CARBON_PICKLE_ENABLE` - Enable a TCP server to listen Carbon relay [pickle protocol](http://graphite.readthedocs.org/en/latest/feeding-carbon.html). Default: `false`
 * `GRAPHITE_CARBON_PICKLE_PORT` - The TCP server port. Default: `2004`
 
+#### [SNMP](http://en.wikipedia.org/wiki/Simple_Network_Management_Protocol)
+* `SNMP_HOST` - The SNMP host. Default: `localhost`
+* `SNMP_PORT` - The SNMP port. Default: `162`
+* `SNMP_COMMUNITY` - The SNMP  community. Default: `public`
+* `SNMP_OID` - The SNMP OID. Default: `1.3.6.1.4.1.32473.1`
+
 ###Cloud Formation
 
 If you are running on amazon infrastructure use this [Cloud Formation Template](https://gist.github.com/5922231) to bring up a single instance of any size. All the environment variables required for Seyren are specified as properties to the cloud formation template and a fully configured Seyren instance should come up with no other intervention.
