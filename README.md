@@ -36,6 +36,7 @@ open http://localhost:8080
 * `GRAPHITE_SOCKET_TIMEOUT` - The number of milliseconds to wait for request data. Default: `0` (infinite)
 * `MONGO_URL` - The Mongo [connection string](http://docs.mongodb.org/manual/reference/connection-string/). Default: `mongodb://localhost:27017/seyren`
 * `SEYREN_URL` - The location of your Seyren instance. Default: `http://localhost:8080/seyren`
+* `SEYREN_LOG_PATH` - The path of seyren.log. Default: ``. If a value is set, it must end with a '/'.
 
 #### [Email](http://en.wikipedia.org/wiki/Simple_Mail_Transfer_Protocol)
 * `SMTP_HOST` - The smtp server to send email notifications from. Default: `localhost`
