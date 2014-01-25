@@ -66,7 +66,11 @@ public class IrcCatNotificationServiceTest {
         when(mockSeyrenConfig.getBaseUrl()).thenReturn("http://localhost");
         when(mockSeyrenConfig.getIrcCatHost()).thenReturn("localhost");
         when(mockSeyrenConfig.getIrcCatPort()).thenReturn(IRCCAT_PORT);
-        TcpServer tcpServer = new TcpServer(IRCCAT_PORT).start();
+        TcpServer tcpServer = new TcpServer(IRCCAT_PORT);
+        synchronized (tcpServer) {
+            tcpServer.start();
+            tcpServer.wait(1000); // Wait for up to 1 second while the server socket is being bound.
+        }
         
         Check check = new Check().withEnabled(true).withName("check-name")
                 .withState(AlertType.ERROR);
@@ -111,7 +115,10 @@ public class IrcCatNotificationServiceTest {
                 public void run() {
                     ServerSocket serverSocket = null;
                     try {
-                        serverSocket = new ServerSocket(port);
+                        synchronized (this) {
+                            serverSocket = new ServerSocket(port);
+                            this.notifyAll(); // Notify now that the server socket is bound.
+                        }
                         while (!shutdown) {
                             Socket socket = serverSocket.accept();
                             Closer closer = Closer.create();
