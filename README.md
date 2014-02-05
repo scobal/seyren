@@ -21,6 +21,14 @@ java -jar seyren-web/target/seyren-web-*-war-exec.jar
 open http://localhost:8080
 ```
 
+If you want to change the port seyren runs on, you can use the jetty parameter:
+
+```
+java -jar seyren-web/target/dependency/jetty-runner.jar --port 9999 --path /seyren seyren-web/target/*.war
+```
+
+An example shell script of to run seyren is included as `run_seyren.sh`
+
 ###Environment variables
 
 #### Base
