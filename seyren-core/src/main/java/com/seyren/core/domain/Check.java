@@ -41,8 +41,10 @@ public class Check {
     private String name;
     private String description;
     private String target;
+    private String diff;
     private BigDecimal warn;
     private BigDecimal error;
+    private BigDecimal timeThreshold;
     private boolean enabled;
     private boolean live;
     private AlertType state;
@@ -62,6 +64,19 @@ public class Check {
         return this;
     }
     
+    public String getDiff() {
+        return diff;
+    }
+
+    public void setDiff(String diff) {
+        this.diff = diff;
+    }
+
+    public Check withDiff(AlertType state) {
+	setDiff(" ");
+        return this;
+    }
+
     public String getName() {
         return name;
     }
@@ -78,58 +93,73 @@ public class Check {
     public String getDescription() {
         return description;
     }
-    
+
     public void setDescription(String description) {
         this.description = description;
     }
-    
+
     public Check withDescription(String description) {
         this.description = description;
         return this;
     }
-    
+
     public String getTarget() {
         return target;
     }
-    
+
     public void setTarget(String target) {
         this.target = target;
     }
-    
+
     public Check withTarget(String target) {
         setTarget(target);
         return this;
     }
-    
+
     @JsonSerialize(using = BigDecimalSerializer.class)
     public BigDecimal getWarn() {
         return warn;
     }
-    
+
     @JsonDeserialize(using = BigDecimalDeserializer.class)
     public void setWarn(BigDecimal warn) {
         this.warn = warn;
     }
-    
+
     public Check withWarn(BigDecimal warn) {
         setWarn(warn);
         return this;
     }
-    
+
     @JsonSerialize(using = BigDecimalSerializer.class)
     public BigDecimal getError() {
         return error;
     }
-    
+
     @JsonDeserialize(using = BigDecimalDeserializer.class)
     public void setError(BigDecimal error) {
         this.error = error;
     }
-    
+
     public Check withError(BigDecimal error) {
         setError(error);
         return this;
     }
+
+    @JsonSerialize(using = BigDecimalSerializer.class)
+    public BigDecimal getTimeThreshold() {
+        return timeThreshold;
+    }
+
+    @JsonDeserialize(using = BigDecimalDeserializer.class)
+    public void setTimeThreshold(BigDecimal timeThreshold) {
+        this.timeThreshold = timeThreshold;
+    }
+
+    public Check withTimeThreshold(BigDecimal timeThreshold) {
+        setTimeThreshold(timeThreshold);
+        return this;
+   }
 
     public boolean isEnabled() {
         return enabled;
@@ -164,7 +194,7 @@ public class Check {
     public void setState(AlertType state) {
         this.state = state;
     }
-    
+
     @JsonSerialize(using = DateTimeSerializer.class)
     public DateTime getLastCheck() {
         return lastCheck;
@@ -178,12 +208,13 @@ public class Check {
         setLastCheck(lastCheck);
         return this;
     }
-    
+
     public Check withState(AlertType state) {
         setState(state);
         return this;
     }
     
+
     public List<Subscription> getSubscriptions() {
         return subscriptions;
     }
@@ -191,7 +222,7 @@ public class Check {
     public void setSubscriptions(List<Subscription> subscriptions) {
         this.subscriptions = subscriptions;
     }
-    
+
     public Check withSubscriptions(List<Subscription> subscriptions) {
         setSubscriptions(subscriptions);
         return this;

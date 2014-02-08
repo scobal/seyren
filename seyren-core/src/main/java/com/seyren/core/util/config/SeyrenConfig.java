@@ -79,7 +79,7 @@ public class SeyrenConfig {
         this.mongoUrl = configOrDefault("MONGO_URL", "mongodb://localhost:27017/seyren");
         
         // Graphite
-        this.graphiteUrl = stripEnd(configOrDefault("GRAPHITE_URL", "http://localhost:80"), "/");
+        this.graphiteUrl = stripEnd(configOrDefault("GRAPHITE_URL", ""), "/");
         this.graphiteUsername = configOrDefault("GRAPHITE_USERNAME", "");
         this.graphitePassword = configOrDefault("GRAPHITE_PASSWORD", "");
         this.graphiteKeyStore = configOrDefault("GRAPHITE_KEYSTORE", "");
@@ -95,9 +95,9 @@ public class SeyrenConfig {
         this.smtpFrom = configOrDefault(list("SMTP_FROM", "SEYREN_FROM_EMAIL"), "alert@seyren");
         this.smtpUsername = configOrDefault("SMTP_USERNAME", "");
         this.smtpPassword = configOrDefault("SMTP_PASSWORD", "");
-        this.smtpHost = configOrDefault("SMTP_HOST", "localhost");
+        this.smtpHost = configOrDefault("SMTP_HOST", "");
         this.smtpProtocol = configOrDefault("SMTP_PROTOCOL", "smtp");
-        this.smtpPort = Integer.parseInt(configOrDefault("SMTP_PORT", "25"));
+        this.smtpPort = Integer.parseInt(configOrDefault("SMTP_PORT", ""));
         
         // HipChat
         this.hipChatAuthToken = configOrDefault(list("HIPCHAT_AUTHTOKEN", "HIPCHAT_AUTH_TOKEN"), "");

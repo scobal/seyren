@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>info</level>
+        </filter>
+        <file>${SEYREN_LOG_PATH}seyren.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>seyren.%d{yyyy-MM-dd}.log.zip</fileNamePattern>
+            <maxHistory>28</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{dd/MM/yyyy HH:mm:ss.SSS} [%thread] %-5level %X{logItemId} %logger{36} - %msg%n %X{stack}</pattern>
+        </encoder>
+    </appender>
+    
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>${console.log.level:-off}</level>
+        </filter>
+        <encoder>
+            <pattern>%d{dd/MM/yyyy HH:mm:ss.SSS} [%thread] %-5level %X{logItemId} %logger{36} - %msg%n %X{stack}</pattern>
+        </encoder>
+    </appender>
+
+    <root level="all">
+        <appender-ref ref="file" />
+        <appender-ref ref="console" />
+    </root>
+
+</configuration>
