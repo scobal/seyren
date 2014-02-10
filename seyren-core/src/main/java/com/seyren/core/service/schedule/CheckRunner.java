@@ -87,7 +87,7 @@ public class CheckRunner implements Runnable {
            throw new RuntimeException(e);
         }
 
-	BasicDBObject query = new BasicDBObject();
+        BasicDBObject query = new BasicDBObject();
         query.put("name", check.getName());
         DBObject dbo  = mongo.getCollection("checks").findOne(query);
 
@@ -107,6 +107,12 @@ public class CheckRunner implements Runnable {
                       }
              }
         }
+            else {
+               mongo.getCollection("checks").update(dbo,new BasicDBObject("$unset",new BasicDBObject("errorTimeStamp",new BasicDBObject("$exists",true))));
+               mongo.getCollection("checks").update(dbo,new BasicDBObject("$unset",new BasicDBObject("diff",new BasicDBObject("$exists",true))));
+               mongo.getCollection("checks").update(dbo,new BasicDBObject("$unset",new BasicDBObject("success","success")));
+
+         }
       }
         try {
             Map<String, Optional<BigDecimal>> targetValues = targetChecker.check(check);
@@ -159,12 +165,15 @@ public class CheckRunner implements Runnable {
                 alertsStore.createAlert(check.getId(), alert);
 
                 if (stateIsTheSame(lastState, currentState)) {
-                    continue;
+                         continue;
                 }
 
                 interestingAlerts.add(alert);
 
-            }
+                if((currentState.toString().compareTo("ERROR") == 0)&&(lastState.toString().compareTo("WARN") == 0)){
+                  mongo.getCollection("checks").update(dbo,new BasicDBObject("$unset",new BasicDBObject("errorOnce","errorOnce")));
+              }
+              }
 
             check.setState(worstState);
             check.setLastCheck(DateTime.now());
@@ -173,17 +182,20 @@ public class CheckRunner implements Runnable {
             if (interestingAlerts.isEmpty()) {
                 return;
             }
-      if(dbo.get("errorOnce") == null){
+      if (dbo.get("errorOnce") == null) 
+       {
            mongo.getCollection("checks").update(dbo,new BasicDBObject("$set",new BasicDBObject("errorOnce","errorOnce")));
-        }else{
+        } else
+        {
               return;
       }
-            for (Subscription subscription : check.getSubscriptions()) {
+            for (Subscription subscription : check.getSubscriptions())             {
                 if (!subscription.shouldNotify(now, worstState)) {
                     continue;
                 }
 
-                for (NotificationService notificationService : notificationServices) {
+                for (NotificationService notificationService : notificationServices) 
+             {
                     if (notificationService.canHandle(subscription.getType())) {
                         try {
                             notificationService.sendNotification(check, subscription, interestingAlerts);
