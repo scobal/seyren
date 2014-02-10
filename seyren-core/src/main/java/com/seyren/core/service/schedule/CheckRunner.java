@@ -13,12 +13,14 @@
  */
 package com.seyren.core.service.schedule;
 
+
 import org.joda.time.Seconds;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import org.bson.types.ObjectId;
 
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -87,33 +89,11 @@ public class CheckRunner implements Runnable {
            throw new RuntimeException(e);
         }
 
-        BasicDBObject query = new BasicDBObject();
+	BasicDBObject query = new BasicDBObject();
         query.put("name", check.getName());
         DBObject dbo  = mongo.getCollection("checks").findOne(query);
+        DBObject findObject = forId(check.getId());
 
-      if(dbo.get("success") == null){
-          if(check.getState().toString().compareTo("OK") != 0 ) {
-             if(dbo.get("errorTimeStamp") != null){
-                      DateTime err_ts = new DateTime(dbo.get("errorTimeStamp"));
-                      DateTime lastCheck = check.getLastCheck();
-                      if(lastCheck!=null){
-                          int   diff  =  Seconds.secondsBetween(err_ts,lastCheck).getSeconds()/(60);
-                          int timeThreshold = check.getTimeThreshold().intValue();
-                          if(diff < timeThreshold) {
-                               return;
-                          }
-                          mongo.getCollection("checks").update(dbo,new BasicDBObject("$set",new BasicDBObject("success","success")));
-                          mongo.getCollection("checks").update(dbo,new BasicDBObject("$unset",new BasicDBObject("errorOnce","errorOnce")));
-                      }
-             }
-        }
-            else {
-               mongo.getCollection("checks").update(dbo,new BasicDBObject("$unset",new BasicDBObject("errorTimeStamp",new BasicDBObject("$exists",true))));
-               mongo.getCollection("checks").update(dbo,new BasicDBObject("$unset",new BasicDBObject("diff",new BasicDBObject("$exists",true))));
-               mongo.getCollection("checks").update(dbo,new BasicDBObject("$unset",new BasicDBObject("success","success")));
-
-         }
-      }
         try {
             Map<String, Optional<BigDecimal>> targetValues = targetChecker.check(check);
 
@@ -153,13 +133,26 @@ public class CheckRunner implements Runnable {
                 AlertType currentState = valueChecker.checkValue(currentValue, warn, error);
 
                 if (currentState.isWorseThan(worstState)) {
+                     mongo.getCollection("checks").update(findObject,new BasicDBObject("$unset",new BasicDBObject("success","errorOnce")));
                     worstState = currentState;
                 }
 
                 if (isStillOk(lastState, currentState)) {
                     continue;
                 }
-
+		if(dbo.get("errorTimeStamp")!=null){
+		 DateTime err_ts = new DateTime(dbo.get("errorTimeStamp"));
+		 DateTime lastCheck = check.getLastCheck();
+                      if(lastCheck!=null){
+                          int   diff  =  Seconds.secondsBetween(err_ts,lastCheck).getSeconds()/(60);
+                          diff += 1;
+		          mongo.getCollection("checks").update(dbo,new BasicDBObject("$set",new BasicDBObject("diff",diff)));
+                          int timeThreshold = check.getTimeThreshold().intValue();
+                          if(diff < timeThreshold) {
+                               continue;
+                        }
+                      }
+                    }
                 Alert alert = createAlert(target, currentValue, warn, error, lastState, currentState, now);
 
                 alertsStore.createAlert(check.getId(), alert);
@@ -169,11 +162,7 @@ public class CheckRunner implements Runnable {
                 }
 
                 interestingAlerts.add(alert);
-
-                if((currentState.toString().compareTo("ERROR") == 0)&&(lastState.toString().compareTo("WARN") == 0)){
-                  mongo.getCollection("checks").update(dbo,new BasicDBObject("$unset",new BasicDBObject("errorOnce","errorOnce")));
-              }
-              }
+          }
 
             check.setState(worstState);
             check.setLastCheck(DateTime.now());
@@ -182,20 +171,12 @@ public class CheckRunner implements Runnable {
             if (interestingAlerts.isEmpty()) {
                 return;
             }
-      if (dbo.get("errorOnce") == null) 
-       {
-           mongo.getCollection("checks").update(dbo,new BasicDBObject("$set",new BasicDBObject("errorOnce","errorOnce")));
-        } else
-        {
-              return;
-      }
-            for (Subscription subscription : check.getSubscriptions())             {
+            for (Subscription subscription : check.getSubscriptions()) {
                 if (!subscription.shouldNotify(now, worstState)) {
                     continue;
                 }
 
-                for (NotificationService notificationService : notificationServices) 
-             {
+                for (NotificationService notificationService : notificationServices) {
                     if (notificationService.canHandle(subscription.getType())) {
                         try {
                             notificationService.sendNotification(check, subscription, interestingAlerts);

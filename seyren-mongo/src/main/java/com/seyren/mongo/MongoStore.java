@@ -189,10 +189,9 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
         if(check.getState().toString().compareTo("OK") !=0){
              if(dbo.get("errorTimeStamp") ==null){
                         getChecksCollection().update(findObject,new BasicDBObject("$set",new BasicDBObject("errorTimeStamp",dbo.get("lastCheck"))));
-        }else{
-         getChecksCollection().update(findObject,new BasicDBObject("$set",new BasicDBObject("errorTimeStamp",new BasicDBObject("$exists",true))));
-         }
-        } else {
+        }
+           }
+        else {
                getChecksCollection().update(findObject,new BasicDBObject("$unset",new BasicDBObject("errorTimeStamp",new BasicDBObject("$exists",true))));
                getChecksCollection().update(findObject,new BasicDBObject("$unset",new BasicDBObject("diff",new BasicDBObject("$exists",true))));
                getChecksCollection().update(findObject,new BasicDBObject("$unset",new BasicDBObject("success","success")));
