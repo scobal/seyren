@@ -1,7 +1,7 @@
 Practo's Alerting Dashboard
 ===================
 
-This git repository is a forked instance of the orignal git repository https://github.com/scobal/seyren. An  additional change has been made to this git repository. The practo's version of seyren accept's an extra parameter called time threshold.This extra parameter makes Seyren initiates an alarm only when the time limit in error or warn state crosses the time threshold.The input to time threshold is taken in minutes.This was developed by Naveed Mohad Abdul http://www.linkedin.com/pub/naveed-mohad-abdul/25/268/b8 as an internship project at Practo https://www.practo.com/. 
+This git repository is a forked instance of the orignal git repository https://github.com/scobal/seyren. An  additional change has been made to this git repository. The practo's version of seyren accept's an extra parameter called time threshold.This extra parameter makes Seyren initiate an alarm only when the time limit in error or warn state exceeds the time threshold.The input to time threshold is taken in minutes.This was developed by Naveed Mohad Abdul http://www.linkedin.com/pub/naveed-mohad-abdul/25/268/b8 as an internship project at Practo https://www.practo.com/.
 
 Prerequisites
 ----------------------------
