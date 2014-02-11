@@ -92,7 +92,6 @@ public class CheckRunner implements Runnable {
 	BasicDBObject query = new BasicDBObject();
         query.put("name", check.getName());
         DBObject dbo  = mongo.getCollection("checks").findOne(query);
-        DBObject findObject = forId(check.getId());
 
         try {
             Map<String, Optional<BigDecimal>> targetValues = targetChecker.check(check);
@@ -133,7 +132,6 @@ public class CheckRunner implements Runnable {
                 AlertType currentState = valueChecker.checkValue(currentValue, warn, error);
 
                 if (currentState.isWorseThan(worstState)) {
-                     mongo.getCollection("checks").update(findObject,new BasicDBObject("$unset",new BasicDBObject("success","errorOnce")));
                     worstState = currentState;
                 }
 
