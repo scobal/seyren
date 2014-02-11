@@ -62,7 +62,6 @@ public class MongoMapper {
 		.withTimeThreshold(timeThreshold)
                 .withLive(live)
                 .withState(state)
-		.withDiff(state)
                 .withLastCheck(lastCheck)
                 .withSubscriptions(subscriptions);
     }

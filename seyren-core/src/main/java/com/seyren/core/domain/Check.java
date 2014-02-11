@@ -41,7 +41,6 @@ public class Check {
     private String name;
     private String description;
     private String target;
-    private String diff;
     private BigDecimal warn;
     private BigDecimal error;
     private BigDecimal timeThreshold;
@@ -61,19 +60,6 @@ public class Check {
     
     public Check withId(String id) {
         setId(id);
-        return this;
-    }
-    
-    public String getDiff() {
-        return diff;
-    }
-
-    public void setDiff(String diff) {
-        this.diff = diff;
-    }
-
-    public Check withDiff(AlertType state) {
-	setDiff(" ");
         return this;
     }
 

@@ -163,6 +163,7 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
     
     @Override
     public Check saveCheck(Check check) {
+
         DBObject findObject = forId(check.getId());
         
         DateTime lastCheck = check.getLastCheck();
@@ -194,13 +195,11 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
         else {
                getChecksCollection().update(findObject,new BasicDBObject("$unset",new BasicDBObject("errorTimeStamp",new BasicDBObject("$exists",true))));
                getChecksCollection().update(findObject,new BasicDBObject("$unset",new BasicDBObject("diff",new BasicDBObject("$exists",true))));
-               getChecksCollection().update(findObject,new BasicDBObject("$unset",new BasicDBObject("success","success")));
 
-}
-
+             }
 
         return check;
-    }
+     }
 
     @Override
     public Alert createAlert(String checkId, Alert alert) {
