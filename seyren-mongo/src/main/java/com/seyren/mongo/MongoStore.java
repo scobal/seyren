@@ -194,7 +194,8 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
            }
         else {
                getChecksCollection().update(findObject,new BasicDBObject("$unset",new BasicDBObject("errorTimeStamp",new BasicDBObject("$exists",true))));
-               getChecksCollection().update(findObject,new BasicDBObject("$unset",new BasicDBObject("diff",new BasicDBObject("$exists",true))));
+               //For Debugging info
+               //getChecksCollection().update(findObject,new BasicDBObject("$unset",new BasicDBObject("diff",new BasicDBObject("$exists",true))));
 
              }
 
