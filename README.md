@@ -5,16 +5,15 @@ This git repository is a forked instance of the orignal git repository https://g
 
 Prerequisites
 ----------------------------
- 1.Graphite 
- 2.MongoDB
- 3.Maven
- 4.Collectd
+ * Graphite ([Installing Graphite is a tedious task.To make things simpler there is a portable vagrant graphite instance at](https://github.com/Jimdo/vagrant-statsd-graphite-puppet.)
+ * MongoDB
+ * Maven
+ * Collectd
 
-     Installing Graphite is a tedious task.To make things simpler there is a portable vagrant graphite instance at https://github.com/Jimdo/vagrant-statsd-graphite-puppet.
-     All other prerequisites can be downloaded from the package manager of any linux distro.
-     Configure your Collectd to write to Graphite.
+All other prerequisites can be downloaded from the package manager of any linux distro.
+Configure your Collectd to write to Graphite.
 
 
 Running on Linux or Mac
 ----------------------------
-     For instructions on Running Practo version of Seyren go to https://github.com/scobal/seyren.
+For instructions on Running Practo version of Seyren go to https://github.com/scobal/seyren.
