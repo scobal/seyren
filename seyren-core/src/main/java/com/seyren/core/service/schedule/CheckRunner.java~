@@ -132,30 +132,25 @@ public class CheckRunner implements Runnable {
                 AlertType currentState = valueChecker.checkValue(currentValue, warn, error);
 
                 if (currentState.isWorseThan(worstState)) {
-                      worstState = currentState;
+                    worstState = currentState;
                 }
 
                 if (isStillOk(lastState, currentState)) {
                     continue;
                 }
-				
-		        if (currentState.toString().compareTo("OK") != 0) {
-				    if (dbo.get("errorTimeStamp") != null) {
-		              DateTime err_ts = new DateTime(dbo.get("errorTimeStamp"));
-		              DateTime lastCheck = check.getLastCheck();
-                      if(lastCheck!=null) {
+		if(dbo.get("errorTimeStamp")!=null){
+		 DateTime err_ts = new DateTime(dbo.get("errorTimeStamp"));
+		 DateTime lastCheck = check.getLastCheck();
+                      if(lastCheck!=null){
                           int   diff  =  Seconds.secondsBetween(err_ts,lastCheck).getSeconds()/(60);
                           diff += 1;
-		                  mongo.getCollection("checks").update(dbo,new BasicDBObject("$set",new BasicDBObject("diff",diff)));
+		          mongo.getCollection("checks").update(dbo,new BasicDBObject("$set",new BasicDBObject("diff",diff)));
                           int timeThreshold = check.getTimeThreshold().intValue();
                           if(diff < timeThreshold) {
                                continue;
                         }
                       }
-                    } else {
-					    continue;
-					}
-				}
+                    }
                 Alert alert = createAlert(target, currentValue, warn, error, lastState, currentState, now);
 
                 alertsStore.createAlert(check.getId(), alert);
