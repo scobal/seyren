@@ -139,7 +139,7 @@ public class CheckRunner implements Runnable {
                     continue;
                 }
 				
-		        if (currentState.toString().compareTo("OK") != 0) {
+		        if (currentState.toString().compareTo("WARN") != 0 ||currentState.toString().compareTo("ERROR") != 0) {
 				    if (dbo.get("errorTimeStamp") != null) {
 		              DateTime err_ts = new DateTime(dbo.get("errorTimeStamp"));
 		              DateTime lastCheck = check.getLastCheck();
