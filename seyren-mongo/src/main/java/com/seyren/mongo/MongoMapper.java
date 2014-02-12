@@ -41,6 +41,7 @@ public class MongoMapper {
         String target = getString(dbo, "target");
         BigDecimal warn = getBigDecimal(dbo, "warn");
         BigDecimal error = getBigDecimal(dbo, "error");
+        BigDecimal timeThreshold = getBigDecimal(dbo, "timeThreshold");
         boolean enabled = getBoolean(dbo, "enabled");
         boolean live = getOptionalBoolean(dbo, "live", false);
         AlertType state = AlertType.valueOf(getString(dbo, "state"));
@@ -58,6 +59,7 @@ public class MongoMapper {
                 .withWarn(warn)
                 .withError(error)
                 .withEnabled(enabled)
+		.withTimeThreshold(timeThreshold)
                 .withLive(live)
                 .withState(state)
                 .withLastCheck(lastCheck)
@@ -148,6 +150,9 @@ public class MongoMapper {
         }
         if (check.getError() != null) {
             map.put("error", check.getError().toPlainString());
+        }
+	if (check.getTimeThreshold() != null) {
+            map.put("timeThreshold", check.getTimeThreshold().toPlainString());
         }
         map.put("enabled", check.isEnabled());
         map.put("live", check.isLive());

@@ -27,6 +27,7 @@ import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.joda.time.Seconds;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
@@ -162,6 +163,7 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
     
     @Override
     public Check saveCheck(Check check) {
+
         DBObject findObject = forId(check.getId());
         
         DateTime lastCheck = check.getLastCheck();
@@ -179,10 +181,27 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
         DBObject setObject = object("$set", updateObject);
         
         getChecksCollection().update(findObject, setObject);
-        
+        BasicDBObject query = new BasicDBObject();
+        query.put("name", check.getName());
+        String models[] = new String[]{"OK"};
+        query.put("state", new BasicDBObject("$nin", models));
+        DBObject dbo = getChecksCollection().findOne(query);
+
+        if(check.getState().toString().compareTo("OK") !=0){
+             if(dbo.get("errorTimeStamp") ==null){
+                        getChecksCollection().update(findObject,new BasicDBObject("$set",new BasicDBObject("errorTimeStamp",dbo.get("lastCheck"))));
+        }
+           }
+        else {
+               getChecksCollection().update(findObject,new BasicDBObject("$unset",new BasicDBObject("errorTimeStamp",new BasicDBObject("$exists",true))));
+               //For Debugging info
+               //getChecksCollection().update(findObject,new BasicDBObject("$unset",new BasicDBObject("diff",new BasicDBObject("$exists",true))));
+
+             }
+
         return check;
-    }
-    
+     }
+
     @Override
     public Alert createAlert(String checkId, Alert alert) {
         alert.setId(ObjectId.get().toString());
@@ -190,7 +209,7 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
         getAlertsCollection().insert(mapper.alertToDBObject(alert));
         return alert;
     }
-    
+
     @Override
     public SeyrenResponse<Alert> getAlerts(String checkId, int start, int items) {
         DBCursor dbc = getAlertsCollection().find(object("checkId", checkId)).sort(object("timestamp", -1)).skip(start).limit(items);
@@ -205,7 +224,7 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
                 .withStart(start)
                 .withTotal(dbc.count());
     }
-    
+
     @Override
     public SeyrenResponse<Alert> getAlerts(int start, int items) {
         DBCursor dbc = getAlertsCollection().find().sort(object("timestamp", -1)).skip(start).limit(items);
@@ -220,11 +239,11 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
                 .withStart(start)
                 .withTotal(dbc.count());
     }
-    
+
     @Override
     public void deleteAlerts(String checkId, DateTime before) {
         DBObject query = object("checkId", checkId);
-        
+
         if (before != null) {
             query.put("timestamp", object("$lt", new Date(before.getMillis())));
         }

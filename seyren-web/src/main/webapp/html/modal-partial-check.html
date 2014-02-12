@@ -41,6 +41,15 @@
                         <input id="check.error" class="form-control" name="check.error" ng-model="check.error" type="text" ng-pattern="/^-?[0-9]+(.[0-9]+)?$/" required />
                     </div>
                 </div>
+		<div ng-class="{ 'form-group': true, 'has-error': checkForm['check.error'].$invalid }">
+                    <label class="col-sm-3 control-label" for="check.timeThreshold">Time Threshold</label>
+                    <div class="col-sm-3">
+                        <input id="check.timeThreshold" class="form-control" name="check.timeThreshold" ng-model="check.timeThreshold" type="text" ng-pattern="/^-?[0-9]+(.[0-9]+)?$/" required />
+                    </div>
+                    <div class="col-sm-4">
+                        <span id="check.timeThreshold.hint" class="glyphicon glyphicon-question-sign"></span>
+                    </div>
+                </div>
                 <div ng-class="{ 'form-group': true, 'has-error': checkForm['check.enabled'].$invalid }">
                     <label class="col-sm-3 control-label" for="check.enabled">Enabled</label>
                     <div class="col-sm-1">

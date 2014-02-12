@@ -23,6 +23,7 @@
                     <th><a href="" ng-click="predicate=sortByState;reverse=!reverse">State</a></th>
                     <th><a href="" ng-click="predicate='warn';reverse=!reverse">Warn</a></th>
                     <th><a href="" ng-click="predicate='error';reverse=!reverse">Error</a></th>
+                    <th><a href="" ng-click="predicate='error';reverse=!reverse">TimeThreshold</a></th>
                     <th><a href="" ng-click="predicate='enabled';reverse=!reverse">Enabled</a></th>
                 </tr>
             </thead>
@@ -38,6 +39,7 @@
                     </td>
                     <td>{{ check.warn }}</td>
                     <td>{{ check.error }}</td>
+                    <td>{{ check.timeThreshold }}</td>
                     <td><input type="checkbox" ng-checked="check.enabled" ng-click="swapCheckEnabled(check); $event.stopPropagation();" /></td>
                 </tr>
             </tbody>

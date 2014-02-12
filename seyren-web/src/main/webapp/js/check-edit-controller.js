@@ -21,6 +21,10 @@
                 placement: 'right',
                 title: 'Setting your warn level higher than your error level will result in Seyren generating alerts when the target value goes below the threshold.'
             });
+             $('#check\\.timeThreshold\\.hint').tooltip({
+                placement: 'right',
+                title: "The time limit in warn or error state which when exceeded make's seyren send notification to subscriber's to elicit a response.Note The Time limit has to be in minutes"
+            });
         });
 
         $scope.create = function () {
