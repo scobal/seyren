@@ -60,6 +60,12 @@ open http://localhost:8080/seyren
 * `FLOWDOCK_TAGS` -  Special tags to add to all messages. Default: ``
 * `FLOWDOCK_EMOJIS` - Mapping between state and emojis unicode. Default: ``
 
+#### SNMP
+* `SNMP_OID` - The SNMP trap base OID. Default: `1.3.6.1.4.1.94843.1.2`
+* `SNMP_COMMUNITY` -   Default: `public`
+* `SNMP_TIMEOUT` - Timeout in ms. Default: `5000`
+* `SNMP_RETIRES` - Number of retries on failed SNMP communication. Default: `2`
+
 ###Cloud Formation
 
 If you are running on amazon infrastructure use this [Cloud Formation Template](https://gist.github.com/5922231) to bring up a single instance of any size. All the environment variables required for Seyren are specified as properties to the cloud formation template and a fully configured Seyren instance should come up with no other intervention.
