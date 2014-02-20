@@ -168,6 +168,8 @@
     <div class="modal-header">
         <button class="close" data-dismiss="modal">x</button>
         <h3>Add subscription</h3>
+        <br>
+        <a href="http://confluence/display/POS/Seyren+Alerts#SeyrenAlerts-Subscriptions">See Confluence wiki for subscription information</a>
     </div>
     <div class="modal-body">
         <form ng:submit="createSubscription()" class="well form-horizontal">
@@ -184,9 +186,6 @@
                         <select id="newsubscription.type" class="input-medium" name="newsubscription.type">
                             <option value="EMAIL">Email</option>
                             <option value="HIPCHAT">HipChat</option>
-                            <option value="PAGERDUTY">PagerDuty</option>
-                            <option value="HUBOT">Hubot</option>
-                            <option value="FLOWDOCK">Flowdock</option>
                             <option value="SNMP">SNMP</option>
                         </select>
                     </div>
