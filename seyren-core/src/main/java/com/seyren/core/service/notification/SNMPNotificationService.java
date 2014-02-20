@@ -71,7 +71,7 @@ public class SNMPNotificationService implements NotificationService {
         CommunityTarget comtarget = new CommunityTarget();
         comtarget.setCommunity(new OctetString(seyrenConfig.getSnmpCommunity()));
         comtarget.setVersion(SnmpConstants.version2c);
-        comtarget.setAddress(new UdpAddress(subscription.getTarget()));
+        comtarget.setAddress(new UdpAddress(subscription.getTarget().replaceAll(":","/")));
         comtarget.setRetries(seyrenConfig.getSnmpRetries());
         comtarget.setTimeout(seyrenConfig.getSnmpTimeout());
 
@@ -106,19 +106,19 @@ public class SNMPNotificationService implements NotificationService {
             pdu.add(new VariableBinding(new OID(oidPrefix+".9"), new OctetString(alert.getFromType().toString())));
             pdu.add(new VariableBinding(new OID(oidPrefix+".10"), new OctetString(seyrenConfig.getBaseUrl() + "/#/checks/" + check.getId())));
             pdu.add(new VariableBinding(new OID(oidPrefix+".11"), new OctetString(check.getDescription().toString())));
+
             try {
                 snmp.send(pdu,comtarget);
-            } catch (IOException e) {
-                LOGGER.warn("Error: ", e);
+            }catch(IllegalArgumentException iae){
+                LOGGER.warn("Error sending SNMP: Possible that the target is not in the form <host>/<port>", iae);
+            }catch (IOException e) {
+                LOGGER.warn("Error sending SNMP: ", e);
             }
-//
         }
-
     }
 
     @Override
     public boolean canHandle(SubscriptionType subscriptionType) {
         return subscriptionType == SubscriptionType.SNMP;
     }
-
 }
