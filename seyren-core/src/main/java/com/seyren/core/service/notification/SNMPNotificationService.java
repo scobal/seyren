@@ -30,6 +30,8 @@ import org.snmp4j.smi.OctetString;
 import org.snmp4j.smi.UdpAddress;
 import org.snmp4j.smi.VariableBinding;
 import org.snmp4j.transport.DefaultUdpTransportMapping;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -73,21 +75,37 @@ public class SNMPNotificationService implements NotificationService {
         comtarget.setRetries(seyrenConfig.getSnmpRetries());
         comtarget.setTimeout(seyrenConfig.getSnmpTimeout());
 
+        String hostname = "Seyren";
+
+        try
+        {
+            InetAddress addr;
+            addr = InetAddress.getLocalHost();
+            LOGGER.info(addr.toString());
+            hostname = addr.getHostName()+":SEYREN";
+        }
+        catch (UnknownHostException ex)
+        {
+            LOGGER.error("Hostname can not be resolved");
+        }
+
         LOGGER.debug("Sending snmp trap to "+subscription.getTarget());
 
         for (Alert alert : alerts) {
             pdu = new PDU();
             pdu.setType(PDU.NOTIFICATION);
-            pdu.add(new VariableBinding(SnmpConstants.snmpTrapOID,new OID(trapOID)));
+            pdu.add(new VariableBinding(SnmpConstants.snmpTrapOID, new OID(trapOID)));
             pdu.add(new VariableBinding(new OID(oidPrefix+".1"), new OctetString(alert.getTimestamp().toString())));
-            pdu.add(new VariableBinding(new OID(oidPrefix+".2"), new OctetString(alert.getTarget())));
-            pdu.add(new VariableBinding(new OID(oidPrefix+".3"), new OctetString(alert.getValue().toString())));
-            pdu.add(new VariableBinding(new OID(oidPrefix+".4"), new OctetString(alert.getWarn().toString())));
-            pdu.add(new VariableBinding(new OID(oidPrefix+".5"), new OctetString(alert.getError().toString())));
-            pdu.add(new VariableBinding(new OID(oidPrefix+".6"), new OctetString(alert.getToType().toString())));
-            pdu.add(new VariableBinding(new OID(oidPrefix+".7"), new OctetString(alert.getFromType().toString())));
-            pdu.add(new VariableBinding(new OID(oidPrefix+".8"), new OctetString(seyrenConfig.getBaseUrl() + "/#/checks/" + check.getId())));
-            pdu.add(new VariableBinding(new OID(trapOID+".9"), new OctetString(alert.getGraphiteBaseUrl())));
+            pdu.add(new VariableBinding(new OID(oidPrefix+".2"), new OctetString(hostname.toString())));
+            pdu.add(new VariableBinding(new OID(oidPrefix+".3"), new OctetString(check.getName().toString())));
+            pdu.add(new VariableBinding(new OID(oidPrefix+".4"), new OctetString(alert.getTarget())));
+            pdu.add(new VariableBinding(new OID(oidPrefix+".5"), new OctetString(alert.getValue().toString())));
+            pdu.add(new VariableBinding(new OID(oidPrefix+".6"), new OctetString(alert.getWarn().toString())));
+            pdu.add(new VariableBinding(new OID(oidPrefix+".7"), new OctetString(alert.getError().toString())));
+            pdu.add(new VariableBinding(new OID(oidPrefix+".8"), new OctetString(alert.getToType().toString())));
+            pdu.add(new VariableBinding(new OID(oidPrefix+".9"), new OctetString(alert.getFromType().toString())));
+            pdu.add(new VariableBinding(new OID(oidPrefix+".10"), new OctetString(seyrenConfig.getBaseUrl() + "/#/checks/" + check.getId())));
+            pdu.add(new VariableBinding(new OID(oidPrefix+".11"), new OctetString(check.getDescription().toString())));
             try {
                 snmp.send(pdu,comtarget);
             } catch (IOException e) {
