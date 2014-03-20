@@ -15,9 +15,9 @@ Seyren ([/ˈsaɪ.rʌn/](http://en.wikipedia.org/wiki/Wikipedia:IPA_for_English#K
 ###Stand alone
 
 ```
-mvn clean package
+wget https://github.com/scobal/seyren/releases/download/1.0.0/seyren-1.0.0.jar
 export GRAPHITE_URL=http://graphite.foohost.com:80
-java -jar seyren-web/target/seyren-web-*-war-exec.jar
+java -jar seyren-1.0.0.jar
 open http://localhost:8080
 ```
 
