@@ -17,7 +17,7 @@
 
         <jetty.daemon>true</jetty.daemon>
         <jetty.skip>false</jetty.skip>
-        <jetty.stopPort>9966</jetty.stopPort>
+
     </properties>
 
     <dependencies>
@@ -132,10 +132,7 @@
                             <resourcesAsCSV>${project.basedir}/../seyren-web/src/main/webapp</resourcesAsCSV>
                         </baseResource>
                     </webApp>
-                    <httpConnector>
-                        <port>${seyren.port}</port>
-                    </httpConnector>
-                    <stopPort>${jetty.stopPort}</stopPort>
+                    <stopPort>9966</stopPort>
                     <stopKey>foo</stopKey>
                 </configuration>
                 <executions>

@@ -8,11 +8,11 @@ module.exports = function (config) {
             'karma-phantomjs-launcher'
         ],
         files: [
-            'src/test/e2e/**/*.js',
-            '../seyren-web/src/main/webapp/js/lib/jquery-1.7.2.min.js'
+            'test/e2e/**/*.js',
+            '../../seyren-web/src/main/webapp/js/lib/jquery-1.7.2.min.js'
         ],
         proxies: {
-            '/': 'http://localhost:${seyren.port}/seyren/'
+            '/': 'http://localhost:8080/seyren/'
         },
         captureTimeout: 50000,
         urlRoot: '/_karma_/',
@@ -31,3 +31,4 @@ module.exports = function (config) {
 
     });
 };
+
