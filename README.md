@@ -1,17 +1,17 @@
-<img src="http://i.imgur.com/Ae5gQJZ.png" height="60" width="250" />
+<img src="http://i.imgur.com/Ae5gQJZ.png" height="45" width="200" />
 
 Seyren ([/ˈsaɪ.rʌn/](http://en.wikipedia.org/wiki/Wikipedia:IPA_for_English#Key)) is an alerting dashboard for Graphite.
 
-[<img src="http://i.imgur.com/13nR3YA.png" height="504" width="700" />](http://i.imgur.com/ahu3aM6.png)
+[<img src="http://i.imgur.com/13nR3YA.png" height="200" width="280" />](http://i.imgur.com/ahu3aM6.png)
 
-##Run
+##Usage
 
 ###Prerequisites
 
 * An instance of Graphite
 * MongoDB ([Install instructions](http://docs.mongodb.org/manual/installation/#installation-guides Installing MongoDB))
 
-###Stand alone
+###Run
 
 ```
 wget https://github.com/scobal/seyren/releases/download/1.0.0/seyren-1.0.0.jar
@@ -20,7 +20,9 @@ java -jar seyren-1.0.0.jar
 open http://localhost:8080
 ```
 
-###Environment variables
+###Config
+
+The following options can be supplied as system properties or environment variables.
 
 #### Base
 * `GRAPHITE_URL` - The location of your Graphite server. Default: `http://localhost:80`
@@ -79,9 +81,6 @@ open http://localhost:8080
 * `SNMP_COMMUNITY` - The SNMP  community. Default: `public`
 * `SNMP_OID` - The SNMP OID. Default: `1.3.6.1.4.1.32473.1`
 
-###Cloud Formation
-
-If you are running on amazon infrastructure use this [Cloud Formation Template](https://gist.github.com/5922231) to bring up a single instance of any size. All the environment variables required for Seyren are specified as properties to the cloud formation template and a fully configured Seyren instance should come up with no other intervention.
 
 ##Development
 
