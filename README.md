@@ -25,6 +25,11 @@ open http://localhost:8080
 The following options can be supplied as system properties or environment variables.
 
 #### Base
+* `MONGO_URL` - The Mongo [connection string](http://docs.mongodb.org/manual/reference/connection-string/). Default: `mongodb://localhost:27017/seyren`
+* `SEYREN_URL` - The location of your Seyren instance. Default: `http://localhost:8080/seyren`
+* `SEYREN_LOG_PATH` - The path of seyren.log. Default: ``. If a value is set, it must end with a '/'.
+
+#### [Graphite](http://graphite.readthedocs.org/en/latest/)
 * `GRAPHITE_URL` - The location of your Graphite server. Default: `http://localhost:80`
 * `GRAPHITE_REFRESH` - The fixed period (in ms) between checks. Default: `60000`
 * `GRAPHITE_USERNAME` - The HTTP Basic auth username for the Graphite server. Default: ``
@@ -35,9 +40,6 @@ The following options can be supplied as system properties or environment variab
 * `GRAPHITE_CONNECTION_REQUEST_TIMEOUT` - The number of millisconds to wait to obtain a connection from the pool. Default: `0` (infinite)
 * `GRAPHITE_CONNECT_TIMEOUT` - The number of milliseconds to wait to establish a connection. Default: `0` (infinite)
 * `GRAPHITE_SOCKET_TIMEOUT` - The number of milliseconds to wait for request data. Default: `0` (infinite)
-* `MONGO_URL` - The Mongo [connection string](http://docs.mongodb.org/manual/reference/connection-string/). Default: `mongodb://localhost:27017/seyren`
-* `SEYREN_URL` - The location of your Seyren instance. Default: `http://localhost:8080/seyren`
-* `SEYREN_LOG_PATH` - The path of seyren.log. Default: ``. If a value is set, it must end with a '/'.
 
 #### [Email](http://en.wikipedia.org/wiki/Simple_Mail_Transfer_Protocol)
 * `SMTP_HOST` - The smtp server to send email notifications from. Default: `localhost`
