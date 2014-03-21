@@ -101,6 +101,10 @@ The following options can be supplied as system properties or environment variab
 * `SNMP_OID` - The SNMP OID. Default: `1.3.6.1.4.1.32473.1`
 
 
+##Chef
+
+You can use [Seyren Cookbook](https://github.com/obazoud/chef-seyren) to deploy Seyren with [Chef](http://www.getchef.com/).
+
 ##Development
 
 [![Build Status](https://secure.travis-ci.org/scobal/seyren.png?branch=master)](http://travis-ci.org/scobal/seyren)
