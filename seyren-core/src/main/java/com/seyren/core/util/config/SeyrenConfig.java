@@ -66,6 +66,10 @@ public class SeyrenConfig {
     private final String flowdockEmojis;
     private final String ircCatHost;
     private final String ircCatPort;
+    private final String slackToken;
+    private final String slackUsername;
+    private final String slackIconUrl;
+    private final String slackEmojis;
     private final String pushoverAppApiToken;
     private final String snmpHost;
     private final Integer snmpPort;
@@ -120,6 +124,12 @@ public class SeyrenConfig {
         // IrcCat
         this.ircCatHost = configOrDefault("IRCCAT_HOST", "localhost");
         this.ircCatPort = configOrDefault("IRCCAT_PORT", "12345");
+
+        // Slack
+        this.slackToken = configOrDefault("SLACK_TOKEN", "");
+        this.slackUsername = configOrDefault("SLACK_USERNAME", "Seyren");
+        this.slackIconUrl = configOrDefault("SLACK_ICON_URL", "");
+        this.slackEmojis = configOrDefault("SLACK_EMOJIS", "");
 
         // PushOver
         this.pushoverAppApiToken = configOrDefault("PUSHOVER_APP_API_TOKEN", "");
@@ -342,7 +352,27 @@ public class SeyrenConfig {
         return graphiteSocketTimeout;
     }
 
-    private static String configOrDefault(String propertyName, String defaultValue) {
+    @JsonIgnore
+    public String getSlackToken() {
+      return slackToken;
+    }
+
+    @JsonIgnore
+    public String getSlackUsername() {
+      return slackUsername;
+    }
+
+    @JsonIgnore
+    public String getSlackIconUrl() {
+      return slackIconUrl;
+    }
+
+    @JsonIgnore
+    public String getSlackEmojis() {
+      return slackEmojis;
+    }
+
+  private static String configOrDefault(String propertyName, String defaultValue) {
         return configOrDefault(list(propertyName), defaultValue);
     }
     

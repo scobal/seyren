@@ -64,6 +64,12 @@ The following options can be supplied as system properties or environment variab
 * `FLOWDOCK_TAGS` -  Special tags to add to all messages. Default: ``
 * `FLOWDOCK_EMOJIS` - Mapping between state and emojis unicode. Default: ``
 
+##### [Slack](https://www.slack.com)
+* `SLACK_TOKEN` - The Slack api auth token. Default: ``
+* `SLACK_USERNAME` - The username that messages will be sent to slack. Default: `Seyren`
+* `SLACK_ICON_URL` - The user icon URL. Default: ``
+* `SLACK_EMOJIS` - Mapping between state and emojis unicode. Default: ``
+
 ##### [HipChat](https://www.hipchat.com)
 * `HIPCHAT_AUTHTOKEN` - The hipchat api auth token. Default: ``
 * `HIPCHAT_USERNAME` - The username that messages will be sent from. Default: `Seyren Alert`
