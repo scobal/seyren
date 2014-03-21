@@ -11,6 +11,7 @@ Seyren ([/ˈsaɪ.rʌn/](http://en.wikipedia.org/wiki/Wikipedia:IPA_for_English#K
 [PagerDuty](http://www.pagerduty.com),
 [Pushover](https://pushover.net),
 [SLF4J](http://www.slf4j.org),
+[Slack](https://www.slack.com),
 [SNMP](http://en.wikipedia.org/wiki/Simple_Network_Management_Protocol)
 
 
@@ -64,12 +65,6 @@ The following options can be supplied as system properties or environment variab
 * `FLOWDOCK_TAGS` -  Special tags to add to all messages. Default: ``
 * `FLOWDOCK_EMOJIS` - Mapping between state and emojis unicode. Default: ``
 
-##### [Slack](https://www.slack.com)
-* `SLACK_TOKEN` - The Slack api auth token. Default: ``
-* `SLACK_USERNAME` - The username that messages will be sent to slack. Default: `Seyren`
-* `SLACK_ICON_URL` - The user icon URL. Default: ``
-* `SLACK_EMOJIS` - Mapping between state and emojis unicode. Default: ``
-
 ##### [HipChat](https://www.hipchat.com)
 * `HIPCHAT_AUTHTOKEN` - The hipchat api auth token. Default: ``
 * `HIPCHAT_USERNAME` - The username that messages will be sent from. Default: `Seyren Alert`
@@ -92,6 +87,12 @@ The following options can be supplied as system properties or environment variab
 ##### [Real-time metrics](https://github.com/scobal/seyren/pull/142)
 * `GRAPHITE_CARBON_PICKLE_ENABLE` - Enable a TCP server to listen Carbon relay [pickle protocol](http://graphite.readthedocs.org/en/latest/feeding-carbon.html). Default: `false`
 * `GRAPHITE_CARBON_PICKLE_PORT` - The TCP server port. Default: `2004`
+
+##### [Slack](https://www.slack.com)
+* `SLACK_TOKEN` - The Slack api auth token. Default: ``
+* `SLACK_USERNAME` - The username that messages will be sent to slack. Default: `Seyren`
+* `SLACK_ICON_URL` - The user icon URL. Default: ``
+* `SLACK_EMOJIS` - Mapping between state and emojis unicode. Default: ``
 
 ##### [SNMP](http://en.wikipedia.org/wiki/Simple_Network_Management_Protocol)
 * `SNMP_HOST` - The SNMP host. Default: `localhost`
