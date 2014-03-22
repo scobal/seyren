@@ -13,8 +13,11 @@
  */
 package com.seyren.core.util.velocity;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringWriter;
+import java.net.URL;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -32,15 +35,23 @@ import com.seyren.core.util.email.EmailHelper;
 
 @Named
 public class VelocityEmailHelper implements EmailHelper {
-    
-    private static final String TEMPLATE_FILE_NAME = "com/seyren/core/service/notification/email-template.vm";
-    private static final String TEMPLATE_CONTENT = getTemplateAsString();
+
+    // Will first attempt to load from classpath then fall back to loading from the filesystem.
+    private final String TEMPLATE_FILE_NAME;
+    private final String TEMPLATE_CONTENT;
     
     private final SeyrenConfig seyrenConfig;
-    
+
+    /**
+     * Loads content of configurable templated email message at creation time.
+     *
+     * @param seyrenConfig Used for both email template file name and the seyren URL.
+     */
     @Inject
     public VelocityEmailHelper(SeyrenConfig seyrenConfig) {
         this.seyrenConfig = seyrenConfig;
+        TEMPLATE_FILE_NAME = seyrenConfig.getEmailTemplateFileName();
+        TEMPLATE_CONTENT = getTemplateAsString();
     }
     
     public String createSubject(Check check) {
@@ -63,9 +74,14 @@ public class VelocityEmailHelper implements EmailHelper {
         return result;
     }
     
-    private static String getTemplateAsString() {
+    private String getTemplateAsString() {
         try {
-            return IOUtils.toString(Thread.currentThread().getContextClassLoader().getResourceAsStream(TEMPLATE_FILE_NAME));
+            // Handle the template filename as either a class path resource or an absolute path to the filesystem.
+            InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(TEMPLATE_FILE_NAME);
+            if (inputStream == null) {
+                inputStream = new FileInputStream(TEMPLATE_FILE_NAME);
+            }
+            return IOUtils.toString(inputStream);
         } catch (IOException e) {
             throw new RuntimeException("Template file could not be found on classpath at " + TEMPLATE_FILE_NAME);
         }
