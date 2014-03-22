@@ -100,6 +100,8 @@ The following options can be supplied as system properties or environment variab
 * `SNMP_COMMUNITY` - The SNMP  community. Default: `public`
 * `SNMP_OID` - The SNMP OID. Default: `1.3.6.1.4.1.32473.1`
 
+##### [TEMPLATE](http://en.wikipedia.org/wiki/Apache_Velocity
+* `TEMPLATE_EMAIL_FILE_PATH` - The path to the velocity template used when emailing an alert. Seyren will first attempt to load from the class path, but will fall back to loading from the filesystem.  Default: `com/seyren/core/service/notification/email-template.vm"`
 
 ##Chef
 

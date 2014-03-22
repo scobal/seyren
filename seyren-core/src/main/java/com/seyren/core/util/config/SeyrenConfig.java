@@ -75,6 +75,7 @@ public class SeyrenConfig {
     private final Integer snmpPort;
     private final String snmpCommunity;
     private final String snmpOID;
+    private final String emailTemplateFileName;
 
     public SeyrenConfig() {
         
@@ -140,6 +141,8 @@ public class SeyrenConfig {
         this.snmpCommunity = configOrDefault("SNMP_COMMUNITY", "public");
         this.snmpOID = configOrDefault("SNMP_OID", "1.3.6.1.4.1.32473.1");
 
+        // Template
+        this.emailTemplateFileName = configOrDefault("TEMPLATE_EMAIL_FILE_PATH","com/seyren/core/service/notification/email-template.vm");
     }
     
     @PostConstruct
@@ -371,6 +374,9 @@ public class SeyrenConfig {
     public String getSlackEmojis() {
       return slackEmojis;
     }
+
+    @JsonIgnore
+    public String getEmailTemplateFileName() { return emailTemplateFileName; }
 
   private static String configOrDefault(String propertyName, String defaultValue) {
         return configOrDefault(list(propertyName), defaultValue);
