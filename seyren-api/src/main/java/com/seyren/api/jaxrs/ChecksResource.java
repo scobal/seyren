@@ -13,6 +13,7 @@
  */
 package com.seyren.api.jaxrs;
 
+import java.util.List;
 import java.util.Set;
 
 import javax.ws.rs.Consumes;
@@ -31,12 +32,40 @@ import com.seyren.core.domain.Check;
 
 @Path("/")
 public interface ChecksResource {
-    
+
+    /**
+     * Allows the retrieval of a collection of checks via three distinct algorithms:
+     * <ul>
+     *     <li>states is non-null and non-empty: will filter all checks by both the states supplied as well as
+     *     the value of the enabled parameter.</li>
+     *     <li>both fields and regexes are non-null and non-empty: will filter all checks by applying the regex
+     *     at index i of regexes to the field at index i of fields.  Length of fields and regexes must be
+     *     identical.  If the method parameter "enabled" is specified, then it will override any regex value of
+     *     field enabled provided.</li>
+     *     <li>default: get all checks as filtered by the presence and value of the enabled parameter.</li>
+     * </ul>
+     *
+     * @param states legal check states @see com.seyren.core.domain.AlertType
+     * @param enabled optional, if present, will filter any of the three algorithms
+     * @param name (Presently unused)
+     * @param fields an ordered list of @see com.seyren.core.domain.Check fields.  If present and non-empty, will
+     *               be combined with the correspondingly ordered list of regexes in order to restrict the checks
+     *               returned.
+     * @param regexes an ordered list of regexes that will be compiled into @java.util.regex.Pattern objects.  If
+     *                present and non-empty, will be combined with the correspondingly ordered list of fields in
+     *                order to filter the objects returned.
+     *
+     * @return JSON response containing @see com.seyren.core.domain.Check identified by the parameters supplied.
+     */
     @GET
     @Path("/checks")
     @Produces(MediaType.APPLICATION_JSON)
-    Response getChecks(@QueryParam("state") Set<String> states, @QueryParam("enabled") Boolean enabled);
-    
+    Response getChecks(@QueryParam("state") Set<String> states,
+                       @QueryParam("enabled") Boolean enabled,
+                       @QueryParam("name") String name,
+                       @QueryParam("fields") List<String> fields,
+                       @QueryParam("regexes") List<String> regexes);
+
     @POST
     @Path("/checks")
     @Consumes(MediaType.APPLICATION_JSON)
