@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
 
@@ -31,6 +32,7 @@ import com.seyren.core.domain.AlertType;
 import com.seyren.core.domain.Check;
 import com.seyren.core.domain.Subscription;
 import com.seyren.core.domain.SubscriptionType;
+import org.python.antlr.op.Sub;
 
 public class MongoMapper {
     
@@ -154,6 +156,18 @@ public class MongoMapper {
         map.put("state", check.getState().toString());
         if (check.getLastCheck() != null) {
             map.put("lastCheck", new Date(check.getLastCheck().getMillis()));
+        }
+        if (check.getSubscriptions() != null && !check.getSubscriptions().isEmpty()) {
+            final ArrayList<DBObject> dbSubscriptions = new ArrayList<DBObject>();
+            for (Subscription s : check.getSubscriptions()) {
+                final BasicDBObject dbObject = new BasicDBObject(propertiesToMap(s));
+                if (dbObject.get("_id") == null) {
+                    dbObject.put("_id", new ObjectId().toStringMongod());
+                }
+                dbSubscriptions.add(dbObject);
+            }
+
+            map.put("subscriptions", dbSubscriptions);
         }
         return map;
     }
