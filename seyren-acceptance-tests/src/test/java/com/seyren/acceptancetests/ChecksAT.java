@@ -74,6 +74,16 @@ public class ChecksAT {
         assertThat(get(location).asJson(), hasJsonPath("$.state", is("ERROR")));
         deleteLocation(location);
     }
+
+    @Test
+    public void testCreateCheckWithSubscriptionIncluded() {
+        Response response = createCheck("{ \"name\": \"test\", \"warn\": 1.0, \"error\": 0, " +
+                "\"subscriptions\": [ { \"target\": \"nobody@test.com\", \"type\":\"EMAIL\" } ] }");
+        assertThat(response, hasStatusCode(201));
+        String location = response.getHeader("Location").getValue();
+        assertThat(get(location).asJson(), hasJsonPath("$.subscriptions", hasSize(1)));
+        deleteLocation(location);
+    }
     
     @Test
     public void testUpdateHandlesNullLastCheckDate() {
