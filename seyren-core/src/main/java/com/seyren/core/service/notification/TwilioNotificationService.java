@@ -32,6 +32,7 @@ import com.seyren.core.domain.SubscriptionType;
 import com.seyren.core.exception.NotificationFailedException;
 import com.seyren.core.util.config.SeyrenConfig;
 import com.twilio.sdk.TwilioRestClient;
+import com.twilio.sdk.TwilioRestException;
 import com.twilio.sdk.resource.instance.Account;
 import com.twilio.sdk.resource.instance.Message;
 
@@ -73,6 +74,9 @@ public class TwilioNotificationService implements NotificationService {
                 Message sms=account.getMessageFactory().create(params);
 
                 LOGGER.debug("Sent TWILIO notification for alert in state: {}", check.getState());
+            }
+            catch (TwilioRestException e) {
+                throw new NotificationFailedException("Failed to send notification to Twilio (code="+e.getErrorCode()+")", e);
             }
             catch (Exception e) {
                 throw new NotificationFailedException("Failed to send notification to Twilio", e);
