@@ -13,6 +13,7 @@ Seyren ([/ˈsaɪ.rʌn/](http://en.wikipedia.org/wiki/Wikipedia:IPA_for_English#K
 [SLF4J](http://www.slf4j.org),
 [Slack](https://www.slack.com),
 [SNMP](http://en.wikipedia.org/wiki/Simple_Network_Management_Protocol)
+[Twilio](https://www.twilio.com/)
 
 
 #[<img src="http://i.imgur.com/13nR3YA.png" height="200" width="280" />](http://i.imgur.com/ahu3aM6.png)
@@ -71,6 +72,11 @@ The following options can be supplied as system properties or environment variab
 
 ##### [Hubot](http://hubot.github.com)
 * `HUBOT_URL` - The location where Hubot is running. Default ``
+
+##### [Twilio](https://www.twilio.com/)
+* `TWILIO_ACCOUNT_SID` - The Twilio Account SID. Default ``
+* `TWILIO_AUTH_TOKEN` - The Twilio Auth Token. Default ``
+* `TWILIO_PHONE_NUMBER` - The Twilio phone number to use to send SMS. Default ``
 
 ##### [IRCcat](https://github.com/RJ/irccat)
 * `IRCCAT_HOST` - The hostname of the server where IRCcat is running. Default: `localhost`
