@@ -13,11 +13,13 @@
  */
 package com.seyren.core.service.notification;
 
+import static com.github.restdriver.clientdriver.RestClientDriver.giveResponse;
+import static com.github.restdriver.clientdriver.RestClientDriver.onRequestTo;
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
@@ -27,53 +29,21 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.github.restdriver.clientdriver.ClientDriverRequest.Method;
+import com.github.restdriver.clientdriver.ClientDriverRule;
+import com.github.restdriver.clientdriver.capture.BodyCapture;
+import com.github.restdriver.clientdriver.capture.StringBodyCapture;
 import com.seyren.core.domain.Alert;
 import com.seyren.core.domain.AlertType;
 import com.seyren.core.domain.Check;
 import com.seyren.core.domain.Subscription;
 import com.seyren.core.domain.SubscriptionType;
-import com.seyren.core.exception.NotificationFailedException;
 import com.seyren.core.util.config.SeyrenConfig;
 
 public class TwilioNotificationServiceTest {
-    /**
-     * Any phone number works with test credentials when sending SMS, according
-     * to Twilio's "magic phone number" rules. We could use anything, but we use
-     * the dummy From phone number here.
-     * 
-     * @see https://www.twilio.com/docs/api/rest/test-credentials#test-sms-messages-parameters-To
-     */
-    public static final String TWILIO_MAGIC_SUCCESS_PHONE_NUMBER="+15005550006";
-    
-    /**
-     * This is one of Twilio's "magic" phone numbers that always returns a
-     * failing code when sending an SMS message. This allows us to test sending
-     * text messages without actually sending text messages.
-     * 
-     * @see https://www.twilio.com/docs/api/rest/test-credentials#test-sms-messages-parameters-To
-     */
-    public static final String TWILIO_MAGIC_FAILURE_PHONE_NUMBER="+15005550001";
-    
-    /**
-     * This is one of Twilio's "magic" phone numbers that always succeeds as
-     * a "from" number.
-     * 
-     * @see https://www.twilio.com/docs/api/rest/test-credentials#test-sms-messages-parameters-From
-     */
-    public static final String TWILIO_TESTING_ACCOUNT_PHONE_NUMBER="+15005550006";
-    
-    /**
-     * This is the test Account SID associated with our Twilio testing account.
-     */
-    public static final String TWILIO_TESTING_ACCOUNT_SID="AC2d7846930afd1dba5188c6fab4a460a4";
-    
-    /**
-     * This is the test Auth Token associated with our Twilio testing account.
-     */
-    public static final String TWILIO_TESTING_AUTH_TOKEN="bc62abadd790c9800ebb117f5fbc7d63";
-    
     private SeyrenConfig mockSeyrenConfig;
     private NotificationService service;
+    private ClientDriverRule clientDriver = new ClientDriverRule();
     
     @Before
     public void before() {
@@ -82,7 +52,7 @@ public class TwilioNotificationServiceTest {
     }
     
     @Test
-    public void notifcationServiceCanOnlyHandleHubotSubscription() {
+    public void notifcationServiceCanOnlyHandleTwilioSubscription() {
         assertThat(service.canHandle(SubscriptionType.TWILIO), is(true));
         for (SubscriptionType type : SubscriptionType.values()) {
             if (type == SubscriptionType.TWILIO) {
@@ -92,11 +62,17 @@ public class TwilioNotificationServiceTest {
         }
     }
     
+    private static final String ACCOUNT_SID="1234";
+    
     @Test
     public void checkingOutTheHappyPath() {
-        when(mockSeyrenConfig.getTwilioAccountSid()).thenReturn(TWILIO_TESTING_ACCOUNT_SID);
-        when(mockSeyrenConfig.getTwilioAuthToken()).thenReturn(TWILIO_TESTING_AUTH_TOKEN);
-        when(mockSeyrenConfig.getTwilioPhoneNumber()).thenReturn(TWILIO_TESTING_ACCOUNT_PHONE_NUMBER);
+        String seyrenUrl = clientDriver.getBaseUrl() + "/seyren";
+        
+        when(mockSeyrenConfig.getTwilioUrl()).thenReturn(clientDriver.getBaseUrl() + "/twilio");
+        when(mockSeyrenConfig.getTwilioAccountSid()).thenReturn(ACCOUNT_SID);
+        when(mockSeyrenConfig.getTwilioAuthToken()).thenReturn("5678");
+        when(mockSeyrenConfig.getTwilioPhoneNumber()).thenReturn("+11234567890");
+        when(mockSeyrenConfig.getBaseUrl()).thenReturn(seyrenUrl);
         
         Check check = new Check()
                 .withEnabled(true)
@@ -105,7 +81,7 @@ public class TwilioNotificationServiceTest {
         
         Subscription subscription = new Subscription()
                 .withType(SubscriptionType.TWILIO)
-                .withTarget(TWILIO_MAGIC_SUCCESS_PHONE_NUMBER);
+                .withTarget("+10987654321");
         
         Alert alert = new Alert()
                 .withTarget("the.target.name")
@@ -116,47 +92,25 @@ public class TwilioNotificationServiceTest {
                 .withToType(AlertType.ERROR);
         
         List<Alert> alerts = Arrays.asList(alert);
+        
+        BodyCapture<String> bodyCapture = new StringBodyCapture();
+        
+        clientDriver.addExpectation(
+                onRequestTo("/twilio/"+ACCOUNT_SID+"/Messages")
+                        .withMethod(Method.POST)
+                        .capturingBodyIn(bodyCapture),
+                giveResponse("Thanks for letting me know", "text/plain"));
+        
         
         // This will fail with an NotificationFailedException if anything goes wrong.
         service.sendNotification(check, subscription, alerts);
-    }
     
-    @Test
-    public void checkingOutTheSadPath() {
-        when(mockSeyrenConfig.getTwilioAccountSid()).thenReturn(TWILIO_TESTING_ACCOUNT_SID);
-        when(mockSeyrenConfig.getTwilioAuthToken()).thenReturn(TWILIO_TESTING_AUTH_TOKEN);
-        when(mockSeyrenConfig.getTwilioPhoneNumber()).thenReturn(TWILIO_TESTING_ACCOUNT_PHONE_NUMBER);
+        String body=bodyCapture.getContent();
         
-        Check check = new Check()
-                .withEnabled(true)
-                .withName("check-name")
-                .withState(AlertType.ERROR);
+        assertThat(body, containsString("To=%2B10987654321"));
+        assertThat(body, containsString("From=%2B11234567890"));
+        assertThat(body, containsString("Body=ERROR+Check+check-name+has+exceeded+its+threshold"));
         
-        Subscription subscription = new Subscription()
-                .withType(SubscriptionType.TWILIO)
-                .withTarget(TWILIO_MAGIC_FAILURE_PHONE_NUMBER);
-        
-        Alert alert = new Alert()
-                .withTarget("the.target.name")
-                .withValue(BigDecimal.valueOf(12))
-                .withWarn(BigDecimal.valueOf(5))
-                .withError(BigDecimal.valueOf(10))
-                .withFromType(AlertType.WARN)
-                .withToType(AlertType.ERROR);
-        
-        List<Alert> alerts = Arrays.asList(alert);
-        
-        // This will fail with a NotificationFailedException if anything goes wrong.
-        NotificationFailedException cause;
-        try {
-            service.sendNotification(check, subscription, alerts);
-            cause = null;
-        }
-        catch(NotificationFailedException e) {
-            cause = e;
-        }
-        
-        assertThat(cause, notNullValue());
-        assertThat(cause.getMessage(), containsString("(code=21211)"));
+        verify(mockSeyrenConfig).getTwilioUrl();
     }
 }

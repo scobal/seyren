@@ -13,13 +13,24 @@
  */
 package com.seyren.core.service.notification;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.StringUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.utils.HttpClientUtils;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,10 +42,6 @@ import com.seyren.core.domain.Subscription;
 import com.seyren.core.domain.SubscriptionType;
 import com.seyren.core.exception.NotificationFailedException;
 import com.seyren.core.util.config.SeyrenConfig;
-import com.twilio.sdk.TwilioRestClient;
-import com.twilio.sdk.TwilioRestException;
-import com.twilio.sdk.resource.instance.Account;
-import com.twilio.sdk.resource.instance.Message;
 
 @Named
 public class TwilioNotificationService implements NotificationService {
@@ -49,6 +56,13 @@ public class TwilioNotificationService implements NotificationService {
     
     @Override
     public void sendNotification(Check check, Subscription subscription, List<Alert> alerts) throws NotificationFailedException {
+       String twilioUrl = StringUtils.trimToNull(seyrenConfig.getTwilioUrl());
+        
+        if (twilioUrl == null) {
+            LOGGER.warn("Twilio URL needs to be set before sending notifications to Twilio");
+            return;
+        }
+        
         String body;
         if (check.getState() == AlertType.ERROR) {
             body = "ERROR Check "+check.getName()+" has exceeded its threshold.";
@@ -57,39 +71,35 @@ public class TwilioNotificationService implements NotificationService {
         } else {
             LOGGER.warn("Did not send notification to Twilio for check in state: {}", check.getState());
             body = null;
-        }
+        }        
         
-        if(body != null) {
-            TwilioRestClient client = createTwilioClient();
-            
-            Account account = client.getAccount();
-            
-            List<NameValuePair> params = new ArrayList<NameValuePair>();
-            params.add(new BasicNameValuePair("To", subscription.getTarget()));
-            params.add(new BasicNameValuePair("From", seyrenConfig.getTwilioPhoneNumber()));
-            params.add(new BasicNameValuePair("Body", body));
-            
-            try {
-                @SuppressWarnings("unused")
-                Message sms=account.getMessageFactory().create(params);
+        List<NameValuePair> params=new ArrayList<NameValuePair>();
+        params.add(new BasicNameValuePair("To", subscription.getTarget()));
+        params.add(new BasicNameValuePair("From", seyrenConfig.getTwilioPhoneNumber()));
+        params.add(new BasicNameValuePair("Body", body));
 
-                LOGGER.debug("Sent TWILIO notification for alert in state: {}", check.getState());
-            }
-            catch (TwilioRestException e) {
-                throw new NotificationFailedException("Failed to send notification to Twilio (code="+e.getErrorCode()+")", e);
-            }
-            catch (Exception e) {
-                throw new NotificationFailedException("Failed to send notification to Twilio", e);
-            }
+        HttpClient client = HttpClientBuilder.create().build();
+        
+        HttpPost post = new HttpPost(twilioUrl + "/"+seyrenConfig.getTwilioAccountSid()+"/Messages");
+        try {
+            String credentials=seyrenConfig.getTwilioAccountSid()+":"+seyrenConfig.getTwilioAuthToken();
+            post.setHeader(new BasicHeader("Authorization", "Basic "+Base64.encodeBase64String(credentials.getBytes("UTF-8"))));
+            
+            HttpEntity entity = new UrlEncodedFormEntity(params, "UTF-8");
+            post.setEntity(entity);
+            
+            HttpResponse response=client.execute(post);
+            if(response.getStatusLine().getStatusCode()/100 != 2)
+                throw new IOException("API request failed: "+response.getStatusLine());
+        } catch (IOException e) {
+            throw new NotificationFailedException("Sending notification to Twilio at " + twilioUrl + " failed.", e);
+        } finally {
+            HttpClientUtils.closeQuietly(client);
         }
     }
     
     @Override
     public boolean canHandle(SubscriptionType subscriptionType) {
         return subscriptionType == SubscriptionType.TWILIO;
-    }
-    
-    private TwilioRestClient createTwilioClient() {
-        return new TwilioRestClient(seyrenConfig.getTwilioAccountSid(), seyrenConfig.getTwilioAuthToken());
     }
 }

@@ -75,7 +75,6 @@
         <org.slf4j.version>1.7.6</org.slf4j.version>
         <org.snmp4j.version>2.2.5</org.snmp4j.version>
         <org.springframework.version>3.2.8.RELEASE</org.springframework.version>
-        <com.twilio.sdk.twilio-java-sdk.version>3.4.2</com.twilio.sdk.twilio-java-sdk.version>
     </properties>
     
     <prerequisites>

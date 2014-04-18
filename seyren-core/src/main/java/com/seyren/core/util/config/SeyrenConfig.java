@@ -51,6 +51,7 @@ public class SeyrenConfig {
     private final String pagerDutyToken;
     private final String pagerDutyUsername;
     private final String pagerDutyPassword;
+    private final String twilioUrl;
     private final String twilioAccountSid;
     private final String twilioAuthToken;
     private final String twilioPhoneNumber;
@@ -118,6 +119,7 @@ public class SeyrenConfig {
         this.pagerDutyPassword = configOrDefault("PAGERDUTY_PASSWORD", "");
         
         // Twilio
+        this.twilioUrl = configOrDefault("TWILIO_URL", "https://api.twilio.com/2010-04-01/Accounts");
         this.twilioAccountSid = configOrDefault("TWILIO_ACCOUNT_SID", "");
         this.twilioAuthToken = configOrDefault("TWILIO_AUTH_TOKEN", "");
         this.twilioPhoneNumber = configOrDefault("TWILIO_PHONE_NUMBER", "");
@@ -189,6 +191,11 @@ public class SeyrenConfig {
     @JsonIgnore
     public String getPagerDutyPassword() {
         return pagerDutyPassword;
+    }
+
+    @JsonIgnore
+    public String getTwilioUrl() {
+        return twilioUrl;
     }
 
     @JsonIgnore

@@ -100,10 +100,6 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-context-support</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.twilio.sdk</groupId>
-            <artifactId>twilio-java-sdk</artifactId>
-        </dependency>
     </dependencies>
 
 </project>

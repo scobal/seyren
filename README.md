@@ -77,6 +77,7 @@ The following options can be supplied as system properties or environment variab
 * `TWILIO_ACCOUNT_SID` - The Twilio Account SID. Default ``
 * `TWILIO_AUTH_TOKEN` - The Twilio Auth Token. Default ``
 * `TWILIO_PHONE_NUMBER` - The Twilio phone number to use to send SMS. Default ``
+* `TWILIO_URL` - The Twilio API URL. Mostly useful for testing. Default `https://api.twilio.com/2010-04-01/Accounts`
 
 ##### [IRCcat](https://github.com/RJ/irccat)
 * `IRCCAT_HOST` - The hostname of the server where IRCcat is running. Default: `localhost`
