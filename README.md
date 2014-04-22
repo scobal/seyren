@@ -12,7 +12,7 @@ Seyren ([/ˈsaɪ.rʌn/](http://en.wikipedia.org/wiki/Wikipedia:IPA_for_English#K
 [Pushover](https://pushover.net),
 [SLF4J](http://www.slf4j.org),
 [Slack](https://www.slack.com),
-[SNMP](http://en.wikipedia.org/wiki/Simple_Network_Management_Protocol)
+[SNMP](http://en.wikipedia.org/wiki/Simple_Network_Management_Protocol),
 [Twilio](https://www.twilio.com/)
 
 
@@ -73,12 +73,6 @@ The following options can be supplied as system properties or environment variab
 ##### [Hubot](http://hubot.github.com)
 * `HUBOT_URL` - The location where Hubot is running. Default ``
 
-##### [Twilio](https://www.twilio.com/)
-* `TWILIO_ACCOUNT_SID` - The Twilio Account SID. Default ``
-* `TWILIO_AUTH_TOKEN` - The Twilio Auth Token. Default ``
-* `TWILIO_PHONE_NUMBER` - The Twilio phone number to use to send SMS. Default ``
-* `TWILIO_URL` - The Twilio API URL. Mostly useful for testing. Default `https://api.twilio.com/2010-04-01/Accounts`
-
 ##### [IRCcat](https://github.com/RJ/irccat)
 * `IRCCAT_HOST` - The hostname of the server where IRCcat is running. Default: `localhost`
 * `IRCCAT_PORT` - The port on which IRCcat is running. Default: `12345`
@@ -107,6 +101,11 @@ The following options can be supplied as system properties or environment variab
 * `SNMP_COMMUNITY` - The SNMP  community. Default: `public`
 * `SNMP_OID` - The SNMP OID. Default: `1.3.6.1.4.1.32473.1`
 
+##### [Twilio](https://www.twilio.com/)
+* `TWILIO_ACCOUNT_SID` - The Twilio Account SID. Default ``
+* `TWILIO_AUTH_TOKEN` - The Twilio Auth Token. Default ``
+* `TWILIO_PHONE_NUMBER` - The Twilio phone number to use to send SMS. Default ``
+* `TWILIO_URL` - The Twilio API URL. Mostly useful for testing. Default `https://api.twilio.com/2010-04-01/Accounts`
 
 ##Chef
 
