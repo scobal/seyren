@@ -26,9 +26,9 @@ Seyren ([/ˈsaɪ.rʌn/](http://en.wikipedia.org/wiki/Wikipedia:IPA_for_English#K
 ###Run
 
 ```
-wget https://github.com/scobal/seyren/releases/download/1.0.0/seyren-1.0.0.jar
+wget https://github.com/scobal/seyren/releases/download/1.1.0/seyren-1.1.0.jar
 export GRAPHITE_URL=http://graphite.foohost.com:80
-java -jar seyren-1.0.0.jar
+java -jar seyren-1.1.0.jar
 open http://localhost:8080
 ```
 
