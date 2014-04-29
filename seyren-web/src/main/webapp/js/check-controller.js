@@ -116,10 +116,21 @@ CheckController.prototype = {
             sa : this.newsubscription.sa,
             fromTime : this.newsubscription.fromTime,
             toTime : this.newsubscription.toTime,
-            enabled : this.newsubscription.enabled
+            enabled : this.newsubscription.enabled,
+            snmppass : this.newsubscription.snmppass
+
         };
-        $('#createSubscriptionButton').addClass('disabled');
-        this.$xhr('POST', this.seyrenBaseUrl + '/api/checks/' + this.id + '/subscriptions', subscription, this.createSubscriptionSuccess, this.createSubscriptionFailure);
+        if(subscription.type == 'SNMP') {
+            if(subscription.snmppass == 'aHViYmxlDQo='){
+                $('#createSubscriptionButton').addClass('disabled');
+                this.$xhr('POST', this.seyrenBaseUrl + '/api/checks/' + this.id + '/subscriptions', subscription, this.createSubscriptionSuccess, this.createSubscriptionFailure);
+            }
+        } else {
+            $('#createSubscriptionButton').addClass('disabled');
+            this.$xhr('POST', this.seyrenBaseUrl + '/api/checks/' + this.id + '/subscriptions', subscription, this.createSubscriptionSuccess, this.createSubscriptionFailure);
+        }
+
+
     },
     
     createSubscriptionSuccess : function (code, response) {
