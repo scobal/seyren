@@ -371,6 +371,11 @@
                 <artifactId>spring-web</artifactId>
                 <version>${org.springframework.version}</version>
             </dependency>
+            <dependency>
+              <groupId>com.twilio.sdk</groupId>
+              <artifactId>twilio-java-sdk</artifactId>
+              <version>${com.twilio.sdk.twilio-java-sdk.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

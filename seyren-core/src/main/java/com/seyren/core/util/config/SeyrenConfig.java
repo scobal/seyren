@@ -13,7 +13,8 @@
  */
 package com.seyren.core.util.config;
 
-import static org.apache.commons.lang.StringUtils.*;
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
+import static org.apache.commons.lang.StringUtils.stripEnd;
 
 import java.util.Arrays;
 import java.util.List;
@@ -50,6 +51,10 @@ public class SeyrenConfig {
     private final String pagerDutyToken;
     private final String pagerDutyUsername;
     private final String pagerDutyPassword;
+    private final String twilioUrl;
+    private final String twilioAccountSid;
+    private final String twilioAuthToken;
+    private final String twilioPhoneNumber;
     private final String hipChatAuthToken;
     private final String hipChatUsername;
     private final String hubotUrl;
@@ -112,6 +117,12 @@ public class SeyrenConfig {
         this.pagerDutyToken = configOrDefault("PAGERDUTY_TOKEN", "");
         this.pagerDutyUsername = configOrDefault("PAGERDUTY_USERNAME", "");
         this.pagerDutyPassword = configOrDefault("PAGERDUTY_PASSWORD", "");
+        
+        // Twilio
+        this.twilioUrl = configOrDefault("TWILIO_URL", "https://api.twilio.com/2010-04-01/Accounts");
+        this.twilioAccountSid = configOrDefault("TWILIO_ACCOUNT_SID", "");
+        this.twilioAuthToken = configOrDefault("TWILIO_AUTH_TOKEN", "");
+        this.twilioPhoneNumber = configOrDefault("TWILIO_PHONE_NUMBER", "");
         
         // Hubot
         this.hubotUrl = configOrDefault(list("HUBOT_URL", "SEYREN_HUBOT_URL"), "");
@@ -181,7 +192,27 @@ public class SeyrenConfig {
     public String getPagerDutyPassword() {
         return pagerDutyPassword;
     }
+
+    @JsonIgnore
+    public String getTwilioUrl() {
+        return twilioUrl;
+    }
+
+    @JsonIgnore
+    public String getTwilioAccountSid() {
+        return twilioAccountSid;
+    }
+
+    @JsonIgnore
+    public String getTwilioAuthToken() {
+        return twilioAuthToken;
+    }
     
+    @JsonIgnore
+    public String getTwilioPhoneNumber() {
+        return twilioPhoneNumber;
+    }
+
     @JsonIgnore
     public String getHipChatAuthToken() {
         return hipChatAuthToken;

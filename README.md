@@ -12,7 +12,8 @@ Seyren ([/ˈsaɪ.rʌn/](http://en.wikipedia.org/wiki/Wikipedia:IPA_for_English#K
 [Pushover](https://pushover.net),
 [SLF4J](http://www.slf4j.org),
 [Slack](https://www.slack.com),
-[SNMP](http://en.wikipedia.org/wiki/Simple_Network_Management_Protocol)
+[SNMP](http://en.wikipedia.org/wiki/Simple_Network_Management_Protocol),
+[Twilio](https://www.twilio.com/)
 
 
 #[<img src="http://i.imgur.com/13nR3YA.png" height="200" width="280" />](http://i.imgur.com/ahu3aM6.png)
@@ -25,9 +26,9 @@ Seyren ([/ˈsaɪ.rʌn/](http://en.wikipedia.org/wiki/Wikipedia:IPA_for_English#K
 ###Run
 
 ```
-wget https://github.com/scobal/seyren/releases/download/1.0.0/seyren-1.0.0.jar
+wget https://github.com/scobal/seyren/releases/download/1.1.0/seyren-1.1.0.jar
 export GRAPHITE_URL=http://graphite.foohost.com:80
-java -jar seyren-1.0.0.jar
+java -jar seyren-1.1.0.jar
 open http://localhost:8080
 ```
 
@@ -100,6 +101,11 @@ The following options can be supplied as system properties or environment variab
 * `SNMP_COMMUNITY` - The SNMP  community. Default: `public`
 * `SNMP_OID` - The SNMP OID. Default: `1.3.6.1.4.1.32473.1`
 
+##### [Twilio](https://www.twilio.com/)
+* `TWILIO_ACCOUNT_SID` - The Twilio Account SID. Default ``
+* `TWILIO_AUTH_TOKEN` - The Twilio Auth Token. Default ``
+* `TWILIO_PHONE_NUMBER` - The Twilio phone number to use to send SMS. Default ``
+* `TWILIO_URL` - The Twilio API URL. Mostly useful for testing. Default `https://api.twilio.com/2010-04-01/Accounts`
 
 ##Chef
 
