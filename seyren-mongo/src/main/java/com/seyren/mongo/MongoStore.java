@@ -78,7 +78,7 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
         LOGGER.info("Bootstrapping Mongo indexes. Depending on the number of checks and alerts you've got it may take a little while.");
         try {
             getChecksCollection().ensureIndex(new BasicDBObject("name", 1), new BasicDBObject("unique", true));
-            getChecksCollection().ensureIndex(new BasicDBObject("enabled", 1));
+            getChecksCollection().ensureIndex(new BasicDBObject("enabled", 1).append("live", 1));
             getAlertsCollection().ensureIndex(new BasicDBObject("timestamp", -1));
             getAlertsCollection().ensureIndex(new BasicDBObject("checkId", 1).append("target", 1));
         } catch (MongoException e) {
