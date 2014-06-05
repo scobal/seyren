@@ -47,7 +47,7 @@ public class GraphiteTargetChecker implements TargetChecker {
         Map<String, Optional<BigDecimal>> targetValues = new HashMap<String, Optional<BigDecimal>>();
         
         try {
-            JsonNode node = graphiteHttpClient.getTargetJson(check.getTarget());
+            JsonNode node = graphiteHttpClient.getTargetJson(check.getTarget(), check.getFrom(), check.getUntil());
             for (JsonNode metric : node) {
                 String target = metric.path("target").asText();
                 try {
@@ -71,7 +71,7 @@ public class GraphiteTargetChecker implements TargetChecker {
      */
     private BigDecimal getLatestValue(JsonNode node) throws Exception {
         JsonNode datapoints = node.get("datapoints");
-        
+
         for (int i = datapoints.size() - 1; i >= 0; i--) {
             String value = datapoints.get(i).get(0).asText();
             if (!value.equals("null")) {

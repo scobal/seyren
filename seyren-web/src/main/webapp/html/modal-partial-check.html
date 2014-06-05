@@ -26,6 +26,18 @@
                         <input id="check.target" class="form-control"  name="check.target" ng-model="check.target" type="text" required />
                     </div>
                 </div>
+                <div ng-class="{ 'form-group': true, 'has-error': checkForm['check.from'].$invalid }">
+                    <label class="col-sm-3 control-label" for="check.from">From</label>
+                    <div class="col-sm-7">
+                        <input id="check.from" class="form-control" name="check.from" ng-model="check.from" type="text" />
+                    </div>
+                </div>
+                <div ng-class="{ 'form-group': true, 'has-error': checkForm['check.until'].$invalid }">
+                    <label class="col-sm-3 control-label" for="check.until">Until</label>
+                    <div class="col-sm-7">
+                        <input id="check.until" class="form-control" name="check.until" ng-model="check.until" type="text" />
+                    </div>
+                </div>
                 <div ng-class="{ 'form-group': true, 'has-error': checkForm['check.warn'].$invalid }">
                     <label class="col-sm-3 control-label" for="check.warn">Warn level</label>
                     <div class="col-sm-3">
