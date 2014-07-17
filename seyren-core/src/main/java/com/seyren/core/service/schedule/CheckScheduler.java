@@ -42,6 +42,7 @@ import com.seyren.core.service.checker.ValueChecker;
 import com.seyren.core.service.notification.NotificationService;
 import com.seyren.core.store.AlertsStore;
 import com.seyren.core.store.ChecksStore;
+import com.seyren.core.util.config.SeyrenConfig;
 
 @Named
 public class CheckScheduler {
@@ -53,15 +54,16 @@ public class CheckScheduler {
     private final List<NotificationService> notificationServices;
     private final TargetChecker targetChecker;
     private final ValueChecker valueChecker;
-    private final ScheduledExecutorService executor = Executors.newScheduledThreadPool(8, new ThreadFactoryBuilder().setNameFormat("seyren.check-scheduler-%s").setDaemon(false).build());
+    private final ScheduledExecutorService executor;
     
     @Inject
-    public CheckScheduler(ChecksStore checksStore, AlertsStore alertsStore, List<NotificationService> notificationServices, TargetChecker targetChecker, ValueChecker valueChecker) {
+    public CheckScheduler(ChecksStore checksStore, AlertsStore alertsStore, List<NotificationService> notificationServices, TargetChecker targetChecker, ValueChecker valueChecker, SeyrenConfig seyrenConfig) {
         this.checksStore = checksStore;
         this.alertsStore = alertsStore;
         this.notificationServices = notificationServices;
         this.targetChecker = targetChecker;
         this.valueChecker = valueChecker;
+		this.executor = Executors.newScheduledThreadPool(seyrenConfig.getNumThreads(), new ThreadFactoryBuilder().setNameFormat("seyren.check-scheduler-%s").setDaemon(false).build());
     }
     
     @Scheduled(fixedRate = 60000)
