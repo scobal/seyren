@@ -34,6 +34,7 @@ open http://localhost:8080/seyren
 * `GRAPHITE_TRUSTSTORE` - The Http TrustStore path for the https graphite server. Default: ``
 * `MONGO_URL` - The mongo connection string. Default: `mongodb://localhost:27017/seyren`
 * `SEYREN_URL` - The location of your seyren instance. Default: `http://localhost:8080/seyren`
+* `SEYREN_THREADS` - The number of pooled check threads to start. Default: `20`
 
 #### SMTP
 * `SMTP_HOST` - The smtp server to send email notifications from. Default: `localhost`
