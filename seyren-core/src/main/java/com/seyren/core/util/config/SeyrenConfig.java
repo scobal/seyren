@@ -53,12 +53,14 @@ public class SeyrenConfig {
     private final String snmpCommunity;
     private final String snmpTimeout;
     private final String snmpRetries;
+	private final int numThreads;
 
-    public SeyrenConfig() {
+	public SeyrenConfig() {
 
         // Base
         this.baseUrl = stripEnd(configOrDefault("SEYREN_URL", "http://localhost:8080/seyren"), "/");
         this.mongoUrl = configOrDefault("MONGO_URL", "mongodb://localhost:27017/seyren");
+		this.numThreads = Integer.parseInt(configOrDefault("SEYREN_THREADS","20"));
 
         // SMTP
         this.smtpFrom = configOrDefault(list("SMTP_FROM", "SEYREN_FROM_EMAIL"), "alert@seyren");
@@ -229,4 +231,8 @@ public class SeyrenConfig {
     private static List<String> list(String... propertyNames) {
         return Arrays.asList(propertyNames);
     }
+
+	public int getNumThreads() {
+		return numThreads;
+	}
 }
