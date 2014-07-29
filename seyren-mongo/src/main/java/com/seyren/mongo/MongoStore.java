@@ -85,12 +85,17 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore,
         } else {
             dbc = getChecksCollection().find();
         }
-        while (dbc.hasNext()) {
-            checks.add(mapper.checkFrom(dbc.next()));
+        try {
+            while (dbc.hasNext()) {
+                checks.add(mapper.checkFrom(dbc.next()));
+            }
+            
+            return new SeyrenResponse<Check>()
+                    .withValues(checks)
+                    .withTotal(dbc.count());
+        } finally {
+            dbc.close();
         }
-        return new SeyrenResponse<Check>()
-                .withValues(checks)
-                .withTotal(dbc.count());
     }
     
     @Override
@@ -103,15 +108,17 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore,
             query.put("enabled", enabled);
         }
         DBCursor dbc = getChecksCollection().find(query);
+        try {
+            while (dbc.hasNext()) {
+                checks.add(mapper.checkFrom(dbc.next()));
+            }
         
-        while (dbc.hasNext()) {
-            checks.add(mapper.checkFrom(dbc.next()));
+            return new SeyrenResponse<Check>()
+                    .withValues(checks)
+                    .withTotal(dbc.count());
+        } finally {
+            dbc.close();
         }
-        dbc.close();
-        
-        return new SeyrenResponse<Check>()
-                .withValues(checks)
-                .withTotal(dbc.count());
     }
     
     @Override
@@ -173,31 +180,39 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore,
     @Override
     public SeyrenResponse<Alert> getAlerts(String checkId, int start, int items) {
         DBCursor dbc = getAlertsCollection().find(object("checkId", checkId)).sort(object("timestamp", -1)).skip(start).limit(items);
-        List<Alert> alerts = new ArrayList<Alert>();
-        while (dbc.hasNext()) {
-            alerts.add(mapper.alertFrom(dbc.next()));
+        try {
+            List<Alert> alerts = new ArrayList<Alert>();
+            while (dbc.hasNext()) {
+                alerts.add(mapper.alertFrom(dbc.next()));
+            }
+        
+            return new SeyrenResponse<Alert>()
+                    .withValues(alerts)
+                    .withItems(items)
+                    .withStart(start)
+                    .withTotal(dbc.count());
+        } finally {
+            dbc.close();
         }
-        dbc.close();
-        return new SeyrenResponse<Alert>()
-                .withValues(alerts)
-                .withItems(items)
-                .withStart(start)
-                .withTotal(dbc.count());
     }
     
     @Override
     public SeyrenResponse<Alert> getAlerts(int start, int items) {
         DBCursor dbc = getAlertsCollection().find().sort(object("timestamp", -1)).skip(start).limit(items);
-        List<Alert> alerts = new ArrayList<Alert>();
-        while (dbc.hasNext()) {
-            alerts.add(mapper.alertFrom(dbc.next()));
+        try {
+            List<Alert> alerts = new ArrayList<Alert>();
+            while (dbc.hasNext()) {
+                alerts.add(mapper.alertFrom(dbc.next()));
+            }
+        
+            return new SeyrenResponse<Alert>()
+                    .withValues(alerts)
+                    .withItems(items)
+                    .withStart(start)
+                    .withTotal(dbc.count());
+        } finally {
+            dbc.close();
         }
-        dbc.close();
-        return new SeyrenResponse<Alert>()
-                .withValues(alerts)
-                .withItems(items)
-                .withStart(start)
-                .withTotal(dbc.count());
     }
     
     @Override
@@ -245,12 +260,16 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore,
 	public SeyrenResponse<GraphiteInstance> getGraphiteInstances() {
         List<GraphiteInstance> insts = new ArrayList<GraphiteInstance>();
         DBCursor dbc = getGraphiteInstancesCollection().find();
-        while (dbc.hasNext()) {
-            insts.add(mapper.graphiteInstanceFrom(dbc.next()));
+        try {
+            while (dbc.hasNext()) {
+                insts.add(mapper.graphiteInstanceFrom(dbc.next()));
+            }
+            return new SeyrenResponse<GraphiteInstance>()
+                    .withValues(insts)
+                    .withTotal(dbc.count());
+        } finally {
+            dbc.close();
         }
-        return new SeyrenResponse<GraphiteInstance>()
-                .withValues(insts)
-                .withTotal(dbc.count());
 	}
 	
     private DBCollection getGraphiteInstancesCollection() {
