@@ -161,7 +161,7 @@ public class MongoMapper {
             for (Subscription s : check.getSubscriptions()) {
                 final BasicDBObject dbObject = new BasicDBObject(propertiesToMap(s));
                 if (dbObject.get("_id") == null) {
-                    dbObject.put("_id", new ObjectId().toStringMongod());
+                    dbObject.put("_id", new ObjectId().toHexString());
                 }
                 dbSubscriptions.add(dbObject);
             }

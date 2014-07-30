@@ -29,12 +29,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.mongodb.BasicDBObject;
+import com.mongodb.CommandFailureException;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
+import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
 import com.mongodb.MongoException;
-import com.mongodb.MongoURI;
+import com.mongodb.WriteConcern;
 import com.seyren.core.domain.Alert;
 import com.seyren.core.domain.AlertType;
 import com.seyren.core.domain.Check;
@@ -53,16 +56,14 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
     private MongoMapper mapper = new MongoMapper();
     private DB mongo;
     
-    @SuppressWarnings("deprecation")
     @Inject
     public MongoStore(SeyrenConfig seyrenConfig) {
         try {
             String uri = seyrenConfig.getMongoUrl();
-            MongoURI mongoUri = new MongoURI(uri);
-            DB mongo = mongoUri.connectDB();
-            if (mongoUri.getUsername() != null) {
-                mongo.authenticate(mongoUri.getUsername(), mongoUri.getPassword());
-            }
+            MongoClientURI mongoClientUri = new MongoClientURI(uri);
+            MongoClient mongoClient = new MongoClient(mongoClientUri);
+            DB mongo = mongoClient.getDB(mongoClientUri.getDatabase());
+            mongo.setWriteConcern(WriteConcern.ACKNOWLEDGED);
             this.mongo = mongo;
             bootstrapMongo();
         } catch (Exception e) {
@@ -70,18 +71,13 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
         }
     }
     
-    public MongoStore(DB mongo) {
-        this.mongo = mongo;
-        bootstrapMongo();
-    }
-    
     private void bootstrapMongo() {
         LOGGER.info("Bootstrapping Mongo indexes. Depending on the number of checks and alerts you've got it may take a little while.");
         try {
-            getChecksCollection().ensureIndex(new BasicDBObject("name", 1), new BasicDBObject("unique", true));
-            getChecksCollection().ensureIndex(new BasicDBObject("enabled", 1).append("live", 1));
-            getAlertsCollection().ensureIndex(new BasicDBObject("timestamp", -1));
-            getAlertsCollection().ensureIndex(new BasicDBObject("checkId", 1).append("target", 1));
+            getChecksCollection().createIndex(new BasicDBObject("checkId", 1).append("target", 1));
+            getChecksCollection().createIndex(new BasicDBObject("name", 1), new BasicDBObject("unique", true));
+            getChecksCollection().createIndex(new BasicDBObject("enabled", 1).append("live", 1));
+            getAlertsCollection().createIndex(new BasicDBObject("timestamp", -1));
         } catch (MongoException e) {
             LOGGER.error("Failure while bootstrapping Mongo indexes.\n"
                     + "If you've hit this problem it's possible that you have two checks which are named the same and violate an index which we've tried to add.\n"
