@@ -47,6 +47,7 @@ import com.seyren.core.store.AlertsStore;
 import com.seyren.core.store.ChecksStore;
 import com.seyren.core.store.SubscriptionsStore;
 import com.seyren.core.util.config.SeyrenConfig;
+import com.seyren.core.util.hashing.TargetHash;
 
 @Named
 public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore {
@@ -74,10 +75,9 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
     private void bootstrapMongo() {
         LOGGER.info("Bootstrapping Mongo indexes. Depending on the number of checks and alerts you've got it may take a little while.");
         try {
-            getChecksCollection().createIndex(new BasicDBObject("checkId", 1).append("target", 1));
-            getChecksCollection().createIndex(new BasicDBObject("name", 1), new BasicDBObject("unique", true));
-            getChecksCollection().createIndex(new BasicDBObject("enabled", 1).append("live", 1));
-            getAlertsCollection().createIndex(new BasicDBObject("timestamp", -1));
+            createIndices();
+            removeOldIndices();
+            addTargetHashToAlerts();
         } catch (MongoException e) {
             LOGGER.error("Failure while bootstrapping Mongo indexes.\n"
                     + "If you've hit this problem it's possible that you have two checks which are named the same and violate an index which we've tried to add.\n"
@@ -85,6 +85,40 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
             throw new RuntimeException("Failed to bootstrap Mongo indexes. Please refer to the logs for more information.", e);
         }
         LOGGER.info("Done bootstrapping Mongo indexes.");
+    }
+
+    private void createIndices() {
+        LOGGER.info("Ensuring that we have all the indices we need");
+        getChecksCollection().createIndex(new BasicDBObject("name", 1), new BasicDBObject("unique", true));
+        getChecksCollection().createIndex(new BasicDBObject("enabled", 1).append("live", 1));
+        getAlertsCollection().createIndex(new BasicDBObject("timestamp", -1));
+        getAlertsCollection().createIndex(new BasicDBObject("checkId", 1).append("targetHash", 1));
+    }
+
+    private void removeOldIndices() {
+        LOGGER.info("Dropping old indices");
+        try {
+            getAlertsCollection().dropIndex(new BasicDBObject("checkId", 1).append("target", 1));
+        } catch (CommandFailureException e) {
+            if (e.getCode() != -5) {
+                // -5 is the code which appears when the index doesn't exist (which we're happy with, anything else is bad news) 
+                throw e;
+            }
+        }
+    }
+
+    private void addTargetHashToAlerts() {
+        LOGGER.info("Adding targetHash field to any alerts which don't have it");
+        DBCursor alerts = getAlertsCollection().find(new BasicDBObject("targetHash", new BasicDBObject("$exists", false)));
+        int alertCount = alerts.count();
+        if (alertCount > 0) {
+            LOGGER.info("Found {} alert(s) which need updating", alertCount);
+        }
+        while (alerts.hasNext()) {
+            DBObject alertObject = alerts.next();
+            Alert alert = mapper.alertFrom(alertObject);
+            getAlertsCollection().save(mapper.alertToDBObject(alert));
+        }
     }
     
     private DBCollection getChecksCollection() {
@@ -240,7 +274,7 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
     
     @Override
     public Alert getLastAlertForTargetOfCheck(String target, String checkId) {
-        DBObject query = object("checkId", checkId).with("target", target);
+        DBObject query = object("checkId", checkId).with("targetHash", TargetHash.create(target));
         DBCursor cursor = getAlertsCollection().find(query).sort(object("timestamp", -1)).limit(1);
         try {
             while (cursor.hasNext()) {

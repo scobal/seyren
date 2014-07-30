@@ -207,6 +207,7 @@ public class MongoMapper {
         map.put("_id", alert.getId());
         map.put("checkId", alert.getCheckId());
         map.put("target", alert.getTarget());
+        map.put("targetHash", alert.getTargetHash());
         if (alert.getValue() != null) {
             map.put("value", alert.getValue().toPlainString());
         }
