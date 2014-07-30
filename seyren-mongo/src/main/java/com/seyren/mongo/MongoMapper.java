@@ -32,7 +32,6 @@ import com.seyren.core.domain.AlertType;
 import com.seyren.core.domain.Check;
 import com.seyren.core.domain.Subscription;
 import com.seyren.core.domain.SubscriptionType;
-import org.python.antlr.op.Sub;
 
 public class MongoMapper {
     
