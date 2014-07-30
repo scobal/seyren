@@ -36,6 +36,7 @@ import com.mongodb.DBObject;
 import com.mongodb.MongoException;
 import com.mongodb.MongoURI;
 import com.seyren.core.domain.Alert;
+import com.seyren.core.domain.AlertType;
 import com.seyren.core.domain.Check;
 import com.seyren.core.domain.SeyrenResponse;
 import com.seyren.core.domain.Subscription;
@@ -162,11 +163,10 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
     
     @Override
     public Check saveCheck(Check check) {
-        DBObject findObject = forId(check.getId());
-        
         DateTime lastCheck = check.getLastCheck();
         
-        DBObject updateObject = object("name", check.getName())
+        DBObject saveObject = forId(check.getId())
+                .with("name", check.getName())
                 .with("description", check.getDescription())
                 .with("target", check.getTarget())
                 .with("warn", check.getWarn().toPlainString())
@@ -176,11 +176,21 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
                 .with("lastCheck", lastCheck == null ? null : new Date(lastCheck.getMillis()))
                 .with("state", check.getState().toString());
         
-        DBObject setObject = object("$set", updateObject);
-        
-        getChecksCollection().update(findObject, setObject);
+        getChecksCollection().save(saveObject);
         
         return check;
+    }
+    
+    @Override
+    public void updateStateAndLastCheck(String checkId, AlertType state, DateTime lastCheck) {
+        DBObject findObject = forId(checkId);
+        
+        DBObject partialObject = object("lastCheck", new Date(lastCheck.getMillis()))
+                .with("state", state.toString());
+        
+        DBObject setObject = object("$set", partialObject);
+        
+        getChecksCollection().update(findObject, setObject);
     }
     
     @Override

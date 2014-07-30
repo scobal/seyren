@@ -15,6 +15,9 @@ package com.seyren.core.store;
 
 import java.util.Set;
 
+import org.joda.time.DateTime;
+
+import com.seyren.core.domain.AlertType;
 import com.seyren.core.domain.Check;
 import com.seyren.core.domain.SeyrenResponse;
 
@@ -31,5 +34,7 @@ public interface ChecksStore {
     Check createCheck(Check check);
     
     Check saveCheck(Check check);
+
+    void updateStateAndLastCheck(String checkId, AlertType state, DateTime lastCheck);
     
 }
