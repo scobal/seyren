@@ -74,7 +74,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <version>2.0.4</version>
+                    <version>${mongo.version}</version>
                     <logging>none</logging>
                 </configuration>
             </plugin>
