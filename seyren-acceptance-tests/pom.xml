@@ -123,7 +123,7 @@
                     <systemProperties>
                         <systemProperty>
                             <name>console.log.level</name>
-                            <value>warn</value>
+                            <value>off</value>
                         </systemProperty>
                     </systemProperties>
                     <webApp>
