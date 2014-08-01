@@ -29,13 +29,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.mongodb.BasicDBObject;
+import com.mongodb.Bytes;
+import com.mongodb.CommandFailureException;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
+import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
 import com.mongodb.MongoException;
-import com.mongodb.MongoURI;
+import com.mongodb.WriteConcern;
 import com.seyren.core.domain.Alert;
+import com.seyren.core.domain.AlertType;
 import com.seyren.core.domain.Check;
 import com.seyren.core.domain.SeyrenResponse;
 import com.seyren.core.domain.Subscription;
@@ -43,6 +48,7 @@ import com.seyren.core.store.AlertsStore;
 import com.seyren.core.store.ChecksStore;
 import com.seyren.core.store.SubscriptionsStore;
 import com.seyren.core.util.config.SeyrenConfig;
+import com.seyren.core.util.hashing.TargetHash;
 
 @Named
 public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore {
@@ -52,16 +58,14 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
     private MongoMapper mapper = new MongoMapper();
     private DB mongo;
     
-    @SuppressWarnings("deprecation")
     @Inject
     public MongoStore(SeyrenConfig seyrenConfig) {
         try {
             String uri = seyrenConfig.getMongoUrl();
-            MongoURI mongoUri = new MongoURI(uri);
-            DB mongo = mongoUri.connectDB();
-            if (mongoUri.getUsername() != null) {
-                mongo.authenticate(mongoUri.getUsername(), mongoUri.getPassword());
-            }
+            MongoClientURI mongoClientUri = new MongoClientURI(uri);
+            MongoClient mongoClient = new MongoClient(mongoClientUri);
+            DB mongo = mongoClient.getDB(mongoClientUri.getDatabase());
+            mongo.setWriteConcern(WriteConcern.ACKNOWLEDGED);
             this.mongo = mongo;
             bootstrapMongo();
         } catch (Exception e) {
@@ -69,18 +73,12 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
         }
     }
     
-    public MongoStore(DB mongo) {
-        this.mongo = mongo;
-        bootstrapMongo();
-    }
-    
     private void bootstrapMongo() {
         LOGGER.info("Bootstrapping Mongo indexes. Depending on the number of checks and alerts you've got it may take a little while.");
         try {
-            getChecksCollection().ensureIndex(new BasicDBObject("name", 1), new BasicDBObject("unique", true));
-            getChecksCollection().ensureIndex(new BasicDBObject("enabled", 1));
-            getAlertsCollection().ensureIndex(new BasicDBObject("timestamp", -1));
-            getAlertsCollection().ensureIndex(new BasicDBObject("checkId", 1).append("target", 1));
+            createIndices();
+            removeOldIndices();
+            addTargetHashToAlerts();
         } catch (MongoException e) {
             LOGGER.error("Failure while bootstrapping Mongo indexes.\n"
                     + "If you've hit this problem it's possible that you have two checks which are named the same and violate an index which we've tried to add.\n"
@@ -88,6 +86,41 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
             throw new RuntimeException("Failed to bootstrap Mongo indexes. Please refer to the logs for more information.", e);
         }
         LOGGER.info("Done bootstrapping Mongo indexes.");
+    }
+
+    private void createIndices() {
+        LOGGER.info("Ensuring that we have all the indices we need");
+        getChecksCollection().createIndex(new BasicDBObject("name", 1), new BasicDBObject("unique", true));
+        getChecksCollection().createIndex(new BasicDBObject("enabled", 1).append("live", 1));
+        getAlertsCollection().createIndex(new BasicDBObject("timestamp", -1));
+        getAlertsCollection().createIndex(new BasicDBObject("checkId", 1).append("targetHash", 1));
+    }
+
+    private void removeOldIndices() {
+        LOGGER.info("Dropping old indices");
+        try {
+            getAlertsCollection().dropIndex(new BasicDBObject("checkId", 1).append("target", 1));
+        } catch (CommandFailureException e) {
+            if (e.getCode() != -5) {
+                // -5 is the code which appears when the index doesn't exist (which we're happy with, anything else is bad news) 
+                throw e;
+            }
+        }
+    }
+
+    private void addTargetHashToAlerts() {
+        LOGGER.info("Adding targetHash field to any alerts which don't have it");
+        DBCursor alerts = getAlertsCollection().find(new BasicDBObject("targetHash", new BasicDBObject("$exists", false)));
+        alerts.addOption(Bytes.QUERYOPTION_NOTIMEOUT);
+        int alertCount = alerts.count();
+        if (alertCount > 0) {
+            LOGGER.info("Found {} alert(s) which need updating", alertCount);
+        }
+        while (alerts.hasNext()) {
+            DBObject alertObject = alerts.next();
+            Alert alert = mapper.alertFrom(alertObject);
+            getAlertsCollection().save(mapper.alertToDBObject(alert));
+        }
     }
     
     private DBCollection getChecksCollection() {
@@ -162,11 +195,10 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
     
     @Override
     public Check saveCheck(Check check) {
-        DBObject findObject = forId(check.getId());
-        
         DateTime lastCheck = check.getLastCheck();
         
-        DBObject updateObject = object("name", check.getName())
+        DBObject saveObject = forId(check.getId())
+                .with("name", check.getName())
                 .with("description", check.getDescription())
                 .with("target", check.getTarget())
                 .with("from", check.getFrom())
@@ -178,11 +210,21 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
                 .with("lastCheck", lastCheck == null ? null : new Date(lastCheck.getMillis()))
                 .with("state", check.getState().toString());
         
-        DBObject setObject = object("$set", updateObject);
-        
-        getChecksCollection().update(findObject, setObject);
+        getChecksCollection().save(saveObject);
         
         return check;
+    }
+    
+    @Override
+    public void updateStateAndLastCheck(String checkId, AlertType state, DateTime lastCheck) {
+        DBObject findObject = forId(checkId);
+        
+        DBObject partialObject = object("lastCheck", new Date(lastCheck.getMillis()))
+                .with("state", state.toString());
+        
+        DBObject setObject = object("$set", partialObject);
+        
+        getChecksCollection().update(findObject, setObject);
     }
     
     @Override
@@ -236,7 +278,7 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
     
     @Override
     public Alert getLastAlertForTargetOfCheck(String target, String checkId) {
-        DBObject query = object("checkId", checkId).with("target", target);
+        DBObject query = object("checkId", checkId).with("targetHash", TargetHash.create(target));
         DBCursor cursor = getAlertsCollection().find(query).sort(object("timestamp", -1)).limit(1);
         try {
             while (cursor.hasNext()) {

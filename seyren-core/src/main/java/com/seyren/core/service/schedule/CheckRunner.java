@@ -121,9 +121,7 @@ public class CheckRunner implements Runnable {
                 
             }
             
-            check.setState(worstState);
-            check.setLastCheck(DateTime.now());
-            checksStore.saveCheck(check);
+            checksStore.updateStateAndLastCheck(check.getId(), worstState, DateTime.now());
             
             if (interestingAlerts.isEmpty()) {
                 return;

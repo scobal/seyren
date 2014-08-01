@@ -74,7 +74,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <version>2.0.4</version>
+                    <version>${mongo.version}</version>
                     <logging>none</logging>
                 </configuration>
             </plugin>
@@ -123,7 +123,7 @@
                     <systemProperties>
                         <systemProperty>
                             <name>console.log.level</name>
-                            <value>warn</value>
+                            <value>off</value>
                         </systemProperty>
                     </systemProperties>
                     <webApp>

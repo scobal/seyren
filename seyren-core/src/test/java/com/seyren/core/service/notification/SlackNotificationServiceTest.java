@@ -13,11 +13,9 @@
  */
 package com.seyren.core.service.notification;
 
-import static com.github.restdriver.Matchers.*;
 import static com.github.restdriver.clientdriver.RestClientDriver.*;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
 
 import java.io.UnsupportedEncodingException;
@@ -26,7 +24,6 @@ import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.List;
 
-import com.github.restdriver.clientdriver.capture.StringBodyCapture;
 import org.hamcrest.Matchers;
 import org.joda.time.DateTime;
 import org.junit.After;
@@ -34,11 +31,9 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.github.restdriver.clientdriver.ClientDriverRequest;
 import com.github.restdriver.clientdriver.ClientDriverRule;
-import com.github.restdriver.clientdriver.capture.BodyCapture;
-import com.github.restdriver.clientdriver.capture.JsonBodyCapture;
+import com.github.restdriver.clientdriver.capture.StringBodyCapture;
 import com.seyren.core.domain.Alert;
 import com.seyren.core.domain.AlertType;
 import com.seyren.core.domain.Check;

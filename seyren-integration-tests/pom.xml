@@ -92,7 +92,7 @@
                             </execution>
                         </executions>
                         <configuration>
-                            <version>2.0.4</version>
+                            <version>${mongo.version}</version>
                             <logging>none</logging>
                         </configuration>
                     </plugin>
@@ -134,6 +134,12 @@
                         <configuration>
                             <skip>${jetty.skip}</skip>
                             <scanIntervalSeconds>1</scanIntervalSeconds>
+                            <systemProperties>
+                                <systemProperty>
+                                    <name>console.log.level</name>
+                                    <value>off</value>
+                                </systemProperty>
+                            </systemProperties>
                             <webApp>
                                 <contextPath>/seyren</contextPath>
                                 <baseResource implementation="org.eclipse.jetty.util.resource.ResourceCollection">
