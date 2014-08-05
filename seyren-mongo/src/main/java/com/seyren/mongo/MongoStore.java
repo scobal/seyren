@@ -195,10 +195,11 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
     
     @Override
     public Check saveCheck(Check check) {
+        DBObject findObject = forId(check.getId());
+        
         DateTime lastCheck = check.getLastCheck();
         
-        DBObject saveObject = forId(check.getId())
-                .with("name", check.getName())
+        DBObject partialObject = object("name", check.getName())
                 .with("description", check.getDescription())
                 .with("target", check.getTarget())
                 .with("warn", check.getWarn().toPlainString())
@@ -208,7 +209,9 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
                 .with("lastCheck", lastCheck == null ? null : new Date(lastCheck.getMillis()))
                 .with("state", check.getState().toString());
         
-        getChecksCollection().save(saveObject);
+        DBObject setObject = object("$set", partialObject);
+        
+        getChecksCollection().update(findObject, setObject);
         
         return check;
     }
