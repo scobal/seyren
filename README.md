@@ -32,6 +32,13 @@ java -jar seyren-1.1.0.jar
 open http://localhost:8080
 ```
 
+To run seyren on another port:
+
+```
+export SEYREN_URL="http://localhost:8081/seyren"
+java -jar seyren-1.1.0.jar -httpPort=8081
+```
+
 ###Config
 
 The following options can be supplied as system properties or environment variables.
@@ -137,3 +144,10 @@ mvn clean verify -Dwait
 
 You should then be able to browse to `http://localhost:8080/seyren` and have a play.
 
+To package up a new jar file without running the tests:
+
+```
+mvn package -DskipTests
+# Set environment variables as needed.
+java -jar seyren-web/target/seyren-web-*-war-exec.jar
+```
