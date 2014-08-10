@@ -2,7 +2,7 @@
 (function () {
     'use strict';
 
-    seyrenApp.controller('CheckController', function CheckController($scope, $route, $timeout, $location, Checks, Graph, Subscriptions, Seyren) {
+    seyrenApp.controller('CheckController', function CheckController($scope, $sce, $route, $timeout, $location, Checks, Graph, Subscriptions, Seyren, linkify) {
 
         $scope.pollCheckInSeconds = 30;
         $scope.pollAlertsInSeconds = 5;
@@ -27,6 +27,7 @@
         $scope.loadCheck = function () {
             Checks.get({checkId: $route.current.params.id}, function (data) {
                 $scope.check = data;
+                $scope.check.descriptionHtml = $sce.trustAsHtml(linkify.normal($scope.check.description));
                 $scope.check.lastLoadTime = new Date().getTime();
             }, function (err) {
                 console.log('Loading check failed');
