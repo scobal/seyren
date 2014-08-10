@@ -15,6 +15,8 @@ package com.seyren.core.util.velocity;
 
 import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.Matchers.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -146,5 +148,13 @@ public class VelocityEmailHelperTest {
         assertThat(body, containsString("138362880"));
         
     }
-    
+
+    @Test
+    public void templateLocationShouldBeConfigurable() {
+        SeyrenConfig mockConfiguration = mock(SeyrenConfig.class);
+        when(mockConfiguration.getEmailTemplateFileName()).thenReturn("test-email-template.vm");
+        EmailHelper emailHelper = new VelocityEmailHelper(mockConfiguration);
+        String body = emailHelper.createBody(null, null, null);
+        assertThat(body, containsString("Test content."));
+    }
 }

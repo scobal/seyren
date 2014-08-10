@@ -19,6 +19,9 @@ import static org.hamcrest.Matchers.*;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+
 public class SeyrenConfigTest {
     
     private SeyrenConfig config;
@@ -148,6 +151,11 @@ public class SeyrenConfigTest {
     @Test
     public void defaultFlowdockEmojisIsCorrect() {
         assertThat(config.getFlowdockEmojis(), is(""));
+    }
+
+    @Test
+    public void defaultEmailTemplateFileIsCorrect() {
+        assertThat(config.getEmailTemplateFileName(), is("com/seyren/core/service/notification/email-template.vm"));
     }
     
 }

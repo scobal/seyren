@@ -15,13 +15,17 @@ package com.seyren.api.bean;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 import com.seyren.api.jaxrs.ChecksResource;
 import com.seyren.core.domain.AlertType;
 import com.seyren.core.domain.Check;
@@ -39,16 +43,26 @@ public class ChecksBean implements ChecksResource {
     }
     
     @Override
-    public Response getChecks(Set<String> states, Boolean enabled) {
+    public Response getChecks(Set<String> states, Boolean enabled, String name, List<String> fields, List<String> regexes) {
         SeyrenResponse<Check> checks;
         if (states != null && !states.isEmpty()) {
             checks = checksStore.getChecksByState(states, enabled);
+        } else if (fields != null && !fields.isEmpty() &&
+                regexes != null && !regexes.isEmpty()) {
+            List<Pattern> patterns = Lists.transform(regexes, new Function<String, Pattern>() {
+                @Override
+                public Pattern apply(String regex) {
+                    return Pattern.compile(regex);
+                }
+            });
+
+            checks = checksStore.getChecksByPattern(fields, patterns, enabled);
         } else {
             checks = checksStore.getChecks(enabled, null);
         }
         return Response.ok(checks).build();
     }
-    
+
     @Override
     public Response createCheck(Check check) {
         if (check.getState() == null) {
