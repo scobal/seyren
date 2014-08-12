@@ -141,20 +141,26 @@ describe('check page', function () {
         expect(element('div.col-lg-6 div.detail-form:eq(3) label').text()).toBe('Target:');
         expect(element('div.col-lg-6 div.detail-form:eq(3) p').text()).toBe('prod.host1.load.longterm');
 
-        expect(element('div.col-lg-6 div.detail-form:eq(4) label').text()).toBe('Warn:');
-        expect(element('div.col-lg-6 div.detail-form:eq(4) p').text()).toBe('0.5');
+        expect(element('div.col-lg-6 div.detail-form:eq(4) label').text()).toBe('From:');
+        expect(element('div.col-lg-6 div.detail-form:eq(4) p').text()).toBe('TODO');
 
-        expect(element('div.col-lg-6 div.detail-form:eq(5) label').text()).toBe('Error:');
-        expect(element('div.col-lg-6 div.detail-form:eq(5) p').text()).toBe('2.0');
+        expect(element('div.col-lg-6 div.detail-form:eq(5) label').text()).toBe('Until:');
+        expect(element('div.col-lg-6 div.detail-form:eq(5) p').text()).toBe('TODO');
 
-        expect(element('div.col-lg-6 div.detail-form:eq(6) label').text()).toBe('Enabled:');
-        expect(element('div.col-lg-6 div.detail-form:eq(6) p input:checked').val()).toBe('on');
+        expect(element('div.col-lg-6 div.detail-form:eq(6) label').text()).toBe('Warn:');
+        expect(element('div.col-lg-6 div.detail-form:eq(6) p').text()).toBe('0.5');
 
-        expect(element('div.col-lg-6 div.detail-form:eq(7) label').text()).toBe('Live:');
-        expect(element('div.col-lg-6 div.detail-form:eq(7) p input:not(:checked)').val()).toBe('on');
+        expect(element('div.col-lg-6 div.detail-form:eq(7) label').text()).toBe('Error:');
+        expect(element('div.col-lg-6 div.detail-form:eq(7) p').text()).toBe('2.0');
 
-        expect(element('div.col-lg-6 div.detail-form:eq(8) label').text()).toBe('Last check:');
-        expect(element('div.col-lg-6 div.detail-form:eq(8) p').text()).toMatch('[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}');
+        expect(element('div.col-lg-6 div.detail-form:eq(8) label').text()).toBe('Enabled:');
+        expect(element('div.col-lg-6 div.detail-form:eq(8) p input:checked').val()).toBe('on');
+
+        expect(element('div.col-lg-6 div.detail-form:eq(9) label').text()).toBe('Live:');
+        expect(element('div.col-lg-6 div.detail-form:eq(9) p input:not(:checked)').val()).toBe('on');
+
+        expect(element('div.col-lg-6 div.detail-form:eq(10) label').text()).toBe('Last check:');
+        expect(element('div.col-lg-6 div.detail-form:eq(10) p').text()).toMatch('[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}');
     });
 
     it('should have \'Graphs\' thumbnail', function () {
