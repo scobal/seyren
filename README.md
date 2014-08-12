@@ -32,6 +32,13 @@ java -jar seyren-1.1.0.jar
 open http://localhost:8080
 ```
 
+To run seyren on another port:
+
+```
+export SEYREN_URL="http://localhost:8081/seyren"
+java -jar seyren-1.1.0.jar -httpPort=8081
+```
+
 ###Config
 
 The following options can be supplied as system properties or environment variables.
@@ -101,6 +108,9 @@ The following options can be supplied as system properties or environment variab
 * `SNMP_COMMUNITY` - The SNMP  community. Default: `public`
 * `SNMP_OID` - The SNMP OID. Default: `1.3.6.1.4.1.32473.1`
 
+##### [TEMPLATE](http://en.wikipedia.org/wiki/Apache_Velocity)
+* `TEMPLATE_EMAIL_FILE_PATH` - The path to the velocity template used when emailing an alert. Seyren will first attempt to load from the class path, but will fall back to loading from the filesystem.  Default: `com/seyren/core/service/notification/email-template.vm"`
+
 ##### [Twilio](https://www.twilio.com/)
 * `TWILIO_ACCOUNT_SID` - The Twilio Account SID. Default ``
 * `TWILIO_AUTH_TOKEN` - The Twilio Auth Token. Default ``
@@ -112,7 +122,7 @@ The following options can be supplied as system properties or environment variab
 You can use [Seyren Cookbook](https://github.com/obazoud/chef-seyren) to deploy Seyren with [Chef](http://www.getchef.com/).
 
 ##Docker
-You can use the [Docker Seyren Image](https://registry.hub.docker.com/u/usman/docker-seyren/[) to deploy a seyren instance in a [docker](https://docker.com/https://docker.com/) container. 
+You can use the [Docker Seyren Image](https://registry.hub.docker.com/u/usman/docker-seyren/) to deploy a seyren instance in a [docker](https://docker.com/https://docker.com/) container.
 
 ##Development
 
@@ -137,3 +147,10 @@ mvn clean verify -Dwait
 
 You should then be able to browse to `http://localhost:8080/seyren` and have a play.
 
+To package up a new jar file without running the tests:
+
+```
+mvn package -DskipTests
+# Set environment variables as needed.
+java -jar seyren-web/target/seyren-web-*-war-exec.jar
+```
