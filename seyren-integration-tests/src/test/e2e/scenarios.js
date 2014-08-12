@@ -142,10 +142,10 @@ describe('check page', function () {
         expect(element('div.col-lg-6 div.detail-form:eq(3) p').text()).toBe('prod.host1.load.longterm');
 
         expect(element('div.col-lg-6 div.detail-form:eq(4) label').text()).toBe('From:');
-        expect(element('div.col-lg-6 div.detail-form:eq(4) p').text()).toBe('TODO');
+        expect(element('div.col-lg-6 div.detail-form:eq(4) p').text()).toBe('');
 
         expect(element('div.col-lg-6 div.detail-form:eq(5) label').text()).toBe('Until:');
-        expect(element('div.col-lg-6 div.detail-form:eq(5) p').text()).toBe('TODO');
+        expect(element('div.col-lg-6 div.detail-form:eq(5) p').text()).toBe('');
 
         expect(element('div.col-lg-6 div.detail-form:eq(6) label').text()).toBe('Warn:');
         expect(element('div.col-lg-6 div.detail-form:eq(6) p').text()).toBe('0.5');
