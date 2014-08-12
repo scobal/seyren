@@ -127,7 +127,7 @@ describe('check page', function () {
     });
 
     it('should have a \'Details\' informations', function () {
-        expect(element('div.col-lg-6 div.col-lg-10').count()).toBe(9);
+        expect(element('div.col-lg-6 div.col-lg-10').count()).toBe(11);
 
         expect(element('div.col-lg-6 div.detail-form:eq(0) label').text()).toBe('Name:');
         expect(element('div.col-lg-6 div.detail-form:eq(0) p').text()).toBe('load longterm usage');
@@ -207,7 +207,7 @@ describe('edit check', function () {
     });
 
     it('edit and submit check', function () {
-        expect(element('div.col-lg-6 div.col-lg-10').count()).toBe(9);
+        expect(element('div.col-lg-6 div.col-lg-10').count()).toBe(11);
 
         expect(element('a:contains("edit")').count()).toBe(1);
         expect(element('div#editCheckModal:visible').count()).toBe(0);
