@@ -237,6 +237,8 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
         DBObject partialObject = object("name", check.getName())
                 .with("description", check.getDescription())
                 .with("target", check.getTarget())
+                .with("from", check.getFrom())
+                .with("until", check.getUntil())
                 .with("warn", check.getWarn().toPlainString())
                 .with("error", check.getError().toPlainString())
                 .with("enabled", check.isEnabled())

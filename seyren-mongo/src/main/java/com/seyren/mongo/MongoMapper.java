@@ -40,6 +40,8 @@ public class MongoMapper {
         String name = getString(dbo, "name");
         String description = getString(dbo, "description");
         String target = getString(dbo, "target");
+        String from = getString(dbo, "from");
+        String until = getString(dbo, "until");
         BigDecimal warn = getBigDecimal(dbo, "warn");
         BigDecimal error = getBigDecimal(dbo, "error");
         boolean enabled = getBoolean(dbo, "enabled");
@@ -56,6 +58,8 @@ public class MongoMapper {
                 .withName(name)
                 .withDescription(description)
                 .withTarget(target)
+                .withFrom(from)
+                .withUntil(until)
                 .withWarn(warn)
                 .withError(error)
                 .withEnabled(enabled)
@@ -144,6 +148,8 @@ public class MongoMapper {
         map.put("name", check.getName());
         map.put("description", check.getDescription());
         map.put("target", check.getTarget());
+        map.put("from", check.getFrom());
+        map.put("until", check.getUntil());
         if (check.getWarn() != null) {
             map.put("warn", check.getWarn().toPlainString());
         }

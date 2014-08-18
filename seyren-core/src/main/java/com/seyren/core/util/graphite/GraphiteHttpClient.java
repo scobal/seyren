@@ -102,16 +102,32 @@ public class GraphiteHttpClient {
         this.context = new BasicHttpContext();
         this.client = createHttpClient();
     }
-    
+
+    /**
+     * @deprecated Use {link}getTargetJson(String target, String from, String until){link} instead.
+     */
+    @Deprecated
     public JsonNode getTargetJson(String target) throws Exception {
+        return getTargetJson(target, null, null);
+    }
+
+    public JsonNode getTargetJson(String target, String from, String until) throws Exception {
+        // Default values for from/until preserve hard-coded functionality
+        // seyren had before from/until were fields that could be specified.
+        if (from == null) {
+            from = "-11minutes";
+        }
+        if (until == null) {
+            until = "-1minutes";
+        }
         URI baseUri = new URI(graphiteScheme, graphiteHost, graphitePath + "/render/", null, null);
         URI uri = new URIBuilder(baseUri)
-                .addParameter("from", "-11minutes")
-                .addParameter("until", "-1minutes")
+                .addParameter("from", from)
+                .addParameter("until", until)
                 .addParameter("uniq", String.valueOf(new DateTime().getMillis()))
                 .addParameter("format", "json")
                 .addParameter("target", target).build();
-        
+
         HttpGet get = new HttpGet(uri);
         
         try {

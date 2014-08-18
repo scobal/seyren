@@ -41,6 +41,8 @@ public class Check {
     private String name;
     private String description;
     private String target;
+    private String from;
+    private String until;
     private BigDecimal warn;
     private BigDecimal error;
     private boolean enabled;
@@ -95,12 +97,38 @@ public class Check {
     public void setTarget(String target) {
         this.target = target;
     }
-    
+
+    public String getFrom() {
+        return from;
+    }
+
+    public void setFrom(String from) {
+        this.from = from;
+    }
+
+    public Check withFrom(String from) {
+        setFrom(from);
+        return this;
+    }
+
+    public String getUntil() {
+        return until;
+    }
+
+    public void setUntil(String until) {
+        this.until = until;
+    }
+
+    public Check withUntil(String until) {
+        setUntil(until);
+        return this;
+    }
+
     public Check withTarget(String target) {
         setTarget(target);
         return this;
     }
-    
+
     @JsonSerialize(using = BigDecimalSerializer.class)
     public BigDecimal getWarn() {
         return warn;

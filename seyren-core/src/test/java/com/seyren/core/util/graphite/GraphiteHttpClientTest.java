@@ -54,11 +54,11 @@ public class GraphiteHttpClientTest {
     public void after() {
         System.clearProperty("GRAPHITE_URL");
     }
-    
+
     @Test
     public void requestingJsonCallsThroughToGraphiteCorrectly() throws Exception {
         String response = "[{\"target\": \"service.error.1MinuteRate\", \"datapoints\": [[0.06, 1337453460]]}]";
-        
+
         clientDriver.addExpectation(
                 onRequestTo("/render/")
                         .withParam("from", "-11minutes")
@@ -67,12 +67,30 @@ public class GraphiteHttpClientTest {
                         .withParam("format", "json")
                         .withParam("target", "service.error.1MinuteRate"),
                 giveResponse(response, "application/json"));
-        
+
         JsonNode node = graphiteHttpClient.getTargetJson("service.error.1MinuteRate");
-        
+
         assertThat(node, is(MAPPER.readTree(response)));
     }
-    
+
+    @Test
+    public void requestingJsonCallsWithFromAndUntilThroughToGraphiteCorrectly() throws Exception {
+        String response = "[{\"target\": \"service.error.count\", \"datapoints\": [[32, 1337453460]]}]";
+
+        clientDriver.addExpectation(
+                onRequestTo("/render/")
+                        .withParam("from", "-5minutes")
+                        .withParam("until", "now")
+                        .withParam("uniq", Pattern.compile("[0-9]+"))
+                        .withParam("format", "json")
+                        .withParam("target", "service.error.count"),
+                giveResponse(response, "application/json"));
+
+        JsonNode node = graphiteHttpClient.getTargetJson("service.error.count", "-5minutes", "now");
+
+        assertThat(node, is(MAPPER.readTree(response)));
+    }
+
     @Test
     public void exceptionGettingDataFromGraphiteIsHandled() throws Exception {
         thrown.expect(GraphiteReadException.class);
