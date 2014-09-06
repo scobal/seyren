@@ -10,19 +10,27 @@
         $scope.alertStartIndex = 0;
         $scope.alertItemsPerPage = 10;
 
-        $scope.graphs = [{
-            description : "15 minutes",
-            minutes : -15
-        }, {
-            description : "1 hour",
-            minutes : -60
-        }, {
-            description : "1 day",
-            minutes : -1440
-        }, {
-            description : "1 week",
-            minutes : -10080
-        }];
+        $scope.graphsEnabled = function () {
+            return $scope.config.graphsEnabled;
+        };
+
+        if ($scope.graphsEnabled()) {
+            $scope.graphs = [{
+                description : "15 minutes",
+                minutes : -15
+            }, {
+                description : "1 hour",
+                minutes : -60
+            }, {
+                description : "1 day",
+                minutes : -1440
+            }, {
+                description : "1 week",
+                minutes : -10080
+            }];
+        } else {
+            $scope.graphs = [];
+        }
 
         $scope.loadCheck = function () {
             Checks.get({checkId: $route.current.params.id}, function (data) {
