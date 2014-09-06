@@ -47,7 +47,12 @@ public class SeyrenConfigTest {
     public void defaultGraphiteUrlIsCorrect() {
         assertThat(config.getGraphiteUrl(), is("http://localhost:80"));
     }
-    
+
+    @Test
+    public void defaultGraphsEnable() {
+      assertThat(config.isGraphsEnabled(), is(true));
+    }
+
     @Test
     public void defaultGraphiteUsernameIsCorrect() {
         assertThat(config.getGraphiteUsername(), is(""));
