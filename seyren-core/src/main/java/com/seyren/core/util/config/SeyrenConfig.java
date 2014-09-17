@@ -36,6 +36,7 @@ public class SeyrenConfig {
 
     private final String baseUrl;
     private final String mongoUrl;
+    private final String graphsEnable;
     private final String graphiteUrl;
     private final String graphiteUsername;
     private final String graphitePassword;
@@ -87,6 +88,7 @@ public class SeyrenConfig {
         // Base
         this.baseUrl = stripEnd(configOrDefault("SEYREN_URL", DEFAULT_BASE_URL), "/");
         this.mongoUrl = configOrDefault("MONGO_URL", "mongodb://localhost:27017/seyren");
+        this.graphsEnable = configOrDefault("GRAPHS_ENABLE", "true");
         
         // Graphite
         this.graphiteUrl = stripEnd(configOrDefault("GRAPHITE_URL", "http://localhost:80"), "/");
@@ -174,6 +176,10 @@ public class SeyrenConfig {
     @JsonIgnore
     public String getMongoUrl() {
         return mongoUrl;
+    }
+
+    public boolean isGraphsEnabled() {
+        return Boolean.valueOf(graphsEnable);
     }
     
     @JsonIgnore

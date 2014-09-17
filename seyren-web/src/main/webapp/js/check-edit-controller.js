@@ -15,6 +15,10 @@
             totalMetric: '-'
         };
 
+        $scope.graphsEnabled = function () {
+            return $scope.config.graphsEnabled;
+        };
+
         $('#editCheckModal').on('shown.bs.modal', function () {
             $('#check\\.name').focus();
             $('#check\\.warn\\.hint').tooltip({
@@ -62,7 +66,7 @@
         });
 
         $scope.$watch('check.target + check.warn + check.error', function (value) {
-            if (value !== undefined) {
+            if (value !== undefined && $scope.graphsEnabled()) {
                 $scope.check.previewImage = Graph.previewImage($scope.check);
             } else {
                 return "./img/preview-nodata.png";
