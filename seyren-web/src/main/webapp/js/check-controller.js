@@ -139,6 +139,14 @@
             });
         };
 
+        $scope.testSubscription = function (check, subscription) {
+            Subscriptions.test({checkId: check.id, subscriptionId: subscription.id}, subscription, function () {
+                $scope.loadCheck();
+            }, function (err) {
+                console.log('Testing subscription failed');
+            });
+        };
+
         $scope.deleteCheck = function (check) {
             $('#confirmDeleteCheckButton').addClass('disabled');
             Checks.remove({checkId: check.id}, check, function () {

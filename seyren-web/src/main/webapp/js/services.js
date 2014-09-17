@@ -45,10 +45,11 @@
             });
         }).
         factory('Subscriptions', function ($resource) {
-            return $resource('api/checks/:checkId/subscriptions/:subscriptionId', {checkId: "@checkId", subscriptionId: "@subscriptionId"}, {
+            return $resource('api/checks/:checkId/subscriptions/:subscriptionId/:action', {checkId: "@checkId", subscriptionId: "@subscriptionId"}, {
                 'create':    {method: 'POST'},
                 'update':    {method: 'PUT'},
-                'remove':    {method: 'DELETE'}
+                'remove':    {method: 'DELETE'},
+                'test':      {method: 'PUT', params: {action: "test"}}
             });
         }).
         factory('Metrics', function ($resource) {
