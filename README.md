@@ -17,6 +17,7 @@ Seyren ([/ˈsaɪ.rʌn/](http://en.wikipedia.org/wiki/Wikipedia:IPA_for_English#K
 
 
 #[<img src="http://i.imgur.com/13nR3YA.png" height="200" width="280" />](http://i.imgur.com/ahu3aM6.png)
+[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/scobal/seyren?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 [![Build Status](https://travis-ci.org/scobal/seyren.svg?branch=master)](https://travis-ci.org/scobal/seyren)
 
