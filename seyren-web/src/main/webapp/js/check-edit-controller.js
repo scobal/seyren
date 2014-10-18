@@ -62,7 +62,7 @@
         });
 
         $scope.$watch('check.target + check.warn + check.error', function (value) {
-            if (value !== undefined) {
+            if ($scope.check !== undefined && ($scope.config === undefined || (value !== undefined && $scope.config.graphsEnabled))) {
                 $scope.check.previewImage = Graph.previewImage($scope.check);
             } else {
                 return "./img/preview-nodata.png";

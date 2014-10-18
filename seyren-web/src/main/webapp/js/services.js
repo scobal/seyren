@@ -41,7 +41,7 @@
         }).
         factory('Config', function ($resource) {
             return $resource('api/config', {}, {
-                'query':    {method: 'GET', isArray: false}
+                'query':    {method: 'GET', isArray: false, cache : true}
             });
         }).
         factory('Subscriptions', function ($resource) {

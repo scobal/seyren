@@ -31,9 +31,10 @@ public class ConfigAT {
         assertThat(response, hasStatusCode(200));
         
         // Base
-        assertThat(response.asJson().size(), is(2));
+        assertThat(response.asJson().size(), is(3));
         assertThat(response.asJson(), hasJsonPath("$.baseUrl", not(isEmptyOrNullString())));
         assertThat(response.asJson(), hasJsonPath("$.graphiteCarbonPickleEnabled", is(false)));
+        assertThat(response.asJson(), hasJsonPath("$.graphsEnabled", is(true)));
     }
     
 }

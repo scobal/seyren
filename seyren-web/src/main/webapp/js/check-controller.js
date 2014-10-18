@@ -2,7 +2,7 @@
 (function () {
     'use strict';
 
-    seyrenApp.controller('CheckController', function CheckController($scope, $sce, $route, $timeout, $location, Checks, Graph, Subscriptions, Seyren, linkify) {
+    seyrenApp.controller('CheckController', function CheckController($scope, $sce, $route, $timeout, $location, Checks, Graph, Subscriptions, Seyren, linkify, configResults) {
 
         $scope.pollCheckInSeconds = 30;
         $scope.pollAlertsInSeconds = 5;
@@ -10,19 +10,36 @@
         $scope.alertStartIndex = 0;
         $scope.alertItemsPerPage = 10;
 
-        $scope.graphs = [{
-            description : "15 minutes",
-            minutes : -15
-        }, {
-            description : "1 hour",
-            minutes : -60
-        }, {
-            description : "1 day",
-            minutes : -1440
-        }, {
-            description : "1 week",
-            minutes : -10080
-        }];
+        configResults.$promise.then(function(data) {
+            $scope.config = data;
+
+            $scope.graphsEnabled = function () {
+                return $scope.config.graphsEnabled;
+            };
+
+            if ($scope.graphsEnabled()) {
+                $scope.graphs = [{
+                    description : "15 minutes",
+                    minutes : -15
+                }, {
+                    description : "1 hour",
+                    minutes : -60
+                }, {
+                    description : "1 day",
+                    minutes : -1440
+                }, {
+                    description : "1 week",
+                    minutes : -10080
+                }];
+            } else {
+                $scope.graphs = [];
+            }
+
+            $scope.liveEnabled = function () {
+                return $scope.config.graphiteCarbonPickleEnabled;
+            };
+
+        });
 
         $scope.loadCheck = function () {
             Checks.get({checkId: $route.current.params.id}, function (data) {
@@ -165,10 +182,6 @@
 
         $scope.liveImage = function (check, minutes) {
             return Graph.liveImage(check, minutes);
-        };
-
-        $scope.liveEnabled = function () {
-            return $scope.config.graphiteCarbonPickleEnabled;
         };
 
         $scope.deleteAlerts = function (check, days) {
