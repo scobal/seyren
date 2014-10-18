@@ -128,6 +128,10 @@ You can use [Seyren Cookbook](https://github.com/obazoud/chef-seyren) to deploy 
 ##Docker
 You can use the [Docker Seyren Image](https://registry.hub.docker.com/u/usman/docker-seyren/) to deploy a seyren instance in a [docker](https://docker.com/https://docker.com/) container.
 
+##Init script
+
+[Seyren-Init](https://github.com/wingZero21/Seyren-Init) is an init.d script which allows you to start the service.
+
 ##Development
 
 [![Build Status](https://secure.travis-ci.org/scobal/seyren.png?branch=master)](http://travis-ci.org/scobal/seyren)
