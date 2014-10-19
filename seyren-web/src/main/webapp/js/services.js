@@ -7,6 +7,7 @@
             $httpProvider.responseInterceptors.push('spinnerHttpInterceptor');
             var spinnerFunction = function (data, headersGetter) {
                 $('#spinnerG').show();
+                $('#banner').hide();
                 return data;
             };
             $httpProvider.defaults.transformRequest.push(spinnerFunction);
@@ -15,10 +16,12 @@
             return function (promise) {
                 return promise.then(function (response) {
                     $('#spinnerG').hide();
+                    $('#banner').hide();
                     return response;
 
                 }, function (response) {
                     $('#spinnerG').hide();
+                    $('#banner').show();
                     return $q.reject(response);
                 });
             };
