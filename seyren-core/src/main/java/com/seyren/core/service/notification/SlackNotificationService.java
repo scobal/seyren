@@ -29,6 +29,7 @@ import org.apache.http.client.utils.HttpClientUtils;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.client.utils.URLEncodedUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +48,7 @@ import com.seyren.core.util.config.SeyrenConfig;
 @Named
 public class SlackNotificationService implements NotificationService {
     private static final Logger LOGGER = LoggerFactory.getLogger(SlackNotificationService.class);
-    
+
     private final SeyrenConfig seyrenConfig;
     private final String baseUrl;
 
@@ -75,8 +76,6 @@ public class SlackNotificationService implements NotificationService {
 
         String url = String.format("%s/api/chat.postMessage", baseUrl);
         HttpClient client = HttpClientBuilder.create().build();
-        HttpPost post = new HttpPost(url);
-        post.addHeader("accept", "application/json");
 
         List<BasicNameValuePair> parameters = new ArrayList<BasicNameValuePair>();
         parameters.add(new BasicNameValuePair("token", token));
@@ -85,8 +84,10 @@ public class SlackNotificationService implements NotificationService {
         parameters.add(new BasicNameValuePair("username", username));
         parameters.add(new BasicNameValuePair("icon_url", iconUrl));
 
+        HttpPost post = new HttpPost(url+"?"+URLEncodedUtils.format(parameters, "UTF-8"));
+        post.addHeader("accept", "application/json");
+
         try {
-            post.setEntity(new UrlEncodedFormEntity(parameters));
             HttpResponse response = client.execute(post);
             if (LOGGER.isDebugEnabled()) {
               LOGGER.debug("Status: {}, Body: {}", response.getStatusLine(), new BasicResponseHandler().handleResponse(response));
@@ -97,14 +98,14 @@ public class SlackNotificationService implements NotificationService {
             post.releaseConnection();
             HttpClientUtils.closeQuietly(client);
         }
-        
+
     }
-    
+
     @Override
     public boolean canHandle(SubscriptionType subscriptionType) {
         return subscriptionType == SubscriptionType.SLACK;
     }
-    
+
     private String formatContent(List<String> emojis, Check check, Subscription subscription, List<Alert> alerts) {
         String url = String.format("%s/#/checks/%s", seyrenConfig.getBaseUrl(), check.getId());
         String alertsString = Joiner.on(", ").join(transform(alerts, new Function<Alert, String>() {
