@@ -87,9 +87,13 @@ public class SlackNotificationService implements NotificationService {
 
         try {
             post.setEntity(new UrlEncodedFormEntity(parameters));
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.info("> parameters: {}", parameters);
+            }
             HttpResponse response = client.execute(post);
             if (LOGGER.isDebugEnabled()) {
-              LOGGER.debug("Status: {}, Body: {}", response.getStatusLine(), new BasicResponseHandler().handleResponse(response));
+                LOGGER.info("> parameters: {}", parameters);
+                LOGGER.debug("Status: {}, Body: {}", response.getStatusLine(), new BasicResponseHandler().handleResponse(response));
             }
         } catch (Exception e) {
             LOGGER.warn("Error posting to Slack", e);
