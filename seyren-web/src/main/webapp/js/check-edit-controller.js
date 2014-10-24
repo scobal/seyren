@@ -71,7 +71,7 @@
 
 
         $scope.$watch('check.target', function(value) {
-            if (value !== undefined) {
+            if (value) {
                 Metrics.totalMetric({target: value}, function (data) {
                     $scope.check.totalMetric = data[value];
                 }, function () {
