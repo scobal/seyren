@@ -48,6 +48,6 @@ public interface ChecksStore {
     
     Check saveCheck(Check check);
 
-    void updateStateAndLastCheck(String checkId, AlertType state, DateTime lastCheck);
+    Check updateStateAndLastCheck(String checkId, AlertType state, DateTime lastCheck);
     
 }

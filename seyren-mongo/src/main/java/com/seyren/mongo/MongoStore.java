@@ -254,7 +254,7 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
     }
     
     @Override
-    public void updateStateAndLastCheck(String checkId, AlertType state, DateTime lastCheck) {
+    public Check updateStateAndLastCheck(String checkId, AlertType state, DateTime lastCheck) {
         DBObject findObject = forId(checkId);
         
         DBObject partialObject = object("lastCheck", new Date(lastCheck.getMillis()))
@@ -263,6 +263,8 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
         DBObject setObject = object("$set", partialObject);
         
         getChecksCollection().update(findObject, setObject);
+
+        return getCheck(checkId);
     }
     
     @Override
