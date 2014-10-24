@@ -120,15 +120,14 @@ public class CheckRunner implements Runnable {
                 interestingAlerts.add(alert);
                 
             }
-            
-            checksStore.updateStateAndLastCheck(check.getId(), worstState, DateTime.now());
-            check.setState(worstState);
-            
+
+            Check updatedCheck = checksStore.updateStateAndLastCheck(check.getId(), worstState, DateTime.now());
+
             if (interestingAlerts.isEmpty()) {
                 return;
             }
             
-            for (Subscription subscription : check.getSubscriptions()) {
+            for (Subscription subscription : updatedCheck.getSubscriptions()) {
                 if (!subscription.shouldNotify(now, worstState)) {
                     continue;
                 }
@@ -136,7 +135,7 @@ public class CheckRunner implements Runnable {
                 for (NotificationService notificationService : notificationServices) {
                     if (notificationService.canHandle(subscription.getType())) {
                         try {
-                            notificationService.sendNotification(check, subscription, interestingAlerts);
+                            notificationService.sendNotification(updatedCheck, subscription, interestingAlerts);
                         } catch (Exception e) {
                             LOGGER.warn("Notifying {} by {} failed.", subscription.getTarget(), subscription.getType(), e);
                         }
