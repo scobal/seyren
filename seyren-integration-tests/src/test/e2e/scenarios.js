@@ -37,21 +37,23 @@ describe('home page', function () {
     it('should have a \'Recent alerts\' table', function () {
         expect(element('table:eq(1) thead tr').count()).toBe(1);
         expect(element('table:eq(1) thead tr th:eq(0)').text()).toBe('Timestamp');
-        expect(element('table:eq(1) thead tr th:eq(1)').text()).toBe('Name');
-        expect(element('table:eq(1) thead tr th:eq(2)').text()).toBe('Value');
-        expect(element('table:eq(1) thead tr th:eq(3)').text()).toBe('Warn');
-        expect(element('table:eq(1) thead tr th:eq(4)').text()).toBe('Error');
-        expect(element('table:eq(1) thead tr th:eq(5)').text()).toBe('From');
-        expect(element('table:eq(1) thead tr th:eq(6)').text()).toBe('To');
+        expect(element('table:eq(1) thead tr th:eq(1)').text()).toBe('Time ago');
+        expect(element('table:eq(1) thead tr th:eq(2)').text()).toBe('Name');
+        expect(element('table:eq(1) thead tr th:eq(3)').text()).toBe('Value');
+        expect(element('table:eq(1) thead tr th:eq(4)').text()).toBe('Warn');
+        expect(element('table:eq(1) thead tr th:eq(5)').text()).toBe('Error');
+        expect(element('table:eq(1) thead tr th:eq(6)').text()).toBe('From');
+        expect(element('table:eq(1) thead tr th:eq(7)').text()).toBe('To');
 
         expect(element('table:eq(1) tbody tr').count()).toBe(1);
         expect(element('table:eq(1) tbody tr td:eq(0)').text()).toMatch('[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}');
-        expect(element('table:eq(1) tbody tr td:eq(1)').text()).toBe('load longterm usage');
-        expect(element('table:eq(1) tbody tr td:eq(2)').text()).toBe('0.8');
-        expect(element('table:eq(1) tbody tr td:eq(3)').text()).toBe('0.5');
-        expect(element('table:eq(1) tbody tr td:eq(4)').text()).toBe('2');
-        expect(element('table:eq(1) tbody tr td:eq(5) span:visible').text()).toBe('WARN');
-        expect(element('table:eq(1) tbody tr td:eq(6) span:visible').text()).toBe('OK');
+        expect(element('table:eq(1) tbody tr td:eq(1)').text()).toMatch('^.*ago$');
+        expect(element('table:eq(1) tbody tr td:eq(2)').text()).toBe('load longterm usage');
+        expect(element('table:eq(1) tbody tr td:eq(3)').text()).toBe('0.8');
+        expect(element('table:eq(1) tbody tr td:eq(4)').text()).toBe('0.5');
+        expect(element('table:eq(1) tbody tr td:eq(5)').text()).toBe('2');
+        expect(element('table:eq(1) tbody tr td:eq(6) span:visible').text()).toBe('WARN');
+        expect(element('table:eq(1) tbody tr td:eq(7) span:visible').text()).toBe('OK');
     });
 
     it('should have a footer', function () {
@@ -188,21 +190,23 @@ describe('check page', function () {
         
         expect(element('table:eq(1) thead tr').count()).toBe(1);
         expect(element('table:eq(1) thead tr th:eq(0)').text()).toBe('Timestamp');
-        expect(element('table:eq(1) thead tr th:eq(1)').text()).toBe('Target');
-        expect(element('table:eq(1) thead tr th:eq(2)').text()).toBe('Value');
-        expect(element('table:eq(1) thead tr th:eq(3)').text()).toBe('Warn level');
-        expect(element('table:eq(1) thead tr th:eq(4)').text()).toBe('Error level');
-        expect(element('table:eq(1) thead tr th:eq(5)').text()).toBe('From');
-        expect(element('table:eq(1) thead tr th:eq(6)').text()).toBe('To');
+        expect(element('table:eq(1) thead tr th:eq(1)').text()).toBe('Time ago');
+        expect(element('table:eq(1) thead tr th:eq(2)').text()).toBe('Target');
+        expect(element('table:eq(1) thead tr th:eq(3)').text()).toBe('Value');
+        expect(element('table:eq(1) thead tr th:eq(4)').text()).toBe('Warn level');
+        expect(element('table:eq(1) thead tr th:eq(5)').text()).toBe('Error level');
+        expect(element('table:eq(1) thead tr th:eq(6)').text()).toBe('From');
+        expect(element('table:eq(1) thead tr th:eq(7)').text()).toBe('To');
 
         expect(element('table:eq(1) tbody tr').count()).toBe(1);
         expect(element('table:eq(1) tbody tr td:eq(0)').text()).toMatch('[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}');
-        expect(element('table:eq(1) tbody tr td:eq(1)').text()).toBe('prod.host1.load.longterm');
-        expect(element('table:eq(1) tbody tr td:eq(2)').text()).toBe('0.8');
-        expect(element('table:eq(1) tbody tr td:eq(3)').text()).toBe('0.5');
-        expect(element('table:eq(1) tbody tr td:eq(4)').text()).toBe('2');
-        expect(element('table:eq(1) tbody tr td:eq(5) span:visible').text()).toBe('WARN');
-        expect(element('table:eq(1) tbody tr td:eq(6) span:visible').text()).toBe('OK');
+        expect(element('table:eq(1) tbody tr td:eq(1)').text()).toMatch('^.*ago$');
+        expect(element('table:eq(1) tbody tr td:eq(2)').text()).toBe('prod.host1.load.longterm');
+        expect(element('table:eq(1) tbody tr td:eq(3)').text()).toBe('0.8');
+        expect(element('table:eq(1) tbody tr td:eq(4)').text()).toBe('0.5');
+        expect(element('table:eq(1) tbody tr td:eq(5)').text()).toBe('2');
+        expect(element('table:eq(1) tbody tr td:eq(6) span:visible').text()).toBe('WARN');
+        expect(element('table:eq(1) tbody tr td:eq(7) span:visible').text()).toBe('OK');
     });
 
 });
