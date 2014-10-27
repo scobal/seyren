@@ -121,6 +121,10 @@ The following options can be supplied as system properties or environment variab
 * `TWILIO_PHONE_NUMBER` - The Twilio phone number to use to send SMS. Default ``
 * `TWILIO_URL` - The Twilio API URL. Mostly useful for testing. Default `https://api.twilio.com/2010-04-01/Accounts`
 
+##Seyren API
+
+See [Seyren API](API.md)
+
 ##Chef
 
 You can use [Seyren Cookbook](https://github.com/obazoud/chef-seyren) to deploy Seyren with [Chef](http://www.getchef.com/).
