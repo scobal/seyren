@@ -24,6 +24,7 @@ import java.util.regex.Pattern;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import com.google.common.base.Strings;
 import org.apache.commons.lang.Validate;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
@@ -237,8 +238,8 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
         DBObject partialObject = object("name", check.getName())
                 .with("description", check.getDescription())
                 .with("target", check.getTarget())
-                .with("from", check.getFrom())
-                .with("until", check.getUntil())
+                .with("from", Strings.emptyToNull(check.getFrom()))
+                .with("until", Strings.emptyToNull(check.getUntil()))
                 .with("warn", check.getWarn().toPlainString())
                 .with("error", check.getError().toPlainString())
                 .with("enabled", check.isEnabled())

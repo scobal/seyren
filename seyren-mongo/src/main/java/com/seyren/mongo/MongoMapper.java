@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.base.Strings;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
@@ -40,8 +41,8 @@ public class MongoMapper {
         String name = getString(dbo, "name");
         String description = getString(dbo, "description");
         String target = getString(dbo, "target");
-        String from = getString(dbo, "from");
-        String until = getString(dbo, "until");
+        String from = Strings.emptyToNull(getString(dbo, "from"));
+        String until = Strings.emptyToNull(getString(dbo, "until"));
         BigDecimal warn = getBigDecimal(dbo, "warn");
         BigDecimal error = getBigDecimal(dbo, "error");
         boolean enabled = getBoolean(dbo, "enabled");
