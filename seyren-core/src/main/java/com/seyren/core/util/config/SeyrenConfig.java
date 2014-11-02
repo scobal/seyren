@@ -48,10 +48,6 @@ public class SeyrenConfig {
     private final int graphiteConnectionRequestTimeout;
     private final int graphiteConnectTimeout;
     private final int graphiteSocketTimeout;
-    private final String pagerDutyDomain;
-    private final String pagerDutyToken;
-    private final String pagerDutyUsername;
-    private final String pagerDutyPassword;
     private final String twilioUrl;
     private final String twilioAccountSid;
     private final String twilioAuthToken;
@@ -116,11 +112,7 @@ public class SeyrenConfig {
         this.hipChatUsername = configOrDefault(list("HIPCHAT_USERNAME", "HIPCHAT_USER_NAME"), "Seyren Alert");
         
         // PagerDuty
-        this.pagerDutyDomain = configOrDefault("PAGERDUTY_DOMAIN", "");
-        this.pagerDutyToken = configOrDefault("PAGERDUTY_TOKEN", "");
-        this.pagerDutyUsername = configOrDefault("PAGERDUTY_USERNAME", "");
-        this.pagerDutyPassword = configOrDefault("PAGERDUTY_PASSWORD", "");
-        
+
         // Twilio
         this.twilioUrl = configOrDefault("TWILIO_URL", "https://api.twilio.com/2010-04-01/Accounts");
         this.twilioAccountSid = configOrDefault("TWILIO_ACCOUNT_SID", "");
@@ -182,26 +174,6 @@ public class SeyrenConfig {
         return Boolean.valueOf(graphsEnable);
     }
     
-    @JsonIgnore
-    public String getPagerDutyDomain() {
-        return pagerDutyDomain;
-    }
-    
-    @JsonIgnore
-    public String getPagerDutyToken() {
-        return pagerDutyToken;
-    }
-    
-    @JsonIgnore
-    public String getPagerDutyUsername() {
-        return pagerDutyUsername;
-    }
-    
-    @JsonIgnore
-    public String getPagerDutyPassword() {
-        return pagerDutyPassword;
-    }
-
     @JsonIgnore
     public String getTwilioUrl() {
         return twilioUrl;
