@@ -88,6 +88,7 @@ public class SubscriptionsBean implements SubscriptionsResource {
       if (subscriptions.size() != 1) {
         return Response.status(Response.Status.NOT_FOUND).build();
       }
+      check.setState(AlertType.ERROR);
       Subscription subscription = subscriptions.iterator().next();
       List<Alert> interestingAlerts = new ArrayList<Alert>();
       Alert alert = new Alert()
