@@ -4,7 +4,7 @@ var seyrenApp;
 (function () {
     'use strict';
 
-    seyrenApp = angular.module('seyrenApp', ['ngResource', 'ngRoute', 'seyrenApp.services', 'linkify', 'angularMoment']);
+    seyrenApp = angular.module('seyrenApp', ['ngResource', 'ngRoute', 'seyrenApp.services', 'linkify', 'angularMoment', 'igTruncate']);
 
     seyrenApp.config(['$routeProvider', function ($routeProvider) {
         $routeProvider.

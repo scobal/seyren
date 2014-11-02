@@ -134,11 +134,6 @@ public class SeyrenConfigTest {
     }
     
     @Test
-    public void defaultPagerDutyDomainIsCorrect() {
-        assertThat(config.getPagerDutyDomain(), is(""));
-    }
-    
-    @Test
     public void defaultHubotUrlIsCorrect() {
         assertThat(config.getHubotUrl(), is(""));
     }

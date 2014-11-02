@@ -89,9 +89,8 @@ The following options can be supplied as system properties or environment variab
 * `IRCCAT_PORT` - The port on which IRCcat is running. Default: `12345`
 
 ##### [PagerDuty](http://www.pagerduty.com)
-* `PAGERDUTY_DOMAIN` - The PagerDuty domain to be notified. Default: ``
-* `PAGERDUTY_USERNAME` - The PagerDuty API username. Default: ``
-* `PAGERDUTY_PASSWORD` - The PagerDuty API Password. Default: ``
+* No system properties or environment variables here, but in "Subscriptions dialog box", set the target field with a "Service API Key".
+To generate a "Service API Key", see [PagerDuty Support: Adding Services](https://support.pagerduty.com/hc/en-us/articles/202828730-Adding-Services), section "Use our API directly".
 
 ##### [Pushover](https://pushover.net)
 * `PUSHOVER_APP_API_TOKEN` - Your pushover App API Token

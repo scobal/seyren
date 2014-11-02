@@ -120,7 +120,7 @@
                         </thead>
                         <tbody>
                             <tr ng-repeat="subscription in check.subscriptions">
-                                <td>{{ subscription.target }}</td>
+                                <td>{{ subscription.target | truncate:10 }}</td>
                                 <td>{{ subscription.type }}</td>
                                 <td>
                                     <span class="label label-warning" ng-hide="subscription.ignoreWarn">Warn</span>

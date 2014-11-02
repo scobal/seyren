@@ -12,8 +12,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>biz.neustar</groupId>
-            <artifactId>pagerduty</artifactId>
+            <groupId>com.squareup.pagerduty</groupId>
+            <artifactId>pagerduty-incidents</artifactId>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
