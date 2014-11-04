@@ -67,16 +67,16 @@ public class PagerDutyNotificationService implements NotificationService {
 
         try {
             if (check.getState() == AlertType.ERROR) {
-                Trigger trigger = new Trigger.Builder("Check " + check.getName() + " has exceeded its threshold. " + url(check))
+                Trigger trigger = new Trigger.Builder("Check '" + check.getName() + "' has exceeded its threshold.")
                         .withIncidentKey(incidentKey(check))
-                        //.withClient("Seyren") // https://github.com/square/pagerduty-incidents/issues/8
-                        //.withClientUrl(url(check)) // https://github.com/square/pagerduty-incidents/issues/8
+                        .client("Seyren")
+                        .clientUrl(url(check))
                         .addDetails(details(check, alerts))
                         .build();
                 result = pagerDuty.notify(trigger);
             } else if (check.getState() == AlertType.OK) {
                 Resolution resolution = new Resolution.Builder(incidentKey(check))
-                        .withDescription("Check " + check.getName() + " has been resolved. " + url(check))
+                        .withDescription("Check '" + check.getName() + "' has been resolved.")
                         .addDetails(details(check, alerts))
                         .build();
                 result = pagerDuty.notify(resolution);
