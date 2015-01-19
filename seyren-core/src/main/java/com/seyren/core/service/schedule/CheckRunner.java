@@ -64,15 +64,17 @@ public class CheckRunner implements Runnable {
         try {
             Map<String, Optional<BigDecimal>> targetValues = targetChecker.check(check);
             
-            if (targetValues.isEmpty()) {
-                return;
-            }
-            
             DateTime now = new DateTime();
             BigDecimal warn = check.getWarn();
             BigDecimal error = check.getError();
             
-            AlertType worstState = AlertType.UNKNOWN;
+            AlertType worstState;
+            
+            if (check.isAllowNoData()) {
+                worstState = AlertType.OK;
+            } else {
+                worstState = AlertType.UNKNOWN;
+            }
             
             List<Alert> interestingAlerts = new ArrayList<Alert>();
             

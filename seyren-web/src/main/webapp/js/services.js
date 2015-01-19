@@ -183,6 +183,14 @@
                     }, function (err) {
                         console.log('Saving check failed');
                     });
+                },
+                swapCheckAllowNoDataEnabled: function (check) {
+                    check.allowNoData = !check.allowNoData;
+                    Checks.update({ checkId:  check.id}, check, function (data) {
+                        $rootScope.$broadcast('check:swapCheckAllowNoDataEnabled');
+                    }, function (err) {
+                        console.log('Saving check failed');
+                    });
                 }
             };
         });

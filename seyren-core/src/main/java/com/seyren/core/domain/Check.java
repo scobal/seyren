@@ -47,6 +47,7 @@ public class Check {
     private BigDecimal error;
     private boolean enabled;
     private boolean live;
+    private boolean allowNoData;
     private AlertType state;
     private DateTime lastCheck;
     private List<Subscription> subscriptions = new ArrayList<Subscription>();
@@ -184,7 +185,20 @@ public class Check {
         setLive(live);
         return this;
     }
-
+    
+    public boolean isAllowNoData() {
+        return allowNoData;
+    }
+    
+    public void setAllowNoData(boolean allowNoData) {
+        this.allowNoData = allowNoData;
+    }
+    
+    public Check withAllowNoData(boolean allowNoData) {
+        setAllowNoData(allowNoData);
+        return this;
+    }
+    
     public AlertType getState() {
         return state;
     }

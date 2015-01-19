@@ -244,6 +244,7 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
                 .with("error", check.getError().toPlainString())
                 .with("enabled", check.isEnabled())
                 .with("live", check.isLive())
+                .with("allowNoData", check.isAllowNoData())
                 .with("lastCheck", lastCheck == null ? null : new Date(lastCheck.getMillis()))
                 .with("state", check.getState().toString());
         

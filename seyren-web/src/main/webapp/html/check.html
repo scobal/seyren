@@ -85,6 +85,12 @@
                 </div>
             </div>
             <div class="form-group detail-form">
+                <label class="col-lg-2 control-label">Allow no data:</label>
+                <div class="col-lg-10">
+                    <p class="form-control-static"><input type="checkbox" ng-checked="check.allowNoData" ng-click="swapCheckAllowNoDataEnabled(check)" /> </p>
+                </div>
+            </div>
+            <div class="form-group detail-form">
                 <label class="col-lg-2 control-label">Last check:</label>
                 <div class="col-lg-10">
                     <p class="form-control-static">{{check.lastCheck | date: 'yyyy-MM-dd HH:mm:ss'}}</p>
