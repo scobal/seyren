@@ -132,6 +132,10 @@
             $scope.loadCheck();
         });
 
+        $scope.$on('check:swapCheckAllowNoDataEnabled', function () {
+            $scope.loadCheck();
+        });
+
         $scope.swapCheckEnabled = function (check) {
             Seyren.swapCheckEnabled(check);
         };
@@ -142,6 +146,10 @@
 
         $scope.swapCheckLiveEnabled = function (check) {
             Seyren.swapCheckLiveEnabled(check);
+        };
+
+        $scope.swapCheckAllowNoDataEnabled = function (check) {
+            Seyren.swapCheckAllowNoDataEnabled(check);
         };
 
         $scope.editSubscription = function (check, subscription) {

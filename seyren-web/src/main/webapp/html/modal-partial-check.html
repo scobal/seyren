@@ -69,6 +69,14 @@
                         </label>
                     </div>
                 </div>
+                <div ng-class="{ 'form-group': true, 'has-error': checkForm['check.allowNoData'].$invalid }">
+                    <label class="col-sm-3 control-label" for="check.allowNoData">Allow no data</label>
+                    <div class="col-sm-1">
+                        <label class="checkbox inline">
+                            <input id="check.allowNoData" name="check.allowNoData" ng-model="check.allowNoData" type="checkbox" ng-checked="check.allowNoData">
+                        </label>
+                    </div>
+                </div>
                 <div class="form-group">
                     <div class="col-sm-7 col-sm-offset-3">
                         <img ng-src="{{ check.previewImage }}" src="./img/preview-nodata.png" width="300" height="70" />

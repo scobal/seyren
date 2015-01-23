@@ -12,6 +12,7 @@
             previewImage: "./img/preview-nodata.png",
             enabled: true,
             live: false,
+            allowNoData: false,
             totalMetric: '-'
         };
 
