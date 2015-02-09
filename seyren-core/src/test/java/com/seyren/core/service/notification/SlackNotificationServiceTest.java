@@ -20,6 +20,7 @@ import static org.mockito.Mockito.*;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.List;
@@ -44,10 +45,10 @@ import com.seyren.core.util.config.SeyrenConfig;
 public class SlackNotificationServiceTest {
     private NotificationService notificationService;
     private SeyrenConfig mockSeyrenConfig;
-    
+
     @Rule
     public ClientDriverRule clientDriver = new ClientDriverRule();
-    
+
     @Before
     public void before() {
         mockSeyrenConfig = mock(SeyrenConfig.class);
@@ -61,9 +62,9 @@ public class SlackNotificationServiceTest {
 
     @After
     public void after() {
-      System.setProperty("SLACK_USERNAME", "");
+        System.setProperty("SLACK_USERNAME", "");
     }
-    
+
     @Test
     public void notifcationServiceCanOnlyHandleFlowdockSubscription() {
         assertThat(notificationService.canHandle(SubscriptionType.SLACK), is(true));
@@ -74,7 +75,7 @@ public class SlackNotificationServiceTest {
             assertThat(notificationService.canHandle(type), is(false));
         }
     }
-    
+
     @Test
     public void basicSlackTest() {
         BigDecimal value = new BigDecimal("1.0");
@@ -96,23 +97,24 @@ public class SlackNotificationServiceTest {
         List<Alert> alerts = Arrays.asList(alert);
 
         StringBodyCapture bodyCapture = new StringBodyCapture();
-        
+
         clientDriver.addExpectation(
                 onRequestTo("/api/chat.postMessage")
                         .withMethod(ClientDriverRequest.Method.POST)
                         .capturingBodyIn(bodyCapture)
                         .withHeader("accept", "application/json"),
                 giveEmptyResponse());
-        
+
         notificationService.sendNotification(check, subscription, alerts);
-        
+
         String content = bodyCapture.getContent();
+        System.out.println(decode(content));
 
         assertThat(content, Matchers.containsString("token="));
         assertThat(content, Matchers.containsString("&channel=target"));
-        assertThat(content, Matchers.containsString(encode("test-check has entered its ERROR state - [null: 1.0]")));
+        assertThat(content, Matchers.containsString(encode("ERROR test-check")));
         assertThat(content, Matchers.containsString(encode("/#/checks/123")));
-          assertThat(content, Matchers.containsString("&username=Seyren"));
+        assertThat(content, Matchers.containsString("&username=Seyren"));
         assertThat(content, Matchers.containsString("&icon_url="));
 
         verify(mockSeyrenConfig).getSlackEmojis();
@@ -123,11 +125,19 @@ public class SlackNotificationServiceTest {
     }
 
     String encode(String data) {
-      try {
-        return URLEncoder.encode(data, "ISO-8859-1");
-      } catch (UnsupportedEncodingException e) {
-        return null;
-      }
+        try {
+            return URLEncoder.encode(data, "ISO-8859-1");
+        } catch (UnsupportedEncodingException e) {
+            return null;
+        }
     }
-    
+
+    String decode(String data) {
+        try {
+            return URLDecoder.decode(data, "ISO-8859-1");
+        } catch (UnsupportedEncodingException e) {
+            return null;
+        }
+    }
+
 }
