@@ -17,6 +17,7 @@ import static com.google.common.collect.Iterables.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -47,7 +48,7 @@ import com.seyren.core.util.config.SeyrenConfig;
 @Named
 public class SlackNotificationService implements NotificationService {
     private static final Logger LOGGER = LoggerFactory.getLogger(SlackNotificationService.class);
-    
+
     private final SeyrenConfig seyrenConfig;
     private final String baseUrl;
 
@@ -71,7 +72,7 @@ public class SlackNotificationService implements NotificationService {
 
         List<String> emojis = Lists.newArrayList(
                 Splitter.on(',').omitEmptyStrings().trimResults().split(seyrenConfig.getSlackEmojis())
-                );
+        );
 
         String url = String.format("%s/api/chat.postMessage", baseUrl);
         HttpClient client = HttpClientBuilder.create().build();
@@ -101,29 +102,32 @@ public class SlackNotificationService implements NotificationService {
             post.releaseConnection();
             HttpClientUtils.closeQuietly(client);
         }
-        
+
     }
-    
+
     @Override
     public boolean canHandle(SubscriptionType subscriptionType) {
         return subscriptionType == SubscriptionType.SLACK;
     }
-    
+
     private String formatContent(List<String> emojis, Check check, Subscription subscription, List<Alert> alerts) {
         String url = String.format("%s/#/checks/%s", seyrenConfig.getBaseUrl(), check.getId());
-        String alertsString = Joiner.on(", ").join(transform(alerts, new Function<Alert, String>() {
+        String alertsString = Joiner.on("\n").join(transform(alerts, new Function<Alert, String>() {
             @Override
             public String apply(Alert input) {
-                return String.format("%s: %s", input.getTarget(), input.getValue().toString());
+                return String.format("%s = %s", input.getTarget(), input.getValue().toString());
             }
         }));
-        return String.format("[%s] %s %s has entered its %s state - [%s] - %s",
-            Iterables.getFirst(alerts, null).getTimestamp(),
-            Iterables.get(emojis, check.getState().ordinal(), ""),
-            check.getName(),
-            check.getState().toString(),
-            alertsString,
-            url
+
+        final String state = check.getState().toString();
+
+        return String.format("%s%s %s [%s]\n```\n%s\n```\n#%s",
+                Iterables.get(emojis, check.getState().ordinal(), ""),
+                state,
+                check.getName(),
+                url,
+                alertsString,
+                state.toLowerCase(Locale.getDefault())
         );
     }
 }
