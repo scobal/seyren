@@ -85,6 +85,7 @@ public class SlackNotificationService implements NotificationService {
         parameters.add(new BasicNameValuePair("text", formatContent(emojis, check, subscription, alerts)));
         parameters.add(new BasicNameValuePair("username", username));
         parameters.add(new BasicNameValuePair("icon_url", iconUrl));
+        parameters.add(new BasicNameValuePair("link_names", "1"));
 
         try {
             post.setEntity(new UrlEncodedFormEntity(parameters));
@@ -121,7 +122,7 @@ public class SlackNotificationService implements NotificationService {
 
         final String state = check.getState().toString();
 
-        return String.format("%s%s %s [%s]\n```\n%s\n```\n#%s",
+        return String.format("%s%s %s [%s]\n```\n%s\n```\n@channel #%s",
                 Iterables.get(emojis, check.getState().ordinal(), ""),
                 state,
                 check.getName(),
