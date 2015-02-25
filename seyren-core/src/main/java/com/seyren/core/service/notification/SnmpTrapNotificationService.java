@@ -77,12 +77,12 @@ public class SnmpTrapNotificationService implements NotificationService {
             trap.add(variableBinding(SnmpConstants.sysDescr, "Seyren Alert"));
 
             //Add Payload
-            trap.add(variableBinding(oid, check.getName()));
-            trap.add(variableBinding(oid, alert.getTarget()));
-            trap.add(variableBinding(oid, check.getState().name()));
-            trap.add(variableBinding(oid, alert.getValue().toString()));
-            trap.add(variableBinding(oid, check.getWarn().toString()));
-            trap.add(variableBinding(oid, check.getError().toString()));
+            trap.add(variableBinding(oid.append(1), check.getName()));
+            trap.add(variableBinding(oid.append(2), alert.getTarget()));
+            trap.add(variableBinding(oid.append(3), check.getState().name()));
+            trap.add(variableBinding(oid.append(4), alert.getValue().toString()));
+            trap.add(variableBinding(oid.append(5), check.getWarn().toString()));
+            trap.add(variableBinding(oid.append(6), check.getError().toString()));
 
             // Send
             sendAlert(check, snmp, target, trap);
