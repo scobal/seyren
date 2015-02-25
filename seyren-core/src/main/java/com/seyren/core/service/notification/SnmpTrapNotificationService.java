@@ -72,17 +72,22 @@ public class SnmpTrapNotificationService implements NotificationService {
             trap.setType(PDU.TRAP);
 
             OID oid = new OID(seyrenConfig.getSnmpOID());
+            OID name = new OID(seyrenConfig.getSnmpOID()+".1");
+            OID metric = new OID(seyrenConfig.getSnmpOID()+".2");
+            OID state = new OID(seyrenConfig.getSnmpOID()+".3");
+            OID value = new OID(seyrenConfig.getSnmpOID()+".4");
+            OID error = new OID(seyrenConfig.getSnmpOID()+".5");
+            OID warn = new OID(seyrenConfig.getSnmpOID()+".6");
             trap.add(new VariableBinding(SnmpConstants.snmpTrapOID, oid));
             trap.add(new VariableBinding(SnmpConstants.sysUpTime, new TimeTicks(5000)));
-            trap.add(variableBinding(SnmpConstants.sysDescr, "Seyren Alert"));
 
             //Add Payload
-            trap.add(variableBinding(oid.append(1), check.getName()));
-            trap.add(variableBinding(oid.append(2), alert.getTarget()));
-            trap.add(variableBinding(oid.append(3), check.getState().name()));
-            trap.add(variableBinding(oid.append(4), alert.getValue().toString()));
-            trap.add(variableBinding(oid.append(5), check.getWarn().toString()));
-            trap.add(variableBinding(oid.append(6), check.getError().toString()));
+            trap.add(variableBinding(name, check.getName()));
+            trap.add(variableBinding(metric, alert.getTarget()));
+            trap.add(variableBinding(state, check.getState().name()));
+            trap.add(variableBinding(value, alert.getValue().toString()));
+            trap.add(variableBinding(warn, check.getWarn().toString()));
+            trap.add(variableBinding(error, check.getError().toString()));
 
             // Send
             sendAlert(check, snmp, target, trap);
