@@ -77,7 +77,9 @@ public class SnmpTrapNotificationService implements NotificationService {
             OID state = new OID(seyrenConfig.getSnmpOID()+".3");
             OID value = new OID(seyrenConfig.getSnmpOID()+".4");
             OID error = new OID(seyrenConfig.getSnmpOID()+".5");
-            OID warn = new OID(seyrenConfig.getSnmpOID()+".6");
+            OID id = new OID(seyrenConfig.getSnmpOID()+".6");
+	    OID checkUrl = new OID(seyrenConfig.getSnmpOID()+".7");
+
             trap.add(new VariableBinding(SnmpConstants.snmpTrapOID, oid));
             trap.add(new VariableBinding(SnmpConstants.sysUpTime, new TimeTicks(5000)));
 
@@ -88,6 +90,8 @@ public class SnmpTrapNotificationService implements NotificationService {
             trap.add(variableBinding(value, alert.getValue().toString()));
             trap.add(variableBinding(warn, check.getWarn().toString()));
             trap.add(variableBinding(error, check.getError().toString()));
+            trap.add(variableBinding(id, check.getId()));
+	    trap.add(variableBinding(checkUrl, String.format("%s/#/checks/%s", seyrenConfig.getBaseUrl(), check.getId())));
 
             // Send
             sendAlert(check, snmp, target, trap);
