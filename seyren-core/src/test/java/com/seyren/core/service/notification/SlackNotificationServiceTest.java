@@ -66,7 +66,7 @@ public class SlackNotificationServiceTest {
     }
 
     @Test
-    public void notifcationServiceCanOnlyHandleFlowdockSubscription() {
+    public void notifcationServiceCanOnlyHandleSlackSubscription() {
         assertThat(notificationService.canHandle(SubscriptionType.SLACK), is(true));
         for (SubscriptionType type : SubscriptionType.values()) {
             if (type == SubscriptionType.SLACK) {
@@ -112,6 +112,55 @@ public class SlackNotificationServiceTest {
 
         assertThat(content, Matchers.containsString("token="));
         assertThat(content, Matchers.containsString("&channel=target"));
+        assertThat(content, Matchers.containsString(encode("ERROR test-check")));
+        assertThat(content, Matchers.containsString(encode("/#/checks/123")));
+        assertThat(content, Matchers.containsString("&username=Seyren"));
+        assertThat(content, Matchers.containsString("&icon_url="));
+
+        verify(mockSeyrenConfig).getSlackEmojis();
+        verify(mockSeyrenConfig).getSlackIconUrl();
+        verify(mockSeyrenConfig).getSlackToken();
+        verify(mockSeyrenConfig).getSlackUsername();
+        verify(mockSeyrenConfig).getBaseUrl();
+    }
+
+    @Test
+    public void mentionChannelWhenTargetContainsExclamationTest() {
+        BigDecimal value = new BigDecimal("1.0");
+
+        Check check = new Check()
+                .withId("123")
+                .withEnabled(true)
+                .withName("test-check")
+                .withState(AlertType.ERROR);
+        Subscription subscription = new Subscription()
+                .withEnabled(true)
+                .withType(SubscriptionType.SLACK)
+                .withTarget("target!");
+        Alert alert = new Alert()
+                .withValue(value)
+                .withTimestamp(new DateTime())
+                .withFromType(AlertType.OK)
+                .withToType(AlertType.ERROR);
+        List<Alert> alerts = Arrays.asList(alert);
+
+        StringBodyCapture bodyCapture = new StringBodyCapture();
+
+        clientDriver.addExpectation(
+                onRequestTo("/api/chat.postMessage")
+                        .withMethod(ClientDriverRequest.Method.POST)
+                        .capturingBodyIn(bodyCapture)
+                        .withHeader("accept", "application/json"),
+                giveEmptyResponse());
+
+        notificationService.sendNotification(check, subscription, alerts);
+
+        String content = bodyCapture.getContent();
+        System.out.println(decode(content));
+
+        assertThat(content, Matchers.containsString("token="));
+        assertThat(content, Matchers.containsString("&channel=target"));
+        assertThat(content, Matchers.containsString(encode("@channel")));
         assertThat(content, Matchers.containsString(encode("ERROR test-check")));
         assertThat(content, Matchers.containsString(encode("/#/checks/123")));
         assertThat(content, Matchers.containsString("&username=Seyren"));

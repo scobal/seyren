@@ -22,6 +22,7 @@ import java.util.Locale;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -81,7 +82,7 @@ public class SlackNotificationService implements NotificationService {
 
         List<BasicNameValuePair> parameters = new ArrayList<BasicNameValuePair>();
         parameters.add(new BasicNameValuePair("token", token));
-        parameters.add(new BasicNameValuePair("channel", channel));
+        parameters.add(new BasicNameValuePair("channel", StringUtils.removeEnd(channel, "!")));
         parameters.add(new BasicNameValuePair("text", formatContent(emojis, check, subscription, alerts)));
         parameters.add(new BasicNameValuePair("username", username));
         parameters.add(new BasicNameValuePair("icon_url", iconUrl));
@@ -118,16 +119,19 @@ public class SlackNotificationService implements NotificationService {
                 return String.format("%s = %s", input.getTarget(), input.getValue().toString());
             }
         }));
+        
+        String channel = subscription.getTarget().contains("!") ? "@channel" : "";
 
         final String state = check.getState().toString();
 
-        return String.format("%s%s %s [%s]\n```\n%s\n```\n#%s",
+        return String.format("%s%s %s [%s]\n```\n%s\n```\n#%s %s",
                 Iterables.get(emojis, check.getState().ordinal(), ""),
                 state,
                 check.getName(),
                 url,
                 alertsString,
-                state.toLowerCase(Locale.getDefault())
+                state.toLowerCase(Locale.getDefault()),
+                channel
         );
     }
 }
