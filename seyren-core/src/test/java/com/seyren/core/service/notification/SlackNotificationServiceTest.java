@@ -112,6 +112,7 @@ public class SlackNotificationServiceTest {
 
         assertThat(content, Matchers.containsString("token="));
         assertThat(content, Matchers.containsString("&channel=target"));
+        assertThat(content, not(Matchers.containsString(encode("@channel"))));
         assertThat(content, Matchers.containsString(encode("ERROR test-check")));
         assertThat(content, Matchers.containsString(encode("/#/checks/123")));
         assertThat(content, Matchers.containsString("&username=Seyren"));
