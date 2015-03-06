@@ -119,16 +119,24 @@ public class SlackNotificationService implements NotificationService {
                 return String.format("%s = %s", input.getTarget(), input.getValue().toString());
             }
         }));
-        
+
         String channel = subscription.getTarget().contains("!") ? "<!channel>" : "";
+
+        String description;
+        if (StringUtils.isNotBlank(check.getDescription())) {
+            description = String.format("\n> %s", check.getDescription());
+        } else {
+            description = "";
+        }
 
         final String state = check.getState().toString();
 
-        return String.format("%s%s %s [%s]\n```\n%s\n```\n#%s %s",
+        return String.format("%s*%s* %s [%s]%s\n```\n%s\n```\n#%s %s",
                 Iterables.get(emojis, check.getState().ordinal(), ""),
                 state,
                 check.getName(),
                 url,
+                description,
                 alertsString,
                 state.toLowerCase(Locale.getDefault()),
                 channel
