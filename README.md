@@ -73,6 +73,9 @@ The following options can be supplied as system properties or environment variab
 * `SMTP_PROTOCOL` - The smtp server protocol if authenticated SMTP is used. Default: `smtp`
 
 ##### [Flowdock](https://www.flowdock.com)
+
+Use a [Flow API token](https://www.flowdock.com/account/tokens) as Target when adding a new subscription.
+
 * `FLOWDOCK_EXTERNAL_USERNAME` - The username that messages will be sent from to a flow. Default: `Seyren`
 * `FLOWDOCK_TAGS` -  Special tags to add to all messages. Default: ``
 * `FLOWDOCK_EMOJIS` - Mapping between state and emojis unicode. Default: ``
