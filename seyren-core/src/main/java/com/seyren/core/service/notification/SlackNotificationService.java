@@ -120,7 +120,7 @@ public class SlackNotificationService implements NotificationService {
             }
         }));
         
-        String channel = subscription.getTarget().contains("!") ? "@channel" : "";
+        String channel = subscription.getTarget().contains("!") ? "<!channel>" : "";
 
         final String state = check.getState().toString();
 
