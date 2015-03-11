@@ -23,8 +23,11 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
+import com.seyren.core.util.http.HttpHelper;
+import com.seyren.core.util.velocity.VelocityHttpHelper;
 import org.hamcrest.Matchers;
-import org.junit.Before;
+import org.joda.time.DateTime;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -39,19 +42,24 @@ import com.seyren.core.domain.Check;
 import com.seyren.core.domain.Subscription;
 import com.seyren.core.domain.SubscriptionType;
 import com.seyren.core.util.config.SeyrenConfig;
+import org.mockito.Mockito;
 
 public class HttpNotificationServiceTest {
     
-    private SeyrenConfig mockSeyrenConfig;
-    private NotificationService service;
+    private static SeyrenConfig mockSeyrenConfig;
+    private static HttpHelper mockHttpHelper;
+    private static NotificationService service;
     
     @Rule
     public ClientDriverRule clientDriver = new ClientDriverRule();
     
-    @Before
-    public void before() {
+    @BeforeClass
+    public static void before() {
         mockSeyrenConfig = mock(SeyrenConfig.class);
-        service = new HttpNotificationService(mockSeyrenConfig);
+        when(mockSeyrenConfig.getHttpTemplateFileName()).thenReturn("test2-http-template.vm");
+
+        mockHttpHelper = new VelocityHttpHelper(mockSeyrenConfig);
+        service = new HttpNotificationService(mockSeyrenConfig, mockHttpHelper);
     }
     
     @Test
@@ -91,7 +99,8 @@ public class HttpNotificationServiceTest {
                 .withWarn(BigDecimal.valueOf(5))
                 .withError(BigDecimal.valueOf(10))
                 .withFromType(AlertType.WARN)
-                .withToType(AlertType.ERROR);
+                .withToType(AlertType.ERROR)
+                .withTimestamp(new DateTime());
         
         List<Alert> alerts = Arrays.asList(alert);
         
@@ -120,10 +129,9 @@ public class HttpNotificationServiceTest {
         assertThat(node, hasJsonPath("$.alerts[0].toType", is("ERROR")));
         assertThat(node, hasJsonPath("$.preview", Matchers.startsWith("<br />")));
         assertThat(node, hasJsonPath("$.preview", containsString(check.getTarget())));
-        
+
+
         verify(mockSeyrenConfig).getGraphiteUrl();
         verify(mockSeyrenConfig).getBaseUrl();
-        
     }
-    
 }

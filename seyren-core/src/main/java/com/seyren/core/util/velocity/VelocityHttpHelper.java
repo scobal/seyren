@@ -13,25 +13,27 @@
  */
 package com.seyren.core.util.velocity;
 
-import java.io.StringWriter;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
-import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.Velocity;
-
 import com.seyren.core.domain.Alert;
 import com.seyren.core.domain.Check;
 import com.seyren.core.domain.Subscription;
 import com.seyren.core.util.config.SeyrenConfig;
-import com.seyren.core.util.email.EmailHelper;
+import com.seyren.core.util.http.HttpHelper;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.Velocity;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.io.StringWriter;
+import java.util.List;
+
+/**
+ * Helper class to building the http content via template.
+ *
+ * @author <a href="mailto:tobias.lindenmann@1und1.de">Tobias Lindenmann</a>
+ */
 @Named
-public class VelocityEmailHelper extends AbstractHelper implements EmailHelper {
+public class VelocityHttpHelper extends AbstractHelper implements HttpHelper {
 
-    // Will first attempt to load from classpath then fall back to loading from the filesystem.
     private final String TEMPLATE_CONTENT;
 
     /**
@@ -40,23 +42,17 @@ public class VelocityEmailHelper extends AbstractHelper implements EmailHelper {
      * @param seyrenConfig Used for both email template file name and the seyren URL.
      */
     @Inject
-    public VelocityEmailHelper(SeyrenConfig seyrenConfig) {
+    public VelocityHttpHelper(SeyrenConfig seyrenConfig) {
         super(seyrenConfig);
-        TEMPLATE_CONTENT = getTemplateAsString(seyrenConfig.getEmailTemplateFileName());
+        TEMPLATE_CONTENT = getTemplateAsString(seyrenConfig.getHttpTemplateFileName());
     }
-    
-    public String createSubject(Check check) {
-        return "Seyren alert: " + check.getName();
-    }
-    
+
+
     @Override
-    public String createBody(Check check, Subscription subscription, List<Alert> alerts) {
+    public String createHttpContent(Check check, Subscription subscription, List<Alert> alerts) {
         VelocityContext context = createVelocityContext(check, subscription, alerts);
         StringWriter stringWriter = new StringWriter();
-        Velocity.evaluate(context, stringWriter, "EmailNotificationService", TEMPLATE_CONTENT);
+        Velocity.evaluate(context, stringWriter, "HttpNotificationService", TEMPLATE_CONTENT);
         return stringWriter.toString();
     }
-
-
-    
 }

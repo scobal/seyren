@@ -40,6 +40,7 @@ public class Alert {
     private String checkId;
     private BigDecimal value;
     private String target;
+    private PriorityType priorityType;
     private BigDecimal warn;
     private BigDecimal error;
     private AlertType fromType;
@@ -97,15 +98,28 @@ public class Alert {
         setTarget(target);
         return this;
     }
-    
+
+    public PriorityType getPriority() {
+        return priorityType;
+    }
+
+    public void setPriority(PriorityType priorityType) {
+        this.priorityType = priorityType;
+    }
+
+    public Alert withPriority(PriorityType priorityType) {
+        setPriority(priorityType);
+        return this;
+    }
+
     public String getTargetHash() {
         return TargetHash.create(target);
     }
-    
+
     public BigDecimal getWarn() {
         return warn;
     }
-    
+
     public void setWarn(BigDecimal warn) {
         this.warn = warn;
     }
@@ -114,11 +128,11 @@ public class Alert {
         setWarn(warn);
         return this;
     }
-    
+
     public BigDecimal getError() {
         return error;
     }
-    
+
     public void setError(BigDecimal error) {
         this.error = error;
     }

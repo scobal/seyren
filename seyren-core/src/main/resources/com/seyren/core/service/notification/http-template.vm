@@ -1,0 +1,7 @@
+{
+    "seyrenUrl": "$SEYREN_URL",
+    "check": $JSONMAPPER.writeValueAsString($CHECK),
+    "subscribtion": $JSONMAPPER.writeValueAsString($SUBSCRIPTION),
+    "alerts": [#foreach( $ALERT in $ALERTS )$JSONMAPPER.writeValueAsString($ALERT)#if(!$foreach.last),#end #end],
+    "preview": "$PREVIEW"
+}

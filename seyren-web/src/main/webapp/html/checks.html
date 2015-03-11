@@ -21,6 +21,7 @@
                 <tr>
                     <th><a href="" ng-click="predicate='name';reverse=!reverse">Name</a></th>
                     <th><a href="" ng-click="predicate=sortByState;reverse=!reverse">State</a></th>
+                    <th><a href="" ng-click="predicate=sortByPriority;reverse=!reverse">Priority</a></th>
                     <th><a href="" ng-click="predicate='warn';reverse=!reverse">Warn</a></th>
                     <th><a href="" ng-click="predicate='error';reverse=!reverse">Error</a></th>
                     <th><a href="" ng-click="predicate='enabled';reverse=!reverse">Enabled</a></th>
@@ -35,6 +36,12 @@
                         <span ng-show="check.state == 'WARN'" class="label label-warning">{{ check.state }}</span>
                         <span ng-show="check.state == 'ERROR'" class="label label-danger">{{ check.state }}</span>
                         <span ng-show="check.state == 'EXCEPTION'" class="label label-inverse">{{ check.state }}</span>
+                    </td>
+                    <td>
+                        <span ng-show="check.priority  == 'TRIVIAL'" class="label label-trivial">{{ check.priority  }}</span>
+                        <span ng-show="check.priority  == 'MINOR'" class="label label-minor">{{ check.priority  }}</span>
+                        <span ng-show="check.priority  == 'MAJOR'" class="label label-major">{{ check.priority  }}</span>
+                        <span ng-show="check.priority  == 'CRITICAL'" class="label label-critical">{{ check.priority  }}</span>
                     </td>
                     <td>{{ check.warn }}</td>
                     <td>{{ check.error }}</td>

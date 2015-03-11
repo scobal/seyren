@@ -49,6 +49,17 @@
                 </div>
             </div>
             <div class="form-group detail-form">
+                <label class="col-lg-2 control-label">Priority:</label>
+                <div class="col-lg-10">
+                    <p class="form-control-static">
+                        <span ng-show="check.priority  == 'TRIVIAL'" class="label label-trivial">{{ check.priority  }}</span>
+                        <span ng-show="check.priority  == 'MINOR'" class="label label-minor">{{ check.priority  }}</span>
+                        <span ng-show="check.priority  == 'MAJOR'" class="label label-major">{{ check.priority  }}</span>
+                        <span ng-show="check.priority  == 'CRITICAL'" class="label label-critical">{{ check.priority  }}</span>
+                    </p>
+                </div>
+            </div>
+            <div class="form-group detail-form">
                 <label class="col-lg-2 control-label">From:</label>
                 <div class="col-lg-10">
                     <p class="form-control-static">{{check.from}}</p>

@@ -7,6 +7,7 @@
             name: null,
             description: null,
             target: null,
+            priority: "MAJOR",
             warn: null,
             error: null,
             previewImage: "./img/preview-nodata.png",
