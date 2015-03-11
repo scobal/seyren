@@ -3,6 +3,7 @@
     name: "load longterm usage",
     description: "Load longterm of host host1",
     target: "prod.host1.load.longterm",
+    "priority" : "MAJOR",
     warn: "0.5",
     error: "2.0",
     enabled: true,
