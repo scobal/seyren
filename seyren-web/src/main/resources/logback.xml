@@ -2,7 +2,7 @@
 <configuration>
     <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>info</level>
+            <level>${SEYREN_LOG_FILE_LEVEL:-info}</level>
         </filter>
         <file>${SEYREN_LOG_PATH}seyren.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
