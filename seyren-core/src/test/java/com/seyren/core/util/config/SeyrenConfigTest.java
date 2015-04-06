@@ -157,5 +157,10 @@ public class SeyrenConfigTest {
     public void defaultEmailTemplateFileIsCorrect() {
         assertThat(config.getEmailTemplateFileName(), is("com/seyren/core/service/notification/email-template.vm"));
     }
+
+    @Test
+    public void defaultNumOfThreadsIsCorrect() {
+        assertThat(config.getNoOfThreads(), is(8));
+    }
     
 }

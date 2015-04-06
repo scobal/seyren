@@ -22,6 +22,7 @@ import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import com.seyren.core.util.config.SeyrenConfig;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
@@ -31,14 +32,16 @@ import com.seyren.core.store.ChecksStore;
 @Named
 public class CheckScheduler {
     
-    private final ScheduledExecutorService executor = Executors.newScheduledThreadPool(8, new ThreadFactoryBuilder().setNameFormat("seyren.check-scheduler-%s").setDaemon(false).build());
+    private final ScheduledExecutorService executor;
     private final ChecksStore checksStore;
     private final CheckRunnerFactory checkRunnerFactory;
     
     @Inject
-    public CheckScheduler(ChecksStore checksStore, CheckRunnerFactory checkRunnerFactory) {
+    public CheckScheduler(ChecksStore checksStore, CheckRunnerFactory checkRunnerFactory, SeyrenConfig seyrenConfig) {
         this.checksStore = checksStore;
         this.checkRunnerFactory = checkRunnerFactory;
+        this.executor = Executors.newScheduledThreadPool(seyrenConfig.getNoOfThreads(), new ThreadFactoryBuilder().setNameFormat("seyren.check-scheduler-%s")
+                        .setDaemon(false).build());
     }
     
     @Scheduled(fixedRateString = "${GRAPHITE_REFRESH:60000}")

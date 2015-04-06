@@ -78,14 +78,14 @@ public class SeyrenConfig {
     private final String snmpCommunity;
     private final String snmpOID;
     private final String emailTemplateFileName;
-
+    private final int noOfThreads;
     public SeyrenConfig() {
         
         // Base
         this.baseUrl = stripEnd(configOrDefault("SEYREN_URL", DEFAULT_BASE_URL), "/");
         this.mongoUrl = configOrDefault("MONGO_URL", "mongodb://localhost:27017/seyren");
         this.graphsEnable = configOrDefault("GRAPHS_ENABLE", "true");
-        
+        this.noOfThreads = Integer.parseInt(configOrDefault("SEYREN_THREADS", "8"));
         // Graphite
         this.graphiteUrl = stripEnd(configOrDefault("GRAPHITE_URL", "http://localhost:80"), "/");
         this.graphiteUsername = configOrDefault("GRAPHITE_USERNAME", "");
@@ -385,6 +385,11 @@ public class SeyrenConfig {
     }
 
     @JsonIgnore
+    public int getNoOfThreads() {
+        return noOfThreads;
+    }
+
+    @JsonIgnore
     public String getEmailTemplateFileName() { return emailTemplateFileName; }
 
   private static String configOrDefault(String propertyName, String defaultValue) {
@@ -439,4 +444,6 @@ public class SeyrenConfig {
         
         return baseParts;
     }
+
+
 }
