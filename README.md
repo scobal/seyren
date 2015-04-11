@@ -120,7 +120,11 @@ The target for a Slack subscription will be the channel name (including the `#`,
 * `SNMP_OID` - The SNMP OID. Default: `1.3.6.1.4.1.32473.1`
 
 ##### [TEMPLATE](http://en.wikipedia.org/wiki/Apache_Velocity)
-* `TEMPLATE_EMAIL_FILE_PATH` - The path to the velocity template used when emailing an alert. Seyren will first attempt to load from the class path, but will fall back to loading from the filesystem.  Default: `com/seyren/core/service/notification/email-template.vm"`
+* `TEMPLATE_EMAIL_FILE_PATH` - The path to the velocity template used when emailing an alert. Seyren will first attempt to load from the class path, but will fall back to loading from the filesystem.  Default: `"com/seyren/core/service/notification/email-template.vm"`
+    * For an example velocity template usage, please view seyren-core/src/main/resources/com/seyren/core/service/notification/email-template.vm
+    * Variables available to merge with the template include: 
+        * Alert[ Id, CheckId, Value, Target, TargetHash, Warn, Error, FromType, ToType, Timestamp ]
+        * Check [ Id, Name, Description, Target, From, Until, Warn, Error, Enabled, Live, State, LastCheck, Subscriptions ]
 
 ##### [Twilio](https://www.twilio.com/)
 * `TWILIO_ACCOUNT_SID` - The Twilio Account SID. Default ``
