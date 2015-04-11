@@ -72,17 +72,27 @@ public class SnmpTrapNotificationService implements NotificationService {
             trap.setType(PDU.TRAP);
 
             OID oid = new OID(seyrenConfig.getSnmpOID());
+            OID name = new OID(seyrenConfig.getSnmpOID()+".1");
+            OID metric = new OID(seyrenConfig.getSnmpOID()+".2");
+            OID state = new OID(seyrenConfig.getSnmpOID()+".3");
+            OID value = new OID(seyrenConfig.getSnmpOID()+".4");
+            OID error = new OID(seyrenConfig.getSnmpOID()+".5");
+            OID warn = new OID(seyrenConfig.getSnmpOID()+".6");
+            OID id = new OID(seyrenConfig.getSnmpOID()+".7");
+	    OID checkUrl = new OID(seyrenConfig.getSnmpOID()+".8");
+
             trap.add(new VariableBinding(SnmpConstants.snmpTrapOID, oid));
             trap.add(new VariableBinding(SnmpConstants.sysUpTime, new TimeTicks(5000)));
-            trap.add(variableBinding(SnmpConstants.sysDescr, "Seyren Alert"));
 
             //Add Payload
-            trap.add(variableBinding(oid, check.getName()));
-            trap.add(variableBinding(oid, alert.getTarget()));
-            trap.add(variableBinding(oid, check.getState().name()));
-            trap.add(variableBinding(oid, alert.getValue().toString()));
-            trap.add(variableBinding(oid, check.getWarn().toString()));
-            trap.add(variableBinding(oid, check.getError().toString()));
+            trap.add(variableBinding(name, check.getName()));
+            trap.add(variableBinding(metric, alert.getTarget()));
+            trap.add(variableBinding(state, check.getState().name()));
+            trap.add(variableBinding(value, alert.getValue().toString()));
+            trap.add(variableBinding(warn, check.getWarn().toString()));
+            trap.add(variableBinding(error, check.getError().toString()));
+            trap.add(variableBinding(id, check.getId()));
+	    trap.add(variableBinding(checkUrl, String.format("%s/#/checks/%s", seyrenConfig.getBaseUrl(), check.getId())));
 
             // Send
             sendAlert(check, snmp, target, trap);
