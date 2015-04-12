@@ -95,9 +95,17 @@ public class Check {
     public String getTarget() {
         return target;
     }
+
+    public String getGraphiteBaseUrl() {
+        return graphiteBaseUrl;
+    }
     
     public void setTarget(String target) {
         this.target = target;
+    }
+
+    public void setGraphiteBaseUrl(String graphiteBaseUrl) {
+        this.graphiteBaseUrl = graphiteBaseUrl;
     }
 
     public String getFrom() {
@@ -128,6 +136,11 @@ public class Check {
 
     public Check withTarget(String target) {
         setTarget(target);
+        return this;
+    }
+
+    public Check withGraphiteBaseUrl(String graphiteBaseUrl) {
+        setGraphiteBaseUrl(graphiteBaseUrl);
         return this;
     }
 
@@ -227,14 +240,6 @@ public class Check {
         return this;
     }
 
-    public String getGraphiteBaseUrl() {
-        return graphiteBaseUrl;
-    }
-
-    public void setGraphiteBaseUrl(String graphiteBaseUrl) {
-        this.graphiteBaseUrl = graphiteBaseUrl;
-    }
-    
     public List<Subscription> getSubscriptions() {
         return subscriptions;
     }
