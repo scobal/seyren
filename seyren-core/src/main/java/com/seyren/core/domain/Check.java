@@ -43,6 +43,7 @@ public class Check {
     private String target;
     private String from;
     private String until;
+    private String graphiteBaseUrl;
     private BigDecimal warn;
     private BigDecimal error;
     private boolean enabled;
@@ -224,6 +225,14 @@ public class Check {
     public Check withState(AlertType state) {
         setState(state);
         return this;
+    }
+
+    public String getGraphiteBaseUrl() {
+        return graphiteBaseUrl;
+    }
+
+    public void setGraphiteBaseUrl(String graphiteBaseUrl) {
+        this.graphiteBaseUrl = graphiteBaseUrl;
     }
     
     public List<Subscription> getSubscriptions() {
