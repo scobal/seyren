@@ -226,14 +226,6 @@ public class Check {
         setState(state);
         return this;
     }
-
-    public String getGraphiteBaseUrl() {
-        return graphiteBaseUrl;
-    }
-
-    public void setGraphiteBaseUrl(String graphiteBaseUrl) {
-        this.graphiteBaseUrl = graphiteBaseUrl;
-    }
     
     public List<Subscription> getSubscriptions() {
         return subscriptions;
@@ -245,6 +237,20 @@ public class Check {
     
     public Check withSubscriptions(List<Subscription> subscriptions) {
         setSubscriptions(subscriptions);
+        return this;
+    }
+
+
+    public String getGraphiteBaseUrl() {
+        return graphiteBaseUrl;
+    }
+
+    public void setGraphiteBaseUrl(String graphiteBaseUrl) {
+        this.graphiteBaseUrl = graphiteBaseUrl;
+    }
+
+    public Check withGraphiteBaseUrl(String graphiteBaseUrl) {
+        setGraphiteBaseUrl(graphiteBaseUrl);
         return this;
     }
     

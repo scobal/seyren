@@ -40,6 +40,7 @@ public class MongoMapper {
         String id = dbo.get("_id").toString();
         String name = getString(dbo, "name");
         String description = getString(dbo, "description");
+        String graphiteBaseUrl = getString(dbo, "graphiteBaseUrl");
         String target = getString(dbo, "target");
         String from = Strings.emptyToNull(getString(dbo, "from"));
         String until = Strings.emptyToNull(getString(dbo, "until"));
@@ -59,6 +60,7 @@ public class MongoMapper {
         return new Check().withId(id)
                 .withName(name)
                 .withDescription(description)
+                .withGraphiteBaseUrl(graphiteBaseUrl)
                 .withTarget(target)
                 .withFrom(from)
                 .withUntil(until)
@@ -150,6 +152,7 @@ public class MongoMapper {
         map.put("_id", check.getId());
         map.put("name", check.getName());
         map.put("description", check.getDescription());
+        map.put("graphiteBaseUrl", check.getGraphiteBaseUrl());
         map.put("target", check.getTarget());
         map.put("from", check.getFrom());
         map.put("until", check.getUntil());
