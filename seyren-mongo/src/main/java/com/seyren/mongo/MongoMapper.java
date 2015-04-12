@@ -40,6 +40,7 @@ public class MongoMapper {
         String id = dbo.get("_id").toString();
         String name = getString(dbo, "name");
         String description = getString(dbo, "description");
+        String graphiteBaseUrl = getString(dbo, "graphiteBaseUrl");
         String target = getString(dbo, "target");
         String graphiteUrl = getString(dbo, "graphiteBaseUrl");
         String from = Strings.emptyToNull(getString(dbo, "from"));
@@ -60,6 +61,7 @@ public class MongoMapper {
         return new Check().withId(id)
                 .withName(name)
                 .withDescription(description)
+                .withGraphiteBaseUrl(graphiteBaseUrl)
                 .withTarget(target)
                 .withGraphiteBaseUrl(graphiteUrl)
                 .withFrom(from)
@@ -152,6 +154,7 @@ public class MongoMapper {
         map.put("_id", check.getId());
         map.put("name", check.getName());
         map.put("description", check.getDescription());
+        map.put("graphiteBaseUrl", check.getGraphiteBaseUrl());
         map.put("target", check.getTarget());
         map.put("graphiteBaseUrl", check.getGraphiteBaseUrl() == null ? "graphiteURL" : check.getGraphiteBaseUrl());
         map.put("from", check.getFrom());
