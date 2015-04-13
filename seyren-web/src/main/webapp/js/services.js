@@ -12,7 +12,7 @@
             };
             $httpProvider.defaults.transformRequest.push(spinnerFunction);
         }).
-        factory('spinnerHttpInterceptor', function ($q, $window) {
+        factory('spinnerHttpInterceptor', function ($q, $window, $rootScope) {
             return function (promise) {
                 return promise.then(function (response) {
                     $('#spinnerG').hide();
@@ -21,8 +21,10 @@
 
                 }, function (response) {
                     $('#spinnerG').hide();
+                if(response.status === 0) {
                     $('#banner').show();
-                    return $q.reject(response);
+                }
+                return $q.reject(response);
                 });
             };
         }).
@@ -60,6 +62,36 @@
                 'totalMetric':      {method: 'GET', params: {action: 'total'}}
             });
         }).
+        factory('PermissionsSubscription', function($resource) {
+            return $resource('api/permissions/subscription/users/:name', {name: "@name"}, {
+                'get':      {method: 'GET'},
+                'create':   {method: 'POST'}
+            });
+        }).
+        factory('Authentication', ['$http', '$cookieStore', '$rootScope', '$timeout',
+            function ($http, $cookieStore, $rootScope, $timeout) {
+                var service = {};
+                service.Login = function (username, password, callback) {
+                    $http.post('api/authentication', { username: username, password: password })
+                        .success(function (response) {
+                            callback(response);
+                        })
+                        .error(function(response) {
+                            callback(response);
+                        });
+                };
+                service.SetCredentials = function (username, password, isAdmin) {
+                    var token = $.base64.encode(username + ':' + password);
+                    $rootScope.user = { username: username, token: token, admin: isAdmin };
+                    $http.defaults.headers.common.authorization = 'Basic ' + token;
+                    $cookieStore.put('user', $rootScope.user);
+                };
+                service.ClearCredentials = function () {
+                    $cookieStore.remove('user');
+                    $http.defaults.headers.common.authorization = null;
+                };
+                return service;
+            }]).
         factory('Graph', function ($resource) {
             var chart = function (baseurl, chart) {
                 var result = baseurl + '/?';
@@ -194,5 +226,4 @@
                 }
             };
         });
-
 }());

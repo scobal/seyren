@@ -13,9 +13,6 @@
  */
 package com.seyren.core.util.config;
 
-import static org.hamcrest.MatcherAssert.*;
-import static org.hamcrest.Matchers.*;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -161,6 +158,11 @@ public class SeyrenConfigTest {
     @Test
     public void defaultNumOfThreadsIsCorrect() {
         assertThat(config.getNoOfThreads(), is(8));
+    }
+
+    @Test
+    public void defaultAuthenticationIsCorrect() {
+        assertThat(config.authenticationEnabled(), is(false));
     }
     
 }
