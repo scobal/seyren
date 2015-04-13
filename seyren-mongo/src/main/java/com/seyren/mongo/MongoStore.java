@@ -13,48 +13,34 @@
  */
 package com.seyren.mongo;
 
-import static com.seyren.mongo.NiceDBObject.*;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-import java.util.regex.Pattern;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import com.google.common.base.Strings;
+import com.mongodb.*;
+import com.seyren.core.domain.*;
+import com.seyren.core.store.AlertsStore;
+import com.seyren.core.store.ChecksStore;
+import com.seyren.core.store.PermissionsStore;
+import com.seyren.core.store.SubscriptionsStore;
+import com.seyren.core.util.config.SeyrenConfig;
+import com.seyren.core.util.hashing.TargetHash;
 import org.apache.commons.lang.Validate;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.Bytes;
-import com.mongodb.CommandFailureException;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientURI;
-import com.mongodb.MongoException;
-import com.mongodb.WriteConcern;
-import com.seyren.core.domain.Alert;
-import com.seyren.core.domain.AlertType;
-import com.seyren.core.domain.Check;
-import com.seyren.core.domain.SeyrenResponse;
-import com.seyren.core.domain.Subscription;
-import com.seyren.core.store.AlertsStore;
-import com.seyren.core.store.ChecksStore;
-import com.seyren.core.store.SubscriptionsStore;
-import com.seyren.core.util.config.SeyrenConfig;
-import com.seyren.core.util.hashing.TargetHash;
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
+import java.util.regex.Pattern;
+
+import static com.seyren.mongo.NiceDBObject.forId;
+import static com.seyren.mongo.NiceDBObject.object;
 
 @Named
-public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore {
+public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore, PermissionsStore {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(MongoStore.class);
     
@@ -132,6 +118,10 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
     
     private DBCollection getAlertsCollection() {
         return mongo.getCollection("alerts");
+    }
+
+    private DBCollection getPermissionsCollection() {
+        return mongo.getCollection("permissions");
     }
 
     protected SeyrenResponse executeQueryAndCollectResponse(DBObject query) {
@@ -356,5 +346,33 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
         DBObject updateObject = object("$set", object("subscriptions.$", subscriptionObject));
         getChecksCollection().update(checkFindObject, updateObject);
     }
-    
+
+
+    @Override
+    public SubscriptionPermissions getPermissions(String name) {
+        DBObject dbo = getPermissionsCollection().findOne(object("_id", name));
+        if (dbo == null) {
+            return new SubscriptionPermissions();
+        }
+        return mapper.permissionsFrom(dbo);
+    }
+
+
+    @Override
+    public void createPermissions(String name, String[] subscriptions) {
+        SubscriptionPermissions permissions = new SubscriptionPermissions();
+        permissions.setName(name);
+        permissions.setWriteTypes(subscriptions);
+        getPermissionsCollection().insert(mapper.permissionToDBObject(permissions));
+    }
+
+    @Override
+    public void updatePermissions(String name, String[] subscriptions) {
+        SubscriptionPermissions permissions = new SubscriptionPermissions();
+        permissions.setName(name);
+        permissions.setWriteTypes(subscriptions);
+        DBObject permissionToDBObject = mapper.permissionToDBObject(permissions);
+        DBObject perDbObject = forId(permissions.getName());
+        getPermissionsCollection().update(perDbObject, permissionToDBObject);
+    }
 }

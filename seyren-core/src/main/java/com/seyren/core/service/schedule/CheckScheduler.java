@@ -13,21 +13,19 @@
  */
 package com.seyren.core.service.schedule;
 
-import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import com.seyren.core.domain.Check;
+import com.seyren.core.store.ChecksStore;
+import com.seyren.core.util.config.SeyrenConfig;
+import org.springframework.scheduling.annotation.Scheduled;
 
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Named;
-
-import com.seyren.core.util.config.SeyrenConfig;
-import org.springframework.scheduling.annotation.Scheduled;
-
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import com.seyren.core.domain.Check;
-import com.seyren.core.store.ChecksStore;
+import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @Named
 public class CheckScheduler {

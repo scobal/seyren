@@ -13,20 +13,18 @@
  */
 package com.seyren.core.domain;
 
+import org.junit.Test;
 
-public enum SubscriptionType {
-    
-    EMAIL, PAGERDUTY, HIPCHAT, HUBOT, FLOWDOCK, HTTP, IRCCAT, PUSHOVER, LOGGER, SNMP, SLACK, TWILIO;
+import static org.junit.Assert.assertEquals;
 
-    public static String[] names() {
-        SubscriptionType[] subscriptionTypes = values();
-        String[] names = new String[subscriptionTypes.length];
 
-        for (int i = 0; i < subscriptionTypes.length; i++) {
-            names[i] = subscriptionTypes[i].name();
-        }
+public class SubscriptionPermissionsTest {
 
-        return names;
+    @Test
+    public void testGetWriteTypesDeliminted() throws Exception {
+        SubscriptionPermissions subscriptionPermissions = new SubscriptionPermissions();
+        subscriptionPermissions.setWriteTypes(new String[]{SubscriptionType.EMAIL.name(), SubscriptionType.HIPCHAT.name()});
+        String writeTypesDelimited = subscriptionPermissions.getWriteTypesDelimited();
+        assertEquals(writeTypesDelimited, "EMAIL;HIPCHAT");
     }
-    
 }

@@ -13,22 +13,10 @@
  */
 package com.seyren.api.bean;
 
-import java.math.BigDecimal;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.seyren.api.jaxrs.SubscriptionsResource;
+import com.seyren.api.util.RequestValidator;
 import com.seyren.core.domain.Alert;
 import com.seyren.core.domain.AlertType;
 import com.seyren.core.domain.Check;
@@ -40,6 +28,19 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.math.BigDecimal;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 @Named
 public class SubscriptionsBean implements SubscriptionsResource {
     private static final Logger LOGGER = LoggerFactory.getLogger(SubscriptionsBean.class);
@@ -47,28 +48,37 @@ public class SubscriptionsBean implements SubscriptionsResource {
     private ChecksStore checksStore;
     private SubscriptionsStore subscriptionsStore;
     private final Iterable<NotificationService> notificationServices;
-    
+    private final RequestValidator validator;
     @Inject
-    public SubscriptionsBean(ChecksStore checksStore, SubscriptionsStore subscriptionsStore, List<NotificationService> notificationServices) {
+    public SubscriptionsBean(ChecksStore checksStore, SubscriptionsStore subscriptionsStore, List<NotificationService> notificationServices, RequestValidator validator) {
         this.checksStore = checksStore;
         this.subscriptionsStore = subscriptionsStore;
         this.notificationServices = notificationServices;
+        this.validator = validator;
     }
     
     @Override
-    public Response createSubscription(String checkId, Subscription subscription) {
-        Subscription stored = subscriptionsStore.createSubscription(checkId, subscription);
-        return Response.created(uri(checkId, stored.getId())).build();
+    public Response createSubscription(String checkId, Subscription subscription, HttpHeaders headers) {
+        Response unauthorizedResponse = validator.unauthorizedSubscription(headers, subscription.getType());
+        if(unauthorizedResponse == null) {
+            Subscription stored = subscriptionsStore.createSubscription(checkId, subscription);
+            return Response.created(uri(checkId, stored.getId())).build();
+        }
+        return unauthorizedResponse;
     }
     
     @Override
-    public Response updateSubscription(String checkId, Subscription subscription) {
-        subscriptionsStore.updateSubscription(checkId, subscription);
-        return Response.noContent().build();
+    public Response updateSubscription(String checkId, Subscription subscription, HttpHeaders headers) {
+        Response unauthorizedResponse = validator.unauthorizedSubscription(headers, subscription.getType());
+        if(unauthorizedResponse == null) {
+            subscriptionsStore.updateSubscription(checkId, subscription);
+            return Response.noContent().build();
+        }
+        return unauthorizedResponse;
     }
 
     @Override
-    public Response deleteSubscription(String checkId, String subscriptionId) {
+    public Response deleteSubscription(String checkId, String subscriptionId, HttpHeaders headers) {
         subscriptionsStore.deleteSubscription(checkId, subscriptionId);
         return Response.noContent().build();
     }
@@ -121,5 +131,4 @@ public class SubscriptionsBean implements SubscriptionsResource {
             throw new RuntimeException(e);
         }
     }
-    
 }
