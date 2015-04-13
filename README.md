@@ -53,6 +53,14 @@ The following options can be supplied as system properties or environment variab
 * `SEYREN_LOG_FILE_LEVEL` - The level of messages logged to the `file` appender (must correspond to a [Logback](http://logback.qos.ch/) log level. So one of `trace`, `debug`, `info`, `warn` or `error`). Default: `info`.
 * `SEYREN_THREADS` - The number of pooled check threads to start. Default: `8`
 * `GRAPHS_ENABLE` - Show(true) or hide(false) graphs in check page. Default: `true`.
+##### Security
+* `AUTHENTICATION_ENABLED` - Enabled Authentication for both client and server side code. Default: `false`
+* `ADMIN_USER` - The administrator username for seyren. Default: `admin`
+* `ADMIN_PASS` - The administrator password for seyren. Default: `admin`
+* `LDAP_URL` - The LDAP Protocol service URL. Default: ``
+* `LDAP_SSL` - Enabled LDAP Protocol to use SSL Secruity Default: `false`
+* `LDAP_USERPATTERN` - LDAP Protocol User search pattern. Default: ``
+* `LDAP_DOMAIN` - LDAP Protocol Domain name for the active directory. Default: ``
 
 ##### [Graphite](http://graphite.readthedocs.org/en/latest/)
 * `GRAPHITE_URL` - The location of your Graphite server. Default: `http://localhost:80`
@@ -127,6 +135,7 @@ The target for a Slack subscription will be the channel name (including the `#`,
 * `TWILIO_AUTH_TOKEN` - The Twilio Auth Token. Default ``
 * `TWILIO_PHONE_NUMBER` - The Twilio phone number to use to send SMS. Default ``
 * `TWILIO_URL` - The Twilio API URL. Mostly useful for testing. Default `https://api.twilio.com/2010-04-01/Accounts`
+
 
 ##Seyren API
 

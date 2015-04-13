@@ -11,16 +11,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.seyren.core.store;
+package com.seyren.api.provider;
 
-import com.seyren.core.domain.Subscription;
 
-public interface SubscriptionsStore {
-    
-    Subscription createSubscription(String checkId, Subscription subscription);
-    
-    void deleteSubscription(String checkId, String subscriptionId);
-    
-    void updateSubscription(String checkId, Subscription subscription);
+import com.seyren.core.domain.User;
 
+/**
+ * A Interface for authentication providers.
+ * Implementing this provider creates a generic UI
+ */
+public interface AuthenticationProvider {
+    Boolean isValidCredentials(User authentication);
+    Boolean isValidUser(String name);
+    String[] getUsers(String namePattern);
 }
