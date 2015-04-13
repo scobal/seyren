@@ -66,7 +66,7 @@ public class PagerDutyNotificationService implements NotificationService {
         NotifyResult result = null;
 
         try {
-            if (check.getState() == AlertType.ERROR) {
+            if (check.getState() == AlertType.ERROR || check.getState() == AlertType.WARN) {
                 Trigger trigger = new Trigger.Builder("Check '" + check.getName() + "' has exceeded its threshold.")
                         .withIncidentKey(incidentKey(check))
                         .client("Seyren")
@@ -99,6 +99,7 @@ public class PagerDutyNotificationService implements NotificationService {
         mapper.setPropertyNamingStrategy(new PropertyNamingStrategy.LowerCaseWithUnderscoresStrategy());
         return ImmutableMap.<String, String>builder().
                 put("CHECK", mapper.writeValueAsString(check)).
+                put("STATE", check.getState().name()).
                 put("ALERTS", mapper.writeValueAsString(alerts)).
                 put("SEYREN_URL", seyrenConfig.getBaseUrl()).
                 build();
