@@ -139,6 +139,15 @@ You can use [Seyren Cookbook](https://github.com/obazoud/chef-seyren) to deploy 
 ##Docker
 You can use the [Docker Seyren Image](https://registry.hub.docker.com/u/usman/docker-seyren/) to deploy a seyren instance in a [docker](https://docker.com) container.
 
+##Docker compose
+You can use `docker-compose` to create containers and hack seyren.
+First, you need to install [Docker and Docker Compose](https://docs.docker.com/compose/#installation-and-set-up).
+Then, you just need to start Docker Compose:
+```
+docker-compose up
+```
+and open [http://localhost:8080/seyren](http://localhost:8080/seyren).
+
 ##Init script
 
 [Seyren-Init](https://github.com/wingZero21/Seyren-Init) is an init.d script which allows you to start the service.
