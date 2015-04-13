@@ -20,6 +20,7 @@ import com.seyren.core.domain.SubscriptionType;
 import com.seyren.core.domain.User;
 import com.seyren.core.store.PermissionsStore;
 import com.seyren.core.util.config.SeyrenConfig;
+import org.apache.commons.codec.binary.Base64;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -27,7 +28,6 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import java.nio.charset.Charset;
-import java.util.Base64;
 
 @Named
 public class RequestValidator {
@@ -85,7 +85,7 @@ public class RequestValidator {
         final String authorization = requestHeaders.getFirst("Authorization");
         if (authorization != null && authorization.startsWith("Basic")) {
             String base64Credentials = authorization.substring("Basic".length()).trim();
-            String credentials = new String(Base64.getDecoder().decode(base64Credentials),
+            String credentials = new String(Base64.decodeBase64(base64Credentials),
                     Charset.forName("UTF-8"));
             String[] split = credentials.split(":", 2);
             User user = new User();
