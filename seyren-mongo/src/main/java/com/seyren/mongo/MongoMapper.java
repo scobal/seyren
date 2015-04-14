@@ -13,26 +13,17 @@
  */
 package com.seyren.mongo;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.google.common.base.Strings;
+import com.mongodb.BasicDBList;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
+import com.seyren.core.domain.*;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
 
-import com.mongodb.BasicDBList;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
-import com.seyren.core.domain.Alert;
-import com.seyren.core.domain.AlertType;
-import com.seyren.core.domain.Check;
-import com.seyren.core.domain.Subscription;
-import com.seyren.core.domain.SubscriptionType;
+import java.math.BigDecimal;
+import java.util.*;
 
 public class MongoMapper {
     
@@ -131,6 +122,15 @@ public class MongoMapper {
                 .withToType(toType)
                 .withTimestamp(timestamp);
     }
+
+    public SubscriptionPermissions permissionsFrom(DBObject dbo) {
+        String name = dbo.get("_id").toString();
+        String write = getString(dbo, "write");
+        SubscriptionPermissions permissions = new SubscriptionPermissions();
+        permissions.setName(name);
+        permissions.setWriteTypes(write.split(";"));
+        return permissions;
+    }
     
     public DBObject checkToDBObject(Check check) {
         return new BasicDBObject(propertiesToMap(check));
@@ -142,6 +142,10 @@ public class MongoMapper {
     
     public DBObject alertToDBObject(Alert alert) {
         return new BasicDBObject(propertiesToMap(alert));
+    }
+
+    public DBObject permissionToDBObject(SubscriptionPermissions permissions) {
+        return new BasicDBObject(propertiesToMap(permissions));
     }
     
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -230,6 +234,13 @@ public class MongoMapper {
         map.put("fromType", alert.getFromType().toString());
         map.put("toType", alert.getToType().toString());
         map.put("timestamp", new Date(alert.getTimestamp().getMillis()));
+        return map;
+    }
+
+    private Map propertiesToMap(SubscriptionPermissions permissions) {
+        Map map = new HashMap();
+        map.put("_id", permissions.getName());
+        map.put("write", permissions.getWriteTypesDelimited());
         return map;
     }
     
