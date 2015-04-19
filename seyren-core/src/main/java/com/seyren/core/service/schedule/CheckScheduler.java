@@ -44,7 +44,7 @@ public class CheckScheduler {
                         .setDaemon(false).build());
     }
     
-    @Scheduled(fixedRateString = "${GRAPHITE_REFRESH:30000}")
+    @Scheduled(fixedRateString = "${GRAPHITE_REFRESH:10000}")
     public void performChecks() {
         List<Check> checks = checksStore.getChecks(true, false).getValues();
         for (final Check check : checks) {

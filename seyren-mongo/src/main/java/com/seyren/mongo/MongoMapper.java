@@ -156,7 +156,7 @@ public class MongoMapper {
         map.put("description", check.getDescription());
         map.put("graphiteBaseUrl", check.getGraphiteBaseUrl());
         map.put("target", check.getTarget());
-        map.put("graphiteBaseUrl", check.getGraphiteBaseUrl() == null ? "graphiteURL" : check.getGraphiteBaseUrl());
+        map.put("graphiteBaseUrl", check.getGraphiteBaseUrl());
         map.put("from", check.getFrom());
         map.put("until", check.getUntil());
         if (check.getWarn() != null) {
