@@ -293,7 +293,7 @@ public class SeyrenConfig {
         return snmpOID;
     }
 
-    @JsonProperty
+    @JsonProperty("graphiteUrl")
     public String getGraphiteUrl() {
         return graphiteUrl;
     }
