@@ -14,7 +14,7 @@
             live: false,
             allowNoData: false,
             totalMetric: '-',
-            graphiteBaseUrl: null
+            graphiteBaseUrl: $scope.config.graphiteBaseUrl
         };
 
         $('#editCheckModal').on('shown.bs.modal', function () {
