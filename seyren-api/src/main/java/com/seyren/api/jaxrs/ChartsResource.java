@@ -23,30 +23,29 @@ import javax.ws.rs.core.Response;
 
 @Path("/")
 public interface ChartsResource {
-    
+
     @GET
     @Produces("image/png")
-    @Path("/checks/{checkId}/image")
-    Response getChart(@PathParam("checkId") String checkId,
-            @QueryParam("width") @DefaultValue("1200") int width,
-            @QueryParam("height") @DefaultValue("350") int height,
-            @QueryParam("from") @DefaultValue("-24hours") String from,
-            @QueryParam("to") String to,
-            @QueryParam("hideThresholds") boolean hideThresholds,
-            @QueryParam("hideLegend") boolean hideLegend,
-            @QueryParam("hideAxes") boolean hideAxes);
-    
+    @Path("/checks/{checkId}/image") Response getChart(@PathParam("checkId") String checkId,
+                                                       @QueryParam("width") @DefaultValue("1200") int width,
+                                                       @QueryParam("height") @DefaultValue("350") int height,
+                                                       @QueryParam("from") @DefaultValue("-24hours") String from,
+                                                       @QueryParam("to") String to,
+                                                       @QueryParam("hideThresholds") boolean hideThresholds,
+                                                       @QueryParam("hideLegend") boolean hideLegend,
+                                                       @QueryParam("hideAxes") boolean hideAxes);
+
     @GET
     @Produces("image/png")
-    @Path("/chart/{target}")
-    Response getCustomChart(@PathParam("target") String target,
-            @QueryParam("width") @DefaultValue("1200") int width,
-            @QueryParam("height") @DefaultValue("350") int height,
-            @QueryParam("from") @DefaultValue("-24hours") String from,
-            @QueryParam("to") String to,
-            @QueryParam("warn") String warnThreshold,
-            @QueryParam("error") String errorThreshold,
-            @QueryParam("hideLegend") boolean hideLegend,
-            @QueryParam("hideAxes") boolean hideAxes);
-    
+    @Path("/chart/{target}") Response getCustomChart(@PathParam("target") String target,
+                                                     @QueryParam("graphiteBaseUrl") String graphiteUrl,
+                                                     @QueryParam("width") @DefaultValue("1200") int width,
+                                                     @QueryParam("height") @DefaultValue("350") int height,
+                                                     @QueryParam("from") @DefaultValue("-24hours") String from,
+                                                     @QueryParam("to") String to,
+                                                     @QueryParam("warn") String warnThreshold,
+                                                     @QueryParam("error") String errorThreshold,
+                                                     @QueryParam("hideLegend") boolean hideLegend,
+                                                     @QueryParam("hideAxes") boolean hideAxes);
+
 }
