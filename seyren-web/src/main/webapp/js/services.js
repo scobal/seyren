@@ -92,6 +92,9 @@
                 if (chart.uniq) {
                     result += '&uniq=' + chart.uniq;
                 }
+                if (chart.graphiteBaseUrl) {
+                    result += '&graphiteBaseUrl=' + chart.graphiteBaseUrl;
+                }
                 return result;
             };
             return {

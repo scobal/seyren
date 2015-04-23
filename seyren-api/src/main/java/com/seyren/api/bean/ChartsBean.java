@@ -58,7 +58,7 @@ public class ChartsBean implements ChartsResource {
     }
 
     @Override
-    public Response getCustomChart(String graphitebaseUrl, String target, int width, int height, String from, String to, String warnThreshold, String errorThreshold,
+    public Response getCustomChart(String target, String graphiteBaseUrl, int width, int height, String from, String to, String warnThreshold, String errorThreshold,
                                    boolean hideLegend,
                                    boolean hideAxes) {
 
@@ -76,7 +76,7 @@ public class ChartsBean implements ChartsResource {
             error = new BigDecimal(errorThreshold);
         }
 
-        return getChart(graphitebaseUrl, target, width, height, from, to, warn, error, hideLegend, hideAxes);
+        return getChart(graphiteBaseUrl, target, width, height, from, to, warn, error, hideLegend, hideAxes);
 
     }
 

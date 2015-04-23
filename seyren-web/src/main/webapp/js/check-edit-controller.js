@@ -18,7 +18,7 @@
         };
 
         Config.query({}, function(config) {
-            $scope.master.graphiteBaseUrl = config.graphiteUrl
+            $scope.master.graphiteBaseUrl = config.graphiteUrl;
         });
 
         $('#editCheckModal').on('shown.bs.modal', function () {
