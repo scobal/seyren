@@ -141,7 +141,7 @@ describe('check page', function () {
         expect(element('div.col-lg-6 div.detail-form:eq(2) p span:visible').text()).toBe('WARN');
 
         expect(element('div.col-lg-6 div.detail-form:eq(3) label').text()).toBe('Graphite Base Url:');
-        expect(element('div.col-lg-6 div.detail-form:eq(3) p').text()).toBe('prod.host1.load.longterm');
+        expect(element('div.col-lg-6 div.detail-form:eq(3) p').text()).toBe('localhost:80');
 
         expect(element('div.col-lg-6 div.detail-form:eq(4) label').text()).toBe('Target:');
         expect(element('div.col-lg-6 div.detail-form:eq(4) p').text()).toBe('prod.host1.load.longterm');
@@ -382,7 +382,7 @@ describe('create new check', function () {
         input('check\\.error').enter('4.0');
         input('check\\.enabled').check();
 
-        expect(element('div#editCheckModal img').attr('src')).toBe('./api/chart/karma.metric/?&width=365&height=70&from=-1day&warn=2.0&error=4.0&hideLegend=true&ƒUrl=http://localhost:80');
+        expect(element('div#editCheckModal img').attr('src')).toBe('./api/chart/karma.metric/?&width=365&height=70&from=-1day&warn=2.0&error=4.0&hideLegend=true&graphiteBaseUrl=http://localhost:80');
 
         expect(element('button#createCheckButton:visible:enabled').count()).toEqual(1);
         expect(element('button#cancelCheckButton:visible:enabled').count()).toEqual(1);
