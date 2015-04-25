@@ -24,17 +24,17 @@ import org.junit.Test;
 import com.github.restdriver.serverdriver.http.response.Response;
 
 public class ConfigAT {
-    
+
     @Test
     public void getAcceptanceTestSeyrenConfig() {
         Response response = get(config());
         assertThat(response, hasStatusCode(200));
-        
+
         // Base
-        assertThat(response.asJson().size(), is(3));
+        assertThat(response.asJson().size(), is(4));
         assertThat(response.asJson(), hasJsonPath("$.baseUrl", not(isEmptyOrNullString())));
         assertThat(response.asJson(), hasJsonPath("$.graphiteCarbonPickleEnabled", is(false)));
         assertThat(response.asJson(), hasJsonPath("$.graphsEnabled", is(true)));
     }
-    
+
 }

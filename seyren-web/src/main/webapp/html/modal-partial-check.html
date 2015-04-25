@@ -20,6 +20,12 @@
                         <input id="check.description" class="form-control" name="check.description" ng-model="check.description" type="text" />
                     </div>
                 </div>
+                    <div ng-class="{ 'form-group': true, 'has-error': checkForm['check.graphiteBaseUrl'].$invalid }">
+                        <label class="col-sm-4 control-label" for="check.graphiteBaseUrl">Graphite Base Url</label>
+                        <div class="col-sm-7">
+                            <input id="check.graphiteBaseUrl" class="form-control" name="check.graphiteBaseUrl" ng-model="check.graphiteBaseUrl" type="text" required />
+                        </div>
+                    </div>
                 <div ng-class="{ 'form-group': true, 'has-error': checkForm['check.target'].$invalid }">
                     <label class="col-sm-3 control-label" for="check.target">Target</label>
                     <div class="col-sm-7">
