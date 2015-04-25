@@ -43,6 +43,7 @@ public class Check {
     private String target;
     private String from;
     private String until;
+    private String graphiteBaseUrl;
     private BigDecimal warn;
     private BigDecimal error;
     private boolean enabled;
@@ -94,9 +95,17 @@ public class Check {
     public String getTarget() {
         return target;
     }
+
+    public String getGraphiteBaseUrl() {
+        return graphiteBaseUrl;
+    }
     
     public void setTarget(String target) {
         this.target = target;
+    }
+
+    public void setGraphiteBaseUrl(String graphiteBaseUrl) {
+        this.graphiteBaseUrl = graphiteBaseUrl;
     }
 
     public String getFrom() {
@@ -127,6 +136,11 @@ public class Check {
 
     public Check withTarget(String target) {
         setTarget(target);
+        return this;
+    }
+
+    public Check withGraphiteBaseUrl(String graphiteBaseUrl) {
+        setGraphiteBaseUrl(graphiteBaseUrl);
         return this;
     }
 
@@ -225,7 +239,7 @@ public class Check {
         setState(state);
         return this;
     }
-    
+
     public List<Subscription> getSubscriptions() {
         return subscriptions;
     }
@@ -238,5 +252,6 @@ public class Check {
         setSubscriptions(subscriptions);
         return this;
     }
+
     
 }

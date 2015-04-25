@@ -92,6 +92,9 @@
                 if (chart.uniq) {
                     result += '&uniq=' + chart.uniq;
                 }
+                if (chart.graphiteBaseUrl) {
+                    result += '&graphiteBaseUrl=' + chart.graphiteBaseUrl;
+                }
                 return result;
             };
             return {
@@ -99,6 +102,7 @@
                     if (check && check.target) {
                         return chart('./api/chart/' + check.target, {
                             target: check.target,
+                            graphiteBaseUrl: check.graphiteBaseUrl,
                             width: 365,
                             height: 70,
                             warn: check.warn,
