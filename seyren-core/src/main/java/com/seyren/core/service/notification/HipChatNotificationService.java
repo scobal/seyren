@@ -86,16 +86,14 @@ public class HipChatNotificationService implements NotificationService {
         for (String roomId : roomIds) {
             LOGGER.info("Posting: {} to {}: {} {}", from, roomId, message, color);
             HttpClient client = HttpClientBuilder.create().build();
-            String url = baseUrl + "/v1/rooms/message";
+            String url = baseUrl + ("/v2/room/{}/notification?auth_token={}", roomId, authToken);
             HttpPost post = new HttpPost(url);
             
             try {
                 List<BasicNameValuePair> parameters = new ArrayList<BasicNameValuePair>();
-                parameters.add(new BasicNameValuePair("auth_token", authToken));
-                parameters.add(new BasicNameValuePair("from", from));
-                parameters.add(new BasicNameValuePair("room_id", roomId));
                 parameters.add(new BasicNameValuePair("message", message));
                 parameters.add(new BasicNameValuePair("color", color.name().toLowerCase()));
+                parameters.add(new BasicNameValuePair("message_format", "html");
                 if (notify) {
                     parameters.add(new BasicNameValuePair("notify", "1"));
                 }
