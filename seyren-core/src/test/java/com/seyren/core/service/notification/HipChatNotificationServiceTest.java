@@ -70,7 +70,7 @@ public class HipChatNotificationServiceTest {
 
         String seyrenUrl = URLEncoder.encode(seyrenConfig.getBaseUrl(), "UTF-8");
         clientDriver.addExpectation(
-                onRequestTo("/v1/rooms/message")
+                onRequestTo("/v2/rooms/target/notification")
                         .withMethod(Method.POST)
                         .withBody(is("auth_token="
                                 + "&from=Seyren+Alert"
