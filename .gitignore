@@ -6,6 +6,5 @@
 .idea/
 .project
 .settings/
-META-INF/
 target/
 node_modules/
