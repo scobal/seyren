@@ -29,9 +29,9 @@ Seyren ([/ˈsaɪ.rʌn/](http://en.wikipedia.org/wiki/Wikipedia:IPA_for_English#K
 ###Run
 
 ```
-wget https://github.com/scobal/seyren/releases/download/1.2.1/seyren-1.2.1.jar
+wget https://github.com/scobal/seyren/releases/download/1.3.0/seyren-1.3.0.jar
 export GRAPHITE_URL=http://graphite.foohost.com:80
-java -jar seyren-1.2.1.jar
+java -jar seyren-1.3.0.jar
 open http://localhost:8080
 ```
 
@@ -39,7 +39,7 @@ To run seyren on another port:
 
 ```
 export SEYREN_URL="http://localhost:8081/seyren"
-java -jar seyren-1.2.1.jar -httpPort=8081
+java -jar seyren-1.3.0.jar -httpPort=8081
 ```
 
 ###Config
@@ -50,6 +50,8 @@ The following options can be supplied as system properties or environment variab
 * `MONGO_URL` - The Mongo [connection string](http://docs.mongodb.org/manual/reference/connection-string/). Default: `mongodb://localhost:27017/seyren`
 * `SEYREN_URL` - The location of your Seyren instance. Default: `http://localhost:8080/seyren`
 * `SEYREN_LOG_PATH` - The path of seyren.log. Default: ``. If a value is set, it must end with a '/'.
+* `SEYREN_LOG_FILE_LEVEL` - The level of messages logged to the `file` appender (must correspond to a [Logback](http://logback.qos.ch/) log level. So one of `trace`, `debug`, `info`, `warn` or `error`). Default: `info`.
+* `SEYREN_THREADS` - The number of pooled check threads to start. Default: `8`
 * `GRAPHS_ENABLE` - Show(true) or hide(false) graphs in check page. Default: `true`.
 
 ##### [Graphite](http://graphite.readthedocs.org/en/latest/)
@@ -136,7 +138,16 @@ See [Seyren API](API.md)
 You can use [Seyren Cookbook](https://github.com/obazoud/chef-seyren) to deploy Seyren with [Chef](http://www.getchef.com/).
 
 ##Docker
-You can use the [Docker Seyren Image](https://registry.hub.docker.com/u/usman/docker-seyren/) to deploy a seyren instance in a [docker](https://docker.com/https://docker.com/) container.
+You can use the [Docker Seyren Image](https://registry.hub.docker.com/u/usman/docker-seyren/) to deploy a seyren instance in a [docker](https://docker.com) container.
+
+##Docker compose
+You can use `docker-compose` to create containers and hack seyren.
+First, you need to install [Docker and Docker Compose](https://docs.docker.com/compose/#installation-and-set-up).
+Then, you just need to start Docker Compose:
+```
+docker-compose up
+```
+and open [http://localhost:8080/seyren](http://localhost:8080/seyren).
 
 ##Init script
 

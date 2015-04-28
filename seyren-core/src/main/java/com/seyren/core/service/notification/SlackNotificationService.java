@@ -116,7 +116,7 @@ public class SlackNotificationService implements NotificationService {
         String alertsString = Joiner.on("\n").join(transform(alerts, new Function<Alert, String>() {
             @Override
             public String apply(Alert input) {
-                return String.format("%s = %s", input.getTarget(), input.getValue().toString());
+                return String.format("%s = %s (%s to %s)", input.getTarget(), input.getValue().toString(), input.getFromType(), input.getToType());
             }
         }));
 
