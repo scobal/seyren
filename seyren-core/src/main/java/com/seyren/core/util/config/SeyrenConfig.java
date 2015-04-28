@@ -79,6 +79,7 @@ public class SeyrenConfig {
     private final String snmpOID;
     private final String emailTemplateFileName;
     private final int noOfThreads;
+    private final boolean securityEnabled;
     public SeyrenConfig() {
         
         // Base
@@ -148,6 +149,9 @@ public class SeyrenConfig {
 
         // Template
         this.emailTemplateFileName = configOrDefault("TEMPLATE_EMAIL_FILE_PATH","com/seyren/core/service/notification/email-template.vm");
+
+        //spring security
+        this.securityEnabled = Boolean.parseBoolean(configOrDefault("SECURITY_ENABLED", "false"));
     }
     
     @PostConstruct
@@ -391,6 +395,11 @@ public class SeyrenConfig {
 
     @JsonIgnore
     public String getEmailTemplateFileName() { return emailTemplateFileName; }
+
+    @JsonIgnore
+    public boolean isSecurityEnabled() {
+         return securityEnabled;
+    }
 
   private static String configOrDefault(String propertyName, String defaultValue) {
         return configOrDefault(list(propertyName), defaultValue);

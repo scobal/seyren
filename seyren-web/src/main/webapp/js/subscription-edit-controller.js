@@ -46,9 +46,12 @@
                 $("#createSubscriptionButton").removeClass("disabled");
                 $("#editSubscriptionModal").modal("hide");
                 $scope.$emit('subscription:created');
-            }, function () {
+            }, function (response) {
                 $("#createSubscriptionButton").removeClass("disabled");
                 console.log('Create subscription failed');
+                if(response.status === 403) {
+                    $scope.error = "You're not authorized to create this subscription.";
+                }
             });
         };
 
@@ -58,8 +61,12 @@
                 $("#updateSubscriptionButton").removeClass("disabled");
                 $("#editSubscriptionModal").modal("hide");
                 $scope.$emit('subscription:updated');
-            }, function () {
+            }, function (response) {
+                $("#updateSubscriptionButton").removeClass("disabled");
                 console.log('Saving subscription failed');
+                if(response.status === 403) {
+                    $scope.error = "You're not authorized to edit this subscription.";
+                }
             });
         };
 
@@ -70,12 +77,14 @@
         $rootScope.$on('subscription:edit', function () {
             var editSubscription = Seyren.subscriptionBeingEdited();
             if (editSubscription) {
+                $scope.error = null;
                 $scope.newSubscription = false;
                 $scope.subscription = editSubscription;
                 $scope.subscription.notifyOnWarn = !$scope.subscription.ignoreWarn;
                 $scope.subscription.notifyOnError = !$scope.subscription.ignoreError;
                 $scope.subscription.notifyOnOk = !$scope.subscription.ignoreOk;
             } else {
+                $scope.error = null;
                 $scope.newSubscription = true;
                 $scope.subscription = {};
                 $scope.reset();

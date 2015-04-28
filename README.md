@@ -128,6 +128,20 @@ The target for a Slack subscription will be the channel name (including the `#`,
 * `TWILIO_PHONE_NUMBER` - The Twilio phone number to use to send SMS. Default ``
 * `TWILIO_URL` - The Twilio API URL. Mostly useful for testing. Default `https://api.twilio.com/2010-04-01/Accounts`
 
+##### [Spring Security](http://projects.spring.io/spring-security/)
+* `SECURITY_ENABLED` - Enabled Authentication for both client and server side code. Default: `false`
+###### security.properties configuration
+* admin.username  - Admin username. [string]
+* admin.password - Admin password. [string]
+* password.encoder - Password used to encode when stored in the DB. [string]
+* authentication.service - Authentication provider for spring. Options: [ldap, database]
+* ldap.url - Ldap url . [string]
+* db.user - Database username. [string]
+* db.pass - Database password. [string]
+* db.url - Database connection string. [string]
+* db.driver - Database driver. [string]
+* db.log - Log database details. [boolean]
+* db.generate - Generate the database tables. [boolean]
 ##Seyren API
 
 See [Seyren API](API.md)

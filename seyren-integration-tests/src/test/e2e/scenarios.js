@@ -7,7 +7,7 @@ describe('home page', function () {
 
     it('should have a nav bar', function () {
         expect(element('div.navbar img').count()).toBe(1);
-        expect(element('div.navbar ul li a').text()).toBe('Checks');
+        expect(element('div.navbar ul li a').text()).toBe('Checks AdminLogout');
     });
 
     it('should have a \'Checks in an unhealthy state\' section', function () {
