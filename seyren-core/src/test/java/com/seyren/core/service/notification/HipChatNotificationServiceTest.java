@@ -70,13 +70,12 @@ public class HipChatNotificationServiceTest {
 
         String seyrenUrl = URLEncoder.encode(seyrenConfig.getBaseUrl(), "UTF-8");
         clientDriver.addExpectation(
-                onRequestTo("/v2/rooms/target/notification")
+                onRequestTo("/v2/room/target/notification")
                         .withMethod(Method.POST)
-                        .withBody(is("auth_token="
-                                + "&from=Seyren+Alert"
-                                + "&room_id=target"
-                                + "&message=Check+%3Ca+href%3D" + seyrenUrl + "%2F%23%2Fchecks%2Fnull%3Etest-check%3C%2Fa%3E+has+entered+its+ERROR+state."
+                        .withParam("auth_token","")
+                        .withBody(is("message=Check+%3Ca+href%3D" + seyrenUrl + "%2F%23%2Fchecks%2Fnull%3Etest-check%3C%2Fa%3E+has+entered+its+ERROR+state."
                                 + "&color=red"
+                                + "&message_format=html"
                                 + "&notify=1"), "application/x-www-form-urlencoded"),
                 giveEmptyResponse());
         
