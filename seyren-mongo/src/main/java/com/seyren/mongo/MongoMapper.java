@@ -35,12 +35,14 @@ import com.seyren.core.domain.Subscription;
 import com.seyren.core.domain.SubscriptionType;
 
 public class MongoMapper {
-    
+
     public Check checkFrom(DBObject dbo) {
         String id = dbo.get("_id").toString();
         String name = getString(dbo, "name");
         String description = getString(dbo, "description");
+        String graphiteBaseUrl = getString(dbo, "graphiteBaseUrl");
         String target = getString(dbo, "target");
+        String graphiteUrl = getString(dbo, "graphiteBaseUrl");
         String from = Strings.emptyToNull(getString(dbo, "from"));
         String until = Strings.emptyToNull(getString(dbo, "until"));
         BigDecimal warn = getBigDecimal(dbo, "warn");
@@ -55,11 +57,13 @@ public class MongoMapper {
         for (Object o : list) {
             subscriptions.add(subscriptionFrom((DBObject) o));
         }
-        
+
         return new Check().withId(id)
                 .withName(name)
                 .withDescription(description)
+                .withGraphiteBaseUrl(graphiteBaseUrl)
                 .withTarget(target)
+                .withGraphiteBaseUrl(graphiteUrl)
                 .withFrom(from)
                 .withUntil(until)
                 .withWarn(warn)
@@ -71,7 +75,7 @@ public class MongoMapper {
                 .withLastCheck(lastCheck)
                 .withSubscriptions(subscriptions);
     }
-    
+
     public Subscription subscriptionFrom(DBObject dbo) {
         String id = dbo.get("_id").toString();
         String target = getString(dbo, "target");
@@ -89,7 +93,7 @@ public class MongoMapper {
         LocalTime fromTime = getLocalTime(dbo, "fromHour", "fromMin");
         LocalTime toTime = getLocalTime(dbo, "toHour", "toMin");
         boolean enabled = getBoolean(dbo, "enabled");
-        
+
         return new Subscription()
                 .withId(id)
                 .withTarget(target)
@@ -108,7 +112,7 @@ public class MongoMapper {
                 .withToTime(toTime)
                 .withEnabled(enabled);
     }
-    
+
     public Alert alertFrom(DBObject dbo) {
         String id = dbo.get("_id").toString();
         String checkId = getString(dbo, "checkId");
@@ -119,7 +123,7 @@ public class MongoMapper {
         AlertType fromType = AlertType.valueOf(getString(dbo, "fromType"));
         AlertType toType = AlertType.valueOf(getString(dbo, "toType"));
         DateTime timestamp = getDateTime(dbo, "timestamp");
-        
+
         return new Alert()
                 .withId(id)
                 .withCheckId(checkId)
@@ -131,26 +135,29 @@ public class MongoMapper {
                 .withToType(toType)
                 .withTimestamp(timestamp);
     }
-    
+
     public DBObject checkToDBObject(Check check) {
         return new BasicDBObject(propertiesToMap(check));
+
     }
-    
+
     public DBObject subscriptionToDBObject(Subscription subscription) {
         return new BasicDBObject(propertiesToMap(subscription));
     }
-    
+
     public DBObject alertToDBObject(Alert alert) {
         return new BasicDBObject(propertiesToMap(alert));
     }
-    
+
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private Map propertiesToMap(Check check) {
         Map map = new HashMap();
         map.put("_id", check.getId());
         map.put("name", check.getName());
         map.put("description", check.getDescription());
+        map.put("graphiteBaseUrl", check.getGraphiteBaseUrl());
         map.put("target", check.getTarget());
+        map.put("graphiteBaseUrl", check.getGraphiteBaseUrl());
         map.put("from", check.getFrom());
         map.put("until", check.getUntil());
         if (check.getWarn() != null) {
@@ -180,7 +187,7 @@ public class MongoMapper {
         }
         return map;
     }
-    
+
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private Map propertiesToMap(Subscription subscription) {
         Map map = new HashMap();
@@ -210,7 +217,7 @@ public class MongoMapper {
         map.put("enabled", subscription.isEnabled());
         return map;
     }
-    
+
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private Map propertiesToMap(Alert alert) {
         Map map = new HashMap();
@@ -232,11 +239,11 @@ public class MongoMapper {
         map.put("timestamp", new Date(alert.getTimestamp().getMillis()));
         return map;
     }
-    
+
     private boolean getBoolean(DBObject dbo, String key) {
         return (Boolean) dbo.get(key);
     }
-    
+
     private boolean getOptionalBoolean(DBObject dbo, String key, boolean defaultValue) {
         Object value = dbo.get(key);
         if (value == null) {
@@ -244,7 +251,7 @@ public class MongoMapper {
         }
         return (Boolean) value;
     }
-    
+
     private DateTime getDateTime(DBObject dbo, String key) {
         Date date = (Date) dbo.get(key);
         if (date != null) {
@@ -252,17 +259,17 @@ public class MongoMapper {
         }
         return null;
     }
-    
+
     private LocalTime getLocalTime(DBObject dbo, String hourKey, String minKey) {
         Integer hour = getInteger(dbo, hourKey);
         Integer min = getInteger(dbo, minKey);
         return (hour == null || min == null) ? null : new LocalTime(hour, min);
     }
-    
+
     private String getString(DBObject dbo, String key) {
         return (String) dbo.get(key);
     }
-    
+
     private BigDecimal getBigDecimal(DBObject dbo, String key) {
         Object result = dbo.get(key);
         if (result == null) {
@@ -270,11 +277,11 @@ public class MongoMapper {
         }
         return new BigDecimal(result.toString());
     }
-    
+
     private Integer getInteger(DBObject dbo, String key) {
         return (Integer) dbo.get(key);
     }
-    
+
     private BasicDBList getBasicDBList(DBObject dbo, String key) {
         BasicDBList result = (BasicDBList) dbo.get(key);
         if (result == null) {
@@ -282,9 +289,9 @@ public class MongoMapper {
         }
         return result;
     }
-    
+
     private SubscriptionType getSubscriptionType(String value) {
         return value == null ? null : SubscriptionType.valueOf(value);
     }
-    
+
 }

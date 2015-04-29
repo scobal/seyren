@@ -31,7 +31,7 @@ import com.seyren.core.util.velocity.Slf4jLogChute;
 
 @Named
 public class SeyrenConfig {
-    
+
     private static final String DEFAULT_BASE_URL = "http://localhost:8080/seyren";
 
     private final String baseUrl;
@@ -65,6 +65,7 @@ public class SeyrenConfig {
     private final Integer smtpPort;
     private final String flowdockExternalUsername;
     private final String flowdockTags;
+    private final String graphiteScheme;
     // Icon mapped check sate (AlertType) see http://apps.timwhitlock.info/emoji/tables/unicode
     // question, sunny, cloud, voltage exclamation should be: \u2753,\u2600,\u2601,\u26A1,\u2757
     private final String flowdockEmojis;
@@ -82,7 +83,7 @@ public class SeyrenConfig {
     private final String emailTemplateFileName;
     private final int noOfThreads;
     public SeyrenConfig() {
-        
+
         // Base
         this.baseUrl = stripEnd(configOrDefault("SEYREN_URL", DEFAULT_BASE_URL), "/");
         this.mongoUrl = configOrDefault("MONGO_URL", "mongodb://localhost:27017/seyren");
@@ -100,7 +101,8 @@ public class SeyrenConfig {
         this.graphiteConnectionRequestTimeout = Integer.parseInt(configOrDefault("GRAPHITE_CONNECTION_REQUEST_TIMEOUT", "0"));
         this.graphiteConnectTimeout = Integer.parseInt(configOrDefault("GRAPHITE_CONNECT_TIMEOUT", "0"));
         this.graphiteSocketTimeout = Integer.parseInt(configOrDefault("GRAPHITE_SOCKET_TIMEOUT", "0"));
-        
+        this.graphiteScheme = configOrDefault("GRAPHITE_SCHEME", "http");
+
         // SMTP
         this.smtpFrom = configOrDefault(list("SMTP_FROM", "SEYREN_FROM_EMAIL"), "alert@seyren");
         this.smtpUsername = configOrDefault("SMTP_USERNAME", "");
@@ -108,13 +110,13 @@ public class SeyrenConfig {
         this.smtpHost = configOrDefault("SMTP_HOST", "localhost");
         this.smtpProtocol = configOrDefault("SMTP_PROTOCOL", "smtp");
         this.smtpPort = Integer.parseInt(configOrDefault("SMTP_PORT", "25"));
-        
+
         // HipChat
         this.hipChatBaseUrl = configOrDefault(list("HIPCHAT_BASEURL", "HIPCHAT_BASE_URL"), "https://api.hipchat.com");
         this.hipChatApiVersion = configOrDefault(list("HIPCHAT_APIVERSION", "HIPCHAT_API_VERSION"), "1");
         this.hipChatAuthToken = configOrDefault(list("HIPCHAT_AUTHTOKEN", "HIPCHAT_AUTH_TOKEN"), "");
         this.hipChatUsername = configOrDefault(list("HIPCHAT_USERNAME", "HIPCHAT_USER_NAME"), "Seyren Alert");
-        
+
         // PagerDuty
 
         // Twilio
@@ -122,10 +124,10 @@ public class SeyrenConfig {
         this.twilioAccountSid = configOrDefault("TWILIO_ACCOUNT_SID", "");
         this.twilioAuthToken = configOrDefault("TWILIO_AUTH_TOKEN", "");
         this.twilioPhoneNumber = configOrDefault("TWILIO_PHONE_NUMBER", "");
-        
+
         // Hubot
         this.hubotUrl = configOrDefault(list("HUBOT_URL", "SEYREN_HUBOT_URL"), "");
-        
+
         // Flowdock
         this.flowdockExternalUsername = configOrDefault("FLOWDOCK_EXTERNAL_USERNAME", "Seyren");
         this.flowdockTags = configOrDefault("FLOWDOCK_TAGS", "");
@@ -153,13 +155,13 @@ public class SeyrenConfig {
         // Template
         this.emailTemplateFileName = configOrDefault("TEMPLATE_EMAIL_FILE_PATH","com/seyren/core/service/notification/email-template.vm");
     }
-    
+
     @PostConstruct
     public void init() {
         Velocity.setProperty(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM, new Slf4jLogChute());
         Velocity.init();
     }
-    
+
     public String getBaseUrl() {
         return baseUrl;
     }
@@ -168,7 +170,7 @@ public class SeyrenConfig {
     public boolean isBaseUrlSetToDefault() {
         return getBaseUrl().equals(DEFAULT_BASE_URL);
     }
-    
+
     @JsonIgnore
     public String getMongoUrl() {
         return mongoUrl;
@@ -177,7 +179,7 @@ public class SeyrenConfig {
     public boolean isGraphsEnabled() {
         return Boolean.valueOf(graphsEnable);
     }
-    
+
     @JsonIgnore
     public String getTwilioUrl() {
         return twilioUrl;
@@ -192,7 +194,7 @@ public class SeyrenConfig {
     public String getTwilioAuthToken() {
         return twilioAuthToken;
     }
-    
+
     @JsonIgnore
     public String getTwilioPhoneNumber() {
         return twilioPhoneNumber;
@@ -212,27 +214,27 @@ public class SeyrenConfig {
     public String getHipChatAuthToken() {
         return hipChatAuthToken;
     }
-    
+
     @JsonIgnore
     public String getHipChatUsername() {
         return hipChatUsername;
     }
-    
+
     @JsonIgnore
     public String getHubotUrl() {
         return hubotUrl;
     }
-    
+
     @JsonIgnore
     public String getFlowdockExternalUsername() {
         return flowdockExternalUsername;
     }
-    
+
     @JsonIgnore
     public String getFlowdockTags() {
         return flowdockTags;
     }
-    
+
     @JsonIgnore
     public String getFlowdockEmojis() {
         return flowdockEmojis;
@@ -257,27 +259,27 @@ public class SeyrenConfig {
     public String getSmtpFrom() {
         return smtpFrom;
     }
-    
+
     @JsonIgnore
     public String getSmtpUsername() {
         return smtpUsername;
     }
-    
+
     @JsonIgnore
     public String getSmtpPassword() {
         return smtpPassword;
     }
-    
+
     @JsonIgnore
     public String getSmtpHost() {
         return smtpHost;
     }
-    
+
     @JsonIgnore
     public String getSmtpProtocol() {
         return smtpProtocol;
     }
-    
+
     @JsonIgnore
     public Integer getSmtpPort() {
         return smtpPort;
@@ -287,62 +289,62 @@ public class SeyrenConfig {
     public String getSnmpHost() {
         return snmpHost;
     }
-    
+
     @JsonIgnore
     public Integer getSnmpPort() {
         return snmpPort;
     }
-    
+
     @JsonIgnore
     public String getSnmpCommunity() {
         return snmpCommunity;
     }
-    
+
     @JsonIgnore
     public String getSnmpOID() {
         return snmpOID;
     }
-    
-    @JsonIgnore
+
+    @JsonProperty("graphiteUrl")
     public String getGraphiteUrl() {
         return graphiteUrl;
     }
-    
+
     @JsonIgnore
     public String getGraphiteUsername() {
         return graphiteUsername;
     }
-    
+
     @JsonIgnore
     public String getGraphitePassword() {
         return graphitePassword;
     }
-    
+
     @JsonIgnore
     public String getGraphiteScheme() {
-        return splitBaseUrl(graphiteUrl)[0];
+        return this.graphiteScheme == null ? splitBaseUrl(graphiteUrl)[0] : graphiteScheme;
     }
-    
+
     @JsonIgnore
     public int getGraphiteSSLPort() {
         return Integer.valueOf(splitBaseUrl(graphiteUrl)[1]);
     }
-    
+
     @JsonIgnore
     public String getGraphiteHost() {
         return splitBaseUrl(graphiteUrl)[2];
     }
-    
+
     @JsonIgnore
     public String getGraphitePath() {
         return splitBaseUrl(graphiteUrl)[3];
     }
-    
+
     @JsonIgnore
     public String getGraphiteKeyStore() {
         return graphiteKeyStore;
     }
-    
+
     @JsonIgnore
     public String getGraphiteKeyStorePassword() {
         return graphiteKeyStorePassword;
@@ -362,17 +364,17 @@ public class SeyrenConfig {
     public boolean getGraphiteCarbonPickleEnable() {
         return Boolean.valueOf(graphiteCarbonPickleEnable);
     }
-    
+
     @JsonIgnore
     public int getGraphiteConnectionRequestTimeout() {
         return graphiteConnectionRequestTimeout;
     }
-    
+
     @JsonIgnore
     public int getGraphiteConnectTimeout() {
         return graphiteConnectTimeout;
     }
-    
+
     @JsonIgnore
     public int getGraphiteSocketTimeout() {
         return graphiteSocketTimeout;
@@ -409,45 +411,45 @@ public class SeyrenConfig {
   private static String configOrDefault(String propertyName, String defaultValue) {
         return configOrDefault(list(propertyName), defaultValue);
     }
-    
+
     private static String configOrDefault(List<String> propertyNames, String defaultValue) {
-        
+
         for (String propertyName : propertyNames) {
-            
+
             String value = System.getProperty(propertyName);
             if (isNotEmpty(value)) {
                 return value;
             }
-            
+
             value = System.getenv(propertyName);
             if (isNotEmpty(value)) {
                 return value;
             }
         }
-        
+
         return defaultValue;
     }
-    
+
     private static List<String> list(String... propertyNames) {
         return Arrays.asList(propertyNames);
     }
-    
+
     private static String[] splitBaseUrl(String baseUrl) {
         String[] baseParts = new String[4];
-        
+
         if (baseUrl.toString().contains("://")) {
             baseParts[0] = baseUrl.toString().split("://")[0];
             baseUrl = baseUrl.toString().split("://")[1];
         } else {
             baseParts[0] = "http";
         }
-        
+
         if (baseUrl.contains(":")) {
             baseParts[1] = baseUrl.split(":")[1];
         } else {
             baseParts[1] = "443";
         }
-        
+
         if (baseUrl.contains("/")) {
             baseParts[2] = baseUrl.split("/")[0];
             baseParts[3] = "/" + baseUrl.split("/", 2)[1];
@@ -455,7 +457,7 @@ public class SeyrenConfig {
             baseParts[2] = baseUrl;
             baseParts[3] = "";
         }
-        
+
         return baseParts;
     }
 

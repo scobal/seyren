@@ -2,6 +2,7 @@
     "_id" : "5205121fccf2a07eacba64da",
     name: "load longterm usage",
     description: "Load longterm of host host1",
+    graphiteBaseUrl: "localhost:80",
     target: "prod.host1.load.longterm",
     warn: "0.5",
     error: "2.0",
