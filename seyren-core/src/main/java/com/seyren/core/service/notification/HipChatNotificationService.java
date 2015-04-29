@@ -42,19 +42,19 @@ public class HipChatNotificationService implements NotificationService {
     
     private final SeyrenConfig seyrenConfig;
     private final String baseUrl;
-	private final String apiVersion;
+    private final String apiVersion;
     
     @Inject
     public HipChatNotificationService(SeyrenConfig seyrenConfig) {
         this.seyrenConfig = seyrenConfig;
         this.baseUrl = seyrenConfig.getHipChatBaseUrl();
-		this.apiVersion = seyrenConfig.getHipChatApiVersion();
+        this.apiVersion = seyrenConfig.getHipChatApiVersion();
     }
     
     protected HipChatNotificationService(SeyrenConfig seyrenConfig, String baseUrl) {
         this.seyrenConfig = seyrenConfig;
         this.baseUrl = baseUrl;
-		this.apiVersion = seyrenConfig.getHipChatApiVersion();
+        this.apiVersion = seyrenConfig.getHipChatApiVersion();
     }
     
     @Override
