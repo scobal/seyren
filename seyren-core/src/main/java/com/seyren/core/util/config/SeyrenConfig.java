@@ -52,6 +52,8 @@ public class SeyrenConfig {
     private final String twilioAccountSid;
     private final String twilioAuthToken;
     private final String twilioPhoneNumber;
+    private final String hipChatBaseUrl;
+    private final String hipChatApiVersion;
     private final String hipChatAuthToken;
     private final String hipChatUsername;
     private final String hubotUrl;
@@ -108,6 +110,8 @@ public class SeyrenConfig {
         this.smtpPort = Integer.parseInt(configOrDefault("SMTP_PORT", "25"));
         
         // HipChat
+        this.hipChatBaseUrl = configOrDefault(list("HIPCHAT_BASEURL", "HIPCHAT_BASE_URL"), "https://api.hipchat.com");
+        this.hipChatApiVersion = configOrDefault(list("HIPCHAT_APIVERSION", "HIPCHAT_API_VERSION"), "1");
         this.hipChatAuthToken = configOrDefault(list("HIPCHAT_AUTHTOKEN", "HIPCHAT_AUTH_TOKEN"), "");
         this.hipChatUsername = configOrDefault(list("HIPCHAT_USERNAME", "HIPCHAT_USER_NAME"), "Seyren Alert");
         
@@ -192,6 +196,16 @@ public class SeyrenConfig {
     @JsonIgnore
     public String getTwilioPhoneNumber() {
         return twilioPhoneNumber;
+    }
+
+    @JsonIgnore
+    public String getHipChatBaseUrl() {
+        return hipChatBaseUrl;
+    }
+
+    @JsonIgnore
+    public String getHipChatApiVersion() {
+        return hipChatApiVersion;
     }
 
     @JsonIgnore
