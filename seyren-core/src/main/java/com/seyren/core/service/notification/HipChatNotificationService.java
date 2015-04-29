@@ -42,16 +42,19 @@ public class HipChatNotificationService implements NotificationService {
     
     private final SeyrenConfig seyrenConfig;
     private final String baseUrl;
+	private final String apiVersion;
     
     @Inject
     public HipChatNotificationService(SeyrenConfig seyrenConfig) {
         this.seyrenConfig = seyrenConfig;
-        this.baseUrl = "https://api.hipchat.com";
+        this.baseUrl = seyrenConfig.getHipChatBaseUrl();
+		this.apiVersion = seyrenConfig.getHipChatApiVersion();
     }
     
     protected HipChatNotificationService(SeyrenConfig seyrenConfig, String baseUrl) {
         this.seyrenConfig = seyrenConfig;
         this.baseUrl = baseUrl;
+		this.apiVersion = seyrenConfig.getHipChatApiVersion();
     }
     
     @Override
@@ -86,7 +89,7 @@ public class HipChatNotificationService implements NotificationService {
         for (String roomId : roomIds) {
             LOGGER.info("Posting: {} to {}: {} {}", from, roomId, message, color);
             HttpClient client = HttpClientBuilder.create().build();
-            String url = baseUrl + "/v1/rooms/message";
+            String url = baseUrl + "/v" + apiVersion + "/rooms/message";
             HttpPost post = new HttpPost(url);
             
             try {
