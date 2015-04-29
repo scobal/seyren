@@ -49,6 +49,7 @@ public class Check {
     private boolean live;
     private boolean allowNoData;
     private AlertType state;
+    private PriorityType priorityType;
     private DateTime lastCheck;
     private List<Subscription> subscriptions = new ArrayList<Subscription>();
     
@@ -225,7 +226,20 @@ public class Check {
         setState(state);
         return this;
     }
-    
+
+    public PriorityType getPriority() {
+        return priorityType;
+    }
+
+    public void setPriority(PriorityType priorityType) {
+        this.priorityType = priorityType;
+    }
+
+    public Check withPriority(PriorityType priorityType) {
+        setPriority(priorityType);
+        return this;
+    }
+
     public List<Subscription> getSubscriptions() {
         return subscriptions;
     }

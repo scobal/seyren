@@ -13,9 +13,6 @@
  */
 package com.seyren.core.util.config;
 
-import static org.hamcrest.MatcherAssert.*;
-import static org.hamcrest.Matchers.*;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -159,8 +156,11 @@ public class SeyrenConfigTest {
     }
 
     @Test
+    public void defaultHttpTemplateFileIsCorrect() {
+        assertThat(config.getHttpTemplateFileName(), is("com/seyren/core/service/notification/http-template.vm"));
+    }
+
     public void defaultNumOfThreadsIsCorrect() {
         assertThat(config.getNoOfThreads(), is(8));
     }
-    
 }

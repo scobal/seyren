@@ -53,3 +53,20 @@ body {
     padding-right: 10px;
     padding-left: 10px;
 }
+
+.label-trivial {
+    background-color: #8DF3FF;
+}
+
+.label-minor {
+    background-color: #5BA8E8;
+}
+
+.label-major {
+    background-color: #245AE8;
+}
+
+.label-critical {
+    background-color: #1132FF;
+}
+

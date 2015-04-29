@@ -6,6 +6,7 @@
     "error" : "2.0",
     "value" : "0.8",
     "target" : "prod.host1.load.longterm",
+    "priority" : "MAJOR",
     "toType" : "OK",
     "fromType" : "WARN"
 }

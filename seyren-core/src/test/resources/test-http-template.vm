@@ -1,0 +1,5 @@
+{
+    "ping": "pong",
+    "seyrenUrl": "http://localhost:8080",
+    "checkId": "ckecker"
+}

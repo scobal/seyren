@@ -10,3 +10,4 @@ before_script:
   - "npm install karma-cli karma-ng-scenario karma-jasmine karma-phantomjs-launcher --quiet --global"
 script:
   - "mvn clean verify -Pkarma"
+

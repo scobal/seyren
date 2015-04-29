@@ -6,6 +6,7 @@
             <tr>
                 <th>Name</th>
                 <th>State</th>
+                <th>Priority</th>
                 <th>Warn</th>
                 <th>Error</th>
                 <th>Enabled</th>
@@ -20,6 +21,12 @@
                     <span ng-show="check.state == 'WARN'" class="label label-warning">{{ check.state }}</span>
                     <span ng-show="check.state == 'ERROR'" class="label label-danger">{{ check.state }}</span>
                     <span ng-show="check.state == 'EXCEPTION'" class="label label-inverse">{{ check.state }}</span>
+                </td>
+                <td>
+                    <span ng-show="check.priority  == 'TRIVIAL'" class="label label-trivial">{{ check.priority  }}</span>
+                    <span ng-show="check.priority  == 'MINOR'" class="label label-minor">{{ check.priority  }}</span>
+                    <span ng-show="check.priority  == 'MAJOR'" class="label label-major">{{ check.priority  }}</span>
+                    <span ng-show="check.priority  == 'CRITICAL'" class="label label-critical">{{ check.priority  }}</span>
                 </td>
                 <td>{{ check.warn }}</td>
                 <td>{{ check.error }}</td>
@@ -38,6 +45,8 @@
                 <th>Timestamp</th>
                 <th>Time ago</th>
                 <th>Name</th>
+                <th>Target</th>
+                <th>Priority</th>
                 <th>Value</th>
                 <th>Warn</th>
                 <th>Error</th>
@@ -49,7 +58,14 @@
             <tr ng-repeat="alert in alertStream.values" ng-click="selectCheck(alert.checkId)" style="cursor: pointer;">
                 <td>{{ alert.timestamp | date: 'yyyy-MM-dd HH:mm:ss' }}</td>
                 <td><span am-time-ago="alert.timestamp"></span></td>
-                <td title="{{ alert.target }}">{{ checkNames[alert.checkId] }}</span></td>
+                <td title="{{ alert.target }}">{{ checkNames[alert.checkId] }}</td>
+                <td>{{ alert.target }}</td>
+                <td>
+                    <span ng-show="alert.priority  == 'TRIVIAL'" class="label label-trivial">{{ alert.priority  }}</span>
+                    <span ng-show="alert.priority  == 'MINOR'" class="label label-minor">{{ alert.priority  }}</span>
+                    <span ng-show="alert.priority  == 'MAJOR'" class="label label-major">{{ alert.priority  }}</span>
+                    <span ng-show="alert.priority  == 'CRITICAL'" class="label label-critical">{{ alert.priority  }}</span>
+                </td>
                 <td>{{ alert.value }}</td>
                 <td>{{ alert.warn }}</td>
                 <td>{{ alert.error }}</td>

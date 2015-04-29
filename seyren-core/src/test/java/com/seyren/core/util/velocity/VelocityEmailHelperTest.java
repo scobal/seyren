@@ -151,10 +151,19 @@ public class VelocityEmailHelperTest {
 
     @Test
     public void templateLocationShouldBeConfigurable() {
+        Check check = new Check()
+                .withId("123")
+                .withEnabled(true)
+                .withName("test-check")
+                .withWarn(new BigDecimal("2.0"))
+                .withError(new BigDecimal("3.0"))
+                .withState(AlertType.ERROR);
+
         SeyrenConfig mockConfiguration = mock(SeyrenConfig.class);
         when(mockConfiguration.getEmailTemplateFileName()).thenReturn("test-email-template.vm");
+        when(mockConfiguration.getGraphiteUrl()).thenReturn("http://localhost:8081/graphite");
         EmailHelper emailHelper = new VelocityEmailHelper(mockConfiguration);
-        String body = emailHelper.createBody(null, null, null);
+        String body = emailHelper.createBody(check, null, null);
         assertThat(body, containsString("Test content."));
     }
 }

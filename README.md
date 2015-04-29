@@ -121,6 +121,7 @@ The target for a Slack subscription will be the channel name (including the `#`,
 
 ##### [TEMPLATE](http://en.wikipedia.org/wiki/Apache_Velocity)
 * `TEMPLATE_EMAIL_FILE_PATH` - The path to the velocity template used when emailing an alert. Seyren will first attempt to load from the class path, but will fall back to loading from the filesystem.  Default: `com/seyren/core/service/notification/email-template.vm"`
+* `TEMPLATE_HTTP_FILE_PATH` - The path to the velocity template used when sending alerts via http notification. Seyren will first attempt to load from the class path, but will fall back to loading from the filesystem.  Default: `com/seyren/core/service/notification/http-template.vm"`
 
 ##### [Twilio](https://www.twilio.com/)
 * `TWILIO_ACCOUNT_SID` - The Twilio Account SID. Default ``

@@ -68,5 +68,20 @@
             }
         };
 
+        $scope.sortByPriority = function (o) {
+            switch (o.priority) {
+                case 'TRIVIAL':
+                    return 0;
+                case 'MINOR':
+                    return 1;
+                case 'MAJOR':
+                    return 2;
+                case 'CRITICAL':
+                    return 3;
+                default:
+                    return -1;
+            }
+        };
+
     });
 }());

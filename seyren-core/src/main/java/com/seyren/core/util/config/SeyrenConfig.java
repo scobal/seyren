@@ -80,7 +80,11 @@ public class SeyrenConfig {
     private final String snmpCommunity;
     private final String snmpOID;
     private final String emailTemplateFileName;
+    /** The filename of the http content template. */
+    private final String httpTemplateFileName;
+
     private final int noOfThreads;
+    
     public SeyrenConfig() {
         
         // Base
@@ -152,6 +156,7 @@ public class SeyrenConfig {
 
         // Template
         this.emailTemplateFileName = configOrDefault("TEMPLATE_EMAIL_FILE_PATH","com/seyren/core/service/notification/email-template.vm");
+        this.httpTemplateFileName = configOrDefault("TEMPLATE_HTTP_FILE_PATH","com/seyren/core/service/notification/http-template.vm");
     }
     
     @PostConstruct
@@ -405,6 +410,9 @@ public class SeyrenConfig {
 
     @JsonIgnore
     public String getEmailTemplateFileName() { return emailTemplateFileName; }
+
+    @JsonIgnore
+    public String getHttpTemplateFileName() { return httpTemplateFileName; }
 
   private static String configOrDefault(String propertyName, String defaultValue) {
         return configOrDefault(list(propertyName), defaultValue);

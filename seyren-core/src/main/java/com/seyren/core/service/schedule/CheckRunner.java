@@ -19,15 +19,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.seyren.core.domain.*;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
-import com.seyren.core.domain.Alert;
-import com.seyren.core.domain.AlertType;
-import com.seyren.core.domain.Check;
-import com.seyren.core.domain.Subscription;
 import com.seyren.core.service.checker.TargetChecker;
 import com.seyren.core.service.checker.ValueChecker;
 import com.seyren.core.service.notification.NotificationService;
@@ -65,6 +62,7 @@ public class CheckRunner implements Runnable {
             Map<String, Optional<BigDecimal>> targetValues = targetChecker.check(check);
             
             DateTime now = new DateTime();
+            PriorityType priority = check.getPriority();
             BigDecimal warn = check.getWarn();
             BigDecimal error = check.getError();
             
@@ -110,7 +108,7 @@ public class CheckRunner implements Runnable {
                     continue;
                 }
                 
-                Alert alert = createAlert(target, currentValue, warn, error, lastState, currentState, now);
+                Alert alert = createAlert(target, priority, currentValue, warn, error, lastState, currentState, now);
                 
                 alertsStore.createAlert(check.getId(), alert);
                 
@@ -158,9 +156,10 @@ public class CheckRunner implements Runnable {
         return last == current;
     }
     
-    private Alert createAlert(String target, BigDecimal value, BigDecimal warn, BigDecimal error, AlertType from, AlertType to, DateTime now) {
+    private Alert createAlert(String target, PriorityType priority, BigDecimal value, BigDecimal warn, BigDecimal error, AlertType from, AlertType to, DateTime now) {
         return new Alert()
                 .withTarget(target)
+                .withPriority(priority)
                 .withValue(value)
                 .withWarn(warn)
                 .withError(error)
