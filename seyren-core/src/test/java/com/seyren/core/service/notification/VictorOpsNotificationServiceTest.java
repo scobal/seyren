@@ -62,6 +62,7 @@ public class VictorOpsNotificationServiceTest {
     @Test
     public void checkingOutTheHappyPath() throws Exception {
         Check check = new Check()
+                .withId("test-check-id")
                 .withEnabled(true)
                 .withName("test-check")
                 .withState(AlertType.ERROR);

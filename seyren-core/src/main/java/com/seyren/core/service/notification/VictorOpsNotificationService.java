@@ -13,7 +13,6 @@
  */
 package com.seyren.core.service.notification;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -21,11 +20,16 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.seyren.core.domain.*;
 import com.seyren.core.exception.NotificationFailedException;
 import com.seyren.core.util.config.SeyrenConfig;
@@ -50,28 +54,24 @@ public class VictorOpsNotificationService implements NotificationService {
     @Inject
     public VictorOpsNotificationService(SeyrenConfig seyrenConfig) {
         this.seyrenConfig = seyrenConfig;
+        MAPPER.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        MAPPER.configure(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES, false);
     }
 
     @Override
     public void sendNotification(Check check, Subscription subscription, List<Alert> alerts) throws NotificationFailedException {
 
-        String httpUrl = StringUtils.trimToNull(subscription.getTarget());
+        String victorOpsRestEndpoint = StringUtils.trimToNull(subscription.getTarget());
 
-        if (httpUrl == null) {
+        if (victorOpsRestEndpoint == null) {
             LOGGER.warn("VictorOps REST API endpoint needs to be set before sending notifications");
             return;
         }
 
-        Map<String, Object> body = new HashMap<String, Object>();
-        body.put("entity_id", check.getId());
-        body.put("message_type", MessageType.fromAlertType(check.getState()).name());
-        body.put("state_message", getDescription(check));
-
         HttpClient client = HttpClientBuilder.create().build();
-
-        HttpPost post = new HttpPost(subscription.getTarget());
+        HttpPost post = new HttpPost(victorOpsRestEndpoint);
         try {
-            HttpEntity entity = new StringEntity(MAPPER.writeValueAsString(body), ContentType.APPLICATION_JSON);
+            HttpEntity entity = new StringEntity(getDescription(check, alerts), ContentType.APPLICATION_JSON);
             post.setEntity(entity);
             HttpResponse response = client.execute(post);
             HttpEntity responseEntity = response.getEntity();
@@ -79,7 +79,7 @@ public class VictorOpsNotificationService implements NotificationService {
                 LOGGER.info("Response : {} ", EntityUtils.toString(responseEntity));
             }
         } catch (Exception e) {
-            throw new NotificationFailedException("Failed to send notification to HTTP", e);
+            throw new NotificationFailedException("Failed to send notification to VictorOps", e);
         } finally {
             post.releaseConnection();
             HttpClientUtils.closeQuietly(client);
@@ -91,9 +91,20 @@ public class VictorOpsNotificationService implements NotificationService {
         return subscriptionType == SubscriptionType.VICTOROPS;
     }
 
-    private String getDescription(Check check) {
-        String message = "Check <a href=" + seyrenConfig.getBaseUrl() + "/#/checks/" + check.getId() + ">" + check.getName() + "</a> has entered its " + check.getState().toString() + " state.";
-        return message;
+    private String getDescription(Check check, List<Alert> alerts) throws JsonProcessingException {
+        MAPPER.setPropertyNamingStrategy(new PropertyNamingStrategy.LowerCaseWithUnderscoresStrategy());
+        String message = new StringBuilder(MAPPER.writeValueAsString(check)).
+                append("\n").append(MAPPER.writeValueAsString(alerts)).append("\n").append(url(check)).toString();
+        Map<String, String> body = ImmutableMap.<String, String>builder().
+                put("entity_id", check.getId()).
+                put("message_type", MessageType.fromAlertType(check.getState()).name()).
+                put("state_message", message).
+                build();
+        return MAPPER.writeValueAsString(body);
+    }
+
+    private String url(Check check) {
+        return seyrenConfig.getBaseUrl() + "/#/checks/" + check.getId();
     }
 
     @VisibleForTesting
