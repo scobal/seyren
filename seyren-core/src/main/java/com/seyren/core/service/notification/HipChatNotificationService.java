@@ -95,7 +95,7 @@ public class HipChatNotificationService implements NotificationService {
                 parameters.add(new BasicNameValuePair("color", color.name().toLowerCase()));
                 parameters.add(new BasicNameValuePair("message_format", "html"));
                 if (notify) {
-                    parameters.add(new BasicNameValuePair("notify", "1"));
+                    parameters.add(new BasicNameValuePair("notify", "true"));
                 }
                 post.setEntity(new UrlEncodedFormEntity(parameters));
                 client.execute(post);

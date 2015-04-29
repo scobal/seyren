@@ -76,7 +76,7 @@ public class HipChatNotificationServiceTest {
                         .withBody(is("message=Check+%3Ca+href%3D" + seyrenUrl + "%2F%23%2Fchecks%2Fnull%3Etest-check%3C%2Fa%3E+has+entered+its+ERROR+state."
                                 + "&color=red"
                                 + "&message_format=html"
-                                + "&notify=1"), "application/x-www-form-urlencoded"),
+                                + "&notify=true"), "application/x-www-form-urlencoded"),
                 giveEmptyResponse());
         
         notificationService.sendNotification(check, subscription, alerts);
