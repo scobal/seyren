@@ -93,12 +93,21 @@ public class VictorOpsNotificationService implements NotificationService {
 
     private String getDescription(Check check, List<Alert> alerts) throws JsonProcessingException {
         MAPPER.setPropertyNamingStrategy(new PropertyNamingStrategy.LowerCaseWithUnderscoresStrategy());
-        String message = new StringBuilder(MAPPER.writeValueAsString(check)).
-                append("\n").append(MAPPER.writeValueAsString(alerts)).append("\n").append(url(check)).toString();
+        StringBuilder message = new StringBuilder("Check: ").append(check.getDescription())
+                .append("\nQuery: ").append(check.getTarget());
+
+        // to keep message small, Only show the first alert in this check.
+        if (!alerts.isEmpty()) {
+            message.append("\n").append(MAPPER.writeValueAsString(alerts.get(0)));
+        }
+        message.append("\n").append(url(check));
+
         Map<String, String> body = ImmutableMap.<String, String>builder().
                 put("entity_id", check.getId()).
+                put("entity_display_name", check.getName()).
                 put("message_type", MessageType.fromAlertType(check.getState()).name()).
-                put("state_message", message).
+                put("state_message", message.toString()).
+                put("monitoring_tool", "Seyren").
                 build();
         return MAPPER.writeValueAsString(body);
     }
