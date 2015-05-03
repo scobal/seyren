@@ -75,8 +75,14 @@ public class HttpNotificationService implements NotificationService {
         body.put("preview", getPreviewImage(check)); 
         
         HttpClient client = HttpClientBuilder.create().build();
-        
-        HttpPost post = new HttpPost(subscription.getTarget());
+        HttpPost post;
+
+        if(StringUtils.isNotBlank(seyrenConfig.getHttpNotificationUrl())) {
+            post = new HttpPost(seyrenConfig.getHttpNotificationUrl());
+        } else {
+            post = new HttpPost(subscription.getTarget());
+        }
+
         try {
             HttpEntity entity = new StringEntity(MAPPER.writeValueAsString(body), ContentType.APPLICATION_JSON);
             post.setEntity(entity);
