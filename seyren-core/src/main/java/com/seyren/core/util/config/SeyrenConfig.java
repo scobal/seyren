@@ -81,6 +81,7 @@ public class SeyrenConfig {
     private final String snmpOID;
     private final String emailTemplateFileName;
     private final int noOfThreads;
+    private final String httpNotificationUrl;
     public SeyrenConfig() {
         
         // Base
@@ -100,7 +101,11 @@ public class SeyrenConfig {
         this.graphiteConnectionRequestTimeout = Integer.parseInt(configOrDefault("GRAPHITE_CONNECTION_REQUEST_TIMEOUT", "0"));
         this.graphiteConnectTimeout = Integer.parseInt(configOrDefault("GRAPHITE_CONNECT_TIMEOUT", "0"));
         this.graphiteSocketTimeout = Integer.parseInt(configOrDefault("GRAPHITE_SOCKET_TIMEOUT", "0"));
-        
+
+        // HTTP
+
+        this.httpNotificationUrl = configOrDefault("HTTP_NOTIFICATION_URL", "");
+
         // SMTP
         this.smtpFrom = configOrDefault(list("SMTP_FROM", "SEYREN_FROM_EMAIL"), "alert@seyren");
         this.smtpUsername = configOrDefault("SMTP_USERNAME", "");
@@ -404,6 +409,11 @@ public class SeyrenConfig {
     }
 
     @JsonIgnore
+    public String getHttpNotificationUrl() {
+        return httpNotificationUrl;
+    }
+
+    @JsonIgnore
     public String getEmailTemplateFileName() { return emailTemplateFileName; }
 
   private static String configOrDefault(String propertyName, String defaultValue) {
@@ -458,6 +468,4 @@ public class SeyrenConfig {
         
         return baseParts;
     }
-
-
 }
