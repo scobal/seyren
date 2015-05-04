@@ -16,10 +16,7 @@ package com.seyren.mongo;
 import com.google.common.base.Strings;
 import com.mongodb.*;
 import com.seyren.core.domain.*;
-import com.seyren.core.store.AlertsStore;
-import com.seyren.core.store.ChecksStore;
-import com.seyren.core.store.PermissionsStore;
-import com.seyren.core.store.SubscriptionsStore;
+import com.seyren.core.store.*;
 import com.seyren.core.util.config.SeyrenConfig;
 import com.seyren.core.util.hashing.TargetHash;
 import org.apache.commons.lang.Validate;
@@ -27,28 +24,43 @@ import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import static com.seyren.mongo.NiceDBObject.forId;
 import static com.seyren.mongo.NiceDBObject.object;
 
 @Named
-public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore, PermissionsStore {
+public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore, PermissionsStore, UserStore {
+    private final String adminUsername;
+    private final String adminPassword;
+    private final String serviceProvider;
+    private PasswordEncoder passwordEncoder;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MongoStore.class);
+    private final SeyrenConfig seyrenConfig;
 
     private MongoMapper mapper = new MongoMapper();
     private DB mongo;
 
     @Inject
-    public MongoStore(SeyrenConfig seyrenConfig) {
+    public MongoStore(PasswordEncoder passwordEncoder,
+                      @Value("${admin.username}") String adminUsername,
+                      @Value("${admin.password}") String adminPassword,
+                      @Value("${authentication.service}") String serviceProvider,
+                      SeyrenConfig seyrenConfig) {
+        this.passwordEncoder = passwordEncoder;
+        this.adminUsername = adminUsername;
+        this.adminPassword = adminPassword;
+        this.serviceProvider = serviceProvider;
+        this.seyrenConfig = seyrenConfig;
         try {
             String uri = seyrenConfig.getMongoUrl();
             MongoClientURI mongoClientUri = new MongoClientURI(uri);
@@ -68,6 +80,7 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore,
             createIndices();
             removeOldIndices();
             addTargetHashToAlerts();
+            createAdminUser();
         } catch (MongoException e) {
             LOGGER.error("Failure while bootstrapping Mongo indexes.\n"
                     + "If you've hit this problem it's possible that you have two checks which are named the same and violate an index which we've tried to add.\n"
@@ -75,6 +88,16 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore,
             throw new RuntimeException("Failed to bootstrap Mongo indexes. Please refer to the logs for more information.", e);
         }
         LOGGER.info("Done bootstrapping Mongo indexes.");
+    }
+
+    private void createAdminUser() {
+        if(seyrenConfig.isSecurityEnabled() && serviceProvider.equals("mongo")) {
+            if(getUser(adminUsername) == null) {
+                User admin = new User(adminUsername, passwordEncoder.encode(adminPassword));
+                admin.setRoles(new HashSet<String>(Arrays.asList("USER", "ADMIN")));
+                addUser(admin);
+            }
+        }
     }
 
     private void createIndices() {
@@ -122,6 +145,10 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore,
 
     private DBCollection getPermissionsCollection() {
         return mongo.getCollection("permissions");
+    }
+
+    private DBCollection getUsersCollection() {
+        return mongo.getCollection("users");
     }
 
     protected SeyrenResponse executeQueryAndCollectResponse(DBObject query) {
@@ -374,5 +401,33 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore,
         DBObject permissionToDBObject = mapper.permissionToDBObject(permissions);
         DBObject perDbObject = forId(permissions.getName());
         getPermissionsCollection().update(perDbObject, permissionToDBObject);
+    }
+
+    @Override
+    public User addUser(User user) {
+        user.setId(ObjectId.get().toString());
+        getUsersCollection().insert(mapper.userToDBObject(user));
+        return user;
+    }
+
+    @Override
+    public String[] autoCompleteUsers(String userPattern) {
+        Pattern p = Pattern.compile(userPattern + ".*");
+        DBCursor dbc = getUsersCollection().find(new BasicDBObject("username", p));
+        List<String> users = new ArrayList<String>();
+        while (dbc.hasNext()) {
+            users.add(mapper.userFrom(dbc.next()).getUsername());
+        }
+        dbc.close();
+        return users.toArray(new String[users.size()]);
+    }
+
+    @Override
+    public User getUser(String username) {
+        DBObject dbo = getUsersCollection().findOne(object("username", username));
+        if(dbo == null) {
+            return null;
+        }
+        return mapper.userFrom(dbo);
     }
 }

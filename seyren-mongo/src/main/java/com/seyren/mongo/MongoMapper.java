@@ -132,6 +132,18 @@ public class MongoMapper {
         return permissions;
     }
 
+
+    public User userFrom(DBObject dbo) {
+        String userId = dbo.get("_id").toString();
+        String username = dbo.get("username").toString();
+        String passwordEncoded = dbo.get("password").toString();
+        Set<String> roles = new HashSet<String>(Arrays.asList(dbo.get("roles").toString().split(";")));
+        User user = new User(username, passwordEncoded);
+        user.setId(userId);
+        user.setRoles(roles);
+        return user;
+    }
+
     public DBObject checkToDBObject(Check check) {
         return new BasicDBObject(propertiesToMap(check));
     }
@@ -146,6 +158,10 @@ public class MongoMapper {
 
     public DBObject permissionToDBObject(SubscriptionPermissions permissions) {
         return new BasicDBObject(propertiesToMap(permissions));
+    }
+
+    public DBObject userToDBObject(User user) {
+        return new BasicDBObject(propertiesToMap(user));
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -244,6 +260,15 @@ public class MongoMapper {
         return map;
     }
 
+    private Map propertiesToMap(User user) {
+        Map map = new HashMap();
+        map.put("_id", user.getId());
+        map.put("username", user.getUsername());
+        map.put("password", user.getPassword());
+        map.put("roles", user.getRolesDelimited());
+        return map;
+    }
+
     private boolean getBoolean(DBObject dbo, String key) {
         return (Boolean) dbo.get(key);
     }
@@ -297,5 +322,4 @@ public class MongoMapper {
     private SubscriptionType getSubscriptionType(String value) {
         return value == null ? null : SubscriptionType.valueOf(value);
     }
-
 }

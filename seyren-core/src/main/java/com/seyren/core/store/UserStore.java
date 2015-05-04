@@ -11,12 +11,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.seyren.core.security.db;
+package com.seyren.core.store;
 
-import java.util.List;
+import com.seyren.core.domain.User;
 
-public interface Dao<T extends Entity> {
-    T save(T entity);
-
-    List<T> findLike(String column, String pattern);
+public interface UserStore {
+    User addUser(User user);
+    String[] autoCompleteUsers(String userPattern);
+    User getUser(String username);
 }

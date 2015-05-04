@@ -14,35 +14,26 @@
 package com.seyren.core.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.seyren.core.security.db.Entity;
+import com.google.common.base.Joiner;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.*;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-@javax.persistence.Entity
-public class User implements Entity, UserDetails {
+public class User implements UserDetails {
 
-    @Id
-    @GeneratedValue
-    private Long id;
+    private String id;
 
-    @Column(unique = true, length = 16, nullable = false)
     private String username;
 
-
-    @Column(length = 80, nullable = false)
     private String password;
 
-    @ElementCollection(fetch = FetchType.EAGER)
     private Set<String> roles = new HashSet<String>();
-
 
     protected User() {
 
@@ -115,15 +106,19 @@ public class User implements Entity, UserDetails {
         return roles;
     }
 
+    public String getRolesDelimited() {
+        return Joiner.on(";").join(getRoles());
+    }
+
     public void setRoles(Set<String> roles) {
         this.roles = roles;
     }
 
-    public Long getId() {
-        return id;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public String getId() {
+        return id;
     }
 }

@@ -79,9 +79,7 @@
         <org.springframework.version>4.1.4.RELEASE</org.springframework.version>
         <spring.security.version>4.0.0.RELEASE</spring.security.version>
         <javax.servlet-api.version>2.5</javax.servlet-api.version>
-        <org.hibernate.version>4.3.5.Final</org.hibernate.version>
         <commons-dbcp.version>1.4</commons-dbcp.version>
-        <org.hsqldb.version>2.3.2</org.hsqldb.version>
     </properties>
     
     <prerequisites>
@@ -387,31 +385,6 @@
                 <version>${org.springframework.version}</version>
             </dependency>
             <dependency>
-               <groupId>org.hsqldb</groupId>
-               <artifactId>hsqldb</artifactId>
-               <version>${org.hsqldb.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-jdbc</artifactId>
-                <version>${org.springframework.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-jdbc</artifactId>
-                <version>${org.springframework.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-tx</artifactId>
-                <version>${org.springframework.version}</version>
-            </dependency>
-             <dependency>
-                 <groupId>org.springframework</groupId>
-                 <artifactId>spring-orm</artifactId>
-                 <version>${org.springframework.version}</version>
-              </dependency>
-            <dependency>
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-core</artifactId>
                 <version>${spring.security.version}</version>
@@ -430,11 +403,6 @@
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-ldap</artifactId>
                 <version>${spring.security.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-entitymanager</artifactId>
-                <version>${org.hibernate.version}</version>
             </dependency>
             <dependency>
                 <groupId>commons-dbcp</groupId>

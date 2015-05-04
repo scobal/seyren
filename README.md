@@ -137,14 +137,8 @@ The target for a Slack subscription will be the channel name (including the `#`,
 * admin.username  - Admin username. [string]
 * admin.password - Admin password. [string]
 * password.encoder - Password used to encode when stored in the DB. [string]
-* authentication.service - Authentication provider for spring. Options: [ldap, database]
-* ldap.url - Ldap url . [string]
-* db.user - Database username. [string]
-* db.pass - Database password. [string]
-* db.url - Database connection string. [string]
-* db.driver - Database driver. [string]
-* db.log - Log database details. [boolean]
-* db.generate - Generate the database tables. [boolean]
+* authentication.service - Authentication provider for spring. Options: [ldap, mongo]
+* ldap.url - Ldap url . [string, optional if you are using mongodb provider]
 ##Seyren API
 
 See [Seyren API](API.md)

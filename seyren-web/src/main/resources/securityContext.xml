@@ -2,10 +2,8 @@
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:security="http://www.springframework.org/schema/security"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:tx="http://www.springframework.org/schema/tx"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
         http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
-        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
 
     <context:component-scan base-package="com.seyren" />
@@ -56,51 +54,19 @@
         </constructor-arg>
     </bean>
 
-    <!-- Database -->
+    <!-- Mongo DB-->
 
     <bean id="passwordEncoder" class="org.springframework.security.crypto.password.StandardPasswordEncoder">
         <constructor-arg value="${password.encoder}"/>
     </bean>
 
-    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
-        <property name="username" value="{db.user}" />
-        <property name="password" value="{db.pass}" />
-        <property name="driverClassName" value="${db.driver}"/>
-        <property name="url" value="${db.url}" />
-    </bean>
-
-    <bean id="dataBaseInitializer" class="com.seyren.core.security.db.Initializer" init-method="initDataBase">
-        <constructor-arg ref="database"/>
-        <constructor-arg ref="passwordEncoder" />
-    </bean>
-
-    <bean id="databaseUserManagement" class="com.seyren.core.security.db.DatabaseUserManagement">
-        <constructor-arg ref="database"/>
+    <bean id="mongoUserManagement" class="com.seyren.core.security.mongo.MongoUserManagement">
         <constructor-arg ref="passwordEncoder"/>
     </bean>
 
-    <!-- DB Persistence-->
-
-    <bean id="database" class="com.seyren.core.security.db.JpaUserDao">
+    <bean id="mongo" class="com.seyren.core.security.mongo.MongoUserDetails">
+        <constructor-arg ref="passwordEncoder"/>
     </bean>
-
-    <bean id="entityManagerFactory"
-          class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-        <property name="dataSource" ref="dataSource"/>
-        <property name="persistenceUnitName" value="seyren"/>
-        <property name="jpaVendorAdapter">
-            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
-                <property name="generateDdl" value="${db.generate}"/>
-                <property name="showSql" value="${db.log}"/>
-            </bean>
-        </property>
-    </bean>
-
-    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
-        <property name="entityManagerFactory" ref="entityManagerFactory"/>
-    </bean>
-
-    <tx:annotation-driven transaction-manager="transactionManager"/>
 
     <!-- Web Service -->
 
@@ -123,10 +89,8 @@
         <security:authentication-provider ref="ldapAuthenticationProvider"/>
     </security:authentication-manager>
 
-    <security:authentication-manager id="databaseAuthenticationManager">
-        <security:authentication-provider user-service-ref="database">
-            <security:password-encoder ref="passwordEncoder"></security:password-encoder>
-        </security:authentication-provider>
+    <security:authentication-manager id="mongoAuthenticationManager">
+        <security:authentication-provider ref="mongoAuthenticationProvider"/>
     </security:authentication-manager>
 
     <bean class="com.seyren.core.security.AuthenticationTokenFilter" id="authenticationTokenProcessingFilter">
