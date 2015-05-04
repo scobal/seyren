@@ -74,6 +74,9 @@ The following options can be supplied as system properties or environment variab
 * `SMTP_PASSWORD` - The smtp server password if authenticated SMTP is used. Default: ``
 * `SMTP_PROTOCOL` - The smtp server protocol if authenticated SMTP is used. Default: `smtp`
 
+##### [HTTP]
+* `HTTP_NOTIFICATION_URL` - The url for a resource that contains a POST HTTP Method. Default: ``
+
 ##### [Flowdock](https://www.flowdock.com)
 
 Use a [Flow API token](https://www.flowdock.com/account/tokens) as Target when adding a new subscription.
