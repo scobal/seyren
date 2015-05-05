@@ -42,19 +42,16 @@ public class HipChatNotificationService implements NotificationService {
     
     private final SeyrenConfig seyrenConfig;
     private final String baseUrl;
-    private final String apiVersion;
     
     @Inject
     public HipChatNotificationService(SeyrenConfig seyrenConfig) {
         this.seyrenConfig = seyrenConfig;
         this.baseUrl = seyrenConfig.getHipChatBaseUrl();
-        this.apiVersion = seyrenConfig.getHipChatApiVersion();
     }
     
     protected HipChatNotificationService(SeyrenConfig seyrenConfig, String baseUrl) {
         this.seyrenConfig = seyrenConfig;
         this.baseUrl = baseUrl;
-        this.apiVersion = seyrenConfig.getHipChatApiVersion();
     }
     
     @Override
@@ -89,18 +86,16 @@ public class HipChatNotificationService implements NotificationService {
         for (String roomId : roomIds) {
             LOGGER.info("Posting: {} to {}: {} {}", from, roomId, message, color);
             HttpClient client = HttpClientBuilder.create().build();
-            String url = baseUrl + "/v" + apiVersion + "/rooms/message";
+            String url = baseUrl + "/v2/room/" + roomId + "/notification?auth_token=" + authToken;
             HttpPost post = new HttpPost(url);
-            
+
             try {
                 List<BasicNameValuePair> parameters = new ArrayList<BasicNameValuePair>();
-                parameters.add(new BasicNameValuePair("auth_token", authToken));
-                parameters.add(new BasicNameValuePair("from", from));
-                parameters.add(new BasicNameValuePair("room_id", roomId));
                 parameters.add(new BasicNameValuePair("message", message));
                 parameters.add(new BasicNameValuePair("color", color.name().toLowerCase()));
+                parameters.add(new BasicNameValuePair("message_format", "html"));
                 if (notify) {
-                    parameters.add(new BasicNameValuePair("notify", "1"));
+                    parameters.add(new BasicNameValuePair("notify", "true"));
                 }
                 post.setEntity(new UrlEncodedFormEntity(parameters));
                 client.execute(post);
