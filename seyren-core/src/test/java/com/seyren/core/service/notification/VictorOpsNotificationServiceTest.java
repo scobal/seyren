@@ -33,6 +33,8 @@ import static com.github.restdriver.clientdriver.RestClientDriver.giveResponse;
 import static com.github.restdriver.clientdriver.RestClientDriver.onRequestTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class VictorOpsNotificationServiceTest {
 
@@ -44,7 +46,8 @@ public class VictorOpsNotificationServiceTest {
 
     @Before
     public void before() {
-        mockSeyrenConfig = new SeyrenConfig();
+        mockSeyrenConfig = mock(SeyrenConfig.class);
+        when(mockSeyrenConfig.getVictorOpsRestEndpoint()).thenReturn(clientDriver.getBaseUrl() + "/restapi/");
         service = new VictorOpsNotificationService(mockSeyrenConfig);
     }
 
@@ -69,7 +72,7 @@ public class VictorOpsNotificationServiceTest {
         Subscription subscription = new Subscription()
                 .withEnabled(true)
                 .withType(SubscriptionType.VICTOROPS)
-                .withTarget(clientDriver.getBaseUrl() + "/restapi/routingurl");
+                .withTarget("routingurl");
         Alert alert = new Alert()
                 .withFromType(AlertType.OK)
                 .withToType(AlertType.ERROR);

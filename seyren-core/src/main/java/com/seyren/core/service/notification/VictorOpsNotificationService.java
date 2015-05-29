@@ -13,6 +13,8 @@
  */
 package com.seyren.core.service.notification;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 
@@ -61,15 +63,24 @@ public class VictorOpsNotificationService implements NotificationService {
     @Override
     public void sendNotification(Check check, Subscription subscription, List<Alert> alerts) throws NotificationFailedException {
 
-        String victorOpsRestEndpoint = StringUtils.trimToNull(subscription.getTarget());
+        String victorOpsRestEndpoint = seyrenConfig.getVictorOpsRestEndpoint();
+        String victorOpsRoutingKey = StringUtils.defaultIfEmpty(subscription.getTarget(), "default");
 
         if (victorOpsRestEndpoint == null) {
             LOGGER.warn("VictorOps REST API endpoint needs to be set before sending notifications");
             return;
         }
 
+        URI victorOpsUri = null;
+        try {
+            victorOpsUri = new URI(victorOpsRestEndpoint).resolve(new URI(victorOpsRoutingKey));
+        } catch (URISyntaxException use) {
+            LOGGER.warn("Invalid endpoint is given.");
+            return;
+        }
+
         HttpClient client = HttpClientBuilder.create().build();
-        HttpPost post = new HttpPost(victorOpsRestEndpoint);
+        HttpPost post = new HttpPost(victorOpsUri);
         try {
             HttpEntity entity = new StringEntity(getDescription(check, alerts), ContentType.APPLICATION_JSON);
             post.setEntity(entity);

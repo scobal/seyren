@@ -79,6 +79,7 @@ public class SeyrenConfig {
     private final Integer snmpPort;
     private final String snmpCommunity;
     private final String snmpOID;
+    private final String victorOpsRestAPIEndpoint;
     private final String emailTemplateFileName;
     private final int noOfThreads;
     public SeyrenConfig() {
@@ -149,6 +150,9 @@ public class SeyrenConfig {
         this.snmpPort = Integer.parseInt(configOrDefault("SNMP_PORT", "162"));
         this.snmpCommunity = configOrDefault("SNMP_COMMUNITY", "public");
         this.snmpOID = configOrDefault("SNMP_OID", "1.3.6.1.4.1.32473.1");
+
+        //VictorOps
+        this.victorOpsRestAPIEndpoint = configOrDefault("VICTOROPS_REST_ENDPOINT", "");
 
         // Template
         this.emailTemplateFileName = configOrDefault("TEMPLATE_EMAIL_FILE_PATH","com/seyren/core/service/notification/email-template.vm");
@@ -405,6 +409,12 @@ public class SeyrenConfig {
 
     @JsonIgnore
     public String getEmailTemplateFileName() { return emailTemplateFileName; }
+
+    @JsonIgnore
+    public String getVictorOpsRestEndpoint() {
+        return victorOpsRestAPIEndpoint;
+    }
+
 
   private static String configOrDefault(String propertyName, String defaultValue) {
         return configOrDefault(list(propertyName), defaultValue);
