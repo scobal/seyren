@@ -129,8 +129,7 @@ The target for a Slack subscription will be the channel name (including the `#`,
 * `TWILIO_URL` - The Twilio API URL. Mostly useful for testing. Default `https://api.twilio.com/2010-04-01/Accounts`
 
 ##### [Victorops](https://www.victorops.com/)
-* `VICTOROPS_REST_ENDPOINT` - The REST Endpoint given by Victorops. Read more here [[REST Integration http://victorops
-.force.com/knowledgebase/articles/Integration/Alert-Ingestion-API-Documentation/]]  Default ``
+* `VICTOROPS_REST_ENDPOINT` - The REST Endpoint given by Victorops. See [REST Integration]( http://victorops.force.com/knowledgebase/articles/Integration/Alert-Ingestion-API-Documentation/) Default ``
 
 ##Seyren API
 
