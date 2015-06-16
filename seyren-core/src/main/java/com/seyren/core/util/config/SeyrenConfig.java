@@ -52,6 +52,7 @@ public class SeyrenConfig {
     private final String twilioAccountSid;
     private final String twilioAuthToken;
     private final String twilioPhoneNumber;
+    private final List<String> opsGenieTeams;
     private final String hipChatBaseUrl;
     private final String hipChatAuthToken;
     private final String hipChatUsername;
@@ -127,6 +128,9 @@ public class SeyrenConfig {
         this.twilioAuthToken = configOrDefault("TWILIO_AUTH_TOKEN", "");
         this.twilioPhoneNumber = configOrDefault("TWILIO_PHONE_NUMBER", "");
         
+        // OpsGenie
+        this.opsGenieTeams = Arrays.asList(configOrDefault("OPSGENIE_TEAMS", "ops").split(","));
+        
         // Hubot
         this.hubotUrl = configOrDefault(list("HUBOT_URL", "SEYREN_HUBOT_URL"), "");
         
@@ -198,6 +202,11 @@ public class SeyrenConfig {
     @JsonIgnore
     public String getTwilioAuthToken() {
         return twilioAuthToken;
+    }
+    
+    @JsonIgnore
+    public List<String> getOpsGenieTeams() {
+        return opsGenieTeams;
     }
     
     @JsonIgnore
