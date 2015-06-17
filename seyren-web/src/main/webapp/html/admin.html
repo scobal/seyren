@@ -1,0 +1,39 @@
+<br/>
+<br/>
+<h2>Administration Tools</h2>
+<div class="col-md-3">
+    <div class="alert alert-{{state}}">{{statemsg}}
+        <a ng-show="state === 'warning'" ng-click="openAddUser()" class="alert-link">Click to Add.</a>
+    </div>
+    <form name="form" role="form">
+        <div class="form-group">
+            <label for="pername">Edit User</label>
+            <input placeholder="Username" type="text" ng-change="search()" name="pername" id="pername" class="form-control" ng-keydown="checkKeyDown($event)" ng-model="pername" required />
+            <ul id="suggestions" class="user-list">
+                <li ng-repeat="user in users|limitTo:5" class="blockSpan" ng-click="getPermissionsChecks($index)" ng-mouseover="$parent.selectedIndex=$index" ng-class="{active : selectedIndex===$index}">{{user}}</li>
+            </ul>
+            <span ng-show="form.username.$dirty && form.pername.$error.required" class="help-block">Name is Required</span>
+        </div>
+    </form>
+    <div class="panel panel-primary" ng-show="types">
+        <div class="panel-heading">
+            <h3 class="panel-title">Subscription Permissions</h3>
+        </div>
+        <div class="panel-body">
+            <ul>
+                <li ng-repeat="type in types">
+                    <label class="checkbox" for="{{type}}">
+                        <input type="checkbox" ng-checked="writes.indexOf(type) > -1" name="group" id="{{type}}" value="{{type}}"
+                               ng-click="togglePermission(type)" />
+                        {{type}}
+                    </label>
+                </li>
+            </ul>
+        </div>
+        <div class="panel-footer">
+            <button type="submit" class="btn btn-primary" ng-show="types" ng-click="updatePermissionsChecks()"><i class="glyphicon glyphicon-ok glyphicon-white"></i>&nbsp;&nbsp;Save changes</button>
+        </div>
+    </div>
+</div>
+<div class="absolute modal" tabindex="-1" role="dialog" ng-include="'./html/modal-add-user.html'" id="addUserModal">
+</div>
