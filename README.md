@@ -134,6 +134,20 @@ The target for a Slack subscription will be the channel name (including the `#`,
 ##### [Victorops](https://www.victorops.com/)
 * `VICTOROPS_REST_ENDPOINT` - The REST Endpoint given by Victorops. See [REST Integration]( http://victorops.force.com/knowledgebase/articles/Integration/Alert-Ingestion-API-Documentation/) Default ``
 
+##### [Spring Security](http://projects.spring.io/spring-security/)
+* `SECURITY_ENABLED` - Enabled Authentication for both client and server side code. Default: `false`
+###### security.properties configuration
+* admin.username  - Admin username. [string]
+* admin.password - Admin password. [string]
+* password.encoder - Password used to encode when stored in the DB. [string]
+* authentication.service - Authentication provider for spring. Options: [ldap, database]
+* ldap.url - Ldap url . [string]
+* db.user - Database username. [string]
+* db.pass - Database password. [string]
+* db.url - Database connection string. [string]
+* db.driver - Database driver. [string]
+* db.log - Log database details. [boolean]
+* db.generate - Generate the database tables. [boolean]
 ##Seyren API
 
 See [Seyren API](API.md)

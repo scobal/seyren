@@ -81,6 +81,7 @@ public class SeyrenConfig {
     private final String victorOpsRestAPIEndpoint;
     private final String emailTemplateFileName;
     private final int noOfThreads;
+    private final boolean securityEnabled;
     private final String httpNotificationUrl;
     public SeyrenConfig() {
         
@@ -159,6 +160,9 @@ public class SeyrenConfig {
 
         // Template
         this.emailTemplateFileName = configOrDefault("TEMPLATE_EMAIL_FILE_PATH","com/seyren/core/service/notification/email-template.vm");
+
+        //spring security
+        this.securityEnabled = Boolean.parseBoolean(configOrDefault("SECURITY_ENABLED", "false"));
     }
     
     @PostConstruct
@@ -414,6 +418,11 @@ public class SeyrenConfig {
     public String getEmailTemplateFileName() { return emailTemplateFileName; }
 
     @JsonIgnore
+    public boolean isSecurityEnabled() {
+         return securityEnabled;
+    }
+
+    @JsonIgnore
     public String getVictorOpsRestEndpoint() {
         return victorOpsRestAPIEndpoint;
     }
@@ -471,4 +480,6 @@ public class SeyrenConfig {
         
         return baseParts;
     }
+
+
 }

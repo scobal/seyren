@@ -13,29 +13,20 @@
  */
 package com.seyren.mongo;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.google.common.base.Strings;
+import com.mongodb.BasicDBList;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
+import com.seyren.core.domain.*;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
 
-import com.mongodb.BasicDBList;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
-import com.seyren.core.domain.Alert;
-import com.seyren.core.domain.AlertType;
-import com.seyren.core.domain.Check;
-import com.seyren.core.domain.Subscription;
-import com.seyren.core.domain.SubscriptionType;
+import java.math.BigDecimal;
+import java.util.*;
 
 public class MongoMapper {
-    
+
     public Check checkFrom(DBObject dbo) {
         String id = dbo.get("_id").toString();
         String name = getString(dbo, "name");
@@ -55,7 +46,7 @@ public class MongoMapper {
         for (Object o : list) {
             subscriptions.add(subscriptionFrom((DBObject) o));
         }
-        
+
         return new Check().withId(id)
                 .withName(name)
                 .withDescription(description)
@@ -71,7 +62,7 @@ public class MongoMapper {
                 .withLastCheck(lastCheck)
                 .withSubscriptions(subscriptions);
     }
-    
+
     public Subscription subscriptionFrom(DBObject dbo) {
         String id = dbo.get("_id").toString();
         String target = getString(dbo, "target");
@@ -89,7 +80,7 @@ public class MongoMapper {
         LocalTime fromTime = getLocalTime(dbo, "fromHour", "fromMin");
         LocalTime toTime = getLocalTime(dbo, "toHour", "toMin");
         boolean enabled = getBoolean(dbo, "enabled");
-        
+
         return new Subscription()
                 .withId(id)
                 .withTarget(target)
@@ -108,7 +99,7 @@ public class MongoMapper {
                 .withToTime(toTime)
                 .withEnabled(enabled);
     }
-    
+
     public Alert alertFrom(DBObject dbo) {
         String id = dbo.get("_id").toString();
         String checkId = getString(dbo, "checkId");
@@ -119,7 +110,7 @@ public class MongoMapper {
         AlertType fromType = AlertType.valueOf(getString(dbo, "fromType"));
         AlertType toType = AlertType.valueOf(getString(dbo, "toType"));
         DateTime timestamp = getDateTime(dbo, "timestamp");
-        
+
         return new Alert()
                 .withId(id)
                 .withCheckId(checkId)
@@ -131,19 +122,32 @@ public class MongoMapper {
                 .withToType(toType)
                 .withTimestamp(timestamp);
     }
-    
+
+    public SubscriptionPermissions permissionsFrom(DBObject dbo) {
+        String name = dbo.get("_id").toString();
+        String write = getString(dbo, "write");
+        SubscriptionPermissions permissions = new SubscriptionPermissions();
+        permissions.setName(name);
+        permissions.setWriteTypes(write.split(";"));
+        return permissions;
+    }
+
     public DBObject checkToDBObject(Check check) {
         return new BasicDBObject(propertiesToMap(check));
     }
-    
+
     public DBObject subscriptionToDBObject(Subscription subscription) {
         return new BasicDBObject(propertiesToMap(subscription));
     }
-    
+
     public DBObject alertToDBObject(Alert alert) {
         return new BasicDBObject(propertiesToMap(alert));
     }
-    
+
+    public DBObject permissionToDBObject(SubscriptionPermissions permissions) {
+        return new BasicDBObject(propertiesToMap(permissions));
+    }
+
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private Map propertiesToMap(Check check) {
         Map map = new HashMap();
@@ -180,7 +184,7 @@ public class MongoMapper {
         }
         return map;
     }
-    
+
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private Map propertiesToMap(Subscription subscription) {
         Map map = new HashMap();
@@ -210,7 +214,7 @@ public class MongoMapper {
         map.put("enabled", subscription.isEnabled());
         return map;
     }
-    
+
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private Map propertiesToMap(Alert alert) {
         Map map = new HashMap();
@@ -232,11 +236,18 @@ public class MongoMapper {
         map.put("timestamp", new Date(alert.getTimestamp().getMillis()));
         return map;
     }
-    
+
+    private Map propertiesToMap(SubscriptionPermissions permissions) {
+        Map map = new HashMap();
+        map.put("_id", permissions.getName());
+        map.put("write", permissions.getWriteTypesDelimited());
+        return map;
+    }
+
     private boolean getBoolean(DBObject dbo, String key) {
         return (Boolean) dbo.get(key);
     }
-    
+
     private boolean getOptionalBoolean(DBObject dbo, String key, boolean defaultValue) {
         Object value = dbo.get(key);
         if (value == null) {
@@ -244,7 +255,7 @@ public class MongoMapper {
         }
         return (Boolean) value;
     }
-    
+
     private DateTime getDateTime(DBObject dbo, String key) {
         Date date = (Date) dbo.get(key);
         if (date != null) {
@@ -252,17 +263,17 @@ public class MongoMapper {
         }
         return null;
     }
-    
+
     private LocalTime getLocalTime(DBObject dbo, String hourKey, String minKey) {
         Integer hour = getInteger(dbo, hourKey);
         Integer min = getInteger(dbo, minKey);
         return (hour == null || min == null) ? null : new LocalTime(hour, min);
     }
-    
+
     private String getString(DBObject dbo, String key) {
         return (String) dbo.get(key);
     }
-    
+
     private BigDecimal getBigDecimal(DBObject dbo, String key) {
         Object result = dbo.get(key);
         if (result == null) {
@@ -270,11 +281,11 @@ public class MongoMapper {
         }
         return new BigDecimal(result.toString());
     }
-    
+
     private Integer getInteger(DBObject dbo, String key) {
         return (Integer) dbo.get(key);
     }
-    
+
     private BasicDBList getBasicDBList(DBObject dbo, String key) {
         BasicDBList result = (BasicDBList) dbo.get(key);
         if (result == null) {
@@ -282,9 +293,9 @@ public class MongoMapper {
         }
         return result;
     }
-    
+
     private SubscriptionType getSubscriptionType(String value) {
         return value == null ? null : SubscriptionType.valueOf(value);
     }
-    
+
 }
