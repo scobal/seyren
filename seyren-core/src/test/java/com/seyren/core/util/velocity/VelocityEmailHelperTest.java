@@ -44,21 +44,6 @@ public class VelocityEmailHelperTest {
     }
     
     @Test
-    public void subjectIsCorrect() {
-        
-        Check check = new Check()
-                .withId("123")
-                .withEnabled(true)
-                .withName("test-check")
-                .withState(AlertType.ERROR);
-        
-        String subject = emailHelper.createSubject(check);
-        
-        assertThat(subject, is("Seyren alert: test-check"));
-        
-    }
-    
-    @Test
     public void bodyContainsRightSortsOfThings() {
         
         Check check = new Check()
@@ -156,5 +141,42 @@ public class VelocityEmailHelperTest {
         EmailHelper emailHelper = new VelocityEmailHelper(mockConfiguration);
         String body = emailHelper.createBody(null, null, null);
         assertThat(body, containsString("Test content."));
+    }
+
+    @Test
+    public void bodyContainsItemsFromModel() {
+
+        Check check = new Check()
+                .withId("123")
+                .withEnabled(true)
+                .withName("test-check")
+                .withDescription("Some great description")
+                .withWarn(new BigDecimal("2.0"))
+                .withError(new BigDecimal("3.0"))
+                .withState(AlertType.ERROR);
+        Subscription subscription = new Subscription()
+                .withEnabled(true)
+                .withType(SubscriptionType.EMAIL)
+                .withTarget("some@email.com");
+        Alert alert = new Alert()
+                .withTarget("some.value")
+                .withValue(new BigDecimal("4.0"))
+                .withTimestamp(new DateTime())
+                .withFromType(AlertType.OK)
+                .withToType(AlertType.ERROR);
+        List<Alert> alerts = Arrays.asList(alert);
+
+        String subject = emailHelper.createSubject(check, subscription, alerts);
+
+        assertThat(subject, is("Seyren alert: test-check"));
+    }
+
+    @Test
+    public void subjectTemplateLocationShouldBeConfigurable() {
+        SeyrenConfig mockConfiguration = mock(SeyrenConfig.class);
+        when(mockConfiguration.getEmailSubjectTemplateFileName()).thenReturn("test-email-template.vm");
+        EmailHelper emailHelper = new VelocityEmailHelper(mockConfiguration);
+        String subject = emailHelper.createSubject(null, null, null);
+        assertThat(subject, containsString("Test content."));
     }
 }

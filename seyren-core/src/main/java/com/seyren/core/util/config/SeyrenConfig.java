@@ -80,6 +80,7 @@ public class SeyrenConfig {
     private final String snmpOID;
     private final String victorOpsRestAPIEndpoint;
     private final String emailTemplateFileName;
+    private final String emailSubjectTemplateFileName;
     private final int noOfThreads;
     private final String httpNotificationUrl;
     public SeyrenConfig() {
@@ -159,6 +160,7 @@ public class SeyrenConfig {
 
         // Template
         this.emailTemplateFileName = configOrDefault("TEMPLATE_EMAIL_FILE_PATH","com/seyren/core/service/notification/email-template.vm");
+        this.emailSubjectTemplateFileName = configOrDefault("TEMPLATE_EMAIL_SUBJECT_FILE_PATH","com/seyren/core/service/notification/email-subject-template.vm");
     }
     
     @PostConstruct
@@ -412,6 +414,9 @@ public class SeyrenConfig {
 
     @JsonIgnore
     public String getEmailTemplateFileName() { return emailTemplateFileName; }
+
+    @JsonIgnore
+    public String getEmailSubjectTemplateFileName() { return emailSubjectTemplateFileName; }
 
     @JsonIgnore
     public String getVictorOpsRestEndpoint() {
