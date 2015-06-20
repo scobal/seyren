@@ -138,6 +138,7 @@ public class VelocityEmailHelperTest {
     public void templateLocationShouldBeConfigurable() {
         SeyrenConfig mockConfiguration = mock(SeyrenConfig.class);
         when(mockConfiguration.getEmailTemplateFileName()).thenReturn("test-email-template.vm");
+        when(mockConfiguration.getEmailSubjectTemplateFileName()).thenReturn("test-email-template.vm");
         EmailHelper emailHelper = new VelocityEmailHelper(mockConfiguration);
         String body = emailHelper.createBody(null, null, null);
         assertThat(body, containsString("Test content."));
@@ -175,6 +176,7 @@ public class VelocityEmailHelperTest {
     public void subjectTemplateLocationShouldBeConfigurable() {
         SeyrenConfig mockConfiguration = mock(SeyrenConfig.class);
         when(mockConfiguration.getEmailSubjectTemplateFileName()).thenReturn("test-email-template.vm");
+        when(mockConfiguration.getEmailTemplateFileName()).thenReturn("test-email-template.vm");
         EmailHelper emailHelper = new VelocityEmailHelper(mockConfiguration);
         String subject = emailHelper.createSubject(null, null, null);
         assertThat(subject, containsString("Test content."));
