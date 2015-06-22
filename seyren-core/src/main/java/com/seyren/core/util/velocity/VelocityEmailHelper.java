@@ -39,6 +39,9 @@ public class VelocityEmailHelper implements EmailHelper {
     // Will first attempt to load from classpath then fall back to loading from the filesystem.
     private final String TEMPLATE_FILE_NAME;
     private final String TEMPLATE_CONTENT;
+
+    private final String TEMPLATE_SUBJECT_FILE_NAME;
+    private final String TEMPLATE_SUBJECT_CONTENT;
     
     private final SeyrenConfig seyrenConfig;
 
@@ -51,18 +54,25 @@ public class VelocityEmailHelper implements EmailHelper {
     public VelocityEmailHelper(SeyrenConfig seyrenConfig) {
         this.seyrenConfig = seyrenConfig;
         TEMPLATE_FILE_NAME = seyrenConfig.getEmailTemplateFileName();
-        TEMPLATE_CONTENT = getTemplateAsString();
+        TEMPLATE_CONTENT = getTemplateAsString(TEMPLATE_FILE_NAME);
+
+        TEMPLATE_SUBJECT_FILE_NAME = seyrenConfig.getEmailSubjectTemplateFileName();
+        TEMPLATE_SUBJECT_CONTENT = getTemplateAsString(TEMPLATE_SUBJECT_FILE_NAME);
     }
     
-    public String createSubject(Check check) {
-        return "Seyren alert: " + check.getName();
+    public String createSubject(Check check, Subscription subscription, List<Alert> alerts) {
+        return evaluateTemplate(check, subscription, alerts, TEMPLATE_SUBJECT_CONTENT);
     }
-    
+
     @Override
     public String createBody(Check check, Subscription subscription, List<Alert> alerts) {
+        return evaluateTemplate(check, subscription, alerts, TEMPLATE_CONTENT);
+    }
+
+    private String evaluateTemplate(Check check, Subscription subscription, List<Alert> alerts, String templateContent) {
         VelocityContext context = createVelocityContext(check, subscription, alerts);
         StringWriter stringWriter = new StringWriter();
-        Velocity.evaluate(context, stringWriter, "EmailNotificationService", TEMPLATE_CONTENT);
+        Velocity.evaluate(context, stringWriter, "EmailNotificationService", templateContent);
         return stringWriter.toString();
     }
     
@@ -74,16 +84,16 @@ public class VelocityEmailHelper implements EmailHelper {
         return result;
     }
     
-    private String getTemplateAsString() {
+    private String getTemplateAsString(String templateFileName) {
         try {
             // Handle the template filename as either a class path resource or an absolute path to the filesystem.
-            InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(TEMPLATE_FILE_NAME);
+            InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(templateFileName);
             if (inputStream == null) {
-                inputStream = new FileInputStream(TEMPLATE_FILE_NAME);
+                inputStream = new FileInputStream(templateFileName);
             }
             return IOUtils.toString(inputStream);
         } catch (IOException e) {
-            throw new RuntimeException("Template file could not be found on classpath at " + TEMPLATE_FILE_NAME);
+            throw new RuntimeException("Template file could not be found on classpath at " + templateFileName);
         }
     }
     

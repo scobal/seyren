@@ -21,7 +21,7 @@ import com.seyren.core.domain.Subscription;
 
 public interface EmailHelper {
     
-    String createSubject(Check check);
+    String createSubject(Check check, Subscription subscription, List<Alert> alerts);
     
     String createBody(Check check, Subscription subscription, List<Alert> alerts);
     

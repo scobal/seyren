@@ -55,7 +55,7 @@ public class EmailNotificationService implements NotificationService {
             Email email = new Email()
                     .withTo(subscription.getTarget())
                     .withFrom(seyrenConfig.getSmtpFrom())
-                    .withSubject(emailHelper.createSubject(check))
+                    .withSubject(emailHelper.createSubject(check, subscription, alerts))
                     .withMessage(emailHelper.createBody(check, subscription, alerts));
             
             mailSender.send(createMimeMessage(email));
