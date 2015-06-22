@@ -100,6 +100,18 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-context-support</artifactId>
         </dependency>
+        <dependency>
+        	<groupId>com.opsgenie.integration</groupId>
+        	<artifactId>sdk</artifactId>
+        	<version>[2.0.0,)</version>
+    	</dependency>
     </dependencies>
-
+	<repositories>
+	  <repository>
+	      <id>opsgenie-repo</id>
+	      <name>OpsGenie Maven Repository</name>
+	      <url>http://repo.opsgenie.com:9393/content/groups/public</url>
+	      <layout>default</layout>
+	  </repository>
+	</repositories>
 </project>
