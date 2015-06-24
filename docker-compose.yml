@@ -25,7 +25,7 @@ web:
   links:
     - mongodb
     - graphite
-  command: /usr/share/maven/bin/mvn tomcat7:run-war -pl seyren-web
+  command: /bin/bash -c "/usr/share/maven/bin/mvn clean install -am -pl seyren-web -Dmaven.test.skip && /usr/share/maven/bin/mvn tomcat7:run-war -pl seyren-web"
   environment:
     MONGO_URL: mongodb://mongodb:27017/seyren
     GRAPHITE_URL: http://graphite
