@@ -13,45 +13,51 @@
  */
 package com.seyren.core.service.notification;
 
-import static com.google.common.collect.Iterables.*;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
 import javax.inject.Inject;
 import javax.inject.Named;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.utils.HttpClientUtils;
-import org.apache.http.impl.client.BasicResponseHandler;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.message.BasicNameValuePair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import com.seyren.core.domain.Alert;
 import com.seyren.core.domain.Check;
 import com.seyren.core.domain.Subscription;
 import com.seyren.core.domain.SubscriptionType;
 import com.seyren.core.exception.NotificationFailedException;
 import com.seyren.core.util.config.SeyrenConfig;
+import org.apache.commons.lang.StringUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.utils.HttpClientUtils;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.BasicResponseHandler;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static com.google.common.collect.Iterables.transform;
 
 @Named
 public class SlackNotificationService implements NotificationService {
     private static final Logger LOGGER = LoggerFactory.getLogger(SlackNotificationService.class);
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     private final SeyrenConfig seyrenConfig;
-    private final String baseUrl;
+    private String baseUrl;
 
     @Inject
     public SlackNotificationService(SeyrenConfig seyrenConfig) {
@@ -66,35 +72,45 @@ public class SlackNotificationService implements NotificationService {
 
     @Override
     public void sendNotification(Check check, Subscription subscription, List<Alert> alerts) throws NotificationFailedException {
-        String token = seyrenConfig.getSlackToken();
-        String channel = subscription.getTarget();
-        String username = seyrenConfig.getSlackUsername();
-        String iconUrl = seyrenConfig.getSlackIconUrl();
+        String targetUrl = subscription.getTarget();
 
-        List<String> emojis = Lists.newArrayList(
-                Splitter.on(',').omitEmptyStrings().trimResults().split(seyrenConfig.getSlackEmojis())
-        );
+        Map<String, String> query_pairs = new LinkedHashMap<String, String>();
+        try {
+            URL target = new URL(targetUrl);
+            String query = target.getQuery();
+            this.baseUrl = targetUrl.replace(query, "");
+            String[] pairs = query.split("&");
+            for (String pair : pairs) {
+                int idx = pair.indexOf("=");
+                query_pairs.put(URLDecoder.decode(pair.substring(0, idx), "UTF-8"), URLDecoder.decode(pair.substring(idx + 1), "UTF-8"));
+            }
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
+        String channel = query_pairs.get("channel");
+        String username = query_pairs.get("username");
 
-        String url = String.format("%s/api/chat.postMessage", baseUrl);
+        String url = this.baseUrl;
         HttpClient client = HttpClientBuilder.create().build();
         HttpPost post = new HttpPost(url);
         post.addHeader("accept", "application/json");
 
-        List<BasicNameValuePair> parameters = new ArrayList<BasicNameValuePair>();
-        parameters.add(new BasicNameValuePair("token", token));
-        parameters.add(new BasicNameValuePair("channel", StringUtils.removeEnd(channel, "!")));
-        parameters.add(new BasicNameValuePair("text", formatContent(emojis, check, subscription, alerts)));
-        parameters.add(new BasicNameValuePair("username", username));
-        parameters.add(new BasicNameValuePair("icon_url", iconUrl));
+        Map<String, Object> body = new HashMap<String, Object>();
+        body.put("channel", "#" + StringUtils.removeEnd(channel == null ? "dev-ops" : "datascience-ops", "!"));
+        body.put("text", formatContent(check, subscription, alerts));
+        body.put("username", username == null ? "Seyren" : username);
+        body.put("icon_emoji", ":seyren:");
 
         try {
-            post.setEntity(new UrlEncodedFormEntity(parameters));
+            HttpEntity entity = new StringEntity(MAPPER.writeValueAsString(body), ContentType.APPLICATION_JSON);
+            post.setEntity(entity);
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.info("> parameters: {}", parameters);
+                LOGGER.info("> parameters: {}", MAPPER.writeValueAsBytes(body));
             }
             HttpResponse response = client.execute(post);
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.info("> parameters: {}", parameters);
                 LOGGER.debug("Status: {}, Body: {}", response.getStatusLine(), new BasicResponseHandler().handleResponse(response));
             }
         } catch (Exception e) {
@@ -111,7 +127,8 @@ public class SlackNotificationService implements NotificationService {
         return subscriptionType == SubscriptionType.SLACK;
     }
 
-    private String formatContent(List<String> emojis, Check check, Subscription subscription, List<Alert> alerts) {
+    private String formatContent(Check check, Subscription subscription, List<Alert> alerts) {
+        List<String> emojis = new ArrayList<String>();
         String url = String.format("%s/#/checks/%s", seyrenConfig.getBaseUrl(), check.getId());
         String alertsString = Joiner.on("\n").join(transform(alerts, new Function<Alert, String>() {
             @Override
