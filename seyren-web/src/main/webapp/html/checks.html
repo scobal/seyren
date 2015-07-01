@@ -27,7 +27,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="check in checks.values  | filter:filter | orderBy:predicate:reverse" ng-click="selectCheck(check.id)" style="cursor: pointer;">
+                <tr ng-repeat="check in checks.values  | filter:filter | orderBy:[predicate,'-name']:reverse" ng-click="selectCheck(check.id)" style="cursor: pointer;">
                     <td title="{{ check.target }}">{{ check.name }}</td>
                     <td>
                         <span ng-show="check.state == 'UNKNOWN'" class="label label-default">{{ check.state }}</span>
