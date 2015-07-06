@@ -4,6 +4,10 @@
     seyrenApp.controller('ChecksController', function ChecksController($scope, $location, Checks, Seyren) {
         $scope.pollChecksInSeconds = 30;
 
+        if ($location.search().filter) {
+            $scope.filter = $location.search().filter;
+        }
+
         $scope.loadChecks = function () {
             Checks.query(function (data) {
                 $scope.checks = data;
