@@ -99,7 +99,7 @@ describe('checks page', function () {
         expect(element('table thead tr th:eq(4)').text()).toBe('Enabled');
 
         expect(element('table tbody tr').count()).toBe(1);
-        expect(element('table tbody tr td:eq(0)').text()).toBe('load longterm usage');
+        expect(element('table tbody tr td:eq(0) a').text()).toBe('load longterm usage');
         expect(element('table tbody tr td:eq(1) span:visible').text()).toBe('WARN');
         expect(element('table tbody tr td:eq(2)').text()).toBe('0.5');
         expect(element('table tbody tr td:eq(3)').text()).toBe('2.0');
