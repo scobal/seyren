@@ -423,6 +423,10 @@
             <id>oosnmp-net-releases</id>
             <url>https://oosnmp.net/dist/release</url>
         </repository>
+		<repository>
+		    <id>thirdparty</id>
+			<url>http://nexus.sb.karmalab.net/nexus/content/repositories/thirdparty/</url>
+		</repository>
     </repositories>
 
 </project>
