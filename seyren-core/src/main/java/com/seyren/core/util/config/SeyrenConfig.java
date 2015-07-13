@@ -86,6 +86,8 @@ public class SeyrenConfig {
     private final int noOfThreads;
     private final String httpNotificationUrl;
     private final boolean securityEnabled;
+    private final String scriptPath;
+    private final String scriptType;
     public SeyrenConfig() {
         
         // Base
@@ -169,8 +171,12 @@ public class SeyrenConfig {
         this.emailTemplateFileName = configOrDefault("TEMPLATE_EMAIL_FILE_PATH","com/seyren/core/service/notification/email-template.vm");
         this.emailSubjectTemplateFileName = configOrDefault("TEMPLATE_EMAIL_SUBJECT_FILE_PATH","com/seyren/core/service/notification/email-subject-template.vm");
 
-        //spring security
+        // spring security
         this.securityEnabled = Boolean.parseBoolean(configOrDefault("SECURITY_ENABLED", "false"));
+
+        // script
+        this.scriptPath = configOrDefault("SCRIPT_FILE_PATH", "");
+        this.scriptType = configOrDefault("SCRIPT_TYPE", "python");
     }
     
     @PostConstruct
@@ -443,6 +449,16 @@ public class SeyrenConfig {
         return securityEnabled;
     }
 
+    @JsonIgnore
+    public String getScriptPath() {
+        return scriptPath;
+    }
+
+    @JsonIgnore
+    public String getScriptType() {
+        return scriptType;
+    }
+
 
   private static String configOrDefault(String propertyName, String defaultValue) {
         return configOrDefault(list(propertyName), defaultValue);
@@ -496,4 +512,5 @@ public class SeyrenConfig {
         
         return baseParts;
     }
+
 }

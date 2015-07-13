@@ -135,6 +135,10 @@ The target for a Slack subscription will be the channel name (including the `#`,
 ##### [Victorops](https://www.victorops.com/)
 * `VICTOROPS_REST_ENDPOINT` - The REST Endpoint given by Victorops. See [REST Integration]( http://victorops.force.com/knowledgebase/articles/Integration/Alert-Ingestion-API-Documentation/) Default ``
 
+##### [Script]
+* `SCRIPT_FILE_PATH` - The Script file path on the file system. Default ``
+* `SCRIPT_TYPE` - The Script type. Default `python`
+
 ##### [Spring Security](http://projects.spring.io/spring-security/)
 * `SECURITY_ENABLED` - Enabled Authentication for both client and server side code. Default: `false`
 ###### security.properties configuration
