@@ -11,19 +11,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.seyren.core.domain;
+package com.seyren.core.security;
 
-public enum SubscriptionType {
-    
-    EMAIL, PAGERDUTY, HIPCHAT, HUBOT, FLOWDOCK, HTTP, IRCCAT, PUSHOVER, LOGGER, SNMP, SLACK, TWILIO, VICTOROPS,
-    OPSGENIE;
 
-    public static String[] names() {
-        SubscriptionType[] subscriptionTypes = values();
-        String[] names = new String[subscriptionTypes.length];
-        for (int i = 0; i < subscriptionTypes.length; i++) {
-            names[i] = subscriptionTypes[i].name();
-        }
-        return names;
+import com.seyren.core.domain.User;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+
+public class TokenTest {
+
+    @Test
+    public void tokenCreationandValidationTest() {
+        User user = new User("unit", "test");
+        String token = Token.createToken(user);
+        boolean isValid = Token.validateToken(token, user);
+        assertEquals(isValid, true);
     }
 }

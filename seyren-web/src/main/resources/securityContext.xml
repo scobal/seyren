@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:security="http://www.springframework.org/schema/security"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+
+    <context:component-scan base-package="com.seyren" />
+    <context:property-placeholder location="file:security.properties" order="1" ignore-resource-not-found="true" ignore-unresolvable="true"  />
+    <context:property-placeholder location="classpath:security.properties" order="2" ignore-unresolvable="true" />
+
+    <!-- LDAP -->
+
+    <bean id="ldapAuthenticationProvider" class="org.springframework.security.ldap.authentication.LdapAuthenticationProvider">
+        <constructor-arg>
+            <bean class="org.springframework.security.ldap.authentication.BindAuthenticator">
+                <constructor-arg ref="contextSource" />
+                <property name="userSearch" ref="userSearch"/>
+            </bean>
+        </constructor-arg>
+        <constructor-arg>
+            <bean class="com.seyren.core.security.ldap.AuthoritiesPopulatorLdap"></bean>
+        </constructor-arg>
+    </bean>
+
+    <bean id="contextSource" class="org.springframework.security.ldap.DefaultSpringSecurityContextSource">
+        <constructor-arg value="${ldap.url}" />
+        <property name="userDn" value="${admin.username}" />
+        <property name="password" value="${admin.password}" />
+    </bean>
+
+    <bean id="ldapUserManagement" class="com.seyren.core.security.ldap.LdapUserManagement">
+        <constructor-arg index="0" ref="contextSource" />
+    </bean>
+
+    <bean id="userSearch" class="org.springframework.security.ldap.search.FilterBasedLdapUserSearch">
+        <constructor-arg index="0" value="" />
+        <constructor-arg index="1" value="(sAMAccountName={0}*)" />
+        <constructor-arg index="2" ref="contextSource" />
+        <property name="returningAttributes">
+            <list>
+                <value>givenName</value>
+                <value>sn</value>
+                <value>memberOf</value>
+                <value>sAMAccountName</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="ldap" class="org.springframework.security.ldap.userdetails.LdapUserDetailsService">
+        <constructor-arg ref="userSearch" />
+        <constructor-arg>
+            <bean class="com.seyren.core.security.ldap.AuthoritiesPopulatorLdap"></bean>
+        </constructor-arg>
+    </bean>
+
+    <!-- Mongo DB-->
+
+    <bean id="passwordEncoder" class="org.springframework.security.crypto.password.StandardPasswordEncoder">
+        <constructor-arg value="${password.encoder}"/>
+    </bean>
+
+    <bean id="mongoUserManagement" class="com.seyren.core.security.mongo.MongoUserManagement">
+        <constructor-arg ref="passwordEncoder"/>
+    </bean>
+
+    <bean id="mongo" class="com.seyren.core.security.mongo.MongoUserDetails">
+        <constructor-arg ref="passwordEncoder"/>
+    </bean>
+
+    <!-- Web Service -->
+
+
+    <bean id="unauthorizedEntryPoint" class="com.seyren.core.security.UnauthorizedEntryPoint"/>
+    <security:http realm="Protected API" auto-config="false" create-session="stateless" use-expressions="true"
+                   entry-point-ref="unauthorizedEntryPoint"
+                   authentication-manager-ref="${authentication.service}AuthenticationManager">
+        <security:csrf disabled="true"/>
+        <security:headers>
+            <security:frame-options disabled="true"/>
+        </security:headers>
+        <security:custom-filter ref="authenticationTokenProcessingFilter" position="FORM_LOGIN_FILTER" />
+        <security:intercept-url pattern="/api/user/authenticate" access="permitAll"/>
+        <security:intercept-url pattern="/api/*" access="hasAuthority('USER')"/>
+        <security:intercept-url pattern="/api/admin/**/*" access="hasAuthority('ADMIN')" />
+    </security:http>
+
+    <security:authentication-manager id="ldapAuthenticationManager">
+        <security:authentication-provider ref="ldapAuthenticationProvider"/>
+    </security:authentication-manager>
+
+    <security:authentication-manager id="mongoAuthenticationManager">
+        <security:authentication-provider ref="mongoAuthenticationProvider"/>
+    </security:authentication-manager>
+
+    <bean class="com.seyren.core.security.AuthenticationTokenFilter" id="authenticationTokenProcessingFilter">
+        <constructor-arg ref="${authentication.service}"/>
+    </bean>
+</beans>

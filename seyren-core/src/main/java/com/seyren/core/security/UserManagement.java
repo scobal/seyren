@@ -11,19 +11,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.seyren.core.domain;
+package com.seyren.core.security;
 
-public enum SubscriptionType {
-    
-    EMAIL, PAGERDUTY, HIPCHAT, HUBOT, FLOWDOCK, HTTP, IRCCAT, PUSHOVER, LOGGER, SNMP, SLACK, TWILIO, VICTOROPS,
-    OPSGENIE;
 
-    public static String[] names() {
-        SubscriptionType[] subscriptionTypes = values();
-        String[] names = new String[subscriptionTypes.length];
-        for (int i = 0; i < subscriptionTypes.length; i++) {
-            names[i] = subscriptionTypes[i].name();
-        }
-        return names;
-    }
+import com.seyren.core.domain.User;
+
+public interface UserManagement {
+    String[] autoCompleteUsers(String name);
+
+    boolean addUser(User user);
 }
