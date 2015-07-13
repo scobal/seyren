@@ -16,7 +16,9 @@ package com.seyren.core.util.graphite;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.security.KeyStore;
 
 import javax.inject.Inject;
@@ -59,17 +61,18 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Strings;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.seyren.core.service.checker.JsonNodeResponseHandler;
 import com.seyren.core.util.config.SeyrenConfig;
 
 @Named
 public class GraphiteHttpClient {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(GraphiteHttpClient.class);
     private static final String THRESHOLD_TARGET = "alias(dashed(color(constantLine(%s),\"%s\")),\"%s\")";
     private static final int MAX_CONNECTIONS_PER_ROUTE = 20;
-    
+
     private final JsonNodeResponseHandler jsonNodeHandler = new JsonNodeResponseHandler();
     private final ByteArrayResponseHandler chartBytesHandler = new ByteArrayResponseHandler();
     private final String graphiteScheme;
@@ -85,7 +88,7 @@ public class GraphiteHttpClient {
     private final int graphiteSocketTimeout;
     private final HttpClient client;
     private final HttpContext context;
-    
+
     @Inject
     public GraphiteHttpClient(SeyrenConfig seyrenConfig) {
         this.graphiteScheme = seyrenConfig.getGraphiteScheme();
@@ -108,10 +111,10 @@ public class GraphiteHttpClient {
      */
     @Deprecated
     public JsonNode getTargetJson(String target) throws Exception {
-        return getTargetJson(target, null, null);
+        return getTargetJson(getDefaultURI().toString(), target, null, null);
     }
 
-    public JsonNode getTargetJson(String target, String from, String until) throws Exception {
+    public JsonNode getTargetJson(String graphiteBaseUrl, String target, String from, String until) throws Exception {
         // Default values for from/until preserve hard-coded functionality
         // seyren had before from/until were fields that could be specified.
         if (from == null) {
@@ -120,7 +123,7 @@ public class GraphiteHttpClient {
         if (until == null) {
             until = "-1minutes";
         }
-        URI baseUri = new URI(graphiteScheme, graphiteHost, graphitePath + "/render/", null, null);
+        URI baseUri = new URI((Strings.isNullOrEmpty(graphiteBaseUrl) ? getDefaultURI() : graphiteBaseUrl) + "/render/");
         URI uri = new URIBuilder(baseUri)
                 .addParameter("from", from)
                 .addParameter("until", until)
@@ -129,7 +132,7 @@ public class GraphiteHttpClient {
                 .addParameter("target", target).build();
 
         HttpGet get = new HttpGet(uri);
-        
+
         try {
             return client.execute(get, jsonNodeHandler, context);
         } catch (Exception e) {
@@ -138,14 +141,17 @@ public class GraphiteHttpClient {
             get.releaseConnection();
         }
     }
-    
-    public byte[] getChart(String target, int width, int height, String from, String to, LegendState legendState, AxesState axesState) throws Exception {
-        return getChart(target, width, height, from, to, legendState, axesState, null, null);
+
+    public byte[] getChart(String graphiteBaseUrl, String target, int width, int height, String from, String to, LegendState legendState,
+                           AxesState axesState) throws Exception {
+        return getChart(graphiteBaseUrl, target, width, height, from, to, legendState, axesState, null, null);
     }
-    
-    public byte[] getChart(String target, int width, int height, String from, String to, LegendState legendState, AxesState axesState,
-            BigDecimal warnThreshold, BigDecimal errorThreshold) throws Exception {
-        URI baseUri = new URI(graphiteScheme, graphiteHost, graphitePath + "/render/", null, null);
+
+    public byte[] getChart(String graphiteBaseUrl, String target, int width, int height, String from, String to, LegendState legendState,
+                           AxesState axesState,
+                           BigDecimal warnThreshold, BigDecimal errorThreshold) throws Exception {
+
+        URI baseUri = new URI((Strings.isNullOrEmpty(graphiteBaseUrl) ? getDefaultURI() : graphiteBaseUrl) + "/render/");
         URIBuilder uriBuilder = new URIBuilder(baseUri)
                 .addParameter("target", target)
                 .addParameter("from", from)
@@ -154,17 +160,17 @@ public class GraphiteHttpClient {
                 .addParameter("uniq", String.valueOf(new DateTime().getMillis()))
                 .addParameter("hideLegend", legendState == LegendState.HIDE ? "true" : "false")
                 .addParameter("hideAxes", axesState == AxesState.HIDE ? "true" : "false");
-        
+
         if (warnThreshold != null) {
             uriBuilder.addParameter("target", String.format(THRESHOLD_TARGET, warnThreshold.toString(), "yellow", "warn level"));
         }
-        
+
         if (errorThreshold != null) {
             uriBuilder.addParameter("target", String.format(THRESHOLD_TARGET, errorThreshold.toString(), "red", "error level"));
         }
-        
+
         HttpGet get = new HttpGet(uriBuilder.build());
-        
+
         try {
             return client.execute(get, chartBytesHandler, context);
         } catch (Exception e) {
@@ -173,7 +179,7 @@ public class GraphiteHttpClient {
             get.releaseConnection();
         }
     }
-    
+
     private HttpClient createHttpClient() {
         HttpClientBuilder clientBuilder = HttpClientBuilder.create()
                 .setConnectionManager(createConnectionManager())
@@ -182,7 +188,7 @@ public class GraphiteHttpClient {
                         .setConnectTimeout(graphiteConnectTimeout)
                         .setSocketTimeout(graphiteSocketTimeout)
                         .build());
-        
+
         // Set auth header for graphite if username and password are provided
         if (!StringUtils.isEmpty(graphiteUsername) && !StringUtils.isEmpty(graphitePassword)) {
             CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
@@ -193,10 +199,10 @@ public class GraphiteHttpClient {
             context.setAttribute("preemptive-auth", new BasicScheme());
             clientBuilder.addInterceptorFirst(new PreemptiveAuth());
         }
-        
+
         return clientBuilder.build();
     }
-    
+
     private KeyStore loadKeyStore(String keyStorePath, String password) throws Exception {
         FileInputStream keyStoreInput = null;
         try {
@@ -216,30 +222,31 @@ public class GraphiteHttpClient {
             }
         }
     }
-    
+
     private HttpClientConnectionManager createConnectionManager() {
         PoolingHttpClientConnectionManager manager;
-        if ("https".equals(graphiteScheme) && !StringUtils.isEmpty(graphiteKeyStore) && !StringUtils.isEmpty(graphiteKeyStorePassword) && !StringUtils.isEmpty(graphiteTrustStore)) {
+        if ("https".equals(graphiteScheme) && !StringUtils.isEmpty(graphiteKeyStore) && !StringUtils.isEmpty(graphiteKeyStorePassword) && !StringUtils.isEmpty(
+                graphiteTrustStore)) {
             try {
                 KeyStore keyStore = loadKeyStore(graphiteKeyStore, graphiteKeyStorePassword);
                 KeyStore trustStore = loadKeyStore(graphiteTrustStore, null);
-                
+
                 KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
                 keyManagerFactory.init(keyStore, graphiteKeyStorePassword.toCharArray());
                 KeyManager[] keyManagers = keyManagerFactory.getKeyManagers();
-                
+
                 TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
                 trustManagerFactory.init(trustStore);
                 TrustManager[] trustManagers = trustManagerFactory.getTrustManagers();
-                
+
                 SSLContext sslContext = SSLContext.getInstance("SSL");
                 sslContext.init(keyManagers, trustManagers, null);
-                
+
                 SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslContext);
-                
+
                 Registry<ConnectionSocketFactory> socketFactoryRegistry = RegistryBuilder.<ConnectionSocketFactory> create()
                         .register("https", sslsf).build();
-                
+
                 manager = new PoolingHttpClientConnectionManager(socketFactoryRegistry);
             } catch (Exception e) {
                 LOGGER.warn("A problem occurred when building SSLConnectionSocketFactory", e);
@@ -248,11 +255,11 @@ public class GraphiteHttpClient {
         } else {
             manager = new PoolingHttpClientConnectionManager();
         }
-        
+
         manager.setDefaultMaxPerRoute(MAX_CONNECTIONS_PER_ROUTE);
         return manager;
     }
-    
+
     /*
      * Adapted from an answer to this question on Stack Overflow:
      * http://stackoverflow.com/questions/2014700/preemptive-basic-authentication-with-apache-httpclient-4
@@ -275,5 +282,10 @@ public class GraphiteHttpClient {
             authState.update(authScheme, credentials);
         }
     }
-    
+
+    private URI getDefaultURI() throws URISyntaxException, MalformedURLException {
+        return new URI(graphiteScheme, graphiteHost, graphitePath, null, null);
+
+    }
+
 }

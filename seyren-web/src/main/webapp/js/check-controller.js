@@ -39,6 +39,9 @@
                 return $scope.config.graphiteCarbonPickleEnabled;
             };
 
+            $scope.graphiteBaseUrl = function() {
+                return $scope.config.graphiteBaseUrl();
+            };
         });
 
         $scope.loadCheck = function () {

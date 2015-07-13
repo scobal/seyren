@@ -65,6 +65,7 @@ public class SeyrenConfig {
     private final Integer smtpPort;
     private final String flowdockExternalUsername;
     private final String flowdockTags;
+    private final String graphiteScheme;
     // Icon mapped check sate (AlertType) see http://apps.timwhitlock.info/emoji/tables/unicode
     // question, sunny, cloud, voltage exclamation should be: \u2753,\u2600,\u2601,\u26A1,\u2757
     private final String flowdockEmojis;
@@ -104,6 +105,7 @@ public class SeyrenConfig {
         this.graphiteConnectionRequestTimeout = Integer.parseInt(configOrDefault("GRAPHITE_CONNECTION_REQUEST_TIMEOUT", "0"));
         this.graphiteConnectTimeout = Integer.parseInt(configOrDefault("GRAPHITE_CONNECT_TIMEOUT", "0"));
         this.graphiteSocketTimeout = Integer.parseInt(configOrDefault("GRAPHITE_SOCKET_TIMEOUT", "0"));
+        this.graphiteScheme = configOrDefault("GRAPHITE_SCHEME", "http");
 
         // HTTP
 
@@ -319,8 +321,8 @@ public class SeyrenConfig {
     public String getSnmpOID() {
         return snmpOID;
     }
-    
-    @JsonIgnore
+
+    @JsonProperty("graphiteUrl")
     public String getGraphiteUrl() {
         return graphiteUrl;
     }
@@ -337,7 +339,7 @@ public class SeyrenConfig {
     
     @JsonIgnore
     public String getGraphiteScheme() {
-        return splitBaseUrl(graphiteUrl)[0];
+        return this.graphiteScheme == null ? splitBaseUrl(graphiteUrl)[0] : graphiteScheme;
     }
     
     @JsonIgnore
