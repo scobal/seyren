@@ -7,6 +7,7 @@ before_script:
   - "export DISPLAY=:99.0"
   - "sh -e /etc/init.d/xvfb start"
   - sleep 5 # give xvfb some time to start
+  - "npm install karma@0.12.37 -g"  # karma 0.13.x has breaking changes. Raising separate issue.
   - "npm install karma-cli karma-ng-scenario karma-jasmine karma-phantomjs-launcher --quiet --global"
 script:
   - "mvn clean verify -Pkarma"
