@@ -84,6 +84,11 @@ public class SeyrenConfig {
     private final String emailSubjectTemplateFileName;
     private final int noOfThreads;
     private final String httpNotificationUrl;
+
+    private final String jenkinsServerUrl;
+    private final String jenkinsUser;
+    private final String jenkinsPassword;
+
     public SeyrenConfig() {
         
         // Base
@@ -165,6 +170,11 @@ public class SeyrenConfig {
         // Template
         this.emailTemplateFileName = configOrDefault("TEMPLATE_EMAIL_FILE_PATH","com/seyren/core/service/notification/email-template.vm");
         this.emailSubjectTemplateFileName = configOrDefault("TEMPLATE_EMAIL_SUBJECT_FILE_PATH","com/seyren/core/service/notification/email-subject-template.vm");
+
+        // Jenkins
+        this.jenkinsServerUrl = configOrDefault("JENKINS_SERVER_URL","");
+        this.jenkinsPassword = configOrDefault("JENKINS_PASSWORD","");
+        this.jenkinsUser = configOrDefault("JENKINS_USER","");
     }
     
     @PostConstruct
@@ -432,11 +442,27 @@ public class SeyrenConfig {
         return victorOpsRestAPIEndpoint;
     }
 
+    @JsonIgnore
+    public String getJenkinsServerUrl() {
+        return jenkinsServerUrl;
+    }
+
+    @JsonIgnore
+    public String getJenkinsUser() {
+        return jenkinsUser;
+    }
+
+    @JsonIgnore
+    public String getJenkinsPassword() {
+        return jenkinsPassword;
+    }
 
   private static String configOrDefault(String propertyName, String defaultValue) {
         return configOrDefault(list(propertyName), defaultValue);
     }
-    
+
+
+
     private static String configOrDefault(List<String> propertyNames, String defaultValue) {
         
         for (String propertyName : propertyNames) {

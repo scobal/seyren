@@ -22,7 +22,10 @@ import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import com.seyren.core.domain.CheckType;
 import com.seyren.core.util.config.SeyrenConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
@@ -31,7 +34,8 @@ import com.seyren.core.store.ChecksStore;
 
 @Named
 public class CheckScheduler {
-    
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CheckScheduler.class);
     private final ScheduledExecutorService executor;
     private final ChecksStore checksStore;
     private final CheckRunnerFactory checkRunnerFactory;
@@ -48,7 +52,21 @@ public class CheckScheduler {
     public void performChecks() {
         List<Check> checks = checksStore.getChecks(true, false).getValues();
         for (final Check check : checks) {
-            executor.execute(checkRunnerFactory.create(check));
+            CheckType checkType = CheckType.getCheckTypeById(check.getCheckType());
+            LOGGER.debug("Execute check of type: {}",checkType);
+            switch (checkType){
+                case GRAPHITE:
+                    executor.execute(checkRunnerFactory.create(check));
+                    break;
+                case HTTP:
+                    executor.execute(checkRunnerFactory.createHttpChecker(check));
+                    break;
+                case JENKINS:
+                    executor.execute(checkRunnerFactory.createJenkinsChecker(check));
+                    break;
+                default:
+                    LOGGER.error("checkType {} isn't supported",checkType);
+            }
         }
     }
     

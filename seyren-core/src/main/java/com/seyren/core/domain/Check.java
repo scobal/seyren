@@ -51,6 +51,7 @@ public class Check {
     private AlertType state;
     private DateTime lastCheck;
     private List<Subscription> subscriptions = new ArrayList<Subscription>();
+    private Integer checkType;
     
     public String getId() {
         return id;
@@ -77,7 +78,20 @@ public class Check {
         setName(name);
         return this;
     }
-    
+
+    public Integer getCheckType() {
+        return checkType;
+    }
+
+    public void setCheckType(Integer checkType) {
+        this.checkType = checkType;
+    }
+
+    public Check withCheckType(Integer checkType){
+        setCheckType(checkType);
+        return this;
+    }
+
     public String getDescription() {
         return description;
     }
