@@ -43,15 +43,19 @@ public class ScriptNotificationService implements NotificationService {
     }
     @Override
     public void sendNotification(Check check, Subscription subscription, List<Alert> alerts) throws NotificationFailedException {
+        LOGGER.info("Script Location: {}", seyrenConfig.getScriptPath());
         ProcessBuilder pb = new ProcessBuilder(seyrenConfig.getScriptType() ,seyrenConfig.getScriptPath(), subscription.getTarget(), new Gson().toJson(check));
         try {
+            LOGGER.info("Script Start");
             Process p = pb.start();
             BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
             String line;
             while ((line = reader.readLine()) != null) {
-                LOGGER.debug(line);
+                LOGGER.info(line);
             }
+            LOGGER.info("Script End");
         } catch (IOException e) {
+            LOGGER.info("Script could not be sent: {}", e.getMessage());
             throw new NotificationFailedException("Could not send message through the script");
         }
     }
