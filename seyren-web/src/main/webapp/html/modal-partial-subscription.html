@@ -7,6 +7,7 @@
     </div>
     <div class="modal-body">
         <form name="checkSubscription" class="form-horizontal" role="form" novalidate>
+            <div ng-show="error" class="alert alert-danger">{{error}}</div>
             <fieldset>
                 <div ng-class="{ 'form-group': true, 'has-error': checkSubscription['subscription.target'].$invalid }">
                     <label class="col-sm-3 control-label" for="subscription.target">Target</label>
@@ -32,6 +33,7 @@
                             <option value="SNMP">SNMP</option>
                             <option value="TWILIO">TWILIO</option>
                             <option value="VICTOROPS">VictorOps</option>
+                            <option value="SCRIPT">Script</option>
                         </select>
                     </div>
                 </div>

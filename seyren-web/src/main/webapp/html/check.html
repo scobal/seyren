@@ -1,23 +1,23 @@
-    <div class="row" ng-show="graphsEnabled()">
-        <div class="col-lg-12">
-            <div class="col-lg-3 graph" ng-repeat="graph in graphs">
-                <div class="thumbnail">
-                    <a href="{{ liveLink(check, graph.minutes) }}" target="_blank">
-                        <img ng:src="{{ liveImage(check, graph.minutes) }}" />
-                    </a>
-                    <h6 style="margin: 0px 0;"><strong>{{ graph.description }}</strong></h6>
-                </div>
+<div class="row" ng-show="graphsEnabled()">
+    <div class="col-lg-12">
+        <div class="col-lg-3 graph" ng-repeat="graph in graphs">
+            <div class="thumbnail">
+                <a href="{{ liveLink(check, graph.minutes) }}" target="_blank">
+                    <img ng:src="{{ liveImage(check, graph.minutes) }}" />
+                </a>
+                <h6 style="margin: 0px 0;"><strong>{{ graph.description }}</strong></h6>
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-lg-6">
-            <div class="row">
-                <div class="col-lg-7">
-                    <h2><strong>Details</strong> <small>[<a class="" data-keyboard="true" data-toggle="modal" data-show="true" href="" ng-click="editCheck(check)">edit</a>]</small></h2>
-                </div>
+</div>
+<div class="row">
+    <div class="col-lg-6">
+        <div class="row">
+            <div class="col-lg-7">
+                <h2><strong>Details</strong> <small>[<a class="" data-keyboard="true" data-toggle="modal" data-show="true" href="" ng-click="editCheck(check)">edit</a>]</small></h2>
             </div>
-            <form class="form-horizontal" role="form">
+        </div>
+        <form class="form-horizontal" role="form">
             <div class="form-group detail-form">
                 <label class="col-lg-2 control-label">Name:</label>
                 <div class="col-lg-10">
@@ -34,12 +34,18 @@
                 <label class="col-lg-2 control-label">State:</label>
                 <div class="col-lg-10">
                     <p class="form-control-static">
-                    <span ng-show="check.state == 'UNKNOWN'" class="label label-default">{{ check.state }}</span>
-                    <span ng-show="check.state == 'OK'" class="label label-success">{{ check.state }}</span>
-                    <span ng-show="check.state == 'WARN'" class="label label-warning">{{ check.state }}</span>
-                    <span ng-show="check.state == 'ERROR'" class="label label-danger">{{ check.state }}</span>
-                    <span ng-show="check.state == 'EXCEPTION'" class="label label-inverse">{{ check.state }}</span>
+                        <span ng-show="check.state == 'UNKNOWN'" class="label label-default">{{ check.state }}</span>
+                        <span ng-show="check.state == 'OK'" class="label label-success">{{ check.state }}</span>
+                        <span ng-show="check.state == 'WARN'" class="label label-warning">{{ check.state }}</span>
+                        <span ng-show="check.state == 'ERROR'" class="label label-danger">{{ check.state }}</span>
+                        <span ng-show="check.state == 'EXCEPTION'" class="label label-inverse">{{ check.state }}</span>
                     </p>
+                </div>
+            </div>
+            <div class="form-group detail-form">
+                <label class="col-lg-2 control-label">Graphite Base Url:</label>
+                <div class="col-lg-10">
+                    <p class="form-control-static">{{check.graphiteBaseUrl}}</p>
                 </div>
             </div>
             <div class="form-group detail-form">
@@ -74,9 +80,9 @@
             </div>
             <div class="form-group detail-form">
                 <label class="col-lg-2 control-label">Enabled:</label>
-                    <div class="col-lg-10">
-                        <p class="form-control-static"><input type="checkbox" ng-checked="check.enabled" ng-click="swapCheckEnabled(check)" /> </p>
-                    </div>
+                <div class="col-lg-10">
+                    <p class="form-control-static"><input type="checkbox" ng-checked="check.enabled" ng-click="swapCheckEnabled(check)" /> </p>
+                </div>
             </div>
             <div class="form-group detail-form" ng-show="liveEnabled()">
                 <label class="col-lg-2 control-label">Live:</label>
@@ -96,74 +102,74 @@
                     <p class="form-control-static">{{check.lastCheck | date: 'yyyy-MM-dd HH:mm:ss'}}</p>
                 </div>
             </div>
-            </form>
-        </div>
-        <div class="col-lg-6">
-            <div class="row">
-                <div class="col-lg-8">
-                    <h2><strong>Subscriptions</strong></h2>
-                </div>
-                <div class="col-lg-2">
-                    <p></p><p><button id="editSubscaddriptionButton" class="btn btn-success" data-keyboard="true" data-toggle="modal" data-show="true" href="#editSubscriptionModal" ng-click="editSubscription(check, 'new')"><i class="glyphicon glyphicon-volume-up glyphicon-white"></i>&nbsp;Add subscription</button></p>
-                </div>
+        </form>
+    </div>
+    <div class="col-lg-6">
+        <div class="row">
+            <div class="col-lg-8">
+                <h2><strong>Subscriptions</strong></h2>
             </div>
-            <div class="row">
-                <div class="col-lg-12">
-                    <div ng-hide="check.subscriptions">This check has no subscriptions</div>
-                    <table class="table table-bordered table-striped table-hover" ng-show="check.subscriptions" style="cursor: pointer;">
-                        <thead>
-                            <tr>
-                                <th>Target</th>
-                                <th>Type</th>
-                                <th>Notify on</th>
-                                <th>Days</th>
-                                <th>Time</th>
-                                <th>On?</th>
-                                <th>&nbsp;</th>
-                                <th>&nbsp;</th>
-                                <th>&nbsp;</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr ng-repeat="subscription in check.subscriptions">
-                                <td>{{ subscription.target | truncate:10 }}</td>
-                                <td>{{ subscription.type }}</td>
-                                <td>
-                                    <span class="label label-warning" ng-hide="subscription.ignoreWarn">Warn</span>
-                                    <span class="label label-danger" ng-hide="subscription.ignoreError">Error</span>
-                                    <span class="label label-success" ng-hide="subscription.ignoreOk">OK</span>
-                                </td>
-                                <td>
-                                    <span class="label label-info" ng-show="subscription.su">Su</span>
-                                    <span class="label label-info" ng-show="subscription.mo">Mo</span>
-                                    <span class="label label-info" ng-show="subscription.tu">Tu</span>
-                                    <span class="label label-info" ng-show="subscription.we">We</span>
-                                    <span class="label label-info" ng-show="subscription.th">Th</span>
-                                    <span class="label label-info" ng-show="subscription.fr">Fr</span>
-                                    <span class="label label-info" ng-show="subscription.sa">Sa</span>
-                                </td>
-                                <td>{{ subscription.fromTime }} to {{ subscription.toTime }}</td>
-                                <td>
-                                    <input type="checkbox" ng-checked="subscription.enabled" ng-click="swapSubscriptionEnabled(check, subscription)" />
-                                </td>
-                                <td>
-                                    <button type="submit" class="btn btn-danger btn-xs" ng-click="deleteSubscription(check, subscription)">Delete</button>
-                                </td>
-                                <td>
-                                    <button class="btn btn-primary btn-xs" data-keyboard="true" data-toggle="modal" data-show="true" href="#editSubscriptionModal" ng-click="editSubscription(check, subscription)">Edit</button>
-                                </td>
-                                <td>
-                                    <button type="submit" class="btn btn-success  btn-xs" ng-click="testSubscription(check, subscription)">Test</button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+            <div class="col-lg-2">
+                <p></p><p><button id="editSubscaddriptionButton" class="btn btn-success" data-keyboard="true" data-toggle="modal" data-show="true" href="#editSubscriptionModal" ng-click="editSubscription(check, 'new')"><i class="glyphicon glyphicon-volume-up glyphicon-white"></i>&nbsp;Add subscription</button></p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div ng-hide="check.subscriptions">This check has no subscriptions</div>
+                <table class="table table-bordered table-striped table-hover" ng-show="check.subscriptions" style="cursor: pointer;">
+                    <thead>
+                    <tr>
+                        <th>Target</th>
+                        <th>Type</th>
+                        <th>Notify on</th>
+                        <th>Days</th>
+                        <th>Time</th>
+                        <th>On?</th>
+                        <th>&nbsp;</th>
+                        <th>&nbsp;</th>
+                        <th>&nbsp;</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="subscription in check.subscriptions">
+                        <td>{{ subscription.target | truncate:10 }}</td>
+                        <td>{{ subscription.type }}</td>
+                        <td>
+                            <span class="label label-warning" ng-hide="subscription.ignoreWarn">Warn</span>
+                            <span class="label label-danger" ng-hide="subscription.ignoreError">Error</span>
+                            <span class="label label-success" ng-hide="subscription.ignoreOk">OK</span>
+                        </td>
+                        <td>
+                            <span class="label label-info" ng-show="subscription.su">Su</span>
+                            <span class="label label-info" ng-show="subscription.mo">Mo</span>
+                            <span class="label label-info" ng-show="subscription.tu">Tu</span>
+                            <span class="label label-info" ng-show="subscription.we">We</span>
+                            <span class="label label-info" ng-show="subscription.th">Th</span>
+                            <span class="label label-info" ng-show="subscription.fr">Fr</span>
+                            <span class="label label-info" ng-show="subscription.sa">Sa</span>
+                        </td>
+                        <td>{{ subscription.fromTime }} to {{ subscription.toTime }}</td>
+                        <td>
+                            <input type="checkbox" ng-checked="subscription.enabled" ng-click="swapSubscriptionEnabled(check, subscription)" />
+                        </td>
+                        <td>
+                            <button type="submit" class="btn btn-danger btn-xs" ng-click="deleteSubscription(check, subscription)">Delete</button>
+                        </td>
+                        <td>
+                            <button class="btn btn-primary btn-xs" data-keyboard="true" data-toggle="modal" data-show="true" href="#editSubscriptionModal" ng-click="editSubscription(check, subscription)">Edit</button>
+                        </td>
+                        <td>
+                            <button type="submit" class="btn btn-success  btn-xs" ng-click="testSubscription(check, subscription)">Test</button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-lg-12">
+</div>
+<div class="row">
+    <div class="col-lg-12">
         <h2>
             <strong>Alerts</strong> <small>( {{alerts.start}} of {{alerts.total}} )</small>
             <div class="btn-group">
@@ -186,71 +192,71 @@
         </div>
         <table class="table table-bordered table-striped table-hover" ng-show="alerts.values">
             <thead>
-                <tr>
-                    <th>Timestamp</th>
-                    <th>Time ago</th>
-                    <th>Target</th>
-                    <th>Value</th>
-                    <th>Warn level</th>
-                    <th>Error level</th>
-                    <th>From</th>
-                    <th>To</th>
-                </tr>
+            <tr>
+                <th>Timestamp</th>
+                <th>Time ago</th>
+                <th>Target</th>
+                <th>Value</th>
+                <th>Warn level</th>
+                <th>Error level</th>
+                <th>From</th>
+                <th>To</th>
+            </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="alert in alerts.values">
-                    <td>{{ alert.timestamp | date: 'yyyy-MM-dd HH:mm:ss' }}</td>
-                    <td><span am-time-ago="alert.timestamp"></span></td>
-                    <td>{{ alert.target }}</td>
-                    <td>{{ alert.value }}</td>
-                    <td>{{ alert.warn }}</td>
-                    <td>{{ alert.error }}</td>
-                    <td>
-                        <span ng-show="alert.fromType == 'UNKNOWN'" class="label label-default">{{ alert.fromType }}</span>
-                        <span ng-show="alert.fromType == 'OK'" class="label label-success">{{ alert.fromType }}</span>
-                        <span ng-show="alert.fromType == 'WARN'" class="label label-warning">{{ alert.fromType }}</span>
-                        <span ng-show="alert.fromType == 'ERROR'" class="label label-danger">{{ alert.fromType }}</span>
-                        <span ng-show="alert.fromType == 'EXCEPTION'" class="label label-inverse">{{ alert.fromType }}</span>
-                    </td>
-                    <td>
-                        <span ng-show="alert.toType == 'UNKNOWN'" class="label label-default">{{ alert.toType }}</span>
-                        <span ng-show="alert.toType == 'OK'" class="label label-success">{{ alert.toType }}</span>
-                        <span ng-show="alert.toType == 'WARN'" class="label label-warning">{{ alert.toType }}</span>
-                        <span ng-show="alert.toType == 'ERROR'" class="label label-danger">{{ alert.toType }}</span>
-                        <span ng-show="alert.toType == 'EXCEPTION'" class="label label-inverse">{{ alert.toType }}</span>
-                    </td>
-                </tr>
+            <tr ng-repeat="alert in alerts.values">
+                <td>{{ alert.timestamp | date: 'yyyy-MM-dd HH:mm:ss' }}</td>
+                <td><span am-time-ago="alert.timestamp"></span></td>
+                <td>{{ alert.target }}</td>
+                <td>{{ alert.value }}</td>
+                <td>{{ alert.warn }}</td>
+                <td>{{ alert.error }}</td>
+                <td>
+                    <span ng-show="alert.fromType == 'UNKNOWN'" class="label label-default">{{ alert.fromType }}</span>
+                    <span ng-show="alert.fromType == 'OK'" class="label label-success">{{ alert.fromType }}</span>
+                    <span ng-show="alert.fromType == 'WARN'" class="label label-warning">{{ alert.fromType }}</span>
+                    <span ng-show="alert.fromType == 'ERROR'" class="label label-danger">{{ alert.fromType }}</span>
+                    <span ng-show="alert.fromType == 'EXCEPTION'" class="label label-inverse">{{ alert.fromType }}</span>
+                </td>
+                <td>
+                    <span ng-show="alert.toType == 'UNKNOWN'" class="label label-default">{{ alert.toType }}</span>
+                    <span ng-show="alert.toType == 'OK'" class="label label-success">{{ alert.toType }}</span>
+                    <span ng-show="alert.toType == 'WARN'" class="label label-warning">{{ alert.toType }}</span>
+                    <span ng-show="alert.toType == 'ERROR'" class="label label-danger">{{ alert.toType }}</span>
+                    <span ng-show="alert.toType == 'EXCEPTION'" class="label label-inverse">{{ alert.toType }}</span>
+                </td>
+            </tr>
             </tbody>
         </table>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="pull-right">
+            <button class="btn btn-danger btn-sm" data-keyboard="true" data-toggle="modal" data-show="true" id="deleteCheckButton" href="#confirmCheckDeleteModal">Delete check</button>
         </div>
     </div>
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="pull-right">
-                <button class="btn btn-danger btn-sm" data-keyboard="true" data-toggle="modal" data-show="true" id="deleteCheckButton" href="#confirmCheckDeleteModal">Delete check</button>
+</div>
+
+<div class="modal" tabindex="-1" id="confirmCheckDeleteModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+                <h4>Are you sure?</h4>
+            </div>
+            <div class="modal-body">
+                <div class="pull-right">
+                    <button class="btn" data-dismiss="modal">Cancel</button>
+                    <button class="btn btn-primary" id="confirmDeleteCheckButton" ng-click="deleteCheck(check)">Ok</button>
+                </div>
             </div>
         </div>
     </div>
+</div>
 
-    <div class="modal" tabindex="-1" id="confirmCheckDeleteModal">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button class="close" data-dismiss="modal">&times;</button>
-                    <h4>Are you sure?</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="pull-right">
-                        <button class="btn" data-dismiss="modal">Cancel</button>
-                        <button class="btn btn-primary" id="confirmDeleteCheckButton" ng-click="deleteCheck(check)">Ok</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+<div class="absolute modal" tabindex="-1" ng-include="'./html/modal-partial-subscription.html'" id="editSubscriptionModal">
+</div>
 
-    <div class="absolute modal" tabindex="-1" ng-include="'./html/modal-partial-subscription.html'" id="editSubscriptionModal">
-    </div>
-
-    <div class="absolute modal" tabindex="-1" ng-include="'./html/modal-partial-check.html'" id="editCheckModal">
-    </div>
+<div class="absolute modal" tabindex="-1" ng-include="'./html/modal-partial-check.html'" id="editCheckModal">
+</div>
