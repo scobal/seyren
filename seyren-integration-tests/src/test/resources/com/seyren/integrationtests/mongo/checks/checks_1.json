@@ -8,5 +8,6 @@
     enabled: true,
     state: "WARN",
     "lastCheck": { "$date": "2013-07-12T10:10:00.000Z"},
-    subscriptions: [ ]
+    subscriptions: [ ],
+    checkType: 2
 }

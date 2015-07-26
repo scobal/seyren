@@ -37,8 +37,14 @@ public class HttpTargetChecker implements TargetChecker{
 
         Map<String, Optional<BigDecimal>> targetValues = new HashMap<String, Optional<BigDecimal>>();
         String url = check.getTarget();
-        HttpResponse response = urlFetcher.sendUrl(url);
-        BigDecimal statusCode = new BigDecimal(response.getStatusLine().getStatusCode());
+        BigDecimal statusCode = null;
+        try{
+            HttpResponse response = urlFetcher.sendUrl(url);
+            statusCode = new BigDecimal(response.getStatusLine().getStatusCode());
+        }catch (Exception e){
+            statusCode = new BigDecimal(404);
+        }
+
         targetValues.put(url,Optional.of(statusCode));
         return targetValues;
     }
