@@ -18,6 +18,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.impl.client.HttpClientBuilder;
 
 import javax.inject.Named;
@@ -34,7 +35,7 @@ public class HttpUrlFetcher {
     }
 
     public HttpResponse sendUrl(String url,String username,String password) throws IOException {
-        HttpClient client = HttpClientBuilder.create().build();
+        HttpClient client = HttpClientBuilder.create().setRetryHandler(new DefaultHttpRequestRetryHandler(3,true)).build();
 
         HttpGet getMethod = new HttpGet(url);
         if (StringUtils.isNotEmpty(username) && StringUtils.isNotEmpty(password)){
