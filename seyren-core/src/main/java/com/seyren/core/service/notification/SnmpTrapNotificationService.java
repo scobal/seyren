@@ -81,8 +81,8 @@ public class SnmpTrapNotificationService implements NotificationService {
             OID id = new OID(seyrenConfig.getSnmpOID()+".7");
 	    OID checkUrl = new OID(seyrenConfig.getSnmpOID()+".8");
 
-            trap.add(new VariableBinding(SnmpConstants.snmpTrapOID, oid));
             trap.add(new VariableBinding(SnmpConstants.sysUpTime, new TimeTicks(5000)));
+            trap.add(new VariableBinding(SnmpConstants.snmpTrapOID, oid));
 
             //Add Payload
             trap.add(variableBinding(name, check.getName()));
