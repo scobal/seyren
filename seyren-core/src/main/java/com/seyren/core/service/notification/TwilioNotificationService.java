@@ -13,13 +13,9 @@
  */
 package com.seyren.core.service.notification;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
+import com.seyren.core.domain.*;
+import com.seyren.core.exception.NotificationFailedException;
+import com.seyren.core.util.config.SeyrenConfig;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
@@ -35,13 +31,11 @@ import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.seyren.core.domain.Alert;
-import com.seyren.core.domain.AlertType;
-import com.seyren.core.domain.Check;
-import com.seyren.core.domain.Subscription;
-import com.seyren.core.domain.SubscriptionType;
-import com.seyren.core.exception.NotificationFailedException;
-import com.seyren.core.util.config.SeyrenConfig;
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Named
 public class TwilioNotificationService implements NotificationService {
@@ -64,8 +58,8 @@ public class TwilioNotificationService implements NotificationService {
         }
         
         String body;
-        if (check.getState() == AlertType.ERROR) {
-            body = "ERROR Check "+check.getName()+" has exceeded its threshold.";
+        if (check.getState() == AlertType.WARN || check.getState() == AlertType.ERROR) {
+            body = check.getState()+" Check "+check.getName()+" has exceeded its threshold.";
         } else if (check.getState() == AlertType.OK) {
             body = "OK Check "+check.getName()+" has been resolved.";
         } else {
