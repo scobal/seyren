@@ -139,8 +139,14 @@ public class SubscriptionsBean implements SubscriptionsResource {
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         SubscriptionPermissions permissions = permissionsStore.getPermissions(username);
+        SubscriptionPermissions globalPermissions = permissionsStore.getPermissions("global");
         for (String s : permissions.getWrite()) {
             if(type.name().equals(s)) {
+                return true;
+            }
+        }
+        for (String s : globalPermissions.getWrite()) {
+            if (type.name().equals(s)) {
                 return true;
             }
         }

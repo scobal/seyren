@@ -6,6 +6,13 @@
         var init = function() {
             $scope.users = [];
             $scope.selectedIndex = -1;
+            Admin.get({name: "global", type: "subscription"}, function (data) {
+                $scope.globaltypes = data.types;
+                $scope.globalwrites = data.write;
+                if (!$scope.globalwrites) {
+                    $scope.globalwrites = [];
+                }
+            });
         };
 
         init();
@@ -56,6 +63,14 @@
                 $scope.writes.push(typeName);
             }
         };
+        $scope.toggleGlobalPermission = function(typeName) {
+            var idx = $scope.globalwrites.indexOf(typeName);
+            if (idx > -1) {
+                $scope.globalwrites.splice(idx, 1);
+            } else {
+                $scope.globalwrites.push(typeName);
+            }
+        };
         $scope.updatePermissionsChecks = function() {
             Admin.save({
                 type: 'subscription',
@@ -63,7 +78,13 @@
                 write: $scope.writes
             });
         };
-
+        $scope.updateGlobalPermissionsChecks = function () {
+            Admin.save({
+                type: 'subscription',
+                name: 'global',
+                write: $scope.globalwrites
+            });
+        };
         $scope.checkKeyDown = function(event) {
             if (event.keyCode === 40) {
                 event.preventDefault();
