@@ -49,7 +49,9 @@ public class AdminBean implements AdminResource {
     @Override
     public Response getSubscriptionPermissions(String name) {
         try {
-            this.userDetailsService.loadUserByUsername(name);
+            if (!name.equals("global")) {
+                this.userDetailsService.loadUserByUsername(name);
+            }
         } catch (UsernameNotFoundException e) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
