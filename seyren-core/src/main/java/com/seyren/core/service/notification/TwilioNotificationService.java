@@ -78,7 +78,7 @@ public class TwilioNotificationService implements NotificationService {
         params.add(new BasicNameValuePair("From", seyrenConfig.getTwilioPhoneNumber()));
         params.add(new BasicNameValuePair("Body", body));
 
-        HttpClient client = HttpClientBuilder.create().build();
+        HttpClient client = HttpClientBuilder.create().useSystemProperties().build();
         
         HttpPost post = new HttpPost(twilioUrl + "/"+seyrenConfig.getTwilioAccountSid()+"/Messages");
         try {
