@@ -37,6 +37,9 @@ public class SeyrenConfig {
     private final String baseUrl;
     private final String mongoUrl;
     private final String graphsEnable;
+    private final int noOfThreads;
+    private final int checkExecutorInstanceIndex;
+    private final int checkExecutorTotalInstances;
     private final String graphiteUrl;
     private final String graphiteUsername;
     private final String graphitePassword;
@@ -83,7 +86,6 @@ public class SeyrenConfig {
     private final String victorOpsRestAPIEndpoint;
     private final String emailTemplateFileName;
     private final String emailSubjectTemplateFileName;
-    private final int noOfThreads;
     private final String httpNotificationUrl;
     private final boolean securityEnabled;
     private final String scriptPath;
@@ -95,6 +97,9 @@ public class SeyrenConfig {
         this.mongoUrl = configOrDefault("MONGO_URL", "mongodb://localhost:27017/seyren");
         this.graphsEnable = configOrDefault("GRAPHS_ENABLE", "true");
         this.noOfThreads = Integer.parseInt(configOrDefault("SEYREN_THREADS", "8"));
+        this.checkExecutorInstanceIndex = Integer.parseInt(configOrDefault("SEYREN_WORKER_INDEX", "1"));
+        this.checkExecutorTotalInstances = Integer.parseInt(configOrDefault("SEYREN_WORKER_COUNT", "1"));
+        
         // Graphite
         this.graphiteUrl = stripEnd(configOrDefault("GRAPHITE_URL", "http://localhost:80"), "/");
         this.graphiteUsername = configOrDefault("GRAPHITE_USERNAME", "");
@@ -202,7 +207,22 @@ public class SeyrenConfig {
     public boolean isGraphsEnabled() {
         return Boolean.valueOf(graphsEnable);
     }
-    
+
+    @JsonIgnore
+    public int getNoOfThreads() {
+        return noOfThreads;
+    }
+
+    @JsonIgnore
+    public int getCheckExecutorInstanceIndex() {
+        return checkExecutorInstanceIndex;
+    }
+
+    @JsonIgnore
+    public int getCheckExecutorTotalInstances() {
+        return checkExecutorTotalInstances;
+    }
+
     @JsonIgnore
     public String getTwilioUrl() {
         return twilioUrl;
@@ -421,11 +441,6 @@ public class SeyrenConfig {
     @JsonIgnore
     public String getSlackEmojis() {
       return slackEmojis;
-    }
-
-    @JsonIgnore
-    public int getNoOfThreads() {
-        return noOfThreads;
     }
 
     @JsonIgnore
