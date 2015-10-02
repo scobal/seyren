@@ -18,6 +18,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import java.net.URLEncoder;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
