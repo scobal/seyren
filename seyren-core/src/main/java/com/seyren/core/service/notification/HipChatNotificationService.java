@@ -86,7 +86,7 @@ public class HipChatNotificationService implements NotificationService {
         for (String roomId : roomIds) {
             LOGGER.info("Posting: {} to {}: {} {}", from, roomId, message, color);
             HttpClient client = HttpClientBuilder.create().build();
-            String url = baseUrl + "/v2/room/" + roomId + "/notification?auth_token=" + authToken;
+            String url = baseUrl + "/v2/room/" + URLEncoder.encode(roomId, "UTF-8") + "/notification?auth_token=" + authToken;
             HttpPost post = new HttpPost(url);
 
             try {
