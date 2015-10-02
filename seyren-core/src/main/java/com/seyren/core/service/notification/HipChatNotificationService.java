@@ -19,6 +19,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.net.URLEncoder;
+import java.io.UnsupportedEncodingException;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -87,10 +88,19 @@ public class HipChatNotificationService implements NotificationService {
         for (String roomId : roomIds) {
             LOGGER.info("Posting: {} to {}: {} {}", from, roomId, message, color);
             HttpClient client = HttpClientBuilder.create().build();
-            String url = baseUrl + "/v2/room/" + URLEncoder.encode(roomId, "UTF-8") + "/notification?auth_token=" + authToken;
+
+            try {
+                roomId = URLEncoder.encode(roomId, "UTF-8");
+            }
+            catch (UnsupportedEncodingException e) {
+                LOGGER.warn("Unable to URLEncode HipChat RoomID", e);
+            }
+
+            String url = baseUrl + "/v2/room/" + roomId + "/notification?auth_token=" + authToken;
             HttpPost post = new HttpPost(url);
 
             try {
+                roomId = URLEncoder.encode(roomId, "UTF-8");
                 List<BasicNameValuePair> parameters = new ArrayList<BasicNameValuePair>();
                 parameters.add(new BasicNameValuePair("message", message));
                 parameters.add(new BasicNameValuePair("color", color.name().toLowerCase()));
