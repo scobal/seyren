@@ -31,10 +31,13 @@ import com.seyren.core.store.ChecksStore;
 
 @Named
 public class CheckScheduler {
-    
+    private static final int MAX_CHECK_VALUES = 65536; // 4 unsigned hex digits, values range 0 - 16 ^ 4 - 1
+	
     private final ScheduledExecutorService executor;
     private final ChecksStore checksStore;
     private final CheckRunnerFactory checkRunnerFactory;
+    private final int instanceIndex;
+    private final int totalWorkers;
     
     @Inject
     public CheckScheduler(ChecksStore checksStore, CheckRunnerFactory checkRunnerFactory, SeyrenConfig seyrenConfig) {
@@ -42,14 +45,36 @@ public class CheckScheduler {
         this.checkRunnerFactory = checkRunnerFactory;
         this.executor = Executors.newScheduledThreadPool(seyrenConfig.getNoOfThreads(), new ThreadFactoryBuilder().setNameFormat("seyren.check-scheduler-%s")
                         .setDaemon(false).build());
+        this.instanceIndex = seyrenConfig.getCheckExecutorInstanceIndex();
+        this.totalWorkers = seyrenConfig.getCheckExecutorTotalInstances();
     }
     
     @Scheduled(fixedRateString = "${GRAPHITE_REFRESH:60000}")
     public void performChecks() {
         List<Check> checks = checksStore.getChecks(true, false).getValues();
         for (final Check check : checks) {
-            executor.execute(checkRunnerFactory.create(check));
+    		// Skip any not in this instance's workload
+        	if (!isMyWork(check)) {
+        		continue;
+        	}
+
+        	executor.execute(checkRunnerFactory.create(check));
         }
+    }
+    
+    private boolean isMyWork(Check check) {
+    	if (totalWorkers > 1) {
+    		// More than 1 worker; split work on range of characters 30-33 of check id
+    		int checkIndex = Integer.parseInt(check.getId().substring(30,34), 16);
+    		if ((int)(MAX_CHECK_VALUES * (instanceIndex - 1) / totalWorkers) <= checkIndex && checkIndex < (int)(MAX_CHECK_VALUES * instanceIndex / totalWorkers)) {
+    			return true;
+    		}
+    		
+    		// Not in range for this worker instance
+    		return false;
+    	}
+    	
+    	return true;
     }
     
     @PreDestroy

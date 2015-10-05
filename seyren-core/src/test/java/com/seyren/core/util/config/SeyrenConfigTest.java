@@ -167,5 +167,10 @@ public class SeyrenConfigTest {
     public void defaultNumOfThreadsIsCorrect() {
         assertThat(config.getNoOfThreads(), is(8));
     }
+
+    @Test
+    public void defaultSecurityEnabledIsCorrect() {
+        assertThat(config.isSecurityEnabled(), is(false));
+    }
     
 }

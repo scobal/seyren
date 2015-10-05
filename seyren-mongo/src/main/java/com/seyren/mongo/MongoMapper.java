@@ -14,13 +14,10 @@
 package com.seyren.mongo;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.google.common.base.Strings;
+import com.seyren.core.domain.*;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
@@ -28,11 +25,6 @@ import org.joda.time.LocalTime;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
-import com.seyren.core.domain.Alert;
-import com.seyren.core.domain.AlertType;
-import com.seyren.core.domain.Check;
-import com.seyren.core.domain.Subscription;
-import com.seyren.core.domain.SubscriptionType;
 
 public class MongoMapper {
     
@@ -40,7 +32,9 @@ public class MongoMapper {
         String id = dbo.get("_id").toString();
         String name = getString(dbo, "name");
         String description = getString(dbo, "description");
+        String graphiteBaseUrl = getString(dbo, "graphiteBaseUrl");
         String target = getString(dbo, "target");
+        String graphiteUrl = getString(dbo, "graphiteBaseUrl");
         String from = Strings.emptyToNull(getString(dbo, "from"));
         String until = Strings.emptyToNull(getString(dbo, "until"));
         BigDecimal warn = getBigDecimal(dbo, "warn");
@@ -59,7 +53,9 @@ public class MongoMapper {
         return new Check().withId(id)
                 .withName(name)
                 .withDescription(description)
+                .withGraphiteBaseUrl(graphiteBaseUrl)
                 .withTarget(target)
+                .withGraphiteBaseUrl(graphiteUrl)
                 .withFrom(from)
                 .withUntil(until)
                 .withWarn(warn)
@@ -131,6 +127,26 @@ public class MongoMapper {
                 .withToType(toType)
                 .withTimestamp(timestamp);
     }
+
+    public SubscriptionPermissions permissionsFrom(DBObject dbo) {
+        String name = dbo.get("_id").toString();
+        String write = getString(dbo, "write");
+        SubscriptionPermissions permissions = new SubscriptionPermissions();
+        permissions.setName(name);
+        permissions.setWriteTypes(write.split(";"));
+        return permissions;
+    }
+
+    public User userFrom(DBObject dbo) {
+        String userId = dbo.get("_id").toString();
+        String username = dbo.get("username").toString();
+        String passwordEncoded = dbo.get("password").toString();
+        Set<String> roles = new HashSet<String>(Arrays.asList(dbo.get("roles").toString().split(";")));
+        User user = new User(username, passwordEncoded);
+        user.setId(userId);
+        user.setRoles(roles);
+        return user;
+    }
     
     public DBObject checkToDBObject(Check check) {
         return new BasicDBObject(propertiesToMap(check));
@@ -143,6 +159,14 @@ public class MongoMapper {
     public DBObject alertToDBObject(Alert alert) {
         return new BasicDBObject(propertiesToMap(alert));
     }
+
+    public DBObject permissionToDBObject(SubscriptionPermissions permissions) {
+        return new BasicDBObject(propertiesToMap(permissions));
+    }
+
+     public DBObject userToDBObject(User user) {
+         return new BasicDBObject(propertiesToMap(user));
+     }
     
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private Map propertiesToMap(Check check) {
@@ -150,7 +174,9 @@ public class MongoMapper {
         map.put("_id", check.getId());
         map.put("name", check.getName());
         map.put("description", check.getDescription());
+        map.put("graphiteBaseUrl", check.getGraphiteBaseUrl());
         map.put("target", check.getTarget());
+        map.put("graphiteBaseUrl", check.getGraphiteBaseUrl());
         map.put("from", check.getFrom());
         map.put("until", check.getUntil());
         if (check.getWarn() != null) {
@@ -232,6 +258,23 @@ public class MongoMapper {
         map.put("timestamp", new Date(alert.getTimestamp().getMillis()));
         return map;
     }
+
+    private Map propertiesToMap(SubscriptionPermissions permissions) {
+        Map map = new HashMap();
+        map.put("_id", permissions.getName());
+        map.put("write", permissions.getWriteTypesDelimited());
+        return map;
+    }
+
+     private Map propertiesToMap(User user) {
+         Map map = new HashMap();
+         map.put("_id", user.getId());
+         map.put("username", user.getUsername());
+         map.put("password", user.getPassword());
+         map.put("roles", user.getRolesDelimited());
+         return map;
+     }
+
     
     private boolean getBoolean(DBObject dbo, String key) {
         return (Boolean) dbo.get(key);

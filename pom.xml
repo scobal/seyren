@@ -77,6 +77,9 @@
         <org.slf4j.version>1.7.9</org.slf4j.version>
         <org.snmp4j.version>2.3.3</org.snmp4j.version>
         <org.springframework.version>4.1.4.RELEASE</org.springframework.version>
+        <spring.security.version>4.0.0.RELEASE</spring.security.version>
+        <javax.servlet-api.version>2.5</javax.servlet-api.version>
+        <commons-dbcp.version>1.4</commons-dbcp.version>
     </properties>
     
     <prerequisites>
@@ -381,6 +384,37 @@
                 <artifactId>spring-web</artifactId>
                 <version>${org.springframework.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-core</artifactId>
+                <version>${spring.security.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-web</artifactId>
+                <version>${spring.security.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-config</artifactId>
+                <version>${spring.security.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-ldap</artifactId>
+                <version>${spring.security.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-dbcp</groupId>
+                <artifactId>commons-dbcp</artifactId>
+                <version>${commons-dbcp.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>servlet-api</artifactId>
+                <version>${javax.servlet-api.version}</version>
+                <scope>provided</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -389,6 +423,10 @@
             <id>oosnmp-net-releases</id>
             <url>https://oosnmp.net/dist/release</url>
         </repository>
+		<repository>
+		    <id>thirdparty</id>
+			<url>http://nexus.sb.karmalab.net/nexus/content/repositories/thirdparty/</url>
+		</repository>
     </repositories>
 
 </project>

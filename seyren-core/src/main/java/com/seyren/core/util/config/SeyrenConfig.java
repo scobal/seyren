@@ -37,6 +37,9 @@ public class SeyrenConfig {
     private final String baseUrl;
     private final String mongoUrl;
     private final String graphsEnable;
+    private final int noOfThreads;
+    private final int checkExecutorInstanceIndex;
+    private final int checkExecutorTotalInstances;
     private final String graphiteUrl;
     private final String graphiteUsername;
     private final String graphitePassword;
@@ -65,6 +68,7 @@ public class SeyrenConfig {
     private final Integer smtpPort;
     private final String flowdockExternalUsername;
     private final String flowdockTags;
+    private final String graphiteScheme;
     // Icon mapped check sate (AlertType) see http://apps.timwhitlock.info/emoji/tables/unicode
     // question, sunny, cloud, voltage exclamation should be: \u2753,\u2600,\u2601,\u26A1,\u2757
     private final String flowdockEmojis;
@@ -82,8 +86,10 @@ public class SeyrenConfig {
     private final String victorOpsRestAPIEndpoint;
     private final String emailTemplateFileName;
     private final String emailSubjectTemplateFileName;
-    private final int noOfThreads;
     private final String httpNotificationUrl;
+    private final boolean securityEnabled;
+    private final String scriptPath;
+    private final String scriptType;
     public SeyrenConfig() {
         
         // Base
@@ -91,6 +97,9 @@ public class SeyrenConfig {
         this.mongoUrl = configOrDefault("MONGO_URL", "mongodb://localhost:27017/seyren");
         this.graphsEnable = configOrDefault("GRAPHS_ENABLE", "true");
         this.noOfThreads = Integer.parseInt(configOrDefault("SEYREN_THREADS", "8"));
+        this.checkExecutorInstanceIndex = Integer.parseInt(configOrDefault("SEYREN_WORKER_INDEX", "1"));
+        this.checkExecutorTotalInstances = Integer.parseInt(configOrDefault("SEYREN_WORKER_COUNT", "1"));
+        
         // Graphite
         this.graphiteUrl = stripEnd(configOrDefault("GRAPHITE_URL", "http://localhost:80"), "/");
         this.graphiteUsername = configOrDefault("GRAPHITE_USERNAME", "");
@@ -103,6 +112,7 @@ public class SeyrenConfig {
         this.graphiteConnectionRequestTimeout = Integer.parseInt(configOrDefault("GRAPHITE_CONNECTION_REQUEST_TIMEOUT", "0"));
         this.graphiteConnectTimeout = Integer.parseInt(configOrDefault("GRAPHITE_CONNECT_TIMEOUT", "0"));
         this.graphiteSocketTimeout = Integer.parseInt(configOrDefault("GRAPHITE_SOCKET_TIMEOUT", "0"));
+        this.graphiteScheme = configOrDefault("GRAPHITE_SCHEME", "http");
 
         // HTTP
 
@@ -165,6 +175,13 @@ public class SeyrenConfig {
         // Template
         this.emailTemplateFileName = configOrDefault("TEMPLATE_EMAIL_FILE_PATH","com/seyren/core/service/notification/email-template.vm");
         this.emailSubjectTemplateFileName = configOrDefault("TEMPLATE_EMAIL_SUBJECT_FILE_PATH","com/seyren/core/service/notification/email-subject-template.vm");
+
+        // spring security
+        this.securityEnabled = Boolean.parseBoolean(configOrDefault("SECURITY_ENABLED", "false"));
+
+        // script
+        this.scriptPath = configOrDefault("SCRIPT_FILE_PATH", "");
+        this.scriptType = configOrDefault("SCRIPT_TYPE", "python");
     }
     
     @PostConstruct
@@ -190,7 +207,22 @@ public class SeyrenConfig {
     public boolean isGraphsEnabled() {
         return Boolean.valueOf(graphsEnable);
     }
-    
+
+    @JsonIgnore
+    public int getNoOfThreads() {
+        return noOfThreads;
+    }
+
+    @JsonIgnore
+    public int getCheckExecutorInstanceIndex() {
+        return checkExecutorInstanceIndex;
+    }
+
+    @JsonIgnore
+    public int getCheckExecutorTotalInstances() {
+        return checkExecutorTotalInstances;
+    }
+
     @JsonIgnore
     public String getTwilioUrl() {
         return twilioUrl;
@@ -315,8 +347,8 @@ public class SeyrenConfig {
     public String getSnmpOID() {
         return snmpOID;
     }
-    
-    @JsonIgnore
+
+    @JsonProperty("graphiteUrl")
     public String getGraphiteUrl() {
         return graphiteUrl;
     }
@@ -333,7 +365,7 @@ public class SeyrenConfig {
     
     @JsonIgnore
     public String getGraphiteScheme() {
-        return splitBaseUrl(graphiteUrl)[0];
+        return this.graphiteScheme == null ? splitBaseUrl(graphiteUrl)[0] : graphiteScheme;
     }
     
     @JsonIgnore
@@ -412,11 +444,6 @@ public class SeyrenConfig {
     }
 
     @JsonIgnore
-    public int getNoOfThreads() {
-        return noOfThreads;
-    }
-
-    @JsonIgnore
     public String getHttpNotificationUrl() {
         return httpNotificationUrl;
     }
@@ -430,6 +457,21 @@ public class SeyrenConfig {
     @JsonIgnore
     public String getVictorOpsRestEndpoint() {
         return victorOpsRestAPIEndpoint;
+    }
+
+    @JsonIgnore
+      public boolean isSecurityEnabled() {
+        return securityEnabled;
+    }
+
+    @JsonIgnore
+    public String getScriptPath() {
+        return scriptPath;
+    }
+
+    @JsonIgnore
+    public String getScriptType() {
+        return scriptType;
     }
 
 
@@ -485,4 +527,5 @@ public class SeyrenConfig {
         
         return baseParts;
     }
+
 }
