@@ -31,8 +31,8 @@ import com.seyren.core.store.ChecksStore;
 
 @Named
 public class CheckScheduler {
-    private static final int MAX_CHECK_VALUES = 65536; // 4 unsigned hex digits, values range 0 - 16 ^ 4 - 1
-	
+    private static final int GUID_MAX_CHECK_VALUES = 65536; // 4 unsigned hex digits, values range 0 - 16 ^ 4 - 1
+    
     private final ScheduledExecutorService executor;
     private final ChecksStore checksStore;
     private final CheckRunnerFactory checkRunnerFactory;
@@ -64,10 +64,29 @@ public class CheckScheduler {
     
     private boolean isMyWork(Check check) {
     	if (totalWorkers > 1) {
-    		// More than 1 worker; split work on range of characters 30-33 of check id
-    		int checkIndex = Integer.parseInt(check.getId().substring(30,34), 16);
-    		if ((int)(MAX_CHECK_VALUES * (instanceIndex - 1) / totalWorkers) <= checkIndex && checkIndex < (int)(MAX_CHECK_VALUES * instanceIndex / totalWorkers)) {
-    			return true;
+    		// More than 1 worker; split work on range of characters 30-33 of check id for guid-based id
+    		// or modulus-based of counter-based portion of check id for a mongodb ObjectId-based id;
+    		// Note: Determination of ID-type is based on length (36 for Guid, 24 for MongoDB ObjectId)
+    		String id = check.getId();
+    		if (id.length() == 36) {
+    			// Guid-based id work sharding
+        		int checkIndex = Integer.parseInt(id.substring(30,34), 16);
+    			int low = (int)(GUID_MAX_CHECK_VALUES * (instanceIndex - 1) / totalWorkers);
+    			int high = (int)(GUID_MAX_CHECK_VALUES * instanceIndex / totalWorkers);
+        		if (low <= checkIndex && checkIndex < high) {
+        			return true;
+        		}    		
+    		}
+    		else if (id.length() == 24) {
+    			// ObjectId-based id work sharding
+        		int checkIndex = Integer.parseInt(id.substring(22,24), 16);
+        		
+        		if ((checkIndex % totalWorkers) == (instanceIndex - 1)) {
+        			return true;
+        		}
+    		}
+    		else {
+    			throw new UnsupportedOperationException("Unsupported id format; expected formats are 36 or 24 characters in length");
     		}
     		
     		// Not in range for this worker instance
