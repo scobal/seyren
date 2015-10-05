@@ -64,7 +64,7 @@ public class CheckScheduler {
 
     private boolean isMyWork(Check check) {
     	if (totalWorkers > 1) {
-    		// More than 1 worker; split work on range of characters 30-33 of check id
+    		// More than 1 worker; split work on range of characters 20-23 of check id
     		int checkIndex = Integer.parseInt(check.getId().substring(20,24), 16);
     		if ((int)(MAX_CHECK_VALUES * (instanceIndex - 1) / totalWorkers) <= checkIndex && checkIndex < (int)(MAX_CHECK_VALUES * instanceIndex / totalWorkers)) {
     			return true;
