@@ -23,6 +23,9 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import com.seyren.core.util.config.SeyrenConfig;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
@@ -31,6 +34,8 @@ import com.seyren.core.store.ChecksStore;
 
 @Named
 public class CheckScheduler {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CheckScheduler.class);
+
     private static final int GUID_MAX_CHECK_VALUES = 65536; // 4 unsigned hex digits, values range 0 - 16 ^ 4 - 1
     
     private final ScheduledExecutorService executor;
@@ -51,15 +56,19 @@ public class CheckScheduler {
     
     @Scheduled(fixedRateString = "${GRAPHITE_REFRESH:60000}")
     public void performChecks() {
+    	int checksInScope = 0;
         List<Check> checks = checksStore.getChecks(true, false).getValues();
         for (final Check check : checks) {
     		// Skip any not in this instance's workload
         	if (!isMyWork(check)) {
         		continue;
         	}
-
+        	checksInScope++;
         	executor.execute(checkRunnerFactory.create(check));
         }
+
+        // Log basic information about worker instance and its work
+        LOGGER.debug(String.format("Worker %d of %d performed %d of %d checks", instanceIndex, totalWorkers, checksInScope, checks.size()));
     }
     
     private boolean isMyWork(Check check) {
@@ -78,8 +87,9 @@ public class CheckScheduler {
         		}    		
     		}
     		else if (id.length() == 24) {
-    			// ObjectId-based id work sharding
-        		int checkIndex = Integer.parseInt(id.substring(22,24), 16);
+    			// ObjectId-based id work sharding; get the last two hex characters of the timestamp portion
+    			// which is the first 4 bytes or 8 characters
+        		int checkIndex = Integer.parseInt(id.substring(6,8), 16);
         		
         		if ((checkIndex % totalWorkers) == (instanceIndex - 1)) {
         			return true;

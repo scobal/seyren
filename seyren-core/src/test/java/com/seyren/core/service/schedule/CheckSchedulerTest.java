@@ -90,24 +90,33 @@ public class CheckSchedulerTest {
 
         mockChecksByObjectId = new ArrayList<Check>();
         
+        /* MongoDB ObjectId-based ids
+         * From http://docs.mongodb.org/manual/reference/object-id/
+         * Format is [Timestamp, 4 bytes (8 hex chars)][Machine identifier, 3 bytes][Process id, 2 bytes][randomized counter, 3 bytes]
+         * e.g. 000000001111112222333333
+         * where 0 is the timestamp portion, 1 is the machine identifier portion,
+         * 2 is the process id portion, 3 is the counter portion
+         * 
+         * After review, the timestamp portion gives the best work distribution for our data
+         */
         index1MockCheck = mock(Check.class);
-        when(index1MockCheck.getId()).thenReturn("012345678901234567890101");
+        when(index1MockCheck.getId()).thenReturn("000000010000000000000000");
         mockChecksByObjectId.add(index1MockCheck);
         
         index2MockCheck = mock(Check.class);
-        when(index2MockCheck.getId()).thenReturn("012345678901234567890102");
+        when(index2MockCheck.getId()).thenReturn("000000020000000000000000");
         mockChecksByObjectId.add(index2MockCheck);
         
         index3MockCheck = mock(Check.class);
-        when(index3MockCheck.getId()).thenReturn("012345678901234567890103");
+        when(index3MockCheck.getId()).thenReturn("000000030000000000000000");
         mockChecksByObjectId.add(index3MockCheck);
         
         index4MockCheck = mock(Check.class);
-        when(index4MockCheck.getId()).thenReturn("012345678901234567890104");
+        when(index4MockCheck.getId()).thenReturn("000000040000000000000000");
         mockChecksByObjectId.add(index4MockCheck);
 
         index5MockCheck = mock(Check.class);
-        when(index5MockCheck.getId()).thenReturn("012345678901234567890105");
+        when(index5MockCheck.getId()).thenReturn("000000050000000000000000");
         mockChecksByObjectId.add(index5MockCheck);
         
         SeyrenResponse<Check> checksByObjectId = new SeyrenResponse<Check>().withValues(mockChecksByObjectId);
