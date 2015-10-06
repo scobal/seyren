@@ -23,6 +23,9 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import com.seyren.core.util.config.SeyrenConfig;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
@@ -31,8 +34,10 @@ import com.seyren.core.store.ChecksStore;
 
 @Named
 public class CheckScheduler {
-    private static final int MAX_CHECK_VALUES = 65536; // 4 unsigned hex digits, values range 0 - 16 ^ 4 - 1
-	
+    private static final Logger LOGGER = LoggerFactory.getLogger(CheckScheduler.class);
+
+    private static final int GUID_MAX_CHECK_VALUES = 65536; // 4 unsigned hex digits, values range 0 - 16 ^ 4 - 1
+    
     private final ScheduledExecutorService executor;
     private final ChecksStore checksStore;
     private final CheckRunnerFactory checkRunnerFactory;
@@ -51,23 +56,47 @@ public class CheckScheduler {
     
     @Scheduled(fixedRateString = "${GRAPHITE_REFRESH:60000}")
     public void performChecks() {
+    	int checksInScope = 0;
         List<Check> checks = checksStore.getChecks(true, false).getValues();
         for (final Check check : checks) {
     		// Skip any not in this instance's workload
         	if (!isMyWork(check)) {
         		continue;
         	}
-
+        	checksInScope++;
         	executor.execute(checkRunnerFactory.create(check));
         }
+
+        // Log basic information about worker instance and its work
+        LOGGER.debug(String.format("Worker %d of %d performed %d of %d checks", instanceIndex, totalWorkers, checksInScope, checks.size()));
     }
     
     private boolean isMyWork(Check check) {
     	if (totalWorkers > 1) {
-    		// More than 1 worker; split work on range of characters 30-33 of check id
-    		int checkIndex = Integer.parseInt(check.getId().substring(30,34), 16);
-    		if ((int)(MAX_CHECK_VALUES * (instanceIndex - 1) / totalWorkers) <= checkIndex && checkIndex < (int)(MAX_CHECK_VALUES * instanceIndex / totalWorkers)) {
-    			return true;
+    		// More than 1 worker; split work on range of characters 30-33 of check id for guid-based id
+    		// or modulus-based of counter-based portion of check id for a mongodb ObjectId-based id;
+    		// Note: Determination of ID-type is based on length (36 for Guid, 24 for MongoDB ObjectId)
+    		String id = check.getId();
+    		if (id.length() == 36) {
+    			// Guid-based id work sharding
+        		int checkIndex = Integer.parseInt(id.substring(30,34), 16);
+    			int low = (int)(GUID_MAX_CHECK_VALUES * (instanceIndex - 1) / totalWorkers);
+    			int high = (int)(GUID_MAX_CHECK_VALUES * instanceIndex / totalWorkers);
+        		if (low <= checkIndex && checkIndex < high) {
+        			return true;
+        		}    		
+    		}
+    		else if (id.length() == 24) {
+    			// ObjectId-based id work sharding; get the last two hex characters of the timestamp portion
+    			// which is the first 4 bytes or 8 characters
+        		int checkIndex = Integer.parseInt(id.substring(6,8), 16);
+        		
+        		if ((checkIndex % totalWorkers) == (instanceIndex - 1)) {
+        			return true;
+        		}
+    		}
+    		else {
+    			throw new UnsupportedOperationException("Unsupported id format; expected formats are 36 or 24 characters in length");
     		}
     		
     		// Not in range for this worker instance
