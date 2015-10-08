@@ -135,6 +135,10 @@ The target for a Slack subscription will be the channel name (including the `#`,
 ##### [Victorops](https://www.victorops.com/)
 * `VICTOROPS_REST_ENDPOINT` - The REST Endpoint given by Victorops. See [REST Integration]( http://victorops.force.com/knowledgebase/articles/Integration/Alert-Ingestion-API-Documentation/) Default ``
 
+##### [Proxy](http://hc.apache.org/httpcomponents-client-ga/httpclient/apidocs/org/apache/http/impl/client/HttpClientBuilder.html#useSystemProperties())
+The Proxy settings are changed by using JAVA_OPTS. It important that you exclude your graphite server or you will proxy these requests also.
+* `JAVA_OPTS Example` JAVA_OPTS="-server -Dhttps.proxyHost=`PROXYSERVER` -Dhttps.proxyPort=`PROXYPORT` -Dhttp.proxyHost=`PROXYSERVER` -Dhttp.proxyPort=`PROXYPORT` -Dhttp.nonProxyHosts=`GRAPHITESERVER|*YOURDOMAIN.COM|INTERNALHIPCHAT`"
+
 ##Seyren API
 
 See [Seyren API](API.md)

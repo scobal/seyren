@@ -79,7 +79,7 @@ public class VictorOpsNotificationService implements NotificationService {
             return;
         }
 
-        HttpClient client = HttpClientBuilder.create().build();
+        HttpClient client = HttpClientBuilder.create().useSystemProperties().build();
         HttpPost post = new HttpPost(victorOpsUri);
         try {
             HttpEntity entity = new StringEntity(getDescription(check, alerts), ContentType.APPLICATION_JSON);

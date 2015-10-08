@@ -69,7 +69,7 @@ public class HubotNotificationService implements NotificationService {
         body.put("alerts", alerts);
         body.put("rooms", subscription.getTarget().split(","));
         
-        HttpClient client = HttpClientBuilder.create().build();
+        HttpClient client = HttpClientBuilder.create().useSystemProperties().build();
         
         HttpPost post = new HttpPost(hubotUrl + "/seyren/alert");
         try {
