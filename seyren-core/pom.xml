@@ -62,6 +62,10 @@
             <artifactId>httpclient</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpmime</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.apache.velocity</groupId>
             <artifactId>velocity</artifactId>
         </dependency>
@@ -103,7 +107,6 @@
         <dependency>
         	<groupId>com.opsgenie.integration</groupId>
         	<artifactId>sdk</artifactId>
-        	<version>[2.0.0,)</version>
     	</dependency>
     </dependencies>
 	<repositories>
