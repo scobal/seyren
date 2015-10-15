@@ -158,6 +158,7 @@ Then, you just need to start Docker Compose:
 docker-compose up
 ```
 and open [http://localhost:8080/seyren](http://localhost:8080/seyren).
+Graphite is available on [http://localhost:8081/](http://localhost:8081/) with Basic Auth guest/guest.
 
 ##Init script
 
