@@ -91,6 +91,7 @@ public class HipChatNotificationService implements NotificationService {
 
             try {
                 roomId = URLEncoder.encode(roomId, "UTF-8");
+                roomId = roomId.replaceAll("\\+", "%20");
             }
             catch (UnsupportedEncodingException e) {
                 LOGGER.warn("Unable to URLEncode HipChat RoomID", e);
@@ -100,7 +101,6 @@ public class HipChatNotificationService implements NotificationService {
             HttpPost post = new HttpPost(url);
 
             try {
-                roomId = URLEncoder.encode(roomId, "UTF-8");
                 List<BasicNameValuePair> parameters = new ArrayList<BasicNameValuePair>();
                 parameters.add(new BasicNameValuePair("message", message));
                 parameters.add(new BasicNameValuePair("color", color.name().toLowerCase()));
