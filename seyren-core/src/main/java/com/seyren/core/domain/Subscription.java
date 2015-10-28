@@ -43,7 +43,7 @@ public class Subscription {
     // Extended, type-specific properties
     private int position;
     private String resourceUrl;
-    private String scriptPath;
+    // private String scriptPath;
     
     public String getId() {
         return id;
@@ -270,6 +270,7 @@ public class Subscription {
         return this;
     }
     
+    /*
     public String getScriptPath() {
         return scriptPath;
     }
@@ -282,6 +283,7 @@ public class Subscription {
         setScriptPath(scriptPath);
         return this;
     }
+    */
 
     public boolean shouldNotify(DateTime time, AlertType alertType) {
         if (!isEnabled()) {

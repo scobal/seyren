@@ -58,7 +58,7 @@ public class ScriptNotificationService implements NotificationService {
 	    		try {
 	    			String hostname = getHostName(alert, hostPosition);
 	    			String resourceUrl = subscription.getTarget();
-	    			ProcessBuilder pb = new ProcessBuilder(seyrenConfig.getScriptType(), subscription.getScriptPath(), hostname, new Gson().toJson(check), seyrenConfig.getBaseUrl(), resourceUrl);
+	    			ProcessBuilder pb = new ProcessBuilder(seyrenConfig.getScriptType(), seyrenConfig.getScriptPath(), hostname, new Gson().toJson(check), seyrenConfig.getBaseUrl(), resourceUrl);
 	                LOGGER.info("Script Start");
 	                Process p = pb.start();
 	                BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));

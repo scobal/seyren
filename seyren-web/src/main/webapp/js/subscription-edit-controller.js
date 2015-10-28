@@ -29,8 +29,8 @@
             var resourceUrlsConcatenated, scriptPathsConcatenated;
             resourceUrlsConcatenated = config.scriptResourceUrls === undefined ? "" : config.scriptResourceUrls;
             $scope.resourceUrls = resourceUrlsConcatenated.split( /[,;]/ );
-            scriptPathsConcatenated = config.scriptPath === undefined ? "" : config.scriptPath;
-            $scope.scriptPaths = scriptPathsConcatenated.split( /[,;]/ );
+            // scriptPathsConcatenated = config.scriptPath === undefined ? "" : config.scriptPath;
+            // $scope.scriptPaths = scriptPathsConcatenated.split( /[,;]/ );
         });
 
         $('#editSubscriptionModal').on('shown', function () {
