@@ -63,6 +63,7 @@ public class ScriptNotificationServiceTest {
                 .withEnabled(true)
                 .withType(SubscriptionType.SCRIPT)
                 .withTarget("eos.test.expedia.com/isactive")
+                .withScriptPath(Thread.currentThread().getContextClassLoader().getResource("script.py").toString())
                 .withPosition(4);
         Alert alert = new Alert()
                 .withFromType(AlertType.OK)

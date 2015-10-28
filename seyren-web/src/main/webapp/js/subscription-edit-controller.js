@@ -26,8 +26,11 @@
         };
 
         Config.query({}, function(config) {
-            var resourceUrlConcatenated = config.scriptResourceUrls === undefined ? "" : config.scriptResourceUrls;
-            $scope.resourceUrls = resourceUrlConcatenated.split( ',' );
+            var resourceUrlsConcatenated, scriptPathsConcatenated;
+            resourceUrlsConcatenated = config.scriptResourceUrls === undefined ? "" : config.scriptResourceUrls;
+            $scope.resourceUrls = resourceUrlsConcatenated.split( /[,;]/ );
+            scriptPathsConcatenated = config.scriptPath === undefined ? "" : config.scriptPath;
+            $scope.scriptPaths = scriptPathsConcatenated.split( /[,;]/ );
         });
 
         $('#editSubscriptionModal').on('shown', function () {

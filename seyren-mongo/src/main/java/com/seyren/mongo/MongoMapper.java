@@ -239,6 +239,9 @@ public class MongoMapper {
         if (subscription.getPosition() != 0) {
         	map.put("position", subscription.getPosition());
 		}
+        if (subscription.getScriptPath() != null) {
+        	map.put("scriptPath", subscription.getScriptPath());
+		}
         return map;
     }
     

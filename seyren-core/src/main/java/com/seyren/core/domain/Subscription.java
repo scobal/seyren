@@ -43,6 +43,7 @@ public class Subscription {
     // Extended, type-specific properties
     private int position;
     private String resourceUrl;
+    private String scriptPath;
     
     public String getId() {
         return id;
@@ -266,6 +267,19 @@ public class Subscription {
     
     public Subscription withPosition(int position) {
         setPosition(position);
+        return this;
+    }
+    
+    public String getScriptPath() {
+        return scriptPath;
+    }
+    
+    public void setScriptPath(String scriptPath) {
+        this.scriptPath = scriptPath;
+    }
+    
+    public Subscription withScriptPath(String scriptPath) {
+        setScriptPath(scriptPath);
         return this;
     }
 
