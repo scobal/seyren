@@ -71,7 +71,6 @@ public class ScriptNotificationService implements NotificationService {
 	    		}
 	    		catch (Exception e) {
 	                LOGGER.error("Script could not be sent: {}", e);
-                    e.printStackTrace();
 	                throw new NotificationFailedException("Could not send message through the script");
 	    		}
 	    	}
