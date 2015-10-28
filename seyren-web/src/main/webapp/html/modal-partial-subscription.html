@@ -12,7 +12,8 @@
                 <div ng-class="{ 'form-group': true, 'has-error': checkSubscription['subscription.target'].$invalid }">
                     <label class="col-sm-3 control-label" for="subscription.target">Target</label>
                     <div class="col-sm-7">
-                        <input id="subscription.target" class="form-control" name="subscription.target" ng-model="subscription.target" type="text" required />
+                        <input ng-if="subscription.type != 'SCRIPT'" id="subscription.target" class="form-control" name="subscription.target" ng-model="subscription.target" type="text" required />
+                        <select ng-if="subscription.type == 'SCRIPT'" id="subscription.target" class="form-control" name="subscription.target" ng-model="subscription.target" type="text" required ng-options="resourceUrl for resourceUrl in resourceUrls"></select>
                     </div>
                 </div>
                 <div ng-class="{ 'form-group': true, 'has-error': checkSubscription['subscription.type'].$invalid }">
@@ -35,6 +36,12 @@
                             <option value="VICTOROPS">VictorOps</option>
                             <option value="SCRIPT">Script</option>
                         </select>
+                    </div>
+                </div>
+                <div ng-class="{ 'form-group': true, 'has-error': checkSubscription['subscription.position'].$invalid }" ng-if="subscription.type=='SCRIPT'">
+                    <label class="col-sm-3 control-label" for="subscription.position">Machine Name Target String Position</label>
+                    <div class="col-sm-7">
+                        <input id="subscription.position" class="form-control" name="subscription.position" ng-model="subscription.position" type="number" min=0 required/>
                     </div>
                 </div>
                 <div class="form-group">

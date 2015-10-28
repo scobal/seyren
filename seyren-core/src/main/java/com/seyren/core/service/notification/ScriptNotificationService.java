@@ -16,6 +16,7 @@ package com.seyren.core.service.notification;
 
 import com.google.gson.Gson;
 import com.seyren.core.domain.Alert;
+import com.seyren.core.domain.AlertType;
 import com.seyren.core.domain.Check;
 import com.seyren.core.domain.Subscription;
 import com.seyren.core.domain.SubscriptionType;
@@ -43,21 +44,47 @@ public class ScriptNotificationService implements NotificationService {
     }
     @Override
     public void sendNotification(Check check, Subscription subscription, List<Alert> alerts) throws NotificationFailedException {
-        LOGGER.info("Script Location: {}", seyrenConfig.getScriptPath());
-        ProcessBuilder pb = new ProcessBuilder(seyrenConfig.getScriptType() ,seyrenConfig.getScriptPath(), subscription.getTarget(), new Gson().toJson(check));
-        try {
-            LOGGER.info("Script Start");
-            Process p = pb.start();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                LOGGER.info(line);
-            }
-            LOGGER.info("Script End");
-        } catch (IOException e) {
-            LOGGER.info("Script could not be sent: {}", e.getMessage());
-            throw new NotificationFailedException("Could not send message through the script");
-        }
+	    if (check.getState() == AlertType.ERROR) {
+			int hostPosition = subscription.getPosition();
+			
+			// Check for a valid position
+			if (hostPosition == 0) {
+				LOGGER.info("No hostname position for subscription: {}", subscription.getId());
+				throw new NotificationFailedException("Invalid subscription; script has no hostname position");
+			}
+			
+	        LOGGER.info("Script Location: {}", seyrenConfig.getScriptPath());
+	    	for(Alert alert: alerts) {
+	    		try {
+	    			String hostname = getHostName(alert, hostPosition);
+	    			String resourceUrl = subscription.getTarget();
+	    			ProcessBuilder pb = new ProcessBuilder(seyrenConfig.getScriptType(), seyrenConfig.getScriptPath(), hostname, new Gson().toJson(check), seyrenConfig.getBaseUrl(), resourceUrl);
+	                LOGGER.info("Script Start");
+	                Process p = pb.start();
+	                BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+	                String line;
+	                while ((line = reader.readLine()) != null) {
+	                    LOGGER.info(line);
+	                    //System.out.println(line);
+	                }
+	                LOGGER.info("Script End");
+	    		}
+	    		catch (Exception e) {
+	                LOGGER.error("Script could not be sent: {}", e);
+                    e.printStackTrace();
+	                throw new NotificationFailedException("Could not send message through the script");
+	    		}
+	    	}
+	    }
+    }
+
+    private String getHostName(Alert alert,int hostPosition) {
+        //int pos = Integer.parseInt(hostPostion);
+        //LOGGER.info("******* hostPostion found : "+pos);
+        String[] target = alert.getTarget().split("\\.");
+        String hostname = target[hostPosition-1];
+        //LOGGER.info("******* Retuning Hostname " +hostname); 
+        return hostname;
     }
 
     @Override

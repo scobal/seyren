@@ -40,6 +40,10 @@ public class Subscription {
     private LocalTime toTime;
     private boolean enabled;
     
+    // Extended, type-specific properties
+    private int position;
+    private String resourceUrl;
+    
     public String getId() {
         return id;
     }
@@ -252,6 +256,19 @@ public class Subscription {
         return this;
     }
     
+    public int getPosition() {
+        return position;
+    }
+    
+    public void setPosition(int position) {
+        this.position = position;
+    }
+    
+    public Subscription withPosition(int position) {
+        setPosition(position);
+        return this;
+    }
+
     public boolean shouldNotify(DateTime time, AlertType alertType) {
         if (!isEnabled()) {
             return false;
