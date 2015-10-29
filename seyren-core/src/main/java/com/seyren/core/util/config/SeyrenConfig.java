@@ -90,6 +90,7 @@ public class SeyrenConfig {
     private final boolean securityEnabled;
     private final String scriptPath;
     private final String scriptType;
+    private final String scriptResourceUrls;
     public SeyrenConfig() {
         
         // Base
@@ -180,8 +181,9 @@ public class SeyrenConfig {
         this.securityEnabled = Boolean.parseBoolean(configOrDefault("SECURITY_ENABLED", "false"));
 
         // script
-        this.scriptPath = configOrDefault("SCRIPT_FILE_PATH", "");
+        this.scriptPath = configOrDefault("SCRIPT_FILE_PATH", "/tmp");
         this.scriptType = configOrDefault("SCRIPT_TYPE", "python");
+        this.scriptResourceUrls = configOrDefault("SCRIPT_RESOURCE_URLS", "ERROR: None Defined");
     }
     
     @PostConstruct
@@ -464,7 +466,7 @@ public class SeyrenConfig {
         return securityEnabled;
     }
 
-    @JsonIgnore
+    @JsonProperty("scriptPath")
     public String getScriptPath() {
         return scriptPath;
     }
@@ -472,6 +474,11 @@ public class SeyrenConfig {
     @JsonIgnore
     public String getScriptType() {
         return scriptType;
+    }
+    
+    @JsonProperty("scriptResourceUrls")
+    public String getScriptResourceUrls() {
+        return scriptResourceUrls;
     }
 
 

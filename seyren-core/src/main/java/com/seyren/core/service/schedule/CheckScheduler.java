@@ -43,7 +43,7 @@ public class CheckScheduler {
     private final CheckRunnerFactory checkRunnerFactory;
     private final int instanceIndex;
     private final int totalWorkers;
-    
+
     @Inject
     public CheckScheduler(ChecksStore checksStore, CheckRunnerFactory checkRunnerFactory, SeyrenConfig seyrenConfig) {
         this.checksStore = checksStore;
@@ -53,7 +53,7 @@ public class CheckScheduler {
         this.instanceIndex = seyrenConfig.getCheckExecutorInstanceIndex();
         this.totalWorkers = seyrenConfig.getCheckExecutorTotalInstances();
     }
-    
+
     @Scheduled(fixedRateString = "${GRAPHITE_REFRESH:60000}")
     public void performChecks() {
     	int checksInScope = 0;
@@ -70,7 +70,7 @@ public class CheckScheduler {
         // Log basic information about worker instance and its work
         LOGGER.debug(String.format("Worker %d of %d performed %d of %d checks", instanceIndex, totalWorkers, checksInScope, checks.size()));
     }
-    
+
     private boolean isMyWork(Check check) {
     	if (totalWorkers > 1) {
     		// More than 1 worker; split work on range of characters 30-33 of check id for guid-based id
@@ -98,18 +98,18 @@ public class CheckScheduler {
     		else {
     			throw new UnsupportedOperationException("Unsupported id format; expected formats are 36 or 24 characters in length");
     		}
-    		
+
     		// Not in range for this worker instance
     		return false;
     	}
-    	
+
     	return true;
     }
-    
+
     @PreDestroy
     public void preDestroy() throws InterruptedException {
         executor.shutdown();
         executor.awaitTermination(500, TimeUnit.MILLISECONDS);
     }
-    
+
 }

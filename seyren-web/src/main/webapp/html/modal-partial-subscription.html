@@ -12,7 +12,8 @@
                 <div ng-class="{ 'form-group': true, 'has-error': checkSubscription['subscription.target'].$invalid }">
                     <label class="col-sm-3 control-label" for="subscription.target">Target</label>
                     <div class="col-sm-7">
-                        <input id="subscription.target" class="form-control" name="subscription.target" ng-model="subscription.target" type="text" required />
+                        <input ng-if="subscription.type != 'SCRIPT'" id="subscription.target" class="form-control" name="subscription.target" ng-model="subscription.target" type="text" required />
+                        <select ng-if="subscription.type == 'SCRIPT'" id="subscription.target" class="form-control" name="subscription.target" ng-model="subscription.target" type="text" required ng-options="resourceUrl for resourceUrl in resourceUrls"></select>
                     </div>
                 </div>
                 <div ng-class="{ 'form-group': true, 'has-error': checkSubscription['subscription.type'].$invalid }">
@@ -37,6 +38,26 @@
                         </select>
                     </div>
                 </div>
+                <div ng-class="{ 'form-group': true }" ng-if="subscription.type=='SCRIPT'">
+                    <label class="col-sm-3 control-label" for="subscription.scriptType">Script Type</label>
+                    <div class="col-sm-4">
+                        <select id="subscription.scriptType" class="form-control" name="subscription.scriptType">
+                            <option value="EOS">EOS</option>
+                        </select>
+                    </div>
+                </div>
+                <div ng-class="{ 'form-group': true, 'has-error': checkSubscription['subscription.position'].$invalid }" ng-if="subscription.type=='SCRIPT'">
+                    <label class="col-sm-3 control-label" for="subscription.position">Machine Name Target String Position</label>
+                    <div class="col-sm-7">
+                        <input id="subscription.position" class="form-control" name="subscription.position" ng-model="subscription.position" type="number" min=0 required/>
+                    </div>
+                </div>
+                <!-- <div ng-class="{ 'form-group': true, 'has-error': checkSubscription['subscription.scriptPath'].$invalid }" ng-if=false>
+                    <label class="col-sm-3 control-label" for="subscription.scriptPath">Path to Script</label>
+                    <div class="col-sm-7">
+                        <select id="subscription.scriptPath" class="form-control" name="subscription.scriptPath" ng-model="subscription.scriptPath" type="text" required ng-options="scriptPath for scriptPath in scriptPaths"></select>
+                    </div>
+                </div> -->
                 <div class="form-group">
                     <label class="col-sm-3 control-label">Notify on</label>
                     <div class="col-sm-2">

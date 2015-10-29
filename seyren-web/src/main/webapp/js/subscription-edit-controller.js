@@ -2,10 +2,11 @@
 (function () {
     'use strict';
 
-    seyrenApp.controller('SubscriptionEditModalController', function SubscriptionEditModalController($scope, $rootScope, Subscriptions, Seyren) {
+    seyrenApp.controller('SubscriptionEditModalController', function SubscriptionEditModalController($scope, $rootScope, Subscriptions, Seyren, Config) {
         $scope.master = {
             target: null,
             type: "EMAIL",
+            position: 1,
             ignoreWarn: false,
             ignoreError: false,
             ignoreOk: false,
@@ -23,6 +24,14 @@
             sa: true,
             enabled: true
         };
+
+        Config.query({}, function(config) {
+            var resourceUrlsConcatenated, scriptPathsConcatenated;
+            resourceUrlsConcatenated = config.scriptResourceUrls === undefined ? "" : config.scriptResourceUrls;
+            $scope.resourceUrls = resourceUrlsConcatenated.split( /[,;]/ );
+            // scriptPathsConcatenated = config.scriptPath === undefined ? "" : config.scriptPath;
+            // $scope.scriptPaths = scriptPathsConcatenated.split( /[,;]/ );
+        });
 
         $('#editSubscriptionModal').on('shown', function () {
             $('#subscription\\.target').focus();
