@@ -41,7 +41,7 @@ public class Subscription {
     private boolean enabled;
     
     // Extended, type-specific properties
-    private int position;
+    private String position;
     private String resourceUrl;
     // private String scriptPath;
     
@@ -257,15 +257,15 @@ public class Subscription {
         return this;
     }
     
-    public int getPosition() {
+    public String getPosition() {
         return position;
     }
     
-    public void setPosition(int position) {
+    public void setPosition(String position) {
         this.position = position;
     }
     
-    public Subscription withPosition(int position) {
+    public Subscription withPosition(String position) {
         setPosition(position);
         return this;
     }

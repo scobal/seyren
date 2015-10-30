@@ -85,7 +85,7 @@ public class MongoMapper {
         LocalTime fromTime = getLocalTime(dbo, "fromHour", "fromMin");
         LocalTime toTime = getLocalTime(dbo, "toHour", "toMin");
         boolean enabled = getBoolean(dbo, "enabled");
-        int position = getInteger(dbo, "position");
+        String position = getString(dbo, "position");
         
         return new Subscription()
                 .withId(id)
@@ -236,7 +236,7 @@ public class MongoMapper {
             map.put("toMin", subscription.getToTime().getMinuteOfHour());
         }
         map.put("enabled", subscription.isEnabled());
-        if (subscription.getPosition() != 0) {
+        if (subscription.getPosition() != null) {
         	map.put("position", subscription.getPosition());
 		}
         return map;

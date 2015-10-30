@@ -45,10 +45,10 @@ public class ScriptNotificationService implements NotificationService {
     @Override
     public void sendNotification(Check check, Subscription subscription, List<Alert> alerts) throws NotificationFailedException {
 	    if (check.getState() == AlertType.ERROR) {
-			int hostPosition = subscription.getPosition();
+			String hostPosition = subscription.getPosition();
 			
 			// Check for a valid position
-			if (hostPosition == 0) {
+			if (hostPosition == null) {
 				LOGGER.info("No hostname position for subscription: {}", subscription.getId());
 				throw new NotificationFailedException("Invalid subscription; script has no hostname position");
 			}
@@ -77,11 +77,11 @@ public class ScriptNotificationService implements NotificationService {
 	    }
     }
 
-    private String getHostName(Alert alert,int hostPosition) {
-        //int pos = Integer.parseInt(hostPostion);
+    private String getHostName(Alert alert,String hostPosition) {
+        int pos = Integer.parseInt(hostPosition);
         //LOGGER.info("******* hostPostion found : "+pos);
         String[] target = alert.getTarget().split("\\.");
-        String hostname = target[hostPosition-1];
+        String hostname = target[pos-1];
         //LOGGER.info("******* Retuning Hostname " +hostname); 
         return hostname;
     }
