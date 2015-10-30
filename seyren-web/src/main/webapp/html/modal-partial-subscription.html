@@ -49,7 +49,7 @@
                 <div ng-class="{ 'form-group': true, 'has-error': checkSubscription['subscription.position'].$invalid }" ng-if="subscription.type=='SCRIPT'">
                     <label class="col-sm-3 control-label" for="subscription.position">Machine Name Target String Position</label>
                     <div class="col-sm-7">
-                        <input id="subscription.position" class="form-control" name="subscription.position" ng-model="subscription.position" type="number" min=0 required/>
+                        <input id="subscription.position" class="form-control" name="subscription.position" ng-model="subscription.position" type="text" ng-pattern="/^\d+$/" required/>
                     </div>
                 </div>
                 <!-- <div ng-class="{ 'form-group': true, 'has-error': checkSubscription['subscription.scriptPath'].$invalid }" ng-if=false>
