@@ -6,7 +6,7 @@
         $scope.master = {
             target: null,
             type: "EMAIL",
-            position:"1",
+            position: null,
             ignoreWarn: false,
             ignoreError: false,
             ignoreOk: false,
