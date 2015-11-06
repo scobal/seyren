@@ -436,6 +436,56 @@ GET /api/checks/540571f4f562fe8c51873ad1
 
 ### Update a check
 
+* **URL** /api/checks/{checkId}
+
+* **Method** PUT
+
+* **URL Params**
+
+| Parameter      | Required         | Description            | Type      |
+|----------------|------------------|------------------------|-----------|
+| checkId         |  true           | Check id               | String    |
+
+* **Query Params**
+
+None
+
+* **Body**
+
+ Parameter | Required   | Description            | Type    |
+|-----------|------------|------------------------|---------|
+| name | true      | Name of the check | String |
+| description | false      | Description of the check | String |
+| target | true      | Name of the metric in graphite | String |
+| warn | true      | Warn level |  String |
+| error | true      | Error level | String |
+| enabled | true      | Enable/Disable value | boolean |
+| live | false      | Live value (pickle protocol) | boolean |
+| from | false      | Specifies the beginning  | String |
+| until | false      | Specifies the end | String |
+| state| false | Specifies the state | String |
+
+* **Response**
+
+PUT /api/checks/540571f4f562fe8c51873ad1
+
+```json
+{  
+   "id": "540571f4f562fe8c51873ad1",
+   "name":"2222",
+   "description":"2222",
+   "target":"3333",
+   "warn":"6666",
+   "error":"7777",
+   "enabled":true,
+   "live":false,
+   "from":"4444",
+   "until":"5555",
+   "state": "OK"
+}
+```
+
+Return '200 OK'
 
 ### Delete a check
 
