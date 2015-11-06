@@ -326,7 +326,7 @@ GET /api/checks?enabled=true&state=ERROR&state=WARN&state=EXCEPTION&state=UNKNOW
 
 ### Create a check
 
-* **URL** /checks
+* **URL** /api/checks
 
 * **Method** POST
 
@@ -354,7 +354,7 @@ None
 
 * **Response**
 
-POST /checks
+POST /api/checks
 
 ```json
 {  
@@ -375,7 +375,7 @@ Response '201 Created'
 
 ### Get a check
 
-* **URL** /checks/{checkId}
+* **URL** /api/checks/{checkId}
 
 * **Method** GET
 
@@ -395,7 +395,7 @@ None
 
 * **Response**
 
-GET /checks/540571f4f562fe8c51873ad1
+GET /api/checks/540571f4f562fe8c51873ad1
 
 ```json
 {  
@@ -439,7 +439,7 @@ GET /checks/540571f4f562fe8c51873ad1
 
 ### Delete a check
 
-* **URL** /checks/{checkId}
+* **URL** /api/checks/{checkId}
 
 * **Method** DELETE
 
@@ -498,7 +498,7 @@ Return '204 No Content'
 
 ### Get metric count
 
-* **URL** /metrics/{target}/total
+* **URL** /api/metrics/{target}/total
 
 * **Method** GET
 
@@ -573,7 +573,7 @@ Return '201 Created'
 
 ### Update a subscription
 
-* **URL** /checks/{checkId}/subscriptions/{subscriptionId}
+* **URL** /api/checks/{checkId}/subscriptions/{subscriptionId}
 
 * **Method** PUT
 
@@ -620,7 +620,7 @@ Return '204 No Content'
 
 ### Delete a subscription
 
-* **URL** /checks/{checkId}/subscriptions/{subscriptionId}
+* **URL** /api/checks/{checkId}/subscriptions/{subscriptionId}
 
 * **Method** DELETE
 
@@ -647,7 +647,7 @@ Return '204 No Content'
  
 ### Test a subscription
 
-* **URL** /checks/{checkId}/subscriptions/{subscriptionId}/test
+* **URL** /api/checks/{checkId}/subscriptions/{subscriptionId}/test
 
 * **Method** PUT
 
