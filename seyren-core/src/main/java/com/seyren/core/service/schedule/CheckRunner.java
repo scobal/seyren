@@ -57,83 +57,103 @@ public class CheckRunner implements Runnable {
     
     @Override
     public final void run() {
+    	// If the check is not enabled, don't run it, exiting...
         if (!check.isEnabled()) {
             return;
         }
         
         try {
+        	// See if this check is currently running, if so, return and log the 
+        	// missed cycle
+        	if (CheckConcurrencyGovernor.instance().isCheckRunning(this.check)){
+        		CheckConcurrencyGovernor.instance().logCheckSkipped(check);
+        		return;
+        	}
+        	// Notify the Check Governor that the check is now running
+        	CheckConcurrencyGovernor.instance().notifiyCheckIsRunning(this.check);
+        	// Run the check
             Map<String, Optional<BigDecimal>> targetValues = targetChecker.check(check);
-            
+            // Get the current time - to be used for notification and alert time stamps 
             DateTime now = new DateTime();
+            // Get the threshold values for the check which signify warning and error thresholds
             BigDecimal warn = check.getWarn();
             BigDecimal error = check.getError();
             
             AlertType worstState;
-            
+            // If the check is allowed data, initialized the state as OK, otherwise,
+            // it is unknown
             if (check.isAllowNoData()) {
                 worstState = AlertType.OK;
             } else {
                 worstState = AlertType.UNKNOWN;
             }
-            
+            // Intialize a list of alerts that represent a change in alert state from
+            // the last time that the check was run
             List<Alert> interestingAlerts = new ArrayList<Alert>();
-            
+            // Get the measured values for this check from the Graphite/Noop datasource 
+            // Iterate through them, to check for error/warn values
             for (Entry<String, Optional<BigDecimal>> entry : targetValues.entrySet()) {
                 
                 String target = entry.getKey();
                 Optional<BigDecimal> value = entry.getValue();
-                
+                // If there is no value in the entry, move to the next one
                 if (!value.isPresent()) {
                     LOGGER.warn("No value present for {}", target);
                     continue;
                 }
-                
+                // Get the value of the entry
                 BigDecimal currentValue = value.get();
-                
+                // Get the last alert stored for this check
                 Alert lastAlert = alertsStore.getLastAlertForTargetOfCheck(target, check.getId());
                 
                 AlertType lastState;
-                
+                // If no "last alert" is found, then assume that the last state is "OK"
                 if (lastAlert == null) {
                     lastState = AlertType.OK;
                 } else {
                     lastState = lastAlert.getToType();
                 }
-                
+                // Based on the check value retrieved, turn it into an Alert state
                 AlertType currentState = valueChecker.checkValue(currentValue, warn, error);
-                
+                // If the Alert state is worse than the last state, set it as the worst state yet
+                // encountered
                 if (currentState.isWorseThan(worstState)) {
                     worstState = currentState;
                 }
-                
+                // If the last state and the current state are both OK, move to the next entry
                 if (isStillOk(lastState, currentState)) {
                     continue;
                 }
-                
+                // If the state is not OK, create an alert
                 Alert alert = createAlert(target, currentValue, warn, error, lastState, currentState, now);
-                
                 alertsStore.createAlert(check.getId(), alert);
                 
                 // Only notify if the alert has changed state
                 if (stateIsTheSame(lastState, currentState)) {
                     continue;
                 }
-                
+                // If the state has changed, add the alert to the interesting alerts collection
                 interestingAlerts.add(alert);
                 
             }
-
+            // Notify the Check Governor that the check has been completed
+            CheckConcurrencyGovernor.instance().notifiyCheckIsComplete(this.check);
+            // Update the the check with the worst state encountered in this polling
             Check updatedCheck = checksStore.updateStateAndLastCheck(check.getId(), worstState, DateTime.now());
-
+            // If there are no interesting alerts, simply return
             if (interestingAlerts.isEmpty()) {
                 return;
             }
-            
+            // If there are interesting alerts, then evaluate the check's subscriptions 
+            // to see if notifications are to be sent out
             for (Subscription subscription : updatedCheck.getSubscriptions()) {
+            	// If no notification should be sent for this alert state (ERROR, WARN, etc.),
+            	// move on
                 if (!subscription.shouldNotify(now, worstState)) {
                     continue;
                 }
-                
+                // If a notification should be sent out, poll the notification services and 
+                // send a notification for each registered service
                 for (NotificationService notificationService : notificationServices) {
                     if (notificationService.canHandle(subscription.getType())) {
                         try {
@@ -147,6 +167,12 @@ public class CheckRunner implements Runnable {
             
         } catch (Exception e) {
             LOGGER.warn("{} failed", check.getName(), e);
+            
+        } finally {
+        	// If we've made it here, it is due either to a typical Exception, or to
+        	// a database timeout
+        	// Notify the Check Governor that the check has been completed
+            CheckConcurrencyGovernor.instance().notifiyCheckIsComplete(this.check);
         }
     }
     
