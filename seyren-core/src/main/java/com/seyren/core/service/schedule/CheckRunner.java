@@ -61,7 +61,6 @@ public class CheckRunner implements Runnable {
         if (!check.isEnabled()) {
             return;
         }
-        
         try {
         	// See if this check is currently running, if so, return and log the 
         	// missed cycle
