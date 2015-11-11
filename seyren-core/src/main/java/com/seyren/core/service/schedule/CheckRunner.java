@@ -86,27 +86,27 @@ public class CheckRunner implements Runnable {
             // Iterate through them, to check for error/warn values
             for (Entry<String, Optional<BigDecimal>> entry : targetValues.entrySet()) {                
                 String target = entry.getKey();
-            	LOGGER.debug("        Check #{} :: Evaluating value of {}", check.getId(), target);
+            	LOGGER.debug("        Check #{}, Target #{} :: Evaluating value target.", check.getId(), target);
                 Optional<BigDecimal> value = entry.getValue();
                 // If there is no value in the entry, move to the next one
                 if (!value.isPresent()) {
-                    LOGGER.warn("        Check #{} :: No value present for {}", check.getId(), target);
+                    LOGGER.warn("        Check #{}, Target #{} :: No value present.", check.getId(), target);
                     continue;
                 }
                 // Get the value of the entry
                 BigDecimal currentValue = value.get();
-                LOGGER.debug("        Check #{} :: Value found for {}", check.getId(), target);
+                LOGGER.debug("        Check #{}, Target #{} :: Value found.", check.getId(), target);
                 // Get the last alert stored for this check
                 Alert lastAlert = alertsStore.getLastAlertForTargetOfCheck(target, check.getId());
                 
                 AlertType lastState;
                 // If no "last alert" is found, then assume that the last state is "OK"
                 if (lastAlert == null) {
-                	LOGGER.debug("        Check #{} :: Last alert was null, setting to 'OK'", check.getId());
+                	LOGGER.debug("        Check #{}, Target #{} :: Last alert was null, setting to 'OK'", check.getId(), target);
                     lastState = AlertType.OK;
                 } else {
                     lastState = lastAlert.getToType();
-                    LOGGER.debug("        Check #{} :: Last alert found, state was '{}'", check.getId(), lastState );
+                    LOGGER.debug("        Check #{}, Target #{} :: Last alert found, state was '{}'", check.getId(), target, lastState );
                 }
                 // Based on the check value retrieved, turn it into an Alert state
                 AlertType currentState = valueChecker.checkValue(currentValue, warn, error);
@@ -114,11 +114,11 @@ public class CheckRunner implements Runnable {
                 // encountered
                 if (currentState.isWorseThan(worstState)) {
                     worstState = currentState;
-                    LOGGER.debug("        Check #{} :: Current alert worse than last alert", check.getId() );
+                    LOGGER.debug("        Check #{}, Target #{} :: Current alert worse than last alert", check.getId(), target );
                 }
                 // If the last state and the current state are both OK, move to the next entry
                 if (isStillOk(lastState, currentState)) {
-                	LOGGER.debug("        Check #{} :: Current alert comparison yields 'Is Still OK'", check.getId() );
+                	LOGGER.debug("        Check #{}, Target #{} :: Current alert comparison yields 'Is Still OK'", check.getId(), target );
                     continue;
                 }
                 // If the state is not OK, create an alert
@@ -127,11 +127,11 @@ public class CheckRunner implements Runnable {
                 
                 // Only notify if the alert has changed state
                 if (stateIsTheSame(lastState, currentState)) {
-                	LOGGER.debug("        Check #{} :: Current alert comparison reveals state is the same", check.getId() );
+                	LOGGER.debug("        Check #{}, Target #{} :: Current alert comparison reveals state is the same", check.getId(), target );
                     continue;
                 }
                 // If the state has changed, add the alert to the interesting alerts collection
-                LOGGER.debug("        Check #{} :: Adding current alert as an 'Interesting Alert'", check.getId() );
+                LOGGER.debug("        Check #{}, Target #{} :: Adding current alert as an 'Interesting Alert'", check.getId(), target );
                 interestingAlerts.add(alert);
                 
             }
