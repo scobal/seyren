@@ -62,14 +62,6 @@ public class CheckRunner implements Runnable {
             return;
         }
         try {
-        	// See if this check is currently running, if so, return and log the 
-        	// missed cycle
-        	if (CheckConcurrencyGovernor.instance().isCheckRunning(this.check)){
-        		CheckConcurrencyGovernor.instance().logCheckSkipped(check);
-        		return;
-        	}
-        	// Notify the Check Governor that the check is now running
-        	CheckConcurrencyGovernor.instance().notifiyCheckIsRunning(this.check);
         	// Run the check
             Map<String, Optional<BigDecimal>> targetValues = targetChecker.check(check);
             // Get the current time - to be used for notification and alert time stamps 
@@ -77,13 +69,14 @@ public class CheckRunner implements Runnable {
             // Get the threshold values for the check which signify warning and error thresholds
             BigDecimal warn = check.getWarn();
             BigDecimal error = check.getError();
-            
             AlertType worstState;
             // If the check is allowed data, initialized the state as OK, otherwise,
             // it is unknown
             if (check.isAllowNoData()) {
+            	LOGGER.debug("  *** Check #{} :: Initiating check, data is not allowed, setting worst state to 'OK'", check.getId());
                 worstState = AlertType.OK;
             } else {
+            	LOGGER.debug("  *** Check #{} :: Initiating check, data is allowed, setting worst state to 'Unknown'", check.getId());
                 worstState = AlertType.UNKNOWN;
             }
             // Intialize a list of alerts that represent a change in alert state from
@@ -91,26 +84,29 @@ public class CheckRunner implements Runnable {
             List<Alert> interestingAlerts = new ArrayList<Alert>();
             // Get the measured values for this check from the Graphite/Noop datasource 
             // Iterate through them, to check for error/warn values
-            for (Entry<String, Optional<BigDecimal>> entry : targetValues.entrySet()) {
-                
+            for (Entry<String, Optional<BigDecimal>> entry : targetValues.entrySet()) {                
                 String target = entry.getKey();
+            	LOGGER.debug("        Check #{} :: Evaluating value of {}", check.getId(), target);
                 Optional<BigDecimal> value = entry.getValue();
                 // If there is no value in the entry, move to the next one
                 if (!value.isPresent()) {
-                    LOGGER.warn("No value present for {}", target);
+                    LOGGER.warn("        Check #{} :: No value present for {}", check.getId(), target);
                     continue;
                 }
                 // Get the value of the entry
                 BigDecimal currentValue = value.get();
+                LOGGER.debug("        Check #{} :: Value found for {}", check.getId(), target);
                 // Get the last alert stored for this check
                 Alert lastAlert = alertsStore.getLastAlertForTargetOfCheck(target, check.getId());
                 
                 AlertType lastState;
                 // If no "last alert" is found, then assume that the last state is "OK"
                 if (lastAlert == null) {
+                	LOGGER.debug("        Check #{} :: Last alert was null, setting to 'OK'", check.getId());
                     lastState = AlertType.OK;
                 } else {
                     lastState = lastAlert.getToType();
+                    LOGGER.debug("        Check #{} :: Last alert found, state was '{}'", check.getId(), lastState );
                 }
                 // Based on the check value retrieved, turn it into an Alert state
                 AlertType currentState = valueChecker.checkValue(currentValue, warn, error);
@@ -118,9 +114,11 @@ public class CheckRunner implements Runnable {
                 // encountered
                 if (currentState.isWorseThan(worstState)) {
                     worstState = currentState;
+                    LOGGER.debug("        Check #{} :: Current alert worse than last alert", check.getId() );
                 }
                 // If the last state and the current state are both OK, move to the next entry
                 if (isStillOk(lastState, currentState)) {
+                	LOGGER.debug("        Check #{} :: Current alert comparison yields 'Is Still OK'", check.getId() );
                     continue;
                 }
                 // If the state is not OK, create an alert
@@ -129,41 +127,49 @@ public class CheckRunner implements Runnable {
                 
                 // Only notify if the alert has changed state
                 if (stateIsTheSame(lastState, currentState)) {
+                	LOGGER.debug("        Check #{} :: Current alert comparison reveals state is the same", check.getId() );
                     continue;
                 }
                 // If the state has changed, add the alert to the interesting alerts collection
+                LOGGER.debug("        Check #{} :: Adding current alert as an 'Interesting Alert'", check.getId() );
                 interestingAlerts.add(alert);
                 
             }
             // Notify the Check Governor that the check has been completed
             CheckConcurrencyGovernor.instance().notifiyCheckIsComplete(this.check);
+            LOGGER.debug("        Check #{} :: Check is now complete", check.getId() );
             // Update the the check with the worst state encountered in this polling
             Check updatedCheck = checksStore.updateStateAndLastCheck(check.getId(), worstState, DateTime.now());
             // If there are no interesting alerts, simply return
             if (interestingAlerts.isEmpty()) {
+            	LOGGER.debug("        Check #{} :: No interesting alerts found.", check.getId() );
                 return;
             }
+            LOGGER.debug("        Check #{} :: Interesting alerts found, looking at check's subscriptions.", check.getId() );
             // If there are interesting alerts, then evaluate the check's subscriptions 
             // to see if notifications are to be sent out
             for (Subscription subscription : updatedCheck.getSubscriptions()) {
             	// If no notification should be sent for this alert state (ERROR, WARN, etc.),
             	// move on
+            	LOGGER.debug("        Check #{} :: Subscription #{} of type '{}' being evaluated.", check.getId(), subscription.getId(), subscription.getType() );
                 if (!subscription.shouldNotify(now, worstState)) {
+                	LOGGER.debug("        Check #{} :: Subscription #{} should not fire away.", check.getId(), subscription.getId() );
                     continue;
                 }
                 // If a notification should be sent out, poll the notification services and 
                 // send a notification for each registered service
                 for (NotificationService notificationService : notificationServices) {
                     if (notificationService.canHandle(subscription.getType())) {
+                    	LOGGER.debug("        Check #{} :: Subscription #{} firing away.", check.getId(), subscription.getId() );
                         try {
                             notificationService.sendNotification(updatedCheck, subscription, interestingAlerts);
+                            LOGGER.debug("        Check #{} :: Subscription #{} sent.", check.getId(), subscription.getId() );
                         } catch (Exception e) {
                             LOGGER.warn("Notifying {} by {} failed.", subscription.getTarget(), subscription.getType(), e);
                         }
                     }
                 }
             }
-            
         } catch (Exception e) {
             LOGGER.warn("{} failed", check.getName(), e);
             
