@@ -136,7 +136,6 @@ public class CheckRunner implements Runnable {
                 
             }
             // Notify the Check Governor that the check has been completed
-            CheckConcurrencyGovernor.instance().notifiyCheckIsComplete(this.check);
             LOGGER.debug("        Check #{} :: Check is now complete", check.getId() );
             // Update the the check with the worst state encountered in this polling
             Check updatedCheck = checksStore.updateStateAndLastCheck(check.getId(), worstState, DateTime.now());
