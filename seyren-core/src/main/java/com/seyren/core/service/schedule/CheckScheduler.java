@@ -59,13 +59,13 @@ public class CheckScheduler {
     	int checksInScope = 0;
         List<Check> checks = checksStore.getChecks(true, false).getValues();
         for (final Check check : checks) {
+    		// Skip any not in this instance's workload
+        	if (!isMyWork(check)) {
+        		continue;
+        	}
         	// See if this check is currently running, if so, return and log the 
         	// missed cycle
         	if (!CheckConcurrencyGovernor.instance().isCheckRunning(check)){
-        		// Skip any not in this instance's workload
-            	if (!isMyWork(check)) {
-            		continue;
-            	}
             	checksInScope++;
             	// Notify the Check Governor that the check is now running
             	CheckConcurrencyGovernor.instance().notifiyCheckIsRunning(check);
