@@ -51,11 +51,11 @@ public class GraphiteTargetChecker implements TargetChecker {
             JsonNode node = graphiteHttpClient.getTargetJson(check.getGraphiteBaseUrl(), check.getTarget(), check.getFrom(), check.getUntil());
             for (JsonNode metric : node) {
                 String target = metric.path("target").asText();
-                LOGGER.debug("Checking graphite for value of " + target + " using check ID #" + check.getId());
+                LOGGER.info("Checking graphite for value of target#{} using check ID #{}", target, check.getId());
                 try {
                     BigDecimal value = getLatestValue(metric);
                     targetValues.put(target, Optional.of(value));
-                    LOGGER.debug("       Value found: " + value);
+                    LOGGER.info("       Value found - target#{} using check ID #{}: {}, where WARN is '{}' and ERROR is '{}'", target, check.getId() ,value, check.getWarn(), check.getError());
                 } catch (InvalidGraphiteValueException e) {
                     // Silence these - we don't know what's causing Graphite to return null values
                     LOGGER.warn("{} failed to read from Graphite", check.getName(), e);

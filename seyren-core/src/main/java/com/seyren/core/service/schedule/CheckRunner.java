@@ -73,10 +73,10 @@ public class CheckRunner implements Runnable {
             // If the check is allowed data, initialized the state as OK, otherwise,
             // it is unknown
             if (check.isAllowNoData()) {
-            	LOGGER.debug("  *** Check #{} :: Initiating check, data is not allowed, setting worst state to 'OK'", check.getId());
+            	LOGGER.info("  *** Check #{} :: Initiating check, data is not allowed, setting worst state to 'OK'", check.getId());
                 worstState = AlertType.OK;
             } else {
-            	LOGGER.debug("  *** Check #{} :: Initiating check, data is allowed, setting worst state to 'Unknown'", check.getId());
+            	LOGGER.info("  *** Check #{} :: Initiating check, data is allowed, setting worst state to 'Unknown'", check.getId());
                 worstState = AlertType.UNKNOWN;
             }
             // Intialize a list of alerts that represent a change in alert state from
@@ -86,7 +86,7 @@ public class CheckRunner implements Runnable {
             // Iterate through them, to check for error/warn values
             for (Entry<String, Optional<BigDecimal>> entry : targetValues.entrySet()) {                
                 String target = entry.getKey();
-            	LOGGER.debug("        Check #{}, Target #{} :: Evaluating value target.", check.getId(), target);
+            	LOGGER.info("        Check #{}, Target #{} :: Evaluating value target.", check.getId(), target);
                 Optional<BigDecimal> value = entry.getValue();
                 // If there is no value in the entry, move to the next one
                 if (!value.isPresent()) {
@@ -95,18 +95,18 @@ public class CheckRunner implements Runnable {
                 }
                 // Get the value of the entry
                 BigDecimal currentValue = value.get();
-                LOGGER.debug("        Check #{}, Target #{} :: Value found.", check.getId(), target);
+                LOGGER.info("        Check #{}, Target #{} :: Value found.", check.getId(), target);
                 // Get the last alert stored for this check
                 Alert lastAlert = alertsStore.getLastAlertForTargetOfCheck(target, check.getId());
                 
                 AlertType lastState;
                 // If no "last alert" is found, then assume that the last state is "OK"
                 if (lastAlert == null) {
-                	LOGGER.debug("        Check #{}, Target #{} :: Last alert was null, setting to 'OK'", check.getId(), target);
+                	LOGGER.info("        Check #{}, Target #{} :: Last alert was null, setting to 'OK'", check.getId(), target);
                     lastState = AlertType.OK;
                 } else {
                     lastState = lastAlert.getToType();
-                    LOGGER.debug("        Check #{}, Target #{} :: Last alert found, state was '{}'", check.getId(), target, lastState );
+                    LOGGER.info("        Check #{}, Target #{} :: Last alert found, state was '{}'", check.getId(), target, lastState );
                 }
                 // Based on the check value retrieved, turn it into an Alert state
                 AlertType currentState = valueChecker.checkValue(currentValue, warn, error);
@@ -114,11 +114,11 @@ public class CheckRunner implements Runnable {
                 // encountered
                 if (currentState.isWorseThan(worstState)) {
                     worstState = currentState;
-                    LOGGER.debug("        Check #{}, Target #{} :: Current alert worse than last alert", check.getId(), target );
+                    LOGGER.info("        Check #{}, Target #{} :: Current alert worse than last alert", check.getId(), target );
                 }
                 // If the last state and the current state are both OK, move to the next entry
                 if (isStillOk(lastState, currentState)) {
-                	LOGGER.debug("        Check #{}, Target #{} :: Current alert comparison yields 'Is Still OK'", check.getId(), target );
+                	LOGGER.info("        Check #{}, Target #{} :: Current alert comparison yields 'Is Still OK'", check.getId(), target );
                     continue;
                 }
                 // If the state is not OK, create an alert
@@ -127,42 +127,42 @@ public class CheckRunner implements Runnable {
                 
                 // Only notify if the alert has changed state
                 if (stateIsTheSame(lastState, currentState)) {
-                	LOGGER.debug("        Check #{}, Target #{} :: Current alert comparison reveals state is the same", check.getId(), target );
+                	LOGGER.info("        Check #{}, Target #{} :: Current alert comparison reveals state is the same", check.getId(), target );
                     continue;
                 }
                 // If the state has changed, add the alert to the interesting alerts collection
-                LOGGER.debug("        Check #{}, Target #{} :: Adding current alert as an 'Interesting Alert'", check.getId(), target );
+                LOGGER.info("        Check #{}, Target #{} :: Adding current alert as an 'Interesting Alert'", check.getId(), target );
                 interestingAlerts.add(alert);
                 
             }
             // Notify the Check Governor that the check has been completed
-            LOGGER.debug("        Check #{} :: Check is now complete", check.getId() );
+            LOGGER.info("        Check #{} :: Check is now complete", check.getId() );
             // Update the the check with the worst state encountered in this polling
             Check updatedCheck = checksStore.updateStateAndLastCheck(check.getId(), worstState, DateTime.now());
             // If there are no interesting alerts, simply return
             if (interestingAlerts.isEmpty()) {
-            	LOGGER.debug("        Check #{} :: No interesting alerts found.", check.getId() );
+            	LOGGER.info("        Check #{} :: No interesting alerts found.", check.getId() );
                 return;
             }
-            LOGGER.debug("        Check #{} :: Interesting alerts found, looking at check's subscriptions.", check.getId() );
+            LOGGER.info("        Check #{} :: Interesting alerts found, looking at check's subscriptions.", check.getId() );
             // If there are interesting alerts, then evaluate the check's subscriptions 
             // to see if notifications are to be sent out
             for (Subscription subscription : updatedCheck.getSubscriptions()) {
             	// If no notification should be sent for this alert state (ERROR, WARN, etc.),
             	// move on
-            	LOGGER.debug("        Check #{} :: Subscription #{} of type '{}' being evaluated.", check.getId(), subscription.getId(), subscription.getType() );
+            	LOGGER.info("        Check #{} :: Subscription #{} of type '{}' being evaluated.", check.getId(), subscription.getId(), subscription.getType() );
                 if (!subscription.shouldNotify(now, worstState)) {
-                	LOGGER.debug("        Check #{} :: Subscription #{} should not fire away.", check.getId(), subscription.getId() );
+                	LOGGER.info("        Check #{} :: Subscription #{} should not fire away.", check.getId(), subscription.getId() );
                     continue;
                 }
                 // If a notification should be sent out, poll the notification services and 
                 // send a notification for each registered service
                 for (NotificationService notificationService : notificationServices) {
                     if (notificationService.canHandle(subscription.getType())) {
-                    	LOGGER.debug("        Check #{} :: Subscription #{} firing away.", check.getId(), subscription.getId() );
+                    	LOGGER.info("        Check #{} :: Subscription #{} firing away.", check.getId(), subscription.getId() );
                         try {
                             notificationService.sendNotification(updatedCheck, subscription, interestingAlerts);
-                            LOGGER.debug("        Check #{} :: Subscription #{} sent.", check.getId(), subscription.getId() );
+                            LOGGER.info("        Check #{} :: Subscription #{} sent.", check.getId(), subscription.getId() );
                         } catch (Exception e) {
                             LOGGER.warn("Notifying {} by {} failed.", subscription.getTarget(), subscription.getType(), e);
                         }

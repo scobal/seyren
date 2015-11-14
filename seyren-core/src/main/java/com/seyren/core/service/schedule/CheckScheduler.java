@@ -57,16 +57,18 @@ public class CheckScheduler {
     @Scheduled(fixedRateString = "${GRAPHITE_REFRESH:60000}")
     public void performChecks() {
     	int checksInScope = 0;
+    	int checksWereRun = 0;
         List<Check> checks = checksStore.getChecks(true, false).getValues();
         for (final Check check : checks) {
     		// Skip any not in this instance's workload
         	if (!isMyWork(check)) {
         		continue;
         	}
+        	checksInScope++;
         	// See if this check is currently running, if so, return and log the 
         	// missed cycle
         	if (!CheckConcurrencyGovernor.instance().isCheckRunning(check)){
-            	checksInScope++;
+        		checksWereRun++;
             	// Notify the Check Governor that the check is now running
             	CheckConcurrencyGovernor.instance().notifiyCheckIsRunning(check);
             	executor.execute(checkRunnerFactory.create(check));
@@ -77,7 +79,7 @@ public class CheckScheduler {
         	}
         }
         // Log basic information about worker instance and its work
-        LOGGER.debug(String.format("Worker %d of %d performed %d of %d checks", instanceIndex, totalWorkers, checksInScope, checks.size()));
+        LOGGER.debug(String.format("Worker %d of %d is responsible for %d of %d checks, of which %d were run.", instanceIndex, totalWorkers, checksInScope, checks.size(), checksWereRun));
     }
 
     private boolean isMyWork(Check check) {
