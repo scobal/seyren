@@ -39,9 +39,13 @@ public class CheckScheduler {
     private static final int GUID_MAX_CHECK_VALUES = 65536; // 4 unsigned hex digits, values range 0 - 16 ^ 4 - 1
     
     private final ScheduledExecutorService executor;
+    
     private final ChecksStore checksStore;
+    
     private final CheckRunnerFactory checkRunnerFactory;
+    
     private final int instanceIndex;
+    
     private final int totalWorkers;
 
     @Inject
