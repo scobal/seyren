@@ -9,6 +9,7 @@ import com.seyren.core.service.notification.NotificationService;
 import com.seyren.core.service.schedule.CheckRunnerFactory;
 import com.seyren.core.store.AlertsStore;
 import com.seyren.core.store.ChecksStore;
+import com.seyren.mongo.MongoStore;
 
 public class MockCheckRunnerFactory extends CheckRunnerFactory {
 

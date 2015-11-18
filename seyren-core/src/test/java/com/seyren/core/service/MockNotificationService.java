@@ -1,4 +1,4 @@
-package com.seyren.mongo;
+package com.seyren.core.service;
 
 import java.util.List;
 

@@ -14,6 +14,7 @@ import com.seyren.core.domain.Alert;
 import com.seyren.core.domain.AlertType;
 import com.seyren.core.domain.Check;
 import com.seyren.core.domain.Subscription;
+import com.seyren.core.service.MockSubscription;
 
 public class SubscriptionFiringTests extends AbstractCheckRunTest{
 	/** The values to be used for the target checker */

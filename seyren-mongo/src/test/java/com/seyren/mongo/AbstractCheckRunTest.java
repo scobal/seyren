@@ -21,10 +21,15 @@ import com.seyren.core.domain.Alert;
 import com.seyren.core.domain.AlertType;
 import com.seyren.core.domain.Check;
 import com.seyren.core.domain.Subscription;
+import com.seyren.core.service.MockCheck;
+import com.seyren.core.service.MockNotificationService;
+import com.seyren.core.service.MockSubscription;
+import com.seyren.core.service.MockTargetChecker;
 import com.seyren.core.service.checker.DefaultValueChecker;
 import com.seyren.core.service.notification.NotificationService;
 import com.seyren.core.service.schedule.CheckRunner;
 import com.seyren.core.util.config.SeyrenConfig;
+import com.seyren.mongo.MongoStore;
 
 public abstract class AbstractCheckRunTest {
 	
