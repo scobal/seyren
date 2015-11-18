@@ -1,4 +1,4 @@
-package com.seyren.core.service;
+package com.seyren.mongo;
 
 import com.seyren.core.domain.Subscription;
 

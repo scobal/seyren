@@ -1,4 +1,4 @@
-package com.seyren.core.service;
+package com.seyren.mongo;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
