@@ -52,6 +52,9 @@ public class Check {
     private AlertType state;
     private DateTime lastCheck;
     private List<Subscription> subscriptions = new ArrayList<Subscription>();
+    /** Flag which signifies that an exception occurred during a Graphite, etc. server read 
+     * in performing this specific check */
+    private boolean remoteServerErrorOccurred = false;
     
     public String getId() {
         return id;
@@ -252,4 +255,12 @@ public class Check {
     public void setGraphiteBaseUrl(String graphiteBaseUrl) {
         this.graphiteBaseUrl = graphiteBaseUrl;
     }
+
+	public boolean hasRemoteServerErrorOccurred() {
+		return remoteServerErrorOccurred;
+	}
+
+	public void setRemoteServerErrorOccurred(boolean remoteServerErrorOccurred) {
+		this.remoteServerErrorOccurred = remoteServerErrorOccurred;
+	}
 }

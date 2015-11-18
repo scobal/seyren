@@ -64,6 +64,13 @@ public class CheckRunner implements Runnable {
         try {
         	// Run the check
             Map<String, Optional<BigDecimal>> targetValues = targetChecker.check(check);
+            // If there was a problem retrieving data from graphite, then simply don't continue processing the check
+            if (check.hasRemoteServerErrorOccurred()){
+            	// TODO Will we always be calling a Graphite server?  Change if you are using another service
+            	LOGGER.warn("  *** Check #{} :: Will not initiate check, remote server read error occurred when calling "
+            			+ "server located at: ", check.getId(), check.getGraphiteBaseUrl());
+            	return;
+            }
             // Get the current time - to be used for notification and alert time stamps 
             DateTime now = new DateTime();
             // Get the threshold values for the check which signify warning and error thresholds
