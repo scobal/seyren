@@ -198,5 +198,4 @@ public class CheckRunner implements Runnable {
                 .withToType(to)
                 .withTimestamp(now);
     }
-    
 }

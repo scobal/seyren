@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalTime;
 import org.junit.After;
 import org.junit.Before;
 
@@ -46,9 +47,6 @@ public abstract class AbstractCheckRunTest {
 	protected Alert currentAlert;
 	
 	protected Alert previousAlert;
-
-	
-	protected static final MongoMapper mapper = new MongoMapper();
 	
 	protected abstract Check getCheck();
 	
@@ -103,17 +101,61 @@ public abstract class AbstractCheckRunTest {
 		
 	}
 	
+	protected Check getDefaultCheck(){
+		Check check = new Check();
+	    check.setId("Check001");
+	    check.setName("Testing Check");
+	    check.setDescription("A check used simply for unit testing");
+	    check.setTarget("com.launch.check.machine1.target1");
+	    check.setFrom("");
+	    check.setUntil("");
+	    check.setGraphiteBaseUrl("http://mygraphite.launch.com:2003");
+	    check.setWarn(new BigDecimal(80.0));
+	    check.setError(new BigDecimal(90.0));
+	    check.setEnabled(true);
+	    check.setLive(false);
+	    check.setAllowNoData(false);
+	    check.setState(AlertType.UNKNOWN);
+	    check.setLastCheck(new DateTime());
+		return check;
+	}
+	
+	protected Alert getDefaultAlert(){
+		Alert alert = new Alert();
+		alert.setId("Alert001");
+		alert.setCheckId("Check001");
+		alert.setTarget("com.launch.check.machine1.target1");
+		alert.setWarn(new BigDecimal(80.0));
+		alert.setError(new BigDecimal(90.0));
+		alert.setTimestamp(new DateTime());
+		return alert;
+	}
+	
+	protected Subscription getDefaultSubscription(){
+		Subscription subscription = new MockSubscription();
+		subscription.setEnabled(true);
+		subscription.setIgnoreError(false);
+		subscription.setIgnoreWarn(false);
+		subscription.setIgnoreOk(false);
+		subscription.setMo(true);
+		subscription.setTu(true);
+		subscription.setWe(true);
+		subscription.setTh(true);
+		subscription.setFr(true);
+		subscription.setSa(true);
+		subscription.setSu(true);
+		subscription.setFromTime(new LocalTime("0:00"));
+		subscription.setToTime(new LocalTime("23:59"));
+		return subscription;
+	}
+	
 	protected void initialize(){
 		MockTargetChecker checker = new MockTargetChecker();
 		checker.setValues(this.getValues());
 		
-		
-		
 		this.notificationService = new MockNotificationService();
 		List<NotificationService> notificationServices = new ArrayList<NotificationService>();
 		notificationServices.add(this.notificationService);
-		
-		
 		
 		runner = new CheckRunner(this.check, mongoStore, mongoStore, checker,  new DefaultValueChecker(),
 	            notificationServices);
