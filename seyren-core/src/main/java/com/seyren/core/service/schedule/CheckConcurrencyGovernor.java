@@ -22,12 +22,24 @@ public class CheckConcurrencyGovernor {
 	/** A set of the currently running checks, where the check ID is the key and the POJO 
 	 * check object is the value */
 	private static final HashMap<String, CheckStatus> runningChecks = new HashMap<String, CheckStatus>();
+	/**
+	 * 
+	 */
+	public static boolean enabled = true;
 	
 	/**
 	 * Default singleton constructor
 	 */
 	private CheckConcurrencyGovernor(){
 		
+	}
+	
+	/**
+	 * Set the enablement of the concurrency governor
+	 * @param enabled Whether or not the concurrency governor is enabled
+	 */
+	public static final void setEnabled(boolean enabled){
+		CheckConcurrencyGovernor.enabled = enabled;
 	}
 	
 	/**
@@ -48,7 +60,12 @@ public class CheckConcurrencyGovernor {
 	 */
 	public synchronized boolean isCheckRunning(Check check){
 		try {
-			return runningChecks.containsKey(check.getId());
+			if (enabled){
+				return runningChecks.containsKey(check.getId());
+			}
+			else {
+				return false;
+			}
 		}
 		catch (Exception e){
 			LOGGER.error("Exception encountered while checking if check is 'running'", e);
