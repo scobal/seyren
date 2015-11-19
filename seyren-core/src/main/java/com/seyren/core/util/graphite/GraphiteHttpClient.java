@@ -104,6 +104,7 @@ public class GraphiteHttpClient {
         this.graphiteSocketTimeout = seyrenConfig.getGraphiteSocketTimeout();
         this.context = new BasicHttpContext();
         this.client = createHttpClient();
+        LOGGER.debug("Graphite checker initialized: " + this.graphiteHost);
     }
 
     /**

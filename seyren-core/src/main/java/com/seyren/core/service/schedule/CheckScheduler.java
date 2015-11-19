@@ -39,9 +39,13 @@ public class CheckScheduler {
     private static final int GUID_MAX_CHECK_VALUES = 65536; // 4 unsigned hex digits, values range 0 - 16 ^ 4 - 1
     
     private final ScheduledExecutorService executor;
+    
     private final ChecksStore checksStore;
+    
     private final CheckRunnerFactory checkRunnerFactory;
+    
     private final int instanceIndex;
+    
     private final int totalWorkers;
 
     @Inject
@@ -53,10 +57,11 @@ public class CheckScheduler {
         this.instanceIndex = seyrenConfig.getCheckExecutorInstanceIndex();
         this.totalWorkers = seyrenConfig.getCheckExecutorTotalInstances();
     }
-
+    
     @Scheduled(fixedRateString = "${GRAPHITE_REFRESH:60000}")
     public void performChecks() {
     	int checksInScope = 0;
+    	int checksWereRun = 0;
         List<Check> checks = checksStore.getChecks(true, false).getValues();
         for (final Check check : checks) {
     		// Skip any not in this instance's workload
@@ -64,11 +69,21 @@ public class CheckScheduler {
         		continue;
         	}
         	checksInScope++;
-        	executor.execute(checkRunnerFactory.create(check));
+        	// See if this check is currently running, if so, return and log the 
+        	// missed cycle
+        	if (!CheckConcurrencyGovernor.instance().isCheckRunning(check)){
+        		checksWereRun++;
+            	// Notify the Check Governor that the check is now running
+            	CheckConcurrencyGovernor.instance().notifiyCheckIsRunning(check);
+            	executor.execute(checkRunnerFactory.create(check));
+        	}
+        	else {
+        		CheckConcurrencyGovernor.instance().logCheckSkipped(check);
+        		continue;
+        	}
         }
-
         // Log basic information about worker instance and its work
-        LOGGER.debug(String.format("Worker %d of %d performed %d of %d checks", instanceIndex, totalWorkers, checksInScope, checks.size()));
+        LOGGER.debug(String.format("Worker %d of %d is responsible for %d of %d checks, of which %d were run.", instanceIndex, totalWorkers, checksInScope, checks.size(), checksWereRun));
     }
 
     private boolean isMyWork(Check check) {

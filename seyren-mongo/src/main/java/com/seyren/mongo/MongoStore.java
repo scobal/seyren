@@ -54,7 +54,7 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore,
     private final String adminPassword;
     private final String serviceProvider;
     private PasswordEncoder passwordEncoder;
-    private final SeyrenConfig seyrenConfig;
+    private SeyrenConfig seyrenConfig;
     private MongoMapper mapper = new MongoMapper();
     private DB mongo;
 
@@ -80,6 +80,19 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore,
             throw new RuntimeException(e);
         }
     }
+    
+    /**
+     * Constructor used for TDD
+     * @param mongo The mocked Mongo DB
+     * @param seyrenConfig The mocked Seyren config
+     */
+	protected MongoStore(DB mongo, SeyrenConfig seyrenConfig) {
+		this.seyrenConfig = seyrenConfig;
+		this.adminUsername = null;
+		this.adminPassword = null;
+		this.serviceProvider = null;
+		this.mongo = mongo;
+	}
 
     private void bootstrapMongo() {
         LOGGER.info("Bootstrapping Mongo indexes. Depending on the number of checks and alerts you've got it may take a little while.");
@@ -436,4 +449,12 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore,
         }
         return mapper.userFrom(dbo);
     }
+
+    /**
+     * Set the configuartion - mainly for purposes of TDD
+     * @param config A mocked SeyrenConfig object
+     */
+	protected void setConfig(SeyrenConfig config) {
+		this.seyrenConfig = config;
+	}
 }
