@@ -13,6 +13,10 @@ public class MockSubscription extends Subscription {
 	public boolean notificationSent(){
 		return this.notificationSent;
 	}
+	
+	public void reset(){
+		this.notificationSent = false;
+	}
 
 	
 }

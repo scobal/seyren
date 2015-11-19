@@ -153,11 +153,10 @@ public abstract class AbstractCheckRunTest {
 	protected void initialize(){
 		MockTargetChecker checker = new MockTargetChecker();
 		checker.setValues(this.getValues());
-		
+		((MockSubscription)subscription).reset();
 		this.notificationService = new MockNotificationService();
 		List<NotificationService> notificationServices = new ArrayList<NotificationService>();
 		notificationServices.add(this.notificationService);
-		
 		runner = new CheckRunner(this.check, mongoStore, mongoStore, checker,  new DefaultValueChecker(),
 	            notificationServices);
 	}
