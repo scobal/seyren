@@ -18,8 +18,6 @@ import com.seyren.core.domain.Subscription;
 public class SubscriptionFiringTests extends AbstractCheckRunTest{
 	/** The values to be used for the target checker */
 	ArrayList<BigDecimal> values = new ArrayList<BigDecimal>();
-	/** The previous alert to be used for the test run */
-	Alert previousAlert = null;
 	
 	@Override
 	protected Check getCheck() {
@@ -131,7 +129,7 @@ public class SubscriptionFiringTests extends AbstractCheckRunTest{
 		this.previousAlert = this.getDefaultWarnAlert();
 		initialize();
 		runner.run();
-		assertTrue(!((MockSubscription)subscription).notificationSent());
+		assertTrue(((MockSubscription)subscription).notificationSent());
 	}
 	
 	@Test
@@ -140,7 +138,7 @@ public class SubscriptionFiringTests extends AbstractCheckRunTest{
 		this.previousAlert = this.getDefaultWarnAlert();
 		initialize();
 		runner.run();
-		assertTrue(((MockSubscription)subscription).notificationSent());
+		assertTrue(!((MockSubscription)subscription).notificationSent());
 	}
 	
 	@Test
@@ -158,7 +156,7 @@ public class SubscriptionFiringTests extends AbstractCheckRunTest{
 		this.previousAlert = this.getDefaultErrorAlert();
 		initialize();
 		runner.run();
-		assertTrue(!((MockSubscription)subscription).notificationSent());
+		assertTrue(((MockSubscription)subscription).notificationSent());
 	}
 	
 	@Test
@@ -176,6 +174,6 @@ public class SubscriptionFiringTests extends AbstractCheckRunTest{
 		this.previousAlert = this.getDefaultErrorAlert();
 		initialize();
 		runner.run();
-		assertTrue(((MockSubscription)subscription).notificationSent());
+		assertTrue(!((MockSubscription)subscription).notificationSent());
 	}
 }

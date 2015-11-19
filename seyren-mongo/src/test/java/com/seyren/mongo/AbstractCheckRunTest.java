@@ -46,7 +46,7 @@ public abstract class AbstractCheckRunTest {
 	protected Subscription subscription;
 	
 	protected Alert currentAlert;
-	
+	/** The previous alert to be used for the test run */
 	protected Alert previousAlert;
 	
 	protected abstract Check getCheck();
@@ -72,18 +72,12 @@ public abstract class AbstractCheckRunTest {
 
 		DB db = Mockito.mock(DB.class);
 		
-		mongoStore = Mockito.mock(MongoStore.class);
-		mongoStore.setConfig(config);
+
 		
 		this.subscription = this.getSubscription();
 		this.check = new MockCheck(this.getCheck(), this.subscription);
-		
-		Mockito.doAnswer(new Answer<Check>(){ 
-			public Check answer(InvocationOnMock invocation) throws Throwable {
-				return null;
-			}})
-	    .when(mongoStore).updateStateAndLastCheck(
-	          Mockito.any(String.class), Mockito.any(AlertType.class), Mockito.any(DateTime.class));
+
+		mongoStore = Mockito.mock(MongoStore.class);
 		
 		Mockito.when(mongoStore.updateStateAndLastCheck(Mockito.any(String.class), Mockito.any(AlertType.class), Mockito.any(DateTime.class)))
 			.thenReturn(this.check);
@@ -91,9 +85,15 @@ public abstract class AbstractCheckRunTest {
 		Mockito.when(mongoStore.createAlert(Mockito.anyString(),Mockito.any(Alert.class)))
 			.thenReturn(new Alert());
 		
-		Mockito.when(mongoStore.getLastAlertForTargetOfCheck(Mockito.anyString(),Mockito.anyString()))
-			.thenReturn(this.getPreviousAlert());
+		Mockito.doAnswer(new Answer<Alert>(){ 
+			public Alert answer(InvocationOnMock invocation) throws Throwable {
+				return previousAlert;
+			}})
+	    .when(mongoStore).getLastAlertForTargetOfCheck( 
+	    		Mockito.anyString(), Mockito.anyString());
 		
+		
+		mongoStore.setConfig(config);
 	}
 
 
