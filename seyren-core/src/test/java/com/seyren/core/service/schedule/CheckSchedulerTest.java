@@ -47,6 +47,9 @@ public class CheckSchedulerTest {
 
     @Before
     public void before() {
+    	// Disabled the check concurrency prvention mechanisms for the purposes of testing
+    	CheckConcurrencyGovernor.setEnabled(false);
+    	
         mockChecksStore = mock(ChecksStore.class);
         mockCheckRunnerFactory = mock(CheckRunnerFactory.class);
         mockCheckRunner = mock(CheckRunner.class);

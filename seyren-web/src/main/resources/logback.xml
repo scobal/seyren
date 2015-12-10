@@ -8,7 +8,7 @@
         
          <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
          <!-- Roll the file over each hour... -->
-      		<fileNamePattern>${SEYREN_LOG_PATH}seyren.%d{yyyyMMdd_HH}.log.zip</fileNamePattern>
+      		<fileNamePattern>${SEYREN_LOG_PATH}seyren.%d{yyyyMMdd_HH}.%i.log.zip</fileNamePattern>
       		<timeBasedFileNamingAndTriggeringPolicy
           		class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
           		<!-- ... or whenever the file size reaches 200MB -->
