@@ -16,18 +16,18 @@ package com.seyren.core.util.math;
 import java.io.IOException;
 import java.math.BigDecimal;
 
-import org.codehaus.jackson.JsonGenerator;
-import org.codehaus.jackson.JsonProcessingException;
-import org.codehaus.jackson.map.JsonSerializer;
-import org.codehaus.jackson.map.SerializerProvider;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.SerializerProvider;
 
 public class BigDecimalSerializer extends JsonSerializer<BigDecimal> {
-
-	@Override
-	public void serialize(BigDecimal value, JsonGenerator gen, SerializerProvider provider) throws IOException, JsonProcessingException {
-		if (value != null) {
-			gen.writeString(value.toPlainString());
-		}
-	}
-
+    
+    @Override
+    public void serialize(BigDecimal value, JsonGenerator gen, SerializerProvider provider) throws IOException, JsonProcessingException {
+        if (value != null) {
+            gen.writeString(value.toPlainString());
+        }
+    }
+    
 }

@@ -14,12 +14,11 @@
 package com.seyren.core.exception;
 
 public class InvalidGraphiteValueException extends RuntimeException {
-	
-	private static final long serialVersionUID = -7234251750670472410L;
-
-	public InvalidGraphiteValueException(String message) {
-		super(message);
-	}
-
-
+    
+    private static final long serialVersionUID = -7234251750670472410L;
+    
+    public InvalidGraphiteValueException(String message) {
+        super(message);
+    }
+    
 }

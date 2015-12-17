@@ -22,18 +22,17 @@ import com.seyren.core.util.config.SeyrenConfig;
 
 @Named
 public class ConfigBean implements ConfigResource {
-
-
-	private final SeyrenConfig seyrenConfig;
-
-	@Inject
-	public ConfigBean(SeyrenConfig seyrenConfig) {
-		this.seyrenConfig = seyrenConfig;
-	}
-	
-	@Override
-	public Response getSeyrenConfig() {
-		return Response.ok(seyrenConfig).build();
-	}
-
+    
+    private final SeyrenConfig seyrenConfig;
+    
+    @Inject
+    public ConfigBean(SeyrenConfig seyrenConfig) {
+        this.seyrenConfig = seyrenConfig;
+    }
+    
+    @Override
+    public Response getSeyrenConfig() {
+        return Response.ok(seyrenConfig).build();
+    }
+    
 }

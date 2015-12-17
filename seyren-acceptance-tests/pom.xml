@@ -5,9 +5,9 @@
     <name>Seyren Acceptance Tests</name>
 
     <parent>
-        <groupId>com.seyren</groupId>
+        <groupId>com.github.scobal.seyren</groupId>
         <artifactId>seyren-parent</artifactId>
-        <version>0.1-SNAPSHOT</version>
+        <version>1.4.0-SNAPSHOT</version>
     </parent>
 
     <properties>
@@ -39,12 +39,7 @@
         </dependency>
         <dependency>
             <groupId>junit</groupId>
-            <artifactId>junit-dep</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-core</artifactId>
+            <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -52,10 +47,37 @@
             <artifactId>hamcrest-library</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-nop</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>com.github.joelittlejohn.embedmongo</groupId>
+                <artifactId>embedmongo-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>start</id>
+                        <goals>
+                            <goal>start</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>stop</id>
+                        <goals>
+                            <goal>stop</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <version>${mongo.version}</version>
+                    <logging>none</logging>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
@@ -92,13 +114,18 @@
                     <skip>true</skip>
                 </configuration>
             </plugin>
-
             <plugin>
-                <groupId>org.mortbay.jetty</groupId>
+                <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
                 <configuration>
                     <skip>${jetty.skip}</skip>
                     <scanIntervalSeconds>1</scanIntervalSeconds>
+                    <systemProperties>
+                        <systemProperty>
+                            <name>console.log.level</name>
+                            <value>off</value>
+                        </systemProperty>
+                    </systemProperties>
                     <webApp>
                         <contextPath>/seyren</contextPath>
                         <baseResource implementation="org.eclipse.jetty.util.resource.ResourceCollection">
@@ -134,9 +161,13 @@
                         <artifactId>slf4j-nop</artifactId>
                         <version>${org.slf4j.version}</version>
                     </dependency>
+                    <dependency>
+                        <groupId>org.eclipse.jetty</groupId>
+                        <artifactId>jetty-jsp</artifactId>
+                        <version>${org.eclipse.jetty.version}</version>
+                   </dependency>
                 </dependencies>
             </plugin>
-
         </plugins>
     </build>
     <profiles>

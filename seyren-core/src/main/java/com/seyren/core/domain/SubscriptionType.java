@@ -14,7 +14,7 @@
 package com.seyren.core.domain;
 
 public enum SubscriptionType {
-	
-	EMAIL, SMS 
-
+    
+    EMAIL, PAGERDUTY, HIPCHAT, HUBOT, FLOWDOCK, HTTP, IRCCAT, PUSHOVER, LOGGER, SNMP, SLACK, TWILIO, VICTOROPS,
+    OPSGENIE    
 }

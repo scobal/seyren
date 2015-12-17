@@ -1,0 +1,95 @@
+<div class="modal-dialog" ng-controller="CheckEditModalController">
+<div class="modal-content">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h3 class="modal-title" ng-show="newCheck"><strong>Create check</strong></h3>
+        <h3 class="modal-title" ng-hide="newCheck"><strong>Edit check</strong></h3>
+    </div>
+    <div class="modal-body">
+        <form name="checkForm" class="form-horizontal" role="form" novalidate>
+            <fieldset>
+                <div ng-class="{ 'form-group': true, 'has-error': checkForm['check.name'].$invalid }">
+                    <label class="col-sm-3 control-label" for="check.name">Name</label>
+                    <div class="col-sm-7">
+                        <input id="check.name" class="form-control" name="check.name" ng-model="check.name" type="text" required />
+                    </div>
+                </div>
+                <div ng-class="{ 'form-group': true, 'has-error': checkForm['check.description'].$invalid }">
+                    <label class="col-sm-3 control-label" for="check.description">Description</label>
+                    <div class="col-sm-7">
+                        <input id="check.description" class="form-control" name="check.description" ng-model="check.description" type="text" />
+                    </div>
+                </div>
+                <div ng-class="{ 'form-group': true, 'has-error': checkForm['check.target'].$invalid }">
+                    <label class="col-sm-3 control-label" for="check.target">Target</label>
+                    <div class="col-sm-7">
+                        <input id="check.target" class="form-control"  name="check.target" ng-model="check.target" type="text" required />
+                    </div>
+                </div>
+                <div ng-class="{ 'form-group': true, 'has-error': checkForm['check.from'].$invalid }">
+                    <label class="col-sm-3 control-label" for="check.from">From</label>
+                    <div class="col-sm-7">
+                        <input id="check.from" class="form-control" name="check.from" ng-model="check.from" type="text" />
+                    </div>
+                </div>
+                <div ng-class="{ 'form-group': true, 'has-error': checkForm['check.until'].$invalid }">
+                    <label class="col-sm-3 control-label" for="check.until">Until</label>
+                    <div class="col-sm-7">
+                        <input id="check.until" class="form-control" name="check.until" ng-model="check.until" type="text" />
+                    </div>
+                </div>
+                <div ng-class="{ 'form-group': true, 'has-error': checkForm['check.warn'].$invalid }">
+                    <label class="col-sm-3 control-label" for="check.warn">Warn level</label>
+                    <div class="col-sm-3">
+                        <input id="check.warn" class="form-control" name="check.warn" ng-model="check.warn" type="text" ng-pattern="/^-?[0-9]+(.[0-9]+)?$/" required />
+                    </div>
+                    <div class="col-sm-4">
+                        <span id="check.warn.hint" class="glyphicon glyphicon-question-sign"></span>
+                    </div>
+                </div>
+                <div ng-class="{ 'form-group': true, 'has-error': checkForm['check.error'].$invalid }">
+                    <label class="col-sm-3 control-label" for="check.error">Error level</label>
+                    <div class="col-sm-3">
+                        <input id="check.error" class="form-control" name="check.error" ng-model="check.error" type="text" ng-pattern="/^-?[0-9]+(.[0-9]+)?$/" required />
+                    </div>
+                </div>
+                <div ng-class="{ 'form-group': true, 'has-error': checkForm['check.enabled'].$invalid }">
+                    <label class="col-sm-3 control-label" for="check.enabled">Enabled</label>
+                    <div class="col-sm-1">
+                        <label class="checkbox inline">
+                            <input id="check.enabled" name="check.enabled" ng-model="check.enabled" type="checkbox" ng-checked="check.enabled">
+                        </label>
+                    </div>
+                </div>
+                <div ng-class="{ 'form-group': true, 'has-error': checkForm['check.live'].$invalid }" ng-show="liveEnabled()">
+                    <label class="col-sm-3 control-label" for="check.live">Live</label>
+                    <div class="col-sm-1">
+                        <label class="checkbox inline">
+                            <input id="check.live" name="check.live" ng-model="check.live" type="checkbox" ng-checked="check.live">
+                        </label>
+                    </div>
+                </div>
+                <div ng-class="{ 'form-group': true, 'has-error': checkForm['check.allowNoData'].$invalid }">
+                    <label class="col-sm-3 control-label" for="check.allowNoData">Allow no data</label>
+                    <div class="col-sm-1">
+                        <label class="checkbox inline">
+                            <input id="check.allowNoData" name="check.allowNoData" ng-model="check.allowNoData" type="checkbox" ng-checked="check.allowNoData">
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-7 col-sm-offset-3">
+                        <img ng-src="{{ check.previewImage }}" src="./img/preview-nodata.png" width="300" height="70" />
+                        Metrics found: {{ check.totalMetric }}
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn pull-left" data-dismiss="modal" id="cancelCheckButton" ng-click="reset()"><i class="glyphicon glyphicon-remove"></i>&nbsp;&nbsp;Cancel</button>
+        <button type="submit" class="btn btn-primary" ng-show="newCheck" id="createCheckButton" ng-click="create()" ng-disabled="checkForm.$invalid"><i class="glyphicon glyphicon-ok glyphicon-white"></i>&nbsp;&nbsp;Create check</button>
+        <button type="submit" class="btn btn-primary" ng-hide="newCheck" id="updateCheckButton" ng-click="update()" ng-disabled="checkForm.$invalid"><i class="glyphicon glyphicon-ok glyphicon-white"></i>&nbsp;&nbsp;Save changes</button>
+    </div>
+</div>
+</div>

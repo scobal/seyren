@@ -17,11 +17,13 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.codehaus.jackson.map.annotate.JsonDeserialize;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
-import org.codehaus.jackson.map.deser.std.StdDeserializer.BigDecimalDeserializer;
+import org.joda.time.DateTime;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.deser.std.NumberDeserializers.BigDecimalDeserializer;
+import com.fasterxml.jackson.datatype.joda.ser.DateTimeSerializer;
 import com.seyren.core.util.math.BigDecimalSerializer;
 
 /**
@@ -30,126 +32,211 @@ import com.seyren.core.util.math.BigDecimalSerializer;
  * It stores current subscriptions
  * 
  * @author mark
- *
+ * 
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Check {
+    
+    private String id;
+    private String name;
+    private String description;
+    private String target;
+    private String from;
+    private String until;
+    private BigDecimal warn;
+    private BigDecimal error;
+    private boolean enabled;
+    private boolean live;
+    private boolean allowNoData;
+    private AlertType state;
+    private DateTime lastCheck;
+    private List<Subscription> subscriptions = new ArrayList<Subscription>();
+    
+    public String getId() {
+        return id;
+    }
+    
+    public void setId(String id) {
+        this.id = id;
+    }
+    
+    public Check withId(String id) {
+        setId(id);
+        return this;
+    }
+    
+    public String getName() {
+        return name;
+    }
+    
+    public void setName(String name) {
+        this.name = name;
+    }
+    
+    public Check withName(String name) {
+        setName(name);
+        return this;
+    }
+    
+    public String getDescription() {
+        return description;
+    }
+    
+    public void setDescription(String description) {
+        this.description = description;
+    }
+    
+    public Check withDescription(String description) {
+        this.description = description;
+        return this;
+    }
+    
+    public String getTarget() {
+        return target;
+    }
+    
+    public void setTarget(String target) {
+        this.target = target;
+    }
 
-	private String id;
-	private String name;
-	private String target;
-	private BigDecimal warn;
-	private BigDecimal error;
-	private boolean enabled;
-	private AlertType state;
-	private List<Subscription> subscriptions = new ArrayList<Subscription>();
-	
-	public String getId() {
-		return id;
-	}
+    public String getFrom() {
+        return from;
+    }
 
-	public void setId(String id) {
-		this.id = id;
-	}
-	
-	public Check withId(String id) {
-		setId(id);
-		return this;
-	}
-	
-	public String getName() {
-		return name;
-	}
+    public void setFrom(String from) {
+        this.from = from;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
-	
-	public Check withName(String name) {
-		setName(name);
-		return this;
-	}
+    public Check withFrom(String from) {
+        setFrom(from);
+        return this;
+    }
 
-	public String getTarget() {
-		return target;
-	}
+    public String getUntil() {
+        return until;
+    }
 
-	public void setTarget(String target) {
-		this.target = target;
-	}
-	
-	public Check withTarget(String target) {
-		setTarget(target);
-		return this;
-	}
+    public void setUntil(String until) {
+        this.until = until;
+    }
 
-	@JsonSerialize(using = BigDecimalSerializer.class)
-	public BigDecimal getWarn() {
-		return warn;
-	}
+    public Check withUntil(String until) {
+        setUntil(until);
+        return this;
+    }
 
-	@JsonDeserialize(using = BigDecimalDeserializer.class)
-	public void setWarn(BigDecimal warn) {
-		this.warn = warn;
-	}
-	
-	public Check withWarn(BigDecimal warn) {
-		setWarn(warn);
-		return this;
-	}
+    public Check withTarget(String target) {
+        setTarget(target);
+        return this;
+    }
 
-	@JsonSerialize(using = BigDecimalSerializer.class)
-	public BigDecimal getError() {
-		return error;
-	}
+    @JsonSerialize(using = BigDecimalSerializer.class)
+    public BigDecimal getWarn() {
+        return warn;
+    }
+    
+    @JsonDeserialize(using = BigDecimalDeserializer.class)
+    public void setWarn(BigDecimal warn) {
+        this.warn = warn;
+    }
+    
+    public Check withWarn(BigDecimal warn) {
+        setWarn(warn);
+        return this;
+    }
+    
+    @JsonSerialize(using = BigDecimalSerializer.class)
+    public BigDecimal getError() {
+        return error;
+    }
+    
+    @JsonDeserialize(using = BigDecimalDeserializer.class)
+    public void setError(BigDecimal error) {
+        this.error = error;
+    }
+    
+    public Check withError(BigDecimal error) {
+        setError(error);
+        return this;
+    }
 
-	@JsonDeserialize(using = BigDecimalDeserializer.class)
-	public void setError(BigDecimal error) {
-		this.error = error;
-	}
-	
-	public Check withError(BigDecimal error) {
-		setError(error);
-		return this;
-	}
+    public boolean isEnabled() {
+        return enabled;
+    }
 
-	public boolean isEnabled() {
-		return enabled;
-	}
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
 
-	public void setEnabled(boolean enabled) {
-		this.enabled = enabled;
-	}
-	
-	public Check withEnabled(boolean enabled) {
-		setEnabled(enabled);
-		return this;
-	}
-	
-	public AlertType getState() {
-		return state;
-	}
+    public Check withEnabled(boolean enabled) {
+        setEnabled(enabled);
+        return this;
+    }
 
-	public void setState(AlertType state) {
-		this.state = state;
-	}
-	
-	public Check withState(AlertType state) {
-		setState(state);
-		return this;
-	}
+    public boolean isLive() {
+        return live;
+    }
 
-	public List<Subscription> getSubscriptions() {
-		return subscriptions;
-	}
+    public void setLive(boolean live) {
+        this.live = live;
+    }
 
-	public void setSubscriptions(List<Subscription> subscriptions) {
-		this.subscriptions = subscriptions;
-	}
-	
-	public Check withSubscriptions(List<Subscription> subscriptions) {
-		setSubscriptions(subscriptions);
-		return this;
-	}
-	
+    public Check withLive(boolean live) {
+        setLive(live);
+        return this;
+    }
+    
+    public boolean isAllowNoData() {
+        return allowNoData;
+    }
+    
+    public void setAllowNoData(boolean allowNoData) {
+        this.allowNoData = allowNoData;
+    }
+    
+    public Check withAllowNoData(boolean allowNoData) {
+        setAllowNoData(allowNoData);
+        return this;
+    }
+    
+    public AlertType getState() {
+        return state;
+    }
+    
+    public void setState(AlertType state) {
+        this.state = state;
+    }
+    
+    @JsonSerialize(using = DateTimeSerializer.class)
+    public DateTime getLastCheck() {
+        return lastCheck;
+    }
+    
+    public void setLastCheck(DateTime lastCheck) {
+        this.lastCheck = lastCheck;
+    }
+    
+    public Check withLastCheck(DateTime lastCheck) {
+        setLastCheck(lastCheck);
+        return this;
+    }
+    
+    public Check withState(AlertType state) {
+        setState(state);
+        return this;
+    }
+    
+    public List<Subscription> getSubscriptions() {
+        return subscriptions;
+    }
+    
+    public void setSubscriptions(List<Subscription> subscriptions) {
+        this.subscriptions = subscriptions;
+    }
+    
+    public Check withSubscriptions(List<Subscription> subscriptions) {
+        setSubscriptions(subscriptions);
+        return this;
+    }
+    
 }

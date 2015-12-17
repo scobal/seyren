@@ -12,12 +12,11 @@
 		</style>
 	</head>
 	<body>
-		<h3>Alert on check <a href="$SEYREN_URL/#/checks/$CHECK.Id">$CHECK.Name</a></h3>
-		<ul>
-			<li>Warning threshold: $CHECK.Warn</li>
-			<li>Error threshold: $CHECK.Error</li>
-		</ul>
-#if( $ALERTS.size() == 1 )
+		<h3><a href="$SEYREN_URL/#/checks/$CHECK.Id">$CHECK.Name</a></h3>
+#if ("$!CHECK.Description" != "")
+        <p>$CHECK.Description</p>
+#end
+#if ($ALERTS.size() == 1)
 		<p>The following target has changed from its previous state:</p>
 #else
 		<p>The following targets have changed from their previous state:</p>
@@ -25,21 +24,25 @@
 		<table>
 			<thead>
 				<tr>
+                    <th>Timestamp</th>
 					<th>Target</th>
-					<th>Current</th>
+					<th>Value</th>
+					<th>Warn</th>
+					<th>Error</th>
 					<th>From</th>
 					<th>To</th>
-					<th>Run at</th>
 				</tr>
 			</thead>
 			<tbody>
-#foreach( $ALERT in $ALERTS )
+#foreach ($ALERT in $ALERTS)
 			    <tr class="$ALERT.ToType">
+                    <td>$ALERT.Timestamp.toString("yyyy-MM-dd HH:mm:ss")</td>
 			    	<td>$ALERT.Target</td>
 			    	<td>$ALERT.Value</td>
+                    <td>$CHECK.Warn</td>
+                    <td>$CHECK.Error</td>
 			    	<td>$ALERT.FromType</td>
 			    	<td>$ALERT.ToType</td>
-			    	<td>$ALERT.Timestamp.toString("HH:mm d MMM yyyy")</td>
 			    </tr>
 #end
 			</tbody>

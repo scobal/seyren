@@ -13,17 +13,21 @@
  */
 package com.seyren.core.store;
 
+import org.joda.time.DateTime;
+
 import com.seyren.core.domain.Alert;
 import com.seyren.core.domain.SeyrenResponse;
 
 public interface AlertsStore {
-	
-	Alert createAlert(String checkId, Alert alert);
-	
-	SeyrenResponse<Alert> getAlerts(String checkId, int start, int items);
-
-	SeyrenResponse<Alert> getAlerts(int start, int items);
-
-    Alert getLastAlertForTarget(String target);
-	
+    
+    Alert createAlert(String checkId, Alert alert);
+    
+    SeyrenResponse<Alert> getAlerts(String checkId, int start, int items);
+    
+    SeyrenResponse<Alert> getAlerts(int start, int items);
+    
+    void deleteAlerts(String checkId, DateTime before);
+    
+    Alert getLastAlertForTargetOfCheck(String target, String checkId);
+    
 }

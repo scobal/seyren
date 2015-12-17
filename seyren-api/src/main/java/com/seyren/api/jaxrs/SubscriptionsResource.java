@@ -15,6 +15,7 @@ package com.seyren.api.jaxrs;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -22,21 +23,26 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.seyren.core.domain.Check;
 import com.seyren.core.domain.Subscription;
 
-@Path("/checks/{checkId}/subscriptions")
+@Path("/")
 public interface SubscriptionsResource {
-	
-	@POST
-	@Consumes(MediaType.APPLICATION_JSON)
-	Response createSubscription(@PathParam("checkId") String checkId, Subscription subscription);
-	
-	@PUT
-    @Path("/{subscriptionId}")
-    Response updateSubscription(@PathParam("checkId") String checkId, Subscription subscription);
-	
-	@DELETE
-	@Path("/{subscriptionId}")
-	Response deleteSubscription(@PathParam("checkId") String checkId, @PathParam("subscriptionId") String subscriptionId);
+    
+    @POST
+    @Path("/checks/{checkId}/subscriptions")
+    @Consumes(MediaType.APPLICATION_JSON)
+    Response createSubscription(@PathParam("checkId") String checkId, Subscription subscription);
 
+    @PUT
+    @Path("/checks/{checkId}/subscriptions/{subscriptionId}")
+    Response updateSubscription(@PathParam("checkId") String checkId, Subscription subscription);
+
+    @DELETE
+    @Path("/checks/{checkId}/subscriptions/{subscriptionId}")
+    Response deleteSubscription(@PathParam("checkId") String checkId, @PathParam("subscriptionId") String subscriptionId);
+
+    @PUT
+    @Path("/checks/{checkId}/subscriptions/{subscriptionId}/test")
+    Response testSubscription(@PathParam("checkId") String checkId, @PathParam("subscriptionId") String subscriptionId);
 }

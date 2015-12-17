@@ -15,21 +15,39 @@ package com.seyren.core.store;
 
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 
+import org.joda.time.DateTime;
+
+import com.seyren.core.domain.AlertType;
 import com.seyren.core.domain.Check;
+import com.seyren.core.domain.SeyrenResponse;
 
 public interface ChecksStore {
 
-	List<Check> getChecks();
-	
-	List<Check> getChecksByState(Set<String> states);
+    /**
+     * Searches the fields provided using corresponding regular expression pattern.
+     *
+     * @param checkFields non-null, non-empty order-significant list of fields to search for.
+     * @param patterns non-null, non-empty, order-significant, same length list of regex patterns.
+     * @param enabled if present, will restrict checks to the value supplied.
+     *
+     * @return a Seyren response containing all checks that meet the provided criteria
+     */
+    SeyrenResponse getChecksByPattern(List<String> checkFields, List<Pattern> patterns, Boolean enabled);
 
-	Check getCheck(String checkId);
+    SeyrenResponse<Check> getChecks(Boolean enabled, Boolean live);
+    
+    SeyrenResponse<Check> getChecksByState(Set<String> states, Boolean enabled);
+    
+    Check getCheck(String checkId);
+    
+    void deleteCheck(String checkId);
+    
+    Check createCheck(Check check);
+    
+    Check saveCheck(Check check);
 
-	void deleteCheck(String checkId);
-
-	Check createCheck(Check check);
-
-	Check saveCheck(Check check);
-
+    Check updateStateAndLastCheck(String checkId, AlertType state, DateTime lastCheck);
+    
 }

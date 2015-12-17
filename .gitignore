@@ -1,3 +1,4 @@
+.DS_Store
 *.iml
 *.log
 *.log.zip
@@ -7,3 +8,4 @@
 .settings/
 META-INF/
 target/
+node_modules/

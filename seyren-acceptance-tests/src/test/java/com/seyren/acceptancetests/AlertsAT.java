@@ -15,35 +15,35 @@ package com.seyren.acceptancetests;
 
 import static com.github.restdriver.serverdriver.Matchers.*;
 import static com.github.restdriver.serverdriver.RestServerDriver.*;
+import static com.seyren.acceptancetests.util.SeyrenDriver.*;
 import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.Matchers.*;
-import static com.seyren.acceptancetests.util.SeyrenDriver.*;
 
 import org.junit.Test;
 
 import com.github.restdriver.serverdriver.http.response.Response;
 
 public class AlertsAT {
-
-	@Test
-	public void testGetAlertsReturnsOk() {
-		Response response = get(alerts("1"));
-		assertThat(response, hasStatusCode(200));
-		assertThat(response.asJson(), hasJsonPath("$.values", hasSize(0)));
-		assertThat(response.asJson(), hasJsonPath("$.items", is(20)));
-		assertThat(response.asJson(), hasJsonPath("$.start", is(0)));
-		assertThat(response.asJson(), hasJsonPath("$.total", is(0)));
-	}
-	
-	@Test
-	public void testGetAlertsInvalidStart() {
-		Response response = get(alerts("1").withParam("start", "-1"));
-		assertThat(response, hasStatusCode(400));
-	}
-	
-	@Test
-	public void testGetAlertsInvalidItems() {
-		Response response = get(alerts("1").withParam("items", "-1"));
-		assertThat(response, hasStatusCode(400));
-	}
+    
+    @Test
+    public void testGetAlertsReturnsOk() {
+        Response response = get(alerts("1"));
+        assertThat(response, hasStatusCode(200));
+        assertThat(response.asJson(), hasJsonPath("$.values", hasSize(0)));
+        assertThat(response.asJson(), hasJsonPath("$.items", is(20)));
+        assertThat(response.asJson(), hasJsonPath("$.start", is(0)));
+        assertThat(response.asJson(), hasJsonPath("$.total", is(0)));
+    }
+    
+    @Test
+    public void testGetAlertsInvalidStart() {
+        Response response = get(alerts("1").withParam("start", "-1"));
+        assertThat(response, hasStatusCode(400));
+    }
+    
+    @Test
+    public void testGetAlertsInvalidItems() {
+        Response response = get(alerts("1").withParam("items", "-1"));
+        assertThat(response, hasStatusCode(400));
+    }
 }

@@ -17,93 +17,92 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
-
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 import com.seyren.api.jaxrs.ChecksResource;
 import com.seyren.core.domain.AlertType;
 import com.seyren.core.domain.Check;
+import com.seyren.core.domain.SeyrenResponse;
 import com.seyren.core.store.ChecksStore;
 
 @Named
 public class ChecksBean implements ChecksResource {
+    
+    private ChecksStore checksStore;
+    
+    @Inject
+    public ChecksBean(ChecksStore checksStore) {
+        this.checksStore = checksStore;
+    }
+    
+    @Override
+    public Response getChecks(Set<String> states, Boolean enabled, String name, List<String> fields, List<String> regexes) {
+        SeyrenResponse<Check> checks;
+        if (states != null && !states.isEmpty()) {
+            checks = checksStore.getChecksByState(states, enabled);
+        } else if (fields != null && !fields.isEmpty() &&
+                regexes != null && !regexes.isEmpty()) {
+            List<Pattern> patterns = Lists.transform(regexes, new Function<String, Pattern>() {
+                @Override
+                public Pattern apply(String regex) {
+                    return Pattern.compile(regex);
+                }
+            });
 
-	private ChecksStore checksStore;
+            checks = checksStore.getChecksByPattern(fields, patterns, enabled);
+        } else {
+            checks = checksStore.getChecks(enabled, null);
+        }
+        return Response.ok(checks).build();
+    }
 
-	@Inject
-	public ChecksBean(ChecksStore checksStore) {
-		this.checksStore = checksStore;
-	}
-	
-	@Override
-	public Response getChecks(Set<String> states, Boolean enabled) {
-		List<Check> checks;
-		if (states != null && !states.isEmpty()) {
-			checks = checksStore.getChecksByState(states);
-		} else {
-			checks = checksStore.getChecks();
-		}
-		if (enabled != null) {
-			filterByEnabled(checks, enabled);
-		}
-		return Response.ok(checks).build();
-	}
-
-	@Override
-	public Response createCheck(Check check) {
-		if (check.getState() == null) {
-			check.setState(AlertType.OK);
-		}
-		Check stored = checksStore.createCheck(check);
-		return Response.created(uri(stored.getId())).build();
-	}
-	
-	@Override
-	public Response updateCheck(String checkId, Check check) {
-		Check stored = checksStore.getCheck(checkId);
-		if (stored == null) {
-			return Response.status(Status.NOT_FOUND).build();
-		}
-		stored = checksStore.saveCheck(check);
-		return Response.ok(stored).build();
-	}
-	
-	@Override
-	public Response getCheck(String checkId) {
-		Check check = checksStore.getCheck(checkId);
-		if (check == null) {
-			return Response.status(Status.NOT_FOUND).build();
-		}
-		return Response.ok(check).build();
-	}
-	
-	@Override
-	public Response deleteCheck(String checkId) {
-		checksStore.deleteCheck(checkId);
-		return Response.noContent().build();
-	}
-	
-	private void filterByEnabled(final List<Check> checks, final boolean enabled) {
-		CollectionUtils.filter(checks, new Predicate() {
-			@Override
-			public boolean evaluate(Object object) {
-				return ((Check)object).isEnabled() == enabled;
-			}
-		});
-	}
-	
-	private URI uri(String checkId) {
-		try {
-			return new URI("checks/" + checkId);
-		} catch (URISyntaxException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
+    @Override
+    public Response createCheck(Check check) {
+        if (check.getState() == null) {
+            check.setState(AlertType.OK);
+        }
+        Check stored = checksStore.createCheck(check);
+        return Response.created(uri(stored.getId())).build();
+    }
+    
+    @Override
+    public Response updateCheck(String checkId, Check check) {
+        Check stored = checksStore.getCheck(checkId);
+        if (stored == null) {
+            return Response.status(Status.NOT_FOUND).build();
+        }
+        stored = checksStore.saveCheck(check);
+        return Response.ok(stored).build();
+    }
+    
+    @Override
+    public Response getCheck(String checkId) {
+        Check check = checksStore.getCheck(checkId);
+        if (check == null) {
+            return Response.status(Status.NOT_FOUND).build();
+        }
+        return Response.ok(check).build();
+    }
+    
+    @Override
+    public Response deleteCheck(String checkId) {
+        checksStore.deleteCheck(checkId);
+        return Response.noContent().build();
+    }
+    
+    private URI uri(String checkId) {
+        try {
+            return new URI("checks/" + checkId);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
 }

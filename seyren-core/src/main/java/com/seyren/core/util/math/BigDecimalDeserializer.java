@@ -16,16 +16,16 @@ package com.seyren.core.util.math;
 import java.io.IOException;
 import java.math.BigDecimal;
 
-import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.JsonProcessingException;
-import org.codehaus.jackson.map.DeserializationContext;
-import org.codehaus.jackson.map.JsonDeserializer;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
 
 public class BigDecimalDeserializer extends JsonDeserializer<BigDecimal> {
-
-	@Override
-	public BigDecimal deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {
-		return jp.getText() != null ? new BigDecimal(jp.getText()) : null;
-	}
-
+    
+    @Override
+    public BigDecimal deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+        return jp.getText() != null ? new BigDecimal(jp.getText()) : null;
+    }
+    
 }

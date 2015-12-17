@@ -13,180 +13,49 @@
  */
 package com.seyren.core.service.schedule;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
+import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.seyren.core.util.config.SeyrenConfig;
 import org.springframework.scheduling.annotation.Scheduled;
 
-import com.google.common.base.Optional;
-import com.seyren.core.domain.Alert;
-import com.seyren.core.domain.AlertType;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.seyren.core.domain.Check;
-import com.seyren.core.domain.Subscription;
-import com.seyren.core.service.checker.TargetChecker;
-import com.seyren.core.service.checker.ValueChecker;
-import com.seyren.core.service.notification.NotificationService;
-import com.seyren.core.store.AlertsStore;
 import com.seyren.core.store.ChecksStore;
 
 @Named
 public class CheckScheduler {
     
-    private static final Logger LOGGER = LoggerFactory.getLogger(CheckScheduler.class);
-
-	private final ChecksStore checksStore;
-	private final AlertsStore alertsStore;
-	private final NotificationService notificationService;
-	private final TargetChecker targetChecker;
-	private final ValueChecker valueChecker;
-	private final ScheduledExecutorService executor = Executors.newScheduledThreadPool(8);
-
-	@Inject
-	public CheckScheduler(ChecksStore checksStore, AlertsStore alertsStore, NotificationService notificationService, TargetChecker targetChecker,
-	        ValueChecker valueChecker) {
-		this.checksStore = checksStore;
-		this.alertsStore = alertsStore;
-        this.notificationService = notificationService;
-		this.targetChecker = targetChecker;
-		this.valueChecker = valueChecker;
-	}
-	
-	@Scheduled(fixedRate = 60000)
-	public void performChecks() {
-	    List<Check> checks = checksStore.getChecks();
-		for (final Check check : checks) {
-		    executor.execute(new CheckRunner(check));
-		}
-	}
-	
-	private class CheckRunner implements Runnable {
-	    
-	    private final Check check;
-	    
-	    public CheckRunner(Check check) {
-	        this.check = check;
-	    }
-	    
-	    @Override
-	    public final void run() {
-	        if (!check.isEnabled()) {
-	            return;
-	        }
-	        
-            try {
-                Map<String, Optional<BigDecimal>> targetValues = targetChecker.check(check);
-                
-                if (targetValues.isEmpty()) {
-                	return;
-                }
-                
-                DateTime now = new DateTime();
-                BigDecimal warn = check.getWarn();
-                BigDecimal error = check.getError();
-                
-                AlertType worstState = AlertType.UNKNOWN;
-                
-                List<Alert> interestingAlerts = new ArrayList<Alert>();
-                
-                for (Entry<String, Optional<BigDecimal>> entry : targetValues.entrySet()) {
-                    
-                    String target = entry.getKey();
-                    Optional<BigDecimal> value = entry.getValue();
-                    
-                    if (!value.isPresent()) {
-                        LOGGER.warn("No value present for {}", target);
-                        continue;
-                    }
-                    
-                    BigDecimal currentValue = value.get();
-                    
-                    Alert lastAlert = alertsStore.getLastAlertForTarget(target);
-                    
-                    AlertType lastState;
-                    
-                    if (lastAlert == null) {
-                        lastState = AlertType.OK;
-                    } else {
-                        lastState = lastAlert.getToType();
-                    }
-                    
-                    AlertType currentState = valueChecker.checkValue(currentValue, warn, error);
-                    
-                    if (currentState.isWorseThan(worstState)) {
-                        worstState = currentState;
-                    }
-                    
-                    if (isStillOk(lastState, currentState)) {
-                        continue;
-                    }
-                    
-                    Alert alert = createAlert(target, currentValue, warn, error, lastState, currentState, now);
-                    
-                    alertsStore.createAlert(check.getId(), alert);
-                    
-                    // Only notify if the alert has changed state
-                    if (stateIsTheSame(lastState, currentState)) {
-                        continue;
-                    }
-                    
-                    interestingAlerts.add(alert);
-                    
-                }
-                
-                check.setState(worstState);
-                checksStore.saveCheck(check);
-                
-                if (interestingAlerts.isEmpty()) {
-                    return;
-                }
-                
-                for (Subscription subscription : check.getSubscriptions()) {
-                    if (!subscription.shouldNotify(now)) {
-                        continue;
-                    }
-                    
-                    try {
-                        notificationService.sendNotification(check, subscription, interestingAlerts);
-                    } catch (Exception e) {
-                        LOGGER.warn("Notifying " + subscription.getTarget() + " failed", e);
-                    }
-                }
-                
-            } catch (Exception e) {
-                LOGGER.warn(check.getName() + " failed", e);
-            }
-	    }
-	    
-	}
-
-    private boolean isStillOk(AlertType last, AlertType current) {
-        return last == AlertType.OK && current == AlertType.OK;
+    private final ScheduledExecutorService executor;
+    private final ChecksStore checksStore;
+    private final CheckRunnerFactory checkRunnerFactory;
+    
+    @Inject
+    public CheckScheduler(ChecksStore checksStore, CheckRunnerFactory checkRunnerFactory, SeyrenConfig seyrenConfig) {
+        this.checksStore = checksStore;
+        this.checkRunnerFactory = checkRunnerFactory;
+        this.executor = Executors.newScheduledThreadPool(seyrenConfig.getNoOfThreads(), new ThreadFactoryBuilder().setNameFormat("seyren.check-scheduler-%s")
+                        .setDaemon(false).build());
     }
-
-    private boolean stateIsTheSame(AlertType last, AlertType current) {
-        return last == current;
+    
+    @Scheduled(fixedRateString = "${GRAPHITE_REFRESH:60000}")
+    public void performChecks() {
+        List<Check> checks = checksStore.getChecks(true, false).getValues();
+        for (final Check check : checks) {
+            executor.execute(checkRunnerFactory.create(check));
+        }
     }
-
-    private Alert createAlert(String target, BigDecimal value, BigDecimal warn, BigDecimal error, AlertType from, AlertType to, DateTime now) {
-        return new Alert()
-                .withTarget(target)
-                .withValue(value)
-                .withWarn(warn)
-                .withError(error)
-                .withFromType(from)
-                .withToType(to)
-                .withTimestamp(now);
+    
+    @PreDestroy
+    public void preDestroy() throws InterruptedException {
+        executor.shutdown();
+        executor.awaitTermination(500, TimeUnit.MILLISECONDS);
     }
-	
+    
 }

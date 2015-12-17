@@ -18,36 +18,43 @@ import javax.inject.Named;
 import javax.ws.rs.core.Response;
 
 import com.seyren.api.jaxrs.AlertsResource;
+import com.seyren.api.util.DateTimeParam;
 import com.seyren.core.domain.Alert;
 import com.seyren.core.domain.SeyrenResponse;
 import com.seyren.core.store.AlertsStore;
 
 @Named
 public class AlertsBean implements AlertsResource {
-
-	private AlertsStore alertsStore;
-
-	@Inject
-	public AlertsBean(AlertsStore alertsStore) {
-		this.alertsStore = alertsStore;
-	}
-	
-	@Override
-	public Response getAlertsForCheck(String checkId, int start, int items) {
-		if (start < 0 || items < 0) {
-			return Response.status(400).build();
-		}
-		SeyrenResponse<Alert> response = alertsStore.getAlerts(checkId, start, items);
-		return Response.ok(response).build();
-	}
-
-	@Override
-	public Response getAlerts(int start, int items) {
-		if (start < 0 || items < 0) {
-			return Response.status(400).build();
-		}
-		SeyrenResponse<Alert> response = alertsStore.getAlerts(start, items);
-		return Response.ok(response).build();
-	}
-
+    
+    private AlertsStore alertsStore;
+    
+    @Inject
+    public AlertsBean(AlertsStore alertsStore) {
+        this.alertsStore = alertsStore;
+    }
+    
+    @Override
+    public Response getAlertsForCheck(String checkId, int start, int items) {
+        if (start < 0 || items < 0) {
+            return Response.status(400).build();
+        }
+        SeyrenResponse<Alert> response = alertsStore.getAlerts(checkId, start, items);
+        return Response.ok(response).build();
+    }
+    
+    @Override
+    public Response deleteAlertsForCheck(String checkId, DateTimeParam before) {
+        alertsStore.deleteAlerts(checkId, before.value());
+        return Response.noContent().build();
+    }
+    
+    @Override
+    public Response getAlerts(int start, int items) {
+        if (start < 0 || items < 0) {
+            return Response.status(400).build();
+        }
+        SeyrenResponse<Alert> response = alertsStore.getAlerts(start, items);
+        return Response.ok(response).build();
+    }
+    
 }
