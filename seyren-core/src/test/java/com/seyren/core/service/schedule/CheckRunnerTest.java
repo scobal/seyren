@@ -68,6 +68,9 @@ public class CheckRunnerTest {
                 mockTargetChecker,
                 mockValueChecker,
                 mockNotificationServices);
+        
+        // Clear all cached values so that initial state is true even between tests
+        CheckRunner.flushLastAlerts();
     }
     
     @Test
@@ -114,6 +117,103 @@ public class CheckRunnerTest {
         checkRunner.run();
     }
     
+    @Test
+    public void cachesLastAlertByTarget() throws Exception {
+    	BigDecimal warnLevel = new BigDecimal(0.6);
+    	BigDecimal errorLevel = new BigDecimal(0.8);
+    	Alert initialAlert1 = new Alert()
+    		.withCheckId("check1")
+    		.withTarget("target1")
+    		.withValue(new BigDecimal(0.1))
+    		.withWarn(warnLevel)
+    		.withError(errorLevel)
+    		.withFromType(AlertType.WARN)
+    		.withToType(AlertType.OK)
+    		.withTimestamp(DateTime.now());
+    	Alert initialAlert2 = null;
+
+    	when(mockCheck.isEnabled()).thenReturn(true);
+    	Map<String, Optional<BigDecimal>> targetValues = new HashMap<String, Optional<BigDecimal>>();
+    	targetValues.put("target1", Optional.of(new BigDecimal(0.2)));
+    	targetValues.put("target2", Optional.of(new BigDecimal(0.4)));
+    	when(mockTargetChecker.check(mockCheck)).thenReturn(targetValues);
+    	when(mockCheck.hasRemoteServerErrorOccurred()).thenReturn(false);
+    	when(mockCheck.getId()).thenReturn("check1");
+    	when(mockCheck.getWarn()).thenReturn(warnLevel);
+    	when(mockCheck.getError()).thenReturn(errorLevel);
+    	when(mockCheck.isAllowNoData()).thenReturn(true);
+    	when(mockAlertsStore.getLastAlertForTargetOfCheck("target1", "check1")).thenReturn(initialAlert1);
+    	when(mockAlertsStore.getLastAlertForTargetOfCheck("target2", "check1")).thenReturn(initialAlert2);
+    	when(mockValueChecker.checkValue(any(BigDecimal.class), any(BigDecimal.class), any(BigDecimal.class))).thenReturn(AlertType.OK);
+    	
+    	
+    	checkRunner.run();
+    	
+    	// First time through for these targets, it should pull them from persistence tier
+    	verify(mockAlertsStore, times(1)).getLastAlertForTargetOfCheck("target1", "check1");
+    	verify(mockAlertsStore, times(1)).getLastAlertForTargetOfCheck("target2", "check1");
+    
+    	// Add a new target
+    	targetValues.put("target3", Optional.of(new BigDecimal(0.3)));
+    	when(mockAlertsStore.getLastAlertForTargetOfCheck("target3", "check1")).thenReturn(null);
+    	
+    	checkRunner.run();
+    	
+    	// Second time through, verify that still only a single pull from persistence has been made per target
+    	verify(mockAlertsStore, times(1)).getLastAlertForTargetOfCheck("target1", "check1");
+    	verify(mockAlertsStore, times(1)).getLastAlertForTargetOfCheck("target2", "check1");
+    	verify(mockAlertsStore, times(1)).getLastAlertForTargetOfCheck("target3", "check1");
+    }
+
+    @Test
+    public void updatesCacheWhenSavingAlert() throws Exception {
+    	Check mockUpdatedCheck = mock(Check.class);
+    	BigDecimal warnLevel = new BigDecimal(0.6);
+    	BigDecimal errorLevel = new BigDecimal(0.8);
+    	Alert initialAlert = new Alert()
+    		.withCheckId("check1")
+    		.withTarget("target1")
+    		.withValue(new BigDecimal(0.1))
+    		.withWarn(warnLevel)
+    		.withError(errorLevel)
+    		.withFromType(AlertType.WARN)
+    		.withToType(AlertType.OK)
+    		.withTimestamp(DateTime.now());
+
+    	when(mockCheck.isEnabled()).thenReturn(true);
+    	Map<String, Optional<BigDecimal>> targetValues = new HashMap<String, Optional<BigDecimal>>();
+    	targetValues.put("target1", Optional.of(new BigDecimal(0.7)));
+    	when(mockTargetChecker.check(mockCheck)).thenReturn(targetValues);
+    	when(mockCheck.hasRemoteServerErrorOccurred()).thenReturn(false);
+    	when(mockCheck.getId()).thenReturn("check1");
+    	when(mockCheck.getWarn()).thenReturn(warnLevel);
+    	when(mockCheck.getError()).thenReturn(errorLevel);
+    	when(mockCheck.isAllowNoData()).thenReturn(true);
+    	when(mockAlertsStore.getLastAlertForTargetOfCheck("target1", "check1")).thenReturn(initialAlert);
+    	when(mockValueChecker.checkValue(any(BigDecimal.class), any(BigDecimal.class), any(BigDecimal.class))).thenReturn(AlertType.WARN);
+    	when(mockCheck.getSubscriptions()).thenReturn(null);
+    	when(mockAlertsStore.createAlert(anyString(), any(Alert.class))).thenReturn(null);
+    	when(mockChecksStore.updateStateAndLastCheck(anyString(), any(AlertType.class), any(DateTime.class))).thenReturn(mockUpdatedCheck);
+    	
+    	checkRunner.run();
+    	
+    	// First time through for these targets, it should pull from persistence tier and receive OK
+    	verify(mockAlertsStore, times(1)).getLastAlertForTargetOfCheck("target1", "check1");
+    	
+    	// And it should find that state transitions from OK to WARN, so it should create an alert and getSubscriptions should be called
+    	verify(mockAlertsStore, times(1)).createAlert(anyString(), any(Alert.class));
+    	verify(mockUpdatedCheck, times(1)).getSubscriptions();
+    	
+    	
+    	checkRunner.run();
+    	
+    	// Second time through, it should pull from cache and it should move from WARN to WARN, so new alert
+    	// but no new attempt to retrieve subscriptions
+    	verify(mockAlertsStore, times(1)).getLastAlertForTargetOfCheck("target1", "check1");
+    	verify(mockAlertsStore, times(2)).createAlert(anyString(), any(Alert.class));
+    	verify(mockUpdatedCheck, times(1)).getSubscriptions();
+    }
+
     @Test
     public void noPreviousAlertAndHappyCurrentValueDoesNothing() throws Exception {
         BigDecimal value = BigDecimal.ONE;

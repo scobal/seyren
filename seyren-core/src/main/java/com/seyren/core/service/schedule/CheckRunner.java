@@ -15,6 +15,7 @@ package com.seyren.core.service.schedule;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -44,6 +45,9 @@ public class CheckRunner implements Runnable {
     private final TargetChecker targetChecker;
     private final ValueChecker valueChecker;
     private final Iterable<NotificationService> notificationServices;
+    
+    // A hashmap of last alerts by target/check
+	private static final HashMap<String, Alert> lastAlerts = new HashMap<String, Alert>();
     
     public CheckRunner(Check check, AlertsStore alertsStore, ChecksStore checksStore, TargetChecker targetChecker, ValueChecker valueChecker,
             Iterable<NotificationService> notificationServices) {
@@ -104,7 +108,7 @@ public class CheckRunner implements Runnable {
                 BigDecimal currentValue = value.get();
                 LOGGER.info("        Check #{}, Target #{} :: Value found.", check.getId(), target);
                 // Get the last alert stored for this check
-                Alert lastAlert = alertsStore.getLastAlertForTargetOfCheck(target, check.getId());
+                Alert lastAlert = getLastAlertForTarget(target);
                 
                 AlertType lastState;
                 // If no "last alert" is found, then assume that the last state is "OK"
@@ -130,7 +134,7 @@ public class CheckRunner implements Runnable {
                 }
                 // If the state is not OK, create an alert
                 Alert alert = createAlert(target, currentValue, warn, error, lastState, currentState, now);
-                alertsStore.createAlert(check.getId(), alert);
+                saveAlert(alert);
                 
                 // Only notify if the alert has changed state
                 if (stateIsTheSame(lastState, currentState)) {
@@ -185,6 +189,35 @@ public class CheckRunner implements Runnable {
         	// Notify the Check Governor that the check has been completed
             CheckConcurrencyGovernor.instance().notifiyCheckIsComplete(this.check);
         }
+    }
+    
+    public static void flushLastAlerts() {
+    	lastAlerts.clear();
+    }
+    
+    private Alert getLastAlertForTarget(String target) {
+    	String key = String.format("%s|%s", check.getId(), target);
+    	
+    	if (lastAlerts.containsKey(key)) {
+    		return lastAlerts.get(key);
+    	}
+    	
+    	// Last alert has not been loaded for this target/check; load from store
+        LOGGER.info("        Check #{}, Target #{} :: Loading last alert from store", check.getId(), target);
+        Alert lastAlert = alertsStore.getLastAlertForTargetOfCheck(target, check.getId());
+        
+        // Cache, even if null
+        lastAlerts.put(key, lastAlert);
+        return lastAlert;
+    }
+    
+    private void saveAlert(Alert alert) {
+    	// Update cache with latest
+    	String key = String.format("%s|%s", check.getId(), alert.getTarget());    	
+        lastAlerts.put(key, alert);
+        
+        // Persist in store
+        alertsStore.createAlert(check.getId(), alert);
     }
     
     private boolean isStillOk(AlertType last, AlertType current) {
