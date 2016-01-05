@@ -191,8 +191,12 @@ public class CheckRunner implements Runnable {
         }
     }
     
+    public static void flushLastAlerts() {
+    	lastAlerts.clear();
+    }
+    
     private Alert getLastAlertForTarget(String target) {
-    	String key = String.format("{}|{}", check.getId(), target);
+    	String key = String.format("%s|%s", check.getId(), target);
     	
     	if (lastAlerts.containsKey(key)) {
     		return lastAlerts.get(key);
@@ -209,7 +213,7 @@ public class CheckRunner implements Runnable {
     
     private void saveAlert(Alert alert) {
     	// Update cache with latest
-    	String key = String.format("{}|{}", check.getId(), alert.getTarget());    	
+    	String key = String.format("%s|%s", check.getId(), alert.getTarget());    	
         lastAlerts.put(key, alert);
         
         // Persist in store
