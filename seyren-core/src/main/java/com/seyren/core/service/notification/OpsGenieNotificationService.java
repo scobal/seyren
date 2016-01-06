@@ -96,12 +96,32 @@ public class OpsGenieNotificationService implements NotificationService {
     private void closeOpenAlerts(OpsGenieClient client, String apiKey, Check check) throws OpsGenieClientException, ParseException, IOException{
         List<com.ifountain.opsgenie.client.model.beans.Alert> opsAlerts = getOpenAlerts(client, apiKey, check);
         for(com.ifountain.opsgenie.client.model.beans.Alert alert : opsAlerts) {
+            closeAlert(alert, client,apiKey,check);
+        }
+    }
+
+    private void closeAlert(com.ifountain.opsgenie.client.model.beans.Alert alert, OpsGenieClient client, String apiKey, Check check) {
+        try {
             CloseAlertRequest request = new CloseAlertRequest();
             request.setId(alert.getId());
             request.setApiKey(apiKey);
             CloseAlertResponse response = client.alert().closeAlert(request);
-            assert response.isSuccess();
+            if(!response.isSuccess())
+                LOGGER.warn("Unable to close alert for check: " + check.getName());
+        } catch (OpsGenieClientException e) {
+            LOGGER.warn(
+                "Unable to close alert for check: " + check.getName(),
+                check.getState(), e);
+        } catch (IOException e) {
+            LOGGER.warn(
+                "Unable to close alert for check: " + check.getName(),
+                check.getState(), e);
+        } catch (ParseException e) {
+            LOGGER.warn(
+                "Unable to close alert for check: " + check.getName(),
+                check.getState(), e);
         }
+
     }
 
     private void openAlert(OpsGenieClient client, String apiKey, Check check) throws OpsGenieClientException, ParseException, IOException{
