@@ -15,6 +15,8 @@ package com.seyren.core.util.hashing;
 
 import org.apache.commons.codec.digest.DigestUtils;
 
+import java.nio.charset.Charset;
+
 public final class TargetHash {
     
     private TargetHash() {
@@ -24,7 +26,7 @@ public final class TargetHash {
         if (target == null) {
             return null;
         }
-        return new String(DigestUtils.md5(target));
+        return new String(DigestUtils.md5(target), Charset.forName("UTF-8"));
     }
     
 }
