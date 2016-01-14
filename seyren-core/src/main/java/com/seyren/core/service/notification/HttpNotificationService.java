@@ -122,7 +122,7 @@ public class HttpNotificationService implements NotificationService {
         cal.add(Calendar.HOUR, 1);
         String until = format.format(cal.getTime());
 
-        return "&from=" + until.toString() + "&until=" + from.toString();   
+        return "&from=" + until + "&until=" + from;
     }
     
 }
