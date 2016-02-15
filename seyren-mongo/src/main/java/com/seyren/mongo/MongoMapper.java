@@ -45,6 +45,7 @@ public class MongoMapper {
         String until = Strings.emptyToNull(getString(dbo, "until"));
         BigDecimal warn = getBigDecimal(dbo, "warn");
         BigDecimal error = getBigDecimal(dbo, "error");
+        Integer checkType = getInteger(dbo,"checkType");
         boolean enabled = getBoolean(dbo, "enabled");
         boolean live = getOptionalBoolean(dbo, "live", false);
         boolean allowNoData = getOptionalBoolean(dbo, "allowNoData", false);
@@ -69,7 +70,8 @@ public class MongoMapper {
                 .withAllowNoData(allowNoData)
                 .withState(state)
                 .withLastCheck(lastCheck)
-                .withSubscriptions(subscriptions);
+                .withSubscriptions(subscriptions)
+                .withCheckType(checkType);
     }
     
     public Subscription subscriptionFrom(DBObject dbo) {
