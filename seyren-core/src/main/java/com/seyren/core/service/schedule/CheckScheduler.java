@@ -74,7 +74,7 @@ public class CheckScheduler {
         	if (!CheckConcurrencyGovernor.instance().isCheckRunning(check)){
         		checksWereRun++;
             	// Notify the Check Governor that the check is now running
-            	CheckConcurrencyGovernor.instance().notifiyCheckIsRunning(check);
+            	CheckConcurrencyGovernor.instance().notifyCheckIsRunning(check);
             	executor.execute(checkRunnerFactory.create(check));
         	}
         	else {

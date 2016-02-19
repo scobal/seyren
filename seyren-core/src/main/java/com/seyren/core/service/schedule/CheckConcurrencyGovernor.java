@@ -79,7 +79,7 @@ public class CheckConcurrencyGovernor {
 	 * @param check The check that is now running 
 	 * @return True if the check was registered as running properly, false in the case of an exception
 	 */
-	public synchronized boolean notifiyCheckIsRunning(Check check){
+	public synchronized boolean notifyCheckIsRunning(Check check){
 		try {
 			CheckStatus checkStatus = new CheckStatus(check);
 			runningChecks.put(check.getId(), checkStatus);
@@ -96,7 +96,7 @@ public class CheckConcurrencyGovernor {
 	 * @param check The check in question
 	 * @return True if the check was successfully taken out of the running queue
 	 */
-	public synchronized boolean notifiyCheckIsComplete(Check check){
+	public synchronized boolean notifyCheckIsComplete(Check check){
 		try {
 			String id = check.getId();
 			CheckStatus status = runningChecks.get(id);
