@@ -60,7 +60,7 @@ public class CheckRunner implements Runnable {
     }
     
     @Override
-    public final void run() {
+    public void run() {
         // Wrap everything in try so we can clear the concurrency check upon exit in the finally block
     	try {
         	// If the check is not enabled, don't run it, exiting...

@@ -14,11 +14,15 @@
 package com.seyren.core.service.schedule;
 
 import static org.mockito.Mockito.*;
+import static org.hamcrest.MatcherAssert.*;
+import static org.hamcrest.Matchers.*;
 
 import java.util.List;
 import java.util.ArrayList;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 import com.seyren.core.store.ChecksStore;
 import com.seyren.core.util.config.SeyrenConfig;
@@ -56,6 +60,7 @@ public class CheckSchedulerTest {
         mockSeyrenConfig = mock(SeyrenConfig.class);
         
         when(mockSeyrenConfig.getNoOfThreads()).thenReturn(1);
+        when(mockSeyrenConfig.getMaxCheckExecutionTimeInSeconds()).thenReturn(300);
         
         // Mock checks for Guid-based id values 
         mockChecks = new ArrayList<Check>();
@@ -300,5 +305,143 @@ public class CheckSchedulerTest {
         verify(mockCheckRunnerFactory, times(0)).create(index3MockCheck);
         verify(mockCheckRunnerFactory, times(0)).create(index4MockCheck);
         verify(mockCheckRunnerFactory, times(1)).create(index5MockCheck);
+    }
+
+	volatile Boolean reachedEnd = false;
+	volatile Boolean interrupted = false;
+	// Wait 2 seconds for a 1.5-second check...
+	// Verify check execution was not interrupted and did complete
+    @Test
+    public void verifyCheckExecutionNotStoppedEarly() {
+    	// reset variables used in this test
+    	reachedEnd = false;
+    	interrupted = false;
+    	
+    	// set up mocks
+    	SeyrenConfig mockConfig = mock(SeyrenConfig.class);
+    	
+    	// must be multi-threaded
+    	when(mockConfig.getNoOfThreads()).thenReturn(10);
+        when(mockConfig.getCheckExecutorInstanceIndex()).thenReturn(1);
+        when(mockConfig.getCheckExecutorTotalInstances()).thenReturn(1);
+        
+        // 2 second timeout/max execution time
+    	when(mockConfig.getMaxCheckExecutionTimeInSeconds()).thenReturn(2);
+    	
+        ChecksStore mockStore = mock(ChecksStore.class);
+        CheckRunnerFactory mockFactory = mock(CheckRunnerFactory.class);
+        
+        ArrayList<Check> mockChecks = new ArrayList<Check>();
+        
+        Check mockLongRunningCheck = mock(Check.class);
+        mockChecks.add(mockLongRunningCheck);
+        
+        SeyrenResponse<Check> checks = new SeyrenResponse<Check>().withValues(mockChecks);
+        
+        when(mockStore.getChecks(true, false)).thenReturn(checks);
+
+        CheckRunner mockLongRunningCheckRunner = mock(CheckRunner.class);
+        doAnswer(new Answer<Void>() {
+        	public Void answer(InvocationOnMock invocation) {
+        		try {
+        			// 1.5 second execution time
+        			Thread.sleep(1500);
+        			reachedEnd = true;
+        		}
+        		catch(InterruptedException e) {
+        			interrupted = true;
+        		}
+        		return null;
+        	}
+        }).when(mockLongRunningCheckRunner).run();
+        
+        
+        when(mockFactory.create(mockLongRunningCheck)).thenReturn(mockLongRunningCheckRunner);
+        
+        CheckScheduler checkSchedulerUnderTest = new CheckScheduler(mockStore, mockFactory, mockConfig);
+        checkSchedulerUnderTest.performChecks();
+        
+        // Allow check execution to complete
+        try {
+        	Thread.sleep(2500);
+        }
+        catch(InterruptedException e) {
+        	// If we don't get to end of wait time, no way to ensure check execution was given full opportunity to finish
+        	assert false;
+        }
+        
+        // Verify check finished execution
+        assert reachedEnd;
+        
+        // Verify check was not interrupted
+        assert !interrupted;
+    }
+
+    // Wait 2 seconds for a 3-second check...
+	// Verify check execution was interrupted and did not complete
+    @Test
+    public void verifyCheckExecutionStoppedWhenTimeoutExceeded() {
+    	// reset variables used in this test
+    	reachedEnd = false;
+    	interrupted = false;
+    	
+    	// set up mocks
+    	SeyrenConfig mockConfig = mock(SeyrenConfig.class);
+    	
+    	// must be multi-threaded
+    	when(mockConfig.getNoOfThreads()).thenReturn(10);
+        when(mockConfig.getCheckExecutorInstanceIndex()).thenReturn(1);
+        when(mockConfig.getCheckExecutorTotalInstances()).thenReturn(1);
+        
+        // 2 second timeout/max execution time
+    	when(mockConfig.getMaxCheckExecutionTimeInSeconds()).thenReturn(2);
+    	
+        ChecksStore mockStore = mock(ChecksStore.class);
+        CheckRunnerFactory mockFactory = mock(CheckRunnerFactory.class);
+        
+        ArrayList<Check> mockChecks = new ArrayList<Check>();
+        
+        Check mockLongRunningCheck = mock(Check.class);
+        mockChecks.add(mockLongRunningCheck);
+        
+        SeyrenResponse<Check> checks = new SeyrenResponse<Check>().withValues(mockChecks);
+        
+        when(mockStore.getChecks(true, false)).thenReturn(checks);
+
+        CheckRunner mockLongRunningCheckRunner = mock(CheckRunner.class);
+        doAnswer(new Answer<Void>() {
+        	public Void answer(InvocationOnMock invocation) {
+        		try {
+        			// 3 second execution time
+        			Thread.sleep(3000);
+        			reachedEnd = true;
+        		}
+        		catch(InterruptedException e) {
+        			interrupted = true;
+        		}
+        		return null;
+        	}
+        }).when(mockLongRunningCheckRunner).run();
+        
+        
+        when(mockFactory.create(mockLongRunningCheck)).thenReturn(mockLongRunningCheckRunner);
+        
+        CheckScheduler checkSchedulerUnderTest = new CheckScheduler(mockStore, mockFactory, mockConfig);
+        checkSchedulerUnderTest.performChecks();
+        
+        // Allow check execution to complete
+        try {
+        	Thread.sleep(3500);
+        }
+        catch(InterruptedException e) {
+        	// If we don't get to end of wait time, no way to ensure check execution was given full opportunity to finish
+        	assert false;
+        }
+        
+        // Verify check never finished execution
+        assert !reachedEnd;
+        
+        // Verify check was interrupted
+        assert interrupted;
     }
 }

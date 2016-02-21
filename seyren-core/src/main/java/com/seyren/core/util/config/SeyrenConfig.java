@@ -40,6 +40,7 @@ public class SeyrenConfig {
     private final int noOfThreads;
     private final int checkExecutorInstanceIndex;
     private final int checkExecutorTotalInstances;
+    private final int maxCheckExecutionTimeInSeconds;
     private final String graphiteUrl;
     private final String graphiteUsername;
     private final String graphitePassword;
@@ -100,6 +101,7 @@ public class SeyrenConfig {
         this.noOfThreads = Integer.parseInt(configOrDefault("SEYREN_THREADS", "8"));
         this.checkExecutorInstanceIndex = Integer.parseInt(configOrDefault("SEYREN_WORKER_INDEX", "1"));
         this.checkExecutorTotalInstances = Integer.parseInt(configOrDefault("SEYREN_WORKER_COUNT", "1"));
+        this.maxCheckExecutionTimeInSeconds = Integer.parseInt(configOrDefault("CHECK_EXECUTION_TIMEOUT_SECONDS", "1500"));
         
         // Graphite
         this.graphiteUrl = stripEnd(configOrDefault("GRAPHITE_URL", "http://localhost:80"), "/");
@@ -223,6 +225,11 @@ public class SeyrenConfig {
     @JsonIgnore
     public int getCheckExecutorTotalInstances() {
         return checkExecutorTotalInstances;
+    }
+
+    @JsonIgnore
+    public int getMaxCheckExecutionTimeInSeconds() {
+        return maxCheckExecutionTimeInSeconds;
     }
 
     @JsonIgnore
