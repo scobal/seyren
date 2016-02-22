@@ -14,9 +14,12 @@
 package com.seyren.core.service.schedule;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
@@ -48,6 +51,8 @@ public class CheckScheduler {
     
     private final int totalWorkers;
 
+    private final int checkExecutionTimeoutSeconds;
+    
     @Inject
     public CheckScheduler(ChecksStore checksStore, CheckRunnerFactory checkRunnerFactory, SeyrenConfig seyrenConfig) {
         this.checksStore = checksStore;
@@ -56,6 +61,7 @@ public class CheckScheduler {
                         .setDaemon(false).build());
         this.instanceIndex = seyrenConfig.getCheckExecutorInstanceIndex();
         this.totalWorkers = seyrenConfig.getCheckExecutorTotalInstances();
+        this.checkExecutionTimeoutSeconds = seyrenConfig.getMaxCheckExecutionTimeInSeconds();
     }
     
     @Scheduled(fixedRateString = "${GRAPHITE_REFRESH:60000}")
@@ -74,8 +80,24 @@ public class CheckScheduler {
         	if (!CheckConcurrencyGovernor.instance().isCheckRunning(check)){
         		checksWereRun++;
             	// Notify the Check Governor that the check is now running
-            	CheckConcurrencyGovernor.instance().notifiyCheckIsRunning(check);
-            	executor.execute(checkRunnerFactory.create(check));
+            	CheckConcurrencyGovernor.instance().notifyCheckIsRunning(check);
+            	// Submit, so we can get the future, so we can control total time of execution
+            	Future<?> checkExecutionFuture = executor.submit(checkRunnerFactory.create(check));
+            	try {
+            		// Force resolution within max execution time
+            		checkExecutionFuture.get(this.checkExecutionTimeoutSeconds, TimeUnit.SECONDS);
+            	}
+            	catch(TimeoutException e) {
+                	LOGGER.warn("  *** Check #{} :: Check timed out", check.getId());
+                	// Attempt to cancel the check execution, which should also free thread
+                	checkExecutionFuture.cancel(true);
+            	}
+            	catch(ExecutionException e) {
+                	LOGGER.warn("  *** Check #{} :: Check execution failed: {}", check.getId(), e.toString());            		
+                }
+            	catch(InterruptedException e) {
+                	LOGGER.warn("  *** Check #{} :: Check execution was interrupted (possibly by timeout): {}", check.getId(), e.toString());
+            	}
         	}
         	else {
         		CheckConcurrencyGovernor.instance().logCheckSkipped(check);
@@ -83,7 +105,7 @@ public class CheckScheduler {
         	}
         }
         // Log basic information about worker instance and its work
-        LOGGER.debug(String.format("Worker %d of %d is responsible for %d of %d checks, of which %d were run.", instanceIndex, totalWorkers, checksInScope, checks.size(), checksWereRun));
+        LOGGER.info(String.format("Worker %d of %d is responsible for %d of %d checks, of which %d were run.", instanceIndex, totalWorkers, checksInScope, checks.size(), checksWereRun));
     }
 
     private boolean isMyWork(Check check) {

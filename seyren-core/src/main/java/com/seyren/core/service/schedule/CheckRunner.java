@@ -60,12 +60,14 @@ public class CheckRunner implements Runnable {
     }
     
     @Override
-    public final void run() {
-    	// If the check is not enabled, don't run it, exiting...
-        if (!check.isEnabled()) {
-            return;
-        }
-        try {
+    public void run() {
+        // Wrap everything in try so we can clear the concurrency check upon exit in the finally block
+    	try {
+        	// If the check is not enabled, don't run it, exiting...
+            if (!check.isEnabled()) {
+                return;
+            }
+            
         	// Run the check
             Map<String, Optional<BigDecimal>> targetValues = targetChecker.check(check);
             // If there was a problem retrieving data from graphite, then simply don't continue processing the check
@@ -101,7 +103,7 @@ public class CheckRunner implements Runnable {
                 Optional<BigDecimal> value = entry.getValue();
                 // If there is no value in the entry, move to the next one
                 if (!value.isPresent()) {
-                    LOGGER.warn("        Check #{}, Target #{} :: No value present.", check.getId(), target);
+                    LOGGER.info("        Check #{}, Target #{} :: No value present.", check.getId(), target);
                     continue;
                 }
                 // Get the value of the entry
@@ -187,7 +189,7 @@ public class CheckRunner implements Runnable {
         	// If we've made it here, it is due either to a typical Exception, or to
         	// a database timeout
         	// Notify the Check Governor that the check has been completed
-            CheckConcurrencyGovernor.instance().notifiyCheckIsComplete(this.check);
+            CheckConcurrencyGovernor.instance().notifyCheckIsComplete(this.check);
         }
     }
     
