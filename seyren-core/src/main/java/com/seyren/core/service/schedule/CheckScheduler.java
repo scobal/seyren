@@ -82,22 +82,17 @@ public class CheckScheduler {
             	// Notify the Check Governor that the check is now running
             	CheckConcurrencyGovernor.instance().notifyCheckIsRunning(check);
             	// Submit, so we can get the future, so we can control total time of execution
-            	Future<?> checkExecutionFuture = executor.submit(checkRunnerFactory.create(check));
-            	try {
-            		// Force resolution within max execution time
-            		checkExecutionFuture.get(this.checkExecutionTimeoutSeconds, TimeUnit.SECONDS);
-            	}
-            	catch(TimeoutException e) {
-                	LOGGER.warn("  *** Check #{} :: Check timed out", check.getId());
-                	// Attempt to cancel the check execution, which should also free thread
-                	checkExecutionFuture.cancel(true);
-            	}
-            	catch(ExecutionException e) {
-                	LOGGER.warn("  *** Check #{} :: Check execution failed: {}", check.getId(), e.toString());            		
-                }
-            	catch(InterruptedException e) {
-                	LOGGER.warn("  *** Check #{} :: Check execution was interrupted (possibly by timeout): {}", check.getId(), e.toString());
-            	}
+            	final Future<?> checkExecutionFuture = executor.submit(checkRunnerFactory.create(check));
+            	// Schedule the cancellation (which will be a no-op if it has finished)
+            	executor.schedule(new Runnable(){
+            	     public void run(){
+            	    	 checkExecutionFuture.cancel(true);
+            	    	 // Log that it was cancelled, if it was terminated
+            	    	 if (checkExecutionFuture.isCancelled()) {
+            	    		 LOGGER.warn("  *** Check #{} :: Check timed out", check.getId());
+            	    	 }
+            	     }      
+            	 }, this.checkExecutionTimeoutSeconds, TimeUnit.SECONDS);
         	}
         	else {
         		CheckConcurrencyGovernor.instance().logCheckSkipped(check);
