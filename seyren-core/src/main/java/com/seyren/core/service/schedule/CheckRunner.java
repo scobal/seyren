@@ -83,7 +83,7 @@ public class CheckRunner implements Runnable {
                 String target = entry.getKey();
                 Optional<BigDecimal> value = entry.getValue();
                 
-                if (!value.isPresent()) {
+                if (!check.isAllowNoData() && !value.isPresent()) {
                     LOGGER.warn("No value present for {}", target);
                     continue;
                 }
