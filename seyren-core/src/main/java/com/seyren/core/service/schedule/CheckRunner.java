@@ -186,8 +186,6 @@ public class CheckRunner implements Runnable {
             LOGGER.warn("{} failed", check.getName(), e);
             
         } finally {
-        	// If we've made it here, it is due either to a typical Exception, or to
-        	// a database timeout
         	// Notify the Check Governor that the check has been completed
             CheckConcurrencyGovernor.instance().notifyCheckIsComplete(this.check);
         }
