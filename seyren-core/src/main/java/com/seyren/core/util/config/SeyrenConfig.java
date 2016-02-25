@@ -67,6 +67,8 @@ public class SeyrenConfig {
     private final String smtpHost;
     private final String smtpProtocol;
     private final Integer smtpPort;
+    private final Integer smtpConnectionTimeout;
+    private final Integer smtpSocketTimeout;
     private final String flowdockExternalUsername;
     private final String flowdockTags;
     private final String graphiteScheme;
@@ -128,6 +130,8 @@ public class SeyrenConfig {
         this.smtpHost = configOrDefault("SMTP_HOST", "localhost");
         this.smtpProtocol = configOrDefault("SMTP_PROTOCOL", "smtp");
         this.smtpPort = Integer.parseInt(configOrDefault("SMTP_PORT", "25"));
+        this.smtpConnectionTimeout = Integer.parseInt(configOrDefault("SMTP_CONECTION_TIMEOUT", "45000"));
+        this.smtpSocketTimeout = Integer.parseInt(configOrDefault("SMTP_SOCKET_TIMEOUT", "120000"));
         
         // HipChat
         this.hipChatBaseUrl = configOrDefault(list("HIPCHAT_BASEURL", "HIPCHAT_BASE_URL"), "https://api.hipchat.com");
@@ -335,6 +339,16 @@ public class SeyrenConfig {
     @JsonIgnore
     public Integer getSmtpPort() {
         return smtpPort;
+    }
+
+    @JsonIgnore
+    public Integer getSmtpConnectionTimeout() {
+        return smtpConnectionTimeout;
+    }
+
+    @JsonIgnore
+    public Integer getSmtpSocketTimeout() {
+        return smtpSocketTimeout;
     }
 
     @JsonIgnore
