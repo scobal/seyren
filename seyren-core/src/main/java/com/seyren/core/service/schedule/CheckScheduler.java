@@ -90,6 +90,9 @@ public class CheckScheduler {
             	    	 // Log that it was cancelled, if it was terminated
             	    	 if (checkExecutionFuture.isCancelled()) {
             	    		 LOGGER.warn("  *** Check #{} :: Check timed out", check.getId());
+
+            	    		 // Free this check as a fail-safe to not allow a resource issue to prevent checks from occurring
+            	             CheckConcurrencyGovernor.instance().notifyCheckIsComplete(check);
             	    	 }
             	     }      
             	 }, this.checkExecutionTimeoutSeconds, TimeUnit.SECONDS);
