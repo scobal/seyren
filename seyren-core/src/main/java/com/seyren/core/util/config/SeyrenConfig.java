@@ -130,7 +130,7 @@ public class SeyrenConfig {
         this.smtpHost = configOrDefault("SMTP_HOST", "localhost");
         this.smtpProtocol = configOrDefault("SMTP_PROTOCOL", "smtp");
         this.smtpPort = Integer.parseInt(configOrDefault("SMTP_PORT", "25"));
-        this.smtpConnectionTimeout = Integer.parseInt(configOrDefault("SMTP_CONECTION_TIMEOUT", "45000"));
+        this.smtpConnectionTimeout = Integer.parseInt(configOrDefault("SMTP_CONNECTION_TIMEOUT", "45000"));
         this.smtpSocketTimeout = Integer.parseInt(configOrDefault("SMTP_SOCKET_TIMEOUT", "120000"));
         
         // HipChat
