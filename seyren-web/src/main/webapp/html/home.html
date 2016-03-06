@@ -23,7 +23,7 @@
                 </td>
                 <td>{{ check.warn }}</td>
                 <td>{{ check.error }}</td>
-                <td><input type="checkbox" ng-checked="{{ check.enabled }}" ng-click="swapEnabled(check); $event.stopPropagation();" /></td>
+                <td><input type="checkbox" ng-checked="{{ check.enabled }}" ng-click="swapCheckEnabled(check); $event.stopPropagation();" /></td>
             </tr>
         </tbody>
     </table>
