@@ -462,9 +462,9 @@ public class SeyrenConfig {
     private static String[] splitBaseUrl(String baseUrl) {
         String[] baseParts = new String[4];
         
-        if (baseUrl.toString().contains("://")) {
-            baseParts[0] = baseUrl.toString().split("://")[0];
-            baseUrl = baseUrl.toString().split("://")[1];
+        if (baseUrl.contains("://")) {
+            baseParts[0] = baseUrl.split("://")[0];
+            baseUrl = baseUrl.split("://")[1];
         } else {
             baseParts[0] = "http";
         }

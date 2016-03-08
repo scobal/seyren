@@ -141,8 +141,9 @@ public class VictorOpsNotificationService implements NotificationService {
                 case ERROR:
                 case EXCEPTION:
                     return CRITICAL;
+                default:
+                    return INFO;
             }
-            return INFO;
         }
     }
 }
