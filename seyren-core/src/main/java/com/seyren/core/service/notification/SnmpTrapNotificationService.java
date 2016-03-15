@@ -99,7 +99,7 @@ public class SnmpTrapNotificationService implements NotificationService {
             //Add Payload
             trap.add(new VariableBinding(new OID(oidPrefix+".1"), new OctetString(alert.getTimestamp().toString())));
             trap.add(new VariableBinding(new OID(oidPrefix+".2"), new OctetString(hostname.toString())));
-            trap.add(new VariableBinding(new OID(oidPrefix+".3"), new OctetString(check.getName().toString())));
+            trap.add(new VariableBinding(new OID(oidPrefix+".3"), new OctetString(check.getName())));
             trap.add(new VariableBinding(new OID(oidPrefix+".4"), new OctetString(alert.getTarget())));
             trap.add(new VariableBinding(new OID(oidPrefix+".5"), new OctetString(alert.getValue().toString())));
             trap.add(new VariableBinding(new OID(oidPrefix+".6"), new OctetString(alert.getWarn().toString())));
@@ -107,7 +107,7 @@ public class SnmpTrapNotificationService implements NotificationService {
             trap.add(new VariableBinding(new OID(oidPrefix+".8"), new OctetString(alert.getToType().toString())));
             trap.add(new VariableBinding(new OID(oidPrefix+".9"), new OctetString(alert.getFromType().toString())));
             trap.add(new VariableBinding(new OID(oidPrefix+".10"), new OctetString(seyrenConfig.getBaseUrl() + "/#/checks/" + check.getId())));
-            trap.add(new VariableBinding(new OID(oidPrefix+".11"), new OctetString(check.getDescription().toString())));
+            trap.add(new VariableBinding(new OID(oidPrefix+".11"), new OctetString(check.getDescription() == null ? "" : check.getDescription())));
             
             // Send
             sendAlert(check, snmp, target, trap);
