@@ -52,6 +52,7 @@ public class Check {
     private DateTime lastCheck;
     private List<Subscription> subscriptions = new ArrayList<Subscription>();
     private DateTime timeFirstErrorOccured;
+    private DateTime timeLastNotificationSent;
     
     public String getId() {
         return id;
@@ -253,4 +254,18 @@ public class Check {
         setTimeFirstErrorOccured(timeFirstErrorOccured);
         return this;
     }
+    
+    @JsonSerialize(using = DateTimeSerializer.class)    
+    public DateTime getTimeLastNotificationSent () {
+        return timeLastNotificationSent;
+    }
+    
+    public void setTimeLastNotificationSent (DateTime timeLastNotificationSent) {
+        this.timeLastNotificationSent = timeLastNotificationSent;
+    }
+    
+    public Check withTimeLastNotificationSent (DateTime timeLastNotificationSent) {
+        setTimeLastNotificationSent(timeLastNotificationSent);
+        return this;
+    }            
 }

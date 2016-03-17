@@ -34,6 +34,7 @@ import com.seyren.core.service.notification.NotificationService;
 import com.seyren.core.store.AlertsStore;
 import com.seyren.core.store.ChecksStore;
 import com.seyren.core.util.config.SeyrenConfig;
+import java.util.Date;
 
 public class CheckRunner implements Runnable {
     
@@ -120,24 +121,24 @@ public class CheckRunner implements Runnable {
                 alertsStore.createAlert(check.getId(), alert);
                 
                 System.out.println("Before notification method");
+        
+                Integer delayInSeconds = seyrenConfig.getAlertNotificationDelayInSeconds();
+                
+                System.out.println(delayInSeconds);
                 
                 Boolean sendNotification = false;
-                sendNotification = determineTimeElapsedSinceError(lastState,currentState,now);
-//                //global delay variable is set
-//                if (true) {
-//                    sendNotification = determineTimeElapsedSinceError(lastState,currentState,now);
-//                // check specific delay is true
-//                } else if (true && true) {
-//                    sendNotification = determineTimeElapsedSinceError(lastState,currentState,now);
-//                // no delay is set - wil send notification on every state change    
-//                } else {
-//                    if (!stateIsTheSame(lastState, currentState)) {
-//                        sendNotification = true;
-//                    }
-//                }
+                
+                if (delayInSeconds != 0) {
+                    sendNotification = determineTimeElapsedSinceError(lastState,currentState,now, delayInSeconds);
+                } else if (!stateIsTheSame(lastState, currentState)){
+                    sendNotification = true;
+                }
                 
                 if (sendNotification) {
+                    System.out.println("SEND A NOTIFICATION!");
                     interestingAlerts.add(alert);
+                } else {
+                    System.out.println("DO NOT SEND A NOTIFICATION!");
                 }
             }           
             
@@ -193,27 +194,56 @@ public class CheckRunner implements Runnable {
                 .withTimestamp(now);
     }
     
-    private boolean determineTimeElapsedSinceError(AlertType lastState, AlertType currentState, DateTime now) {
+    private boolean determineTimeElapsedSinceError(AlertType lastState, AlertType currentState, DateTime now, Integer delayInSeconds) {
         System.out.println("Actually do delay after time elapsed since error");
         
-        Integer delayInSeconds = seyrenConfig.getAlertNotificationDelayInSeconds();
         Boolean notificationShouldBeSent = false;
-        DateTime timeFirstErrorOccured = check.getTimeFirstErrorOccured();
-        long timeDifferenceInMilliSeconds = now.getMillis() - timeFirstErrorOccured.getMillis();
-        long timeElapsedSinceLastErrorOccured = timeDifferenceInMilliSeconds / 1000;
-
+        System.out.println("1");
+        
         // Check if state changed into ERROR and save timestamp
         if (!stateIsTheSame(lastState, currentState) && currentState == AlertType.ERROR) {
             System.out.println("State HAS changed");
-            checksStore.updateTimeFirstErrorOccured(check.getId(), DateTime.now());
-        }                    
-
-        // Check to see if state has been in ERROR for more than .. minutes
-        if (stateIsTheSame(lastState, currentState) && currentState == AlertType.ERROR && timeElapsedSinceLastErrorOccured > delayInSeconds) {
-            System.out.println("Send the alert because the check has been in error for more than " + delayInSeconds.toString() + " seconds");
-            notificationShouldBeSent = true;
+            check.setTimeFirstErrorOccured(now);
+            checksStore.updateTimeFirstErrorOccured(check.getId(), now);
         }
         
+        DateTime timeFirstErrorOccured = check.getTimeFirstErrorOccured();
+        long timeElapsedInMilliSeconds = now.getMillis() - timeFirstErrorOccured.getMillis();
+        long timeElapsedSinceFirstErrorOccured = timeElapsedInMilliSeconds / 1000;
+        long seyrenNotificationIntervalInSeconds = seyrenConfig.getAlertNotificationIntervalInSeconds();        
+        
+        if (stateIsTheSame(lastState, currentState) && currentState == AlertType.ERROR && timeElapsedSinceFirstErrorOccured > delayInSeconds) {    
+            System.out.println("were in");
+            System.out.println(seyrenNotificationIntervalInSeconds);
+            System.out.println(timeElapsedSinceFirstErrorOccured);
+            System.out.println("Go in");
+            
+            notificationShouldBeSent = true;
+            long timeSinceLastNotificationInSeconds = check.getTimeLastNotificationSent() == null ? seyrenNotificationIntervalInSeconds : (now.getMillis() - check.getTimeLastNotificationSent().getMillis()) / 1000;
+            if (timeElapsedSinceFirstErrorOccured < seyrenNotificationIntervalInSeconds) {
+                System.out.println("interval has not yet passed reset timer");
+                System.out.println(timeSinceLastNotificationInSeconds);
+                if (timeSinceLastNotificationInSeconds == seyrenNotificationIntervalInSeconds) {
+                    System.out.println("first run");
+                    check.setTimeLastNotificationSent(now);
+                    checksStore.updateTimeLastNotification(check.getId(), now);
+                }
+                
+            } else {
+                System.out.println("interval has passed reset timer");
+                if (timeSinceLastNotificationInSeconds < seyrenNotificationIntervalInSeconds) {
+                    System.out.println("everything inside the interval");
+                    notificationShouldBeSent = false;
+                } else if (timeSinceLastNotificationInSeconds > seyrenNotificationIntervalInSeconds) {
+                    System.out.println("interval passed so reset notif timer");
+                    check.setTimeLastNotificationSent(now);
+                    checksStore.updateTimeLastNotification(check.getId(), now);                    
+                }                
+            }
+        }
+           
+        System.out.println("After the Iffs");
+        System.out.println(notificationShouldBeSent.toString());
         return notificationShouldBeSent;
     }
 }

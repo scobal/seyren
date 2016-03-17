@@ -282,6 +282,19 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
         getChecksCollection().update(findObject, setObject);
 
         return getCheck(checkId);
+    }
+    
+    @Override
+    public Check updateTimeLastNotification(String checkId, DateTime timeLastNotificationSent) {
+        DBObject findObject = forId(checkId);
+        
+        DBObject partialObject = object("timeLastNotificationSent", new Date(timeLastNotificationSent.getMillis()));
+        
+        DBObject setObject = object("$set", partialObject);
+        
+        getChecksCollection().update(findObject, setObject);
+
+        return getCheck(checkId);
     }    
     
     @Override

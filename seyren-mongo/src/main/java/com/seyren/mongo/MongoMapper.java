@@ -56,6 +56,7 @@ public class MongoMapper {
             subscriptions.add(subscriptionFrom((DBObject) o));
         }
         DateTime timeFirstErrorOccured = getDateTime(dbo, "timeFirstErrorOccured");
+        DateTime timeLastNotificationSent = getDateTime(dbo, "timeLastNotificationSent");
 
         return new Check().withId(id)
                 .withName(name)
@@ -71,7 +72,8 @@ public class MongoMapper {
                 .withState(state)
                 .withLastCheck(lastCheck)
                 .withSubscriptions(subscriptions)
-                .withTimeFirstErrorOccured(timeFirstErrorOccured);
+                .withTimeFirstErrorOccured(timeFirstErrorOccured)
+                .withTimeLastNotificationSent(timeLastNotificationSent);
     }
     
     public Subscription subscriptionFrom(DBObject dbo) {
@@ -182,6 +184,9 @@ public class MongoMapper {
         }
         if (check.getTimeFirstErrorOccured() != null) {
             map.put("timeFirstErrorOccured", new Date(check.getTimeFirstErrorOccured().getMillis()));
+        }
+        if (check.getTimeLastNotificationSent() != null) {
+            map.put("timeLastNotificationSent", new Date(check.getTimeLastNotificationSent().getMillis()));
         }
         return map;
     }
