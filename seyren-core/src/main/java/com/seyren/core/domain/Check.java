@@ -51,6 +51,7 @@ public class Check {
     private AlertType state;
     private DateTime lastCheck;
     private List<Subscription> subscriptions = new ArrayList<Subscription>();
+    private DateTime timeFirstErrorOccured;
     
     public String getId() {
         return id;
@@ -238,5 +239,18 @@ public class Check {
         setSubscriptions(subscriptions);
         return this;
     }
+
+    @JsonSerialize(using = DateTimeSerializer.class)    
+    public DateTime getTimeFirstErrorOccured () {
+        return timeFirstErrorOccured;
+    }
     
+    public void setTimeFirstErrorOccured (DateTime timeFirstErrorOccured) {
+        this.timeFirstErrorOccured = timeFirstErrorOccured;
+    }
+    
+    public Check withTimeFirstErrorOccured (DateTime timeFirstErrorOccured) {
+        setTimeFirstErrorOccured(timeFirstErrorOccured);
+        return this;
+    }
 }

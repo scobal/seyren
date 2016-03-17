@@ -85,6 +85,8 @@ public class SeyrenConfig {
     private final String emailSubjectTemplateFileName;
     private final int noOfThreads;
     private final String httpNotificationUrl;
+    private final int alertNotificationDelayInSeconds;
+    
     public SeyrenConfig() {
         
         // Base
@@ -92,6 +94,8 @@ public class SeyrenConfig {
         this.mongoUrl = configOrDefault("MONGO_URL", "mongodb://localhost:27017/seyren");
         this.graphsEnable = configOrDefault("GRAPHS_ENABLE", "true");
         this.noOfThreads = Integer.parseInt(configOrDefault("SEYREN_THREADS", "8"));
+        this.alertNotificationDelayInSeconds = Integer.parseInt(configOrDefault("SEYREN_NOTIFICATION_DELAY","20"));
+        
         // Graphite
         this.graphiteUrl = stripEnd(configOrDefault("GRAPHITE_URL", "http://localhost:80"), "/");
         this.graphiteUsername = configOrDefault("GRAPHITE_USERNAME", "");
@@ -421,6 +425,11 @@ public class SeyrenConfig {
     @JsonIgnore
     public int getNoOfThreads() {
         return noOfThreads;
+    }
+    
+    @JsonIgnore
+    public int getAlertNotificationDelayInSeconds() {
+        return alertNotificationDelayInSeconds;
     }
 
     @JsonIgnore
