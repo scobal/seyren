@@ -221,16 +221,22 @@ public class CheckRunner implements Runnable {
             notificationShouldBeSent = true;
             long timeSinceLastNotificationInSeconds = check.getTimeLastNotificationSent() == null ? seyrenNotificationIntervalInSeconds : (now.getMillis() - check.getTimeLastNotificationSent().getMillis()) / 1000;
             if (timeElapsedSinceFirstErrorOccured < seyrenNotificationIntervalInSeconds) {
+                
                 System.out.println("interval has not yet passed reset timer");
                 System.out.println(timeSinceLastNotificationInSeconds);
+                
                 if (timeSinceLastNotificationInSeconds == seyrenNotificationIntervalInSeconds) {
                     System.out.println("first run");
                     check.setTimeLastNotificationSent(now);
                     checksStore.updateTimeLastNotification(check.getId(), now);
+                } else {
+                    System.out.println("other runs");
+                    notificationShouldBeSent = false;
                 }
                 
             } else {
                 System.out.println("interval has passed reset timer");
+                
                 if (timeSinceLastNotificationInSeconds < seyrenNotificationIntervalInSeconds) {
                     System.out.println("everything inside the interval");
                     notificationShouldBeSent = false;
