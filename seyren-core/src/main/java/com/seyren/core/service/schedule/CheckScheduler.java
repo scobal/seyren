@@ -46,7 +46,6 @@ public class CheckScheduler {
     
     @Scheduled(fixedRateString = "${GRAPHITE_REFRESH:6000}")
     public void performChecks() {
-        System.out.println("performChecks method");
         List<Check> checks = checksStore.getChecks(true, false).getValues();
         for (final Check check : checks) {
             executor.execute(checkRunnerFactory.create(check));

@@ -51,7 +51,6 @@ public class CheckRunnerFactory {
     }
 
     public CheckRunner create(Check check) {
-        System.out.println("Ze Factory");
         return new CheckRunner(check, alertsStore, checksStore, targetChecker, valueChecker, notificationServices, seyrenConfig);
     }
 
