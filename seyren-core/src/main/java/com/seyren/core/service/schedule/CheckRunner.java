@@ -66,6 +66,7 @@ public class CheckRunner implements Runnable {
         }
         
         try {
+            System.out.println("CheckRunner");
             Map<String, Optional<BigDecimal>> targetValues = targetChecker.check(check);
             
             DateTime now = new DateTime();
@@ -181,51 +182,47 @@ public class CheckRunner implements Runnable {
     }
     
     private boolean newAlertNotificationShouldBeSent(AlertType lastState, AlertType currentState, DateTime now, Integer delayInSeconds) {
-      
+        System.out.println("NewAlertNotificationMethod");
         Boolean notificationShouldBeSent = false;
         
         // Check if state changed into ERROR and save timestamp
         if (!stateIsTheSame(lastState, currentState) && currentState == AlertType.ERROR) {
+            System.out.println("State changed into error");
             check.setTimeFirstErrorOccured(now);
             checksStore.updateTimeFirstErrorOccured(check.getId(), now);
         }
         
-        DateTime timeFirstErrorOccured = check.getTimeFirstErrorOccured();
-        long timeElapsedInMilliSeconds = now.getMillis() - timeFirstErrorOccured.getMillis();
-        long timeElapsedSinceFirstErrorOccured = timeElapsedInMilliSeconds / 1000;
+        long timeElapsedSinceFirstErrorOccured = (now.getMillis() - check.getTimeFirstErrorOccured().getMillis()) / 1000;
         long seyrenNotificationIntervalInSeconds = seyrenConfig.getAlertNotificationIntervalInSeconds();        
         
         // State is still error and must exist longer than delayInSeconds
         if (stateIsTheSame(lastState, currentState) && currentState == AlertType.ERROR && timeElapsedSinceFirstErrorOccured > delayInSeconds) {    
-            
-            notificationShouldBeSent = true;
+            System.out.println("State has been in error long enogh");
             long timeSinceLastNotificationInSeconds = check.getTimeLastNotificationSent() == null ? seyrenNotificationIntervalInSeconds : (now.getMillis() - check.getTimeLastNotificationSent().getMillis()) / 1000;
             
-            // Time since the first error is not longer ago than the interval (in the first run it will be equal)
-            if (timeElapsedSinceFirstErrorOccured < seyrenNotificationIntervalInSeconds) {
-                
-                // because no notification has been sent - it will be equal and the timers will be set
-                if (timeSinceLastNotificationInSeconds == seyrenNotificationIntervalInSeconds) {
-                    check.setTimeLastNotificationSent(now);
-                    checksStore.updateTimeLastNotification(check.getId(), now);
-                // In the next run it will be unequal because there has been a notification BUT it is still smaller than the interval
-                } else {
-                    notificationShouldBeSent = false;
-                }
-                
-            } else {
-                
-                // The last notification has been sent before the interval passes
-                if (timeSinceLastNotificationInSeconds < seyrenNotificationIntervalInSeconds) {
-                    notificationShouldBeSent = false;
-                // The last notification is beyond the interval so the timer needs to be reset so we can resend it.
-                } else if (timeSinceLastNotificationInSeconds > seyrenNotificationIntervalInSeconds) {
-                    check.setTimeLastNotificationSent(now);
-                    checksStore.updateTimeLastNotification(check.getId(), now);                    
-                }                
+            // Time since the first error is not longer ago than the interval and no notification has been sent
+            if (timeElapsedSinceFirstErrorOccured < seyrenNotificationIntervalInSeconds && check.getTimeLastNotificationSent() == null) {
+                System.out.println("First notification");
+                check.setTimeLastNotificationSent(now);
+                checksStore.updateTimeLastNotification(check.getId(), now);
+                notificationShouldBeSent = true;                
+            } 
+            
+            // First error is time is longer than interval AND last notification is also greater than intervall
+            if (timeSinceLastNotificationInSeconds > seyrenNotificationIntervalInSeconds) {
+                System.out.println("time since first error is passed interval and last notification as well so RESEND!");
+                check.setTimeLastNotificationSent(now);
+                checksStore.updateTimeLastNotification(check.getId(), now);
+                notificationShouldBeSent = true;                
             }
         }
 
+        // Also send notification if the state changes from ERROR to OK
+        if (currentState == AlertType.OK && lastState == AlertType.ERROR) {
+            System.out.println("State changes from ERROR to OK");
+            notificationShouldBeSent = true;
+        }
+        
         return notificationShouldBeSent;
     }
 }
