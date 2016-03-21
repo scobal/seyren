@@ -66,7 +66,6 @@ public class CheckRunner implements Runnable {
         }
         
         try {
-            System.out.println("CheckRunner");
             Map<String, Optional<BigDecimal>> targetValues = targetChecker.check(check);
             
             DateTime now = new DateTime();
@@ -120,8 +119,7 @@ public class CheckRunner implements Runnable {
                 
                 alertsStore.createAlert(check.getId(), alert);
                 
-                Boolean sendNotification = false;
-                
+                Boolean sendNotification = false;        
                 Integer nofiticationDelayInSeconds = seyrenConfig.getAlertNotificationDelayInSeconds();
                 if (nofiticationDelayInSeconds != 0) {
                     sendNotification = newAlertNotificationShouldBeSent(lastState,currentState,now, nofiticationDelayInSeconds);
@@ -201,7 +199,7 @@ public class CheckRunner implements Runnable {
                 check.setTimeLastNotificationSent(now);
                 checksStore.updateTimeLastNotification(check.getId(), now);
                 notificationShouldBeSent = true;                
-            } 
+            }
             
             // Last notification is also greater than interval and first notification has been sent
             if (timeSinceLastNotificationInSeconds > seyrenNotificationIntervalInSeconds) {
