@@ -130,7 +130,6 @@ public class CheckRunner implements Runnable {
                 }
                 
                 if (sendNotification) {
-                    System.out.println("SEND A NOTIFICATION!!!!!!");
                     interestingAlerts.add(alert);
                 }
             }
