@@ -2,7 +2,7 @@
 (function () {
     'use strict';
 
-    seyrenApp.controller('CheckEditModalController', function CheckEditModalController($scope, $rootScope, Checks, Seyren, Graph, Metrics) {
+    seyrenApp.controller('CheckEditModalController', function CheckEditModalController($scope, $rootScope, Checks, Seyren, Graph, Metrics, $window) {
         $scope.master = {
             name: null,
             description: null,
@@ -13,7 +13,9 @@
             enabled: true,
             live: false,
             allowNoData: false,
-            totalMetric: '-'
+            totalMetric: '-',
+            notificationDelay: null,
+            notificationInterval: null
         };
 
         $('#editCheckModal').on('shown.bs.modal', function () {
@@ -30,9 +32,13 @@
                 $("#createCheckButton").removeClass("disabled");
                 $("#editCheckModal").modal("hide");
                 $scope.$emit('check:created');
-            }, function () {
+            }, function (err) {
                 $("#createCheckButton").removeClass("disabled");
-                console.log('Creating check failed');
+                if (err.data.indexOf("E11000") > -1) {
+                    $window.alert("This check name already exists in our database.");
+                } else {
+                    $window.alert("Something went wrong when we tried to save the check.");
+                }
             });
         };
 

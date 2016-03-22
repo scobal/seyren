@@ -57,7 +57,9 @@ public class MongoMapper {
         }
         DateTime timeFirstErrorOccured = getDateTime(dbo, "timeFirstErrorOccured");
         DateTime timeLastNotificationSent = getDateTime(dbo, "timeLastNotificationSent");
-
+        BigDecimal notificationDelay = getBigDecimal(dbo, "notificationDelay");
+        BigDecimal notificationInterval = getBigDecimal(dbo, "notificationInterval");
+        
         return new Check().withId(id)
                 .withName(name)
                 .withDescription(description)
@@ -73,7 +75,9 @@ public class MongoMapper {
                 .withLastCheck(lastCheck)
                 .withSubscriptions(subscriptions)
                 .withTimeFirstErrorOccured(timeFirstErrorOccured)
-                .withTimeLastNotificationSent(timeLastNotificationSent);
+                .withTimeLastNotificationSent(timeLastNotificationSent)
+                .withNotificationDelay(notificationDelay)
+                .withNotificationInterval(notificationInterval);
     }
     
     public Subscription subscriptionFrom(DBObject dbo) {
@@ -188,6 +192,13 @@ public class MongoMapper {
         if (check.getTimeLastNotificationSent() != null) {
             map.put("timeLastNotificationSent", new Date(check.getTimeLastNotificationSent().getMillis()));
         }
+        if (check.getNotificationDelay() != null) {
+            map.put("notificationDelay", check.getNotificationDelay().toPlainString());            
+        }        
+        if (check.getNotificationInterval() != null) {
+            map.put("notificationInterval", check.getNotificationInterval().toPlainString());            
+        }
+
         return map;
     }
     

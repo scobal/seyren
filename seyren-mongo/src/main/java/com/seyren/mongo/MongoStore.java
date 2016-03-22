@@ -248,7 +248,9 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
                 .with("allowNoData", check.isAllowNoData())
                 .with("lastCheck", lastCheck == null ? null : new Date(lastCheck.getMillis()))
                 .with("state", check.getState().toString())
-                .with("timeFirstErrorOccured", timeFirstErrorOccured == null ? null : new Date(timeFirstErrorOccured.getMillis()));
+                .with("timeFirstErrorOccured", timeFirstErrorOccured == null ? null : new Date(timeFirstErrorOccured.getMillis()))
+                .with("notificationDelay", check.getNotificationDelay() == null ? null : check.getNotificationDelay().toPlainString())
+                .with("notificationInterval", check.getNotificationInterval() == null ? null : check.getNotificationInterval().toPlainString());
         
         DBObject setObject = object("$set", partialObject);
         

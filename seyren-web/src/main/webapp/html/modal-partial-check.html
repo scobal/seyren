@@ -77,6 +77,18 @@
                         </label>
                     </div>
                 </div>
+                <div ng-class="{ 'form-group': true, 'has-error': checkForm['check.notificationDelay'].$invalid }">
+                    <label class="col-sm-3 control-label" for="check.notificationDelay">Notification delay</label>
+                    <div class="col-sm-7">
+                        <input id="check.notificationDelay" class="form-control" name="check.notificationDelay" ng-model="check.notificationDelay" type="text" />
+                    </div>
+                </div>
+                <div ng-class="{ 'form-group': true, 'has-error': checkForm['check.notificationInterval'].$invalid }">
+                    <label class="col-sm-3 control-label" for="check.notificationInterval">Notification interval</label>
+                    <div class="col-sm-7">
+                        <input id="check.notificationInterval" class="form-control" name="check.notificationInterval" ng-model="check.notificationInterval" type="text" />
+                    </div>
+                </div>
                 <div class="form-group">
                     <div class="col-sm-7 col-sm-offset-3">
                         <img ng-src="{{ check.previewImage }}" src="./img/preview-nodata.png" width="300" height="70" />
