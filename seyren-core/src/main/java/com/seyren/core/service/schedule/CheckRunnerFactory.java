@@ -24,6 +24,7 @@ import com.seyren.core.service.checker.NoopTargetCheck;
 import com.seyren.core.service.checker.TargetChecker;
 import com.seyren.core.service.checker.ValueChecker;
 import com.seyren.core.service.notification.NotificationService;
+import com.seyren.core.service.notification.NotificationServiceSettings;
 import com.seyren.core.store.AlertsStore;
 import com.seyren.core.store.ChecksStore;
 import com.seyren.core.util.config.SeyrenConfig;
@@ -37,24 +38,26 @@ public class CheckRunnerFactory {
     private final ValueChecker valueChecker;
     private final Iterable<NotificationService> notificationServices;
     private final SeyrenConfig seyrenConfig;
+    private final NotificationServiceSettings notificationServiceSettings;
     
     
     @Inject
     public CheckRunnerFactory(AlertsStore alertsStore, ChecksStore checksStore, TargetChecker targetChecker, ValueChecker valueChecker,
-            List<NotificationService> notificationServices, SeyrenConfig seyrenConfig) {
+            List<NotificationService> notificationServices, SeyrenConfig seyrenConfig, NotificationServiceSettings notificationServiceSettings) {
         this.alertsStore = alertsStore;
         this.checksStore = checksStore;
         this.targetChecker = targetChecker;
         this.valueChecker = valueChecker;
         this.notificationServices = notificationServices;
         this.seyrenConfig = seyrenConfig;
+        this.notificationServiceSettings = notificationServiceSettings;
     }
 
     public CheckRunner create(Check check) {
-        return new CheckRunner(check, alertsStore, checksStore, targetChecker, valueChecker, notificationServices, seyrenConfig);
+        return new CheckRunner(check, alertsStore, checksStore, targetChecker, valueChecker, notificationServices, seyrenConfig, notificationServiceSettings);
     }
 
     public CheckRunner create(Check check, BigDecimal value) {
-        return new CheckRunner(check, alertsStore, checksStore, new NoopTargetCheck(value), valueChecker, notificationServices, seyrenConfig);
+        return new CheckRunner(check, alertsStore, checksStore, new NoopTargetCheck(value), valueChecker, notificationServices, seyrenConfig, notificationServiceSettings);
     }
 }
