@@ -51,7 +51,7 @@ public class SeyrenNotificationSettings implements NotificationServiceSettings {
             checksStore.updateTimeFirstErrorOccured(check.getId(), now);
         }
         
-        // Global or specific interval
+        // Set Seyren global delay and interval or Check specific delay and interval
         long timeElapsedSinceFirstErrorOccured = (now.getMillis() - check.getTimeFirstErrorOccured().getMillis()) / 1000;
         long seyrenNotificationIntervalInSeconds = seyrenConfig.getAlertNotificationIntervalInSeconds();
         long delayInSeconds = seyrenConfig.getAlertNotificationDelayInSeconds();
