@@ -166,6 +166,15 @@ describe('check page', function () {
 
         expect(element('div.col-lg-6 div.detail-form:eq(11) label').text()).toBe('Last check:');
         expect(element('div.col-lg-6 div.detail-form:eq(11) p').text()).toMatch('[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}');
+        
+        expect(element('div.col-lg-6 div.detail-form:eq(11) label').text()).toBe('Notification delay (in seconds):');
+        expect(element('div.col-lg-6 div.detail-form:eq(11) p').text()).toMatch('');
+        
+        expect(element('div.col-lg-6 div.detail-form:eq(11) label').text()).toBe('Notificaion interval (in seconds):');
+        expect(element('div.col-lg-6 div.detail-form:eq(11) p').text()).toMatch('');        
+        
+        expect(element('div.col-lg-6 div.detail-form:eq(11) label').text()).toBe('Last notification sent:');
+        expect(element('div.col-lg-6 div.detail-form:eq(11) p').text()).toMatch('');        
     });
 
     it('should have \'Graphs\' thumbnail', function () {
