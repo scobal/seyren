@@ -15,10 +15,14 @@ package com.seyren.core.service.schedule;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Lists;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,16 +39,16 @@ import com.seyren.core.store.AlertsStore;
 import com.seyren.core.store.ChecksStore;
 
 public class CheckRunner implements Runnable {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(CheckRunner.class);
-    
+
     private final Check check;
     private final AlertsStore alertsStore;
     private final ChecksStore checksStore;
     private final TargetChecker targetChecker;
     private final ValueChecker valueChecker;
     private final Iterable<NotificationService> notificationServices;
-    
+
     public CheckRunner(Check check, AlertsStore alertsStore, ChecksStore checksStore, TargetChecker targetChecker, ValueChecker valueChecker,
             Iterable<NotificationService> notificationServices) {
         this.check = check;
@@ -54,75 +58,73 @@ public class CheckRunner implements Runnable {
         this.valueChecker = valueChecker;
         this.notificationServices = notificationServices;
     }
-    
+
     @Override
     public final void run() {
         if (!check.isEnabled()) {
             return;
         }
-        
+
         try {
             Map<String, Optional<BigDecimal>> targetValues = targetChecker.check(check);
-            
+
             DateTime now = new DateTime();
             BigDecimal warn = check.getWarn();
             BigDecimal error = check.getError();
-            
+
             AlertType worstState;
-            
+
             if (check.isAllowNoData()) {
                 worstState = AlertType.OK;
             } else {
                 worstState = AlertType.UNKNOWN;
             }
-            
+
             List<Alert> interestingAlerts = new ArrayList<Alert>();
-            
+
             for (Entry<String, Optional<BigDecimal>> entry : targetValues.entrySet()) {
-                
+
                 String target = entry.getKey();
                 Optional<BigDecimal> value = entry.getValue();
 
                 if (!value.isPresent()) {
-                    if (!check.isAllowNoData()) {
-                        LOGGER.warn("No value present for {} and check must have data", target);
-                    }
+                    LOGGER.warn("No value present for {}", target);
                     continue;
                 }
-                
+
                 BigDecimal currentValue = value.get();
-                
+
                 Alert lastAlert = alertsStore.getLastAlertForTargetOfCheck(target, check.getId());
-                
+
                 AlertType lastState;
-                
+
                 if (lastAlert == null) {
                     lastState = AlertType.OK;
                 } else {
                     lastState = lastAlert.getToType();
                 }
-                
+
                 AlertType currentState = valueChecker.checkValue(currentValue, warn, error);
-                
+
                 if (currentState.isWorseThan(worstState)) {
                     worstState = currentState;
                 }
-                
+
                 if (isStillOk(lastState, currentState)) {
                     continue;
                 }
-                
+
                 Alert alert = createAlert(target, currentValue, warn, error, lastState, currentState, now);
-                
+
                 alertsStore.createAlert(check.getId(), alert);
-                
+
                 // Only notify if the alert has changed state
                 if (stateIsTheSame(lastState, currentState)) {
                     continue;
                 }
-                
+
                 interestingAlerts.add(alert);
-                
+
             }
 
             Check updatedCheck = checksStore.updateStateAndLastCheck(check.getId(), worstState, DateTime.now());
@@ -130,36 +132,38 @@ public class CheckRunner implements Runnable {
             if (interestingAlerts.isEmpty()) {
                 return;
             }
-            
+
             for (Subscription subscription : updatedCheck.getSubscriptions()) {
-                if (!subscription.shouldNotify(now, worstState)) {
+                Collection<Alert> matchingToSubscription = Collections2.filter(interestingAlerts, isMatchingAlertToSubscription(now, subscription));
+
+                if (matchingToSubscription.isEmpty()) {
                     continue;
                 }
-                
+
                 for (NotificationService notificationService : notificationServices) {
                     if (notificationService.canHandle(subscription.getType())) {
                         try {
-                            notificationService.sendNotification(updatedCheck, subscription, interestingAlerts);
+                            notificationService.sendNotification(updatedCheck, subscription, Lists.newArrayList(matchingToSubscription));
                         } catch (Exception e) {
                             LOGGER.warn("Notifying {} by {} failed.", subscription.getTarget(), subscription.getType(), e);
                         }
                     }
                 }
             }
-            
+
         } catch (Exception e) {
             LOGGER.warn("{} failed", check.getName(), e);
         }
     }
-    
+
     private boolean isStillOk(AlertType last, AlertType current) {
         return last == AlertType.OK && current == AlertType.OK;
     }
-    
+
     private boolean stateIsTheSame(AlertType last, AlertType current) {
         return last == current;
     }
-    
+
     private Alert createAlert(String target, BigDecimal value, BigDecimal warn, BigDecimal error, AlertType from, AlertType to, DateTime now) {
         return new Alert()
                 .withTarget(target)
@@ -170,5 +174,13 @@ public class CheckRunner implements Runnable {
                 .withToType(to)
                 .withTimestamp(now);
     }
-    
+
+    private static Predicate<Alert> isMatchingAlertToSubscription(final DateTime date,final Subscription subscription) {
+        return new Predicate<Alert>() {
+            @Override
+            public boolean apply(final Alert input) {
+                return subscription.shouldNotify(date, input.getToType());
+            }
+        };
+    }
 }

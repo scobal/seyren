@@ -67,9 +67,9 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
             String uri = seyrenConfig.getMongoUrl();
             MongoClientURI mongoClientUri = new MongoClientURI(uri);
             MongoClient mongoClient = new MongoClient(mongoClientUri);
-            DB mongoDB = mongoClient.getDB(mongoClientUri.getDatabase());
-            mongoDB.setWriteConcern(WriteConcern.ACKNOWLEDGED);
-            this.mongo = mongoDB;
+            DB mongo = mongoClient.getDB(mongoClientUri.getDatabase());
+            mongo.setWriteConcern(WriteConcern.ACKNOWLEDGED);
+            this.mongo = mongo;
             bootstrapMongo();
         } catch (Exception e) {
             throw new RuntimeException(e);

@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.net.Socket;
-import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
 
@@ -83,7 +82,7 @@ public class IrcCatNotificationService implements NotificationService {
         Socket socket = new Socket(ircCatHost, ircCatPort);
         Closer closer = Closer.create();
         try {
-            Writer out = closer.register(new OutputStreamWriter(socket.getOutputStream(), Charset.forName("UTF-8")));
+            Writer out = closer.register(new OutputStreamWriter(socket.getOutputStream()));
             out.write(format("%s %s\n", channel, message));
             out.flush();
         } catch (IOException e) {
