@@ -40,6 +40,8 @@ public interface ChecksStore {
     
     SeyrenResponse<Check> getChecksByState(Set<String> states, Boolean enabled);
     
+    SeyrenResponse<Check> getChecksByTag(Set<String> tags, Boolean enabled);
+    
     Check getCheck(String checkId);
     
     void deleteCheck(String checkId);

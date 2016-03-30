@@ -13,7 +13,8 @@
             enabled: true,
             live: false,
             allowNoData: false,
-            totalMetric: '-'
+            totalMetric: '-',
+            tag: null
         };
 
         $('#editCheckModal').on('shown.bs.modal', function () {
@@ -38,6 +39,8 @@
 
         $scope.update = function () {
             $("#updateCheckButton").addClass("disabled");
+            console.log("update");
+            console.log($scope.check.tag);
             Checks.update({checkId: $scope.check.id}, $scope.check, function () {
                 $("#updateCheckButton").removeClass("disabled");
                 $("#editCheckModal").modal("hide");

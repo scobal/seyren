@@ -186,6 +186,30 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
                 .withValues(checks)
                 .withTotal(dbc.count());
     }
+    
+    @Override
+    public SeyrenResponse<Check> getChecksByTag(Set<String> tag, Boolean enabled) {
+        System.out.println("getChecks by TAG in de mongostore");
+        List<Check> checks = new ArrayList<Check>();
+        
+        DBObject query = new BasicDBObject();
+        query.put("tag", object("$in", tag.toArray()));
+        if (enabled != null) {
+            query.put("enabled", enabled);
+        }
+        
+        System.out.println(query.toString());
+        DBCursor dbc = getChecksCollection().find(query);
+        System.out.println(dbc.toString());
+        while (dbc.hasNext()) {
+            checks.add(mapper.checkFrom(dbc.next()));
+        }
+        dbc.close();
+        
+        return new SeyrenResponse<Check>()
+                .withValues(checks)
+                .withTotal(dbc.count());
+    }    
 
     @Override
     public SeyrenResponse getChecksByPattern(List<String> checkFields, List<Pattern> patterns, Boolean enabled) {
@@ -234,7 +258,7 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
         DBObject findObject = forId(check.getId());
         
         DateTime lastCheck = check.getLastCheck();
-        
+
         DBObject partialObject = object("name", check.getName())
                 .with("description", check.getDescription())
                 .with("target", check.getTarget())
@@ -246,7 +270,8 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
                 .with("live", check.isLive())
                 .with("allowNoData", check.isAllowNoData())
                 .with("lastCheck", lastCheck == null ? null : new Date(lastCheck.getMillis()))
-                .with("state", check.getState().toString());
+                .with("state", check.getState().toString())
+                .with("tag", check.getTag());
         
         DBObject setObject = object("$set", partialObject);
         

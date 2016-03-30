@@ -77,6 +77,12 @@
                         </label>
                     </div>
                 </div>
+                <div ng-class="{ 'form-group': true, 'has-error': checkForm['check.tag'].$invalid }">
+                    <label class="col-sm-3 control-label" for="check.tag">Tag</label>
+                    <div class="col-sm-7">
+                        <input id="check.tag" class="form-control" name="check.tag" ng-model="check.tag" type="text" ng-pattern="/^[a-zA-Z,0-9]*$/" />
+                    </div>
+                </div>                
                 <div class="form-group">
                     <div class="col-sm-7 col-sm-offset-3">
                         <img ng-src="{{ check.previewImage }}" src="./img/preview-nodata.png" width="300" height="70" />

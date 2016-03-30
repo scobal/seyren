@@ -45,6 +45,7 @@ public interface ChecksResource {
      *     <li>default: get all checks as filtered by the presence and value of the enabled parameter.</li>
      * </ul>
      *
+     * @param tags lalalal
      * @param states legal check states @see com.seyren.core.domain.AlertType
      * @param enabled optional, if present, will filter any of the three algorithms
      * @param name (Presently unused)
@@ -60,7 +61,8 @@ public interface ChecksResource {
     @GET
     @Path("/checks")
     @Produces(MediaType.APPLICATION_JSON)
-    Response getChecks(@QueryParam("state") Set<String> states,
+    Response getChecks(@QueryParam("tag") Set<String> tags,
+                       @QueryParam("state") Set<String> states,
                        @QueryParam("enabled") Boolean enabled,
                        @QueryParam("name") String name,
                        @QueryParam("fields") List<String> fields,

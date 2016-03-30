@@ -55,6 +55,7 @@ public class MongoMapper {
         for (Object o : list) {
             subscriptions.add(subscriptionFrom((DBObject) o));
         }
+        String tag = getString(dbo, "tag");
         
         return new Check().withId(id)
                 .withName(name)
@@ -69,7 +70,8 @@ public class MongoMapper {
                 .withAllowNoData(allowNoData)
                 .withState(state)
                 .withLastCheck(lastCheck)
-                .withSubscriptions(subscriptions);
+                .withSubscriptions(subscriptions)
+                .withTag(tag);
     }
     
     public Subscription subscriptionFrom(DBObject dbo) {
@@ -178,6 +180,7 @@ public class MongoMapper {
 
             map.put("subscriptions", dbSubscriptions);
         }
+        map.put("tag", check.getTag());
         return map;
     }
     

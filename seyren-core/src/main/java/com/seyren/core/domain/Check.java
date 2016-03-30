@@ -51,6 +51,7 @@ public class Check {
     private AlertType state;
     private DateTime lastCheck;
     private List<Subscription> subscriptions = new ArrayList<Subscription>();
+    private String tag;
     
     public String getId() {
         return id;
@@ -239,4 +240,16 @@ public class Check {
         return this;
     }
     
+    public String getTag() {
+        return tag;
+    }
+    
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
+    
+    public Check withTag(String tag) {
+        setTag(tag);
+        return this;
+    }
 }

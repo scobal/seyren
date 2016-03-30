@@ -72,5 +72,19 @@
             }
         };
 
+        $scope.getChecksByTag = function (tag) {
+            console.log('Get de checks');
+            console.log(tag);
+            console.log($scope.checks);
+            
+            Checks.query({tag: [tag], enabled: true},function (data) {
+                console.log("Query Function");
+                console.log(data);
+                $scope.checks = data;
+            }, function (err) {
+                console.log('Loading checks failed');
+            });
+            
+        };        
     });
 }());
