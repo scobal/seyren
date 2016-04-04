@@ -73,7 +73,7 @@ public class CheckRunner implements Runnable {
             DateTime now = new DateTime();
             BigDecimal warn = check.getWarn();
             BigDecimal error = check.getError();
-            BigDecimal checkNotificationDelayInSeconds = check.getNotificationDelay();
+            BigDecimal singleCheckNotificationDelayInSeconds = check.getNotificationDelay();
             Integer globalNofiticationDelayInSeconds = seyrenConfig.getAlertNotificationDelayInSeconds();
             
             AlertType worstState;
@@ -125,14 +125,14 @@ public class CheckRunner implements Runnable {
                 
                 Boolean sendNotification = false;
                 
-                if (checkNotificationDelayInSeconds != null) {
+                if (singleCheckNotificationDelayInSeconds != null) {
                     sendNotification = notificationServiceSettings.applyNotificationDelayAndIntervalProperties(check, lastState, currentState, now);
                 } else if(globalNofiticationDelayInSeconds != 0) {
                     sendNotification = notificationServiceSettings.applyNotificationDelayAndIntervalProperties(check, lastState, currentState, now);
                 } else if(!stateIsTheSame(lastState, currentState)) {
                     sendNotification = true;
                 }
-                
+
                 if (sendNotification) {
                     interestingAlerts.add(alert);
                 }

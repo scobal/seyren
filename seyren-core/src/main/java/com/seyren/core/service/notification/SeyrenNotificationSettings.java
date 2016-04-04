@@ -44,7 +44,10 @@ public class SeyrenNotificationSettings implements NotificationServiceSettings {
     @Override
     public boolean applyNotificationDelayAndIntervalProperties(Check check, AlertType lastState, AlertType currentState, DateTime now) {
         Boolean notificationShouldBeSent = false;
-        
+        long delayInSeconds;
+        long seyrenNotificationIntervalInSeconds;
+        long timeElapsedSinceFirstErrorOccured;
+
         // Check if state changed into ERROR save timestamp
         if (!stateIsTheSame(lastState, currentState) && currentState == AlertType.ERROR) {
             check.setTimeFirstErrorOccured(now);
@@ -52,24 +55,27 @@ public class SeyrenNotificationSettings implements NotificationServiceSettings {
         }
         
         // Set Seyren global delay and interval or Check specific delay and interval
-        long timeElapsedSinceFirstErrorOccured = (now.getMillis() - check.getTimeFirstErrorOccured().getMillis()) / 1000;
-        long seyrenNotificationIntervalInSeconds = seyrenConfig.getAlertNotificationIntervalInSeconds();
-        long delayInSeconds = seyrenConfig.getAlertNotificationDelayInSeconds();
-        
+        timeElapsedSinceFirstErrorOccured = (now.getMillis() - check.getTimeFirstErrorOccured().getMillis()) / 1000;
+        seyrenNotificationIntervalInSeconds = seyrenConfig.getAlertNotificationIntervalInSeconds();
+        delayInSeconds = seyrenConfig.getAlertNotificationDelayInSeconds();
+
         if (check.getNotificationDelay() != null) {
-            seyrenNotificationIntervalInSeconds = check.getNotificationInterval().longValue();
             delayInSeconds = check.getNotificationDelay().longValue();
         }
+        
+        if (check.getNotificationInterval() != null) {
+            seyrenNotificationIntervalInSeconds = check.getNotificationInterval().longValue();            
+        }      
         
         // State is still error and must exist longer than delayInSeconds
         if (stateIsTheSame(lastState, currentState) && currentState == AlertType.ERROR && timeElapsedSinceFirstErrorOccured > delayInSeconds) {    
             long timeSinceLastNotificationInSeconds = check.getTimeLastNotificationSent() == null ? seyrenNotificationIntervalInSeconds : (now.getMillis() - check.getTimeLastNotificationSent().getMillis()) / 1000;
-            
+
             // Time since the first error is not longer ago than the interval and no notification has been sent
             if (timeElapsedSinceFirstErrorOccured < seyrenNotificationIntervalInSeconds && check.getTimeLastNotificationSent() == null) {
                 check.setTimeLastNotificationSent(now);
                 checksStore.updateTimeLastNotification(check.getId(), now);
-                notificationShouldBeSent = true;                
+                notificationShouldBeSent = true;
             }
             
             // Last notification is also greater than interval and first notification has been sent
@@ -81,10 +87,11 @@ public class SeyrenNotificationSettings implements NotificationServiceSettings {
         }
 
         // Also send notification if the state changes from ERROR to OK
-        if (currentState == AlertType.OK && lastState == AlertType.ERROR) {
+        if (currentState == AlertType.OK && lastState == AlertType.ERROR && timeElapsedSinceFirstErrorOccured > delayInSeconds) {
             notificationShouldBeSent = true;
+            check.setTimeLastNotificationSent(null);
         }
-        
+
         return notificationShouldBeSent;                
     }
     
