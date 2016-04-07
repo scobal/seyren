@@ -13,7 +13,8 @@
             enabled: true,
             live: false,
             allowNoData: false,
-            totalMetric: '-'
+            totalMetric: '-',
+            graphiteSourceUrl: null
         };
 
         $('#editCheckModal').on('shown.bs.modal', function () {

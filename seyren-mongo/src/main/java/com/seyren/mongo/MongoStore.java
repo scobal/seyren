@@ -149,6 +149,7 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
     
     @Override
     public SeyrenResponse<Check> getChecks(Boolean enabled, Boolean live) {
+        System.out.println("getChecks");
         List<Check> checks = new ArrayList<Check>();
         DBObject query = new BasicDBObject();
         if (enabled != null) {
@@ -209,6 +210,7 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
 
     @Override
     public Check getCheck(String checkId) {
+        System.out.println("getCheck");
         DBObject dbo = getChecksCollection().findOne(object("_id", checkId));
         if (dbo == null) {
             return null;
@@ -231,6 +233,8 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
     
     @Override
     public Check saveCheck(Check check) {
+        System.out.println("Save that shit");
+        System.out.println(check.getGraphiteSourceUrl());
         DBObject findObject = forId(check.getId());
         
         DateTime lastCheck = check.getLastCheck();
@@ -246,7 +250,8 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
                 .with("live", check.isLive())
                 .with("allowNoData", check.isAllowNoData())
                 .with("lastCheck", lastCheck == null ? null : new Date(lastCheck.getMillis()))
-                .with("state", check.getState().toString());
+                .with("state", check.getState().toString())
+                .with("graphiteSourceUrl", check.getGraphiteSourceUrl());
         
         DBObject setObject = object("$set", partialObject);
         
