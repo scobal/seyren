@@ -96,6 +96,7 @@
             };
             return {
                 previewImage: function (check) {
+                    console.log("previewImage");
                     if (check && check.target) {
                         return chart('./api/chart/' + check.target, {
                             target: check.target,

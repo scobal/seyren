@@ -62,6 +62,7 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.seyren.core.service.checker.JsonNodeResponseHandler;
 import com.seyren.core.util.config.SeyrenConfig;
+import com.seyren.core.domain.Check;
 
 @Named
 public class GraphiteHttpClient {
@@ -72,9 +73,9 @@ public class GraphiteHttpClient {
     
     private final JsonNodeResponseHandler jsonNodeHandler = new JsonNodeResponseHandler();
     private final ByteArrayResponseHandler chartBytesHandler = new ByteArrayResponseHandler();
-    private final String graphiteScheme;
-    private final String graphiteHost;
-    private final String graphitePath;
+    private String graphiteScheme;
+    private String graphiteHost;
+    private String graphitePath;
     private final String graphiteUsername;
     private final String graphitePassword;
     private final String graphiteKeyStore;
@@ -107,20 +108,28 @@ public class GraphiteHttpClient {
      * @deprecated Use {link}getTargetJson(String target, String from, String until){link} instead.
      */
     @Deprecated
-    public JsonNode getTargetJson(String target) throws Exception {
-        return getTargetJson(target, null, null);
+    public JsonNode getTargetJson(String graphiteSource, String target) throws Exception {
+        return getTargetJson(graphiteSource, target, null, null);
     }
 
-    public JsonNode getTargetJson(String target, String from, String until) throws Exception {
+    public JsonNode getTargetJson(String graphiteSource, String target, String from, String until) throws Exception {
+        String graphiteDomain;
         // Default values for from/until preserve hard-coded functionality
-        // seyren had before from/until were fields that could be specified.
+        // seyren had before from/until were fields that could be specified
         if (from == null) {
             from = "-11minutes";
         }
         if (until == null) {
             until = "-1minutes";
         }
-        URI baseUri = new URI(graphiteScheme, graphiteHost, graphitePath + "/render/", null, null);
+        
+        if (graphiteSource != null) {
+            graphiteDomain = graphiteSource;
+        } else {
+            graphiteDomain = GraphiteHttpClient.this.graphiteHost;
+        }
+        
+        URI baseUri = new URI(graphiteScheme, graphiteDomain, graphitePath + "/render/", null, null);
         URI uri = new URIBuilder(baseUri)
                 .addParameter("from", from)
                 .addParameter("until", until)
@@ -129,6 +138,12 @@ public class GraphiteHttpClient {
                 .addParameter("target", target).build();
 
         HttpGet get = new HttpGet(uri);
+//        System.out.println("==========");
+//        System.out.println(graphiteScheme);
+//        System.out.println(graphiteHost);
+//        System.out.println(graphitePath);
+//        System.out.println("==========");
+//        System.out.println(get.toString());
         
         try {
             return client.execute(get, jsonNodeHandler, context);
@@ -139,13 +154,24 @@ public class GraphiteHttpClient {
         }
     }
     
-    public byte[] getChart(String target, int width, int height, String from, String to, LegendState legendState, AxesState axesState) throws Exception {
-        return getChart(target, width, height, from, to, legendState, axesState, null, null);
+    public byte[] getChart(String graphiteSource, String target, int width, int height, String from, String to, LegendState legendState, AxesState axesState) throws Exception {
+        //System.out.println("Get Chart 1 inside graphite HTTP Client");
+        return getChart(graphiteSource, target, width, height, from, to, legendState, axesState, null, null);
     }
     
-    public byte[] getChart(String target, int width, int height, String from, String to, LegendState legendState, AxesState axesState,
+    public byte[] getChart(String graphiteSource, String target, int width, int height, String from, String to, LegendState legendState, AxesState axesState,
             BigDecimal warnThreshold, BigDecimal errorThreshold) throws Exception {
-        URI baseUri = new URI(graphiteScheme, graphiteHost, graphitePath + "/render/", null, null);
+        String graphiteDomain;
+        System.out.println("Get Chart 2 inside graphite HTTP Client 2");
+        
+        if (graphiteSource != null) {
+            graphiteDomain = graphiteSource;
+        } else {
+            graphiteDomain = GraphiteHttpClient.this.graphiteHost;
+        }
+        
+        URI baseUri = new URI(graphiteScheme, graphiteDomain, graphitePath + "/render/", null, null);
+        System.out.println(baseUri.toString());
         URIBuilder uriBuilder = new URIBuilder(baseUri)
                 .addParameter("target", target)
                 .addParameter("from", from)
@@ -162,8 +188,12 @@ public class GraphiteHttpClient {
         if (errorThreshold != null) {
             uriBuilder.addParameter("target", String.format(THRESHOLD_TARGET, errorThreshold.toString(), "red", "error level"));
         }
-        
+        System.out.println(graphiteSource);
         HttpGet get = new HttpGet(uriBuilder.build());
+        System.out.println(get.toString());
+        System.out.println(graphiteScheme);
+        System.out.println(graphiteHost);
+        System.out.println(graphitePath);
         
         try {
             return client.execute(get, chartBytesHandler, context);
@@ -175,6 +205,7 @@ public class GraphiteHttpClient {
     }
     
     private HttpClient createHttpClient() {
+        System.out.println("creat HTTP CLIENT!!!");
         HttpClientBuilder clientBuilder = HttpClientBuilder.create().useSystemProperties()
                 .setConnectionManager(createConnectionManager())
                 .setDefaultRequestConfig(RequestConfig.custom()
@@ -218,6 +249,7 @@ public class GraphiteHttpClient {
     }
     
     private HttpClientConnectionManager createConnectionManager() {
+        System.out.println("Create Connection Manager");
         PoolingHttpClientConnectionManager manager;
         if ("https".equals(graphiteScheme) && !StringUtils.isEmpty(graphiteKeyStore) && !StringUtils.isEmpty(graphiteKeyStorePassword) && !StringUtils.isEmpty(graphiteTrustStore)) {
             try {

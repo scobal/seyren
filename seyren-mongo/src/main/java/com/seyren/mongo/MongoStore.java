@@ -149,7 +149,6 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
     
     @Override
     public SeyrenResponse<Check> getChecks(Boolean enabled, Boolean live) {
-        System.out.println("getChecks");
         List<Check> checks = new ArrayList<Check>();
         DBObject query = new BasicDBObject();
         if (enabled != null) {
@@ -210,7 +209,6 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
 
     @Override
     public Check getCheck(String checkId) {
-        System.out.println("getCheck");
         DBObject dbo = getChecksCollection().findOne(object("_id", checkId));
         if (dbo == null) {
             return null;

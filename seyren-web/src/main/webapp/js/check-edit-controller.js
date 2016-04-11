@@ -65,12 +65,13 @@
 
         $scope.$watch('check.target + check.warn + check.error', function (value) {
             if ($scope.check !== undefined && ($scope.config === undefined || (value !== undefined && $scope.config.graphsEnabled))) {
+                console.log("Hit itt");
                 $scope.check.previewImage = Graph.previewImage($scope.check);
+                console.log($scope.check.previewImage);
             } else {
                 return "./img/preview-nodata.png";
             }
         });
-
 
         $scope.$watch('check.target', function(value) {
             if (value) {
@@ -82,7 +83,5 @@
                 });
             }
         });
-
     });
-
 }());
