@@ -138,12 +138,6 @@ public class GraphiteHttpClient {
                 .addParameter("target", target).build();
 
         HttpGet get = new HttpGet(uri);
-//        System.out.println("==========");
-//        System.out.println(graphiteScheme);
-//        System.out.println(graphiteHost);
-//        System.out.println(graphitePath);
-//        System.out.println("==========");
-//        System.out.println(get.toString());
         
         try {
             return client.execute(get, jsonNodeHandler, context);
@@ -155,14 +149,12 @@ public class GraphiteHttpClient {
     }
     
     public byte[] getChart(String graphiteSource, String target, int width, int height, String from, String to, LegendState legendState, AxesState axesState) throws Exception {
-        //System.out.println("Get Chart 1 inside graphite HTTP Client");
         return getChart(graphiteSource, target, width, height, from, to, legendState, axesState, null, null);
     }
     
     public byte[] getChart(String graphiteSource, String target, int width, int height, String from, String to, LegendState legendState, AxesState axesState,
             BigDecimal warnThreshold, BigDecimal errorThreshold) throws Exception {
         String graphiteDomain;
-        System.out.println("Get Chart 2 inside graphite HTTP Client 2");
         
         if (graphiteSource != null) {
             graphiteDomain = graphiteSource;
@@ -171,7 +163,6 @@ public class GraphiteHttpClient {
         }
         
         URI baseUri = new URI(graphiteScheme, graphiteDomain, graphitePath + "/render/", null, null);
-        System.out.println(baseUri.toString());
         URIBuilder uriBuilder = new URIBuilder(baseUri)
                 .addParameter("target", target)
                 .addParameter("from", from)
@@ -188,12 +179,8 @@ public class GraphiteHttpClient {
         if (errorThreshold != null) {
             uriBuilder.addParameter("target", String.format(THRESHOLD_TARGET, errorThreshold.toString(), "red", "error level"));
         }
-        System.out.println(graphiteSource);
+
         HttpGet get = new HttpGet(uriBuilder.build());
-        System.out.println(get.toString());
-        System.out.println(graphiteScheme);
-        System.out.println(graphiteHost);
-        System.out.println(graphitePath);
         
         try {
             return client.execute(get, chartBytesHandler, context);
@@ -205,7 +192,6 @@ public class GraphiteHttpClient {
     }
     
     private HttpClient createHttpClient() {
-        System.out.println("creat HTTP CLIENT!!!");
         HttpClientBuilder clientBuilder = HttpClientBuilder.create().useSystemProperties()
                 .setConnectionManager(createConnectionManager())
                 .setDefaultRequestConfig(RequestConfig.custom()
@@ -249,7 +235,6 @@ public class GraphiteHttpClient {
     }
     
     private HttpClientConnectionManager createConnectionManager() {
-        System.out.println("Create Connection Manager");
         PoolingHttpClientConnectionManager manager;
         if ("https".equals(graphiteScheme) && !StringUtils.isEmpty(graphiteKeyStore) && !StringUtils.isEmpty(graphiteKeyStorePassword) && !StringUtils.isEmpty(graphiteTrustStore)) {
             try {

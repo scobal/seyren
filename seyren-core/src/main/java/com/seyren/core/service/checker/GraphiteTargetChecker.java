@@ -45,7 +45,7 @@ public class GraphiteTargetChecker implements TargetChecker {
     @Override
     public Map<String, Optional<BigDecimal>> check(Check check) throws Exception {
         Map<String, Optional<BigDecimal>> targetValues = new HashMap<String, Optional<BigDecimal>>();
-        //System.out.println("Graphite Target Checker CHECK");
+        
         try {
             JsonNode node = graphiteHttpClient.getTargetJson(check.getGraphiteSourceUrl(), check.getTarget(), check.getFrom(), check.getUntil());
             

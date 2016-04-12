@@ -231,8 +231,6 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
     
     @Override
     public Check saveCheck(Check check) {
-        System.out.println("Save that shit");
-        System.out.println(check.getGraphiteSourceUrl());
         DBObject findObject = forId(check.getId());
         
         DateTime lastCheck = check.getLastCheck();
@@ -359,5 +357,4 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
         DBObject updateObject = object("$set", object("subscriptions.$", subscriptionObject));
         getChecksCollection().update(checkFindObject, updateObject);
     }
-    
 }
