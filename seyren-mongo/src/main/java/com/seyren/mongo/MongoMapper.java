@@ -55,6 +55,7 @@ public class MongoMapper {
         for (Object o : list) {
             subscriptions.add(subscriptionFrom((DBObject) o));
         }
+        String graphiteSourceUrl = getString(dbo, "graphiteSourceUrl");
         
         return new Check().withId(id)
                 .withName(name)
@@ -69,7 +70,8 @@ public class MongoMapper {
                 .withAllowNoData(allowNoData)
                 .withState(state)
                 .withLastCheck(lastCheck)
-                .withSubscriptions(subscriptions);
+                .withSubscriptions(subscriptions)
+                .withGraphiteSourceUrl(graphiteSourceUrl);
     }
     
     public Subscription subscriptionFrom(DBObject dbo) {
@@ -178,6 +180,7 @@ public class MongoMapper {
 
             map.put("subscriptions", dbSubscriptions);
         }
+        map.put("graphiteSourceUrl",check.getGraphiteSourceUrl());
         return map;
     }
     

@@ -23,7 +23,7 @@ describe('home page', function () {
         expect(element('table:eq(0) thead tr th:eq(4)').text()).toBe('Enabled');
 
         expect(element('table:eq(0) tbody tr').count()).toBe(1);
-        expect(element('table:eq(0) tbody tr td:eq(0) a').text()).toBe('load longterm usage');
+        expect(element('table:eq(0) tbody tr td:eq(0)').text()).toBe('load longterm usage');
         expect(element('table:eq(0) tbody tr td:eq(1) span:visible').text()).toBe('WARN');
         expect(element('table:eq(0) tbody tr td:eq(2)').text()).toBe('0.5');
         expect(element('table:eq(0) tbody tr td:eq(3)').text()).toBe('2.0');
@@ -48,7 +48,7 @@ describe('home page', function () {
         expect(element('table:eq(1) tbody tr').count()).toBe(1);
         expect(element('table:eq(1) tbody tr td:eq(0)').text()).toMatch('[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}');
         expect(element('table:eq(1) tbody tr td:eq(1)').text()).toMatch('^.*ago$');
-        expect(element('table:eq(1) tbody tr td:eq(2) a').text()).toBe('load longterm usage');
+        expect(element('table:eq(1) tbody tr td:eq(2)').text()).toBe('load longterm usage');
         expect(element('table:eq(1) tbody tr td:eq(3)').text()).toBe('0.8');
         expect(element('table:eq(1) tbody tr td:eq(4)').text()).toBe('0.5');
         expect(element('table:eq(1) tbody tr td:eq(5)').text()).toBe('2');
@@ -129,7 +129,7 @@ describe('check page', function () {
     });
 
     it('should have a \'Details\' informations', function () {
-        expect(element('div.col-lg-6 div.col-lg-10').count()).toBe(12);
+        expect(element('div.col-lg-6 div.col-lg-10').count()).toBe(13);
 
         expect(element('div.col-lg-6 div.detail-form:eq(0) label').text()).toBe('Name:');
         expect(element('div.col-lg-6 div.detail-form:eq(0) p').text()).toBe('load longterm usage');
@@ -139,6 +139,9 @@ describe('check page', function () {
 
         expect(element('div.col-lg-6 div.detail-form:eq(2) label').text()).toBe('State:');
         expect(element('div.col-lg-6 div.detail-form:eq(2) p span:visible').text()).toBe('WARN');
+
+        expect(element('div.col-lg-6 div.detail-form:eq(2) label').text()).toBe('Graphite source:');
+        expect(element('div.col-lg-6 div.detail-form:eq(2) p span:visible').text()).toBe('');
 
         expect(element('div.col-lg-6 div.detail-form:eq(3) label').text()).toBe('Target:');
         expect(element('div.col-lg-6 div.detail-form:eq(3) p').text()).toBe('prod.host1.load.longterm');
@@ -220,7 +223,7 @@ describe('edit check', function () {
     });
 
     it('edit and submit check', function () {
-        expect(element('div.col-lg-6 div.col-lg-10').count()).toBe(12);
+        expect(element('div.col-lg-6 div.col-lg-10').count()).toBe(13);
 
         expect(element('a:contains("edit")').count()).toBe(1);
         expect(element('div#editCheckModal:visible').count()).toBe(0);
@@ -379,7 +382,7 @@ describe('create new check', function () {
         input('check\\.error').enter('4.0');
         input('check\\.enabled').check();
 
-        expect(element('div#editCheckModal img').attr('src')).toBe('./api/chart/karma.metric/?&width=365&height=70&from=-1day&warn=2.0&error=4.0&hideLegend=true');
+        expect(element('div#editCheckModal img').attr('src')).toBe('./api/chart/karma.metric/?&width=365&height=70&from=-1day&warn=2.0&error=4.0&hideLegend=true&graphiteSourceUrl=http://localhost:8080');
 
         expect(element('button#createCheckButton:visible:enabled').count()).toEqual(1);
         expect(element('button#cancelCheckButton:visible:enabled').count()).toEqual(1);

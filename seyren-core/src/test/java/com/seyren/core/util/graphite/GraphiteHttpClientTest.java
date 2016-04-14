@@ -68,10 +68,18 @@ public class GraphiteHttpClientTest {
                         .withParam("target", "service.error.1MinuteRate"),
                 giveResponse(response, "application/json"));
 
-        JsonNode node = graphiteHttpClient.getTargetJson("service.error.1MinuteRate");
+        String from = "-11minutes";
+        String until = "-1minutes";
+        
+        JsonNode node = graphiteHttpClient.getTargetJson(null, "service.error.1MinuteRate");
 
         assertThat(node, is(MAPPER.readTree(response)));
     }
+    
+    @Test
+    public void requestingJsonCallsThroughToOtherThanDefaultGraphiteSourcesCorrectly() throws Exception {
+
+    }    
 
     @Test
     public void requestingJsonCallsWithFromAndUntilThroughToGraphiteCorrectly() throws Exception {
@@ -86,7 +94,7 @@ public class GraphiteHttpClientTest {
                         .withParam("target", "service.error.count"),
                 giveResponse(response, "application/json"));
 
-        JsonNode node = graphiteHttpClient.getTargetJson("service.error.count", "-5minutes", "now");
+        JsonNode node = graphiteHttpClient.getTargetJson(null,"service.error.count", "-5minutes", "now");
 
         assertThat(node, is(MAPPER.readTree(response)));
     }
@@ -96,8 +104,13 @@ public class GraphiteHttpClientTest {
         thrown.expect(GraphiteReadException.class);
         
         graphiteHttpClient = new GraphiteHttpClient(seyrenConfig("http://unknown"));
-        graphiteHttpClient.getTargetJson("service.*.1MinuteRate");
+        graphiteHttpClient.getTargetJson(null,"service.*.1MinuteRate");
     }
+    
+    @Test
+    public void exceptionGettingDataFromOtherThanStandardGraphiteSourceIsHandled() throws Exception {
+        
+    }    
     
     @Test
     public void authIsAddedWhenUsernameAndPasswordAreProvided() throws Exception {
@@ -117,11 +130,16 @@ public class GraphiteHttpClientTest {
                         .withHeader("Authorization", "Basic c2V5cmVuOnMzeXIzTg=="),
                 giveResponse(response, "application/json"));
         
-        graphiteHttpClient.getTargetJson("service.error.1MinuteRate");
+        graphiteHttpClient.getTargetJson(null,"service.error.1MinuteRate");
         
         System.clearProperty("GRAPHITE_USERNAME");
         System.clearProperty("GRAPHITE_PASSWORD");
     }
+    
+   @Test
+    public void authForDifferentGraphiteSourceIsAddedWhenUsernameAndPasswordAreProvided() throws Exception {
+
+    }    
     
     @Test
     public void gettingChartFromGraphiteIsHandledWhenThresholdsAreNotProvided() throws Exception {
@@ -139,10 +157,15 @@ public class GraphiteHttpClientTest {
                         .withParam("hideAxes", false),
                 giveResponseAsBytes(response, "image/png"));
         
-        byte[] actualBytes = graphiteHttpClient.getChart("hello.world", 300, 200, "-1hours", null, LegendState.SHOW, AxesState.SHOW);
+        byte[] actualBytes = graphiteHttpClient.getChart(null, "hello.world", 300, 200, "-1hours", null, LegendState.SHOW, AxesState.SHOW);
         
         assertThat(actualBytes, is(bytes));
     }
+    
+    @Test
+    public void gettingChartFromNonDefaultGraphiteSourceIsHandledWhenThresholdsAreNotProvided() throws Exception {
+        
+    }    
     
     @Test
     public void legendCanBeHiddenWhenGettingChartFromGraphite() throws Exception {
@@ -160,10 +183,15 @@ public class GraphiteHttpClientTest {
                         .withParam("hideAxes", false),
                 giveResponseAsBytes(response, "image/png"));
         
-        byte[] actualBytes = graphiteHttpClient.getChart("hello.world", 300, 200, "-1hours", null, LegendState.HIDE, AxesState.SHOW);
+        byte[] actualBytes = graphiteHttpClient.getChart(null,"hello.world", 300, 200, "-1hours", null, LegendState.HIDE, AxesState.SHOW);
         
         assertThat(actualBytes, is(bytes));
     }
+    
+    @Test
+    public void legendCanBeHiddenWhenGettingChartFromNonDefaultGraphiteSource() throws Exception {
+
+    }    
     
     @Test
     public void axesCanBeHiddenWhenGettingChartFromGraphite() throws Exception {
@@ -181,10 +209,15 @@ public class GraphiteHttpClientTest {
                         .withParam("hideAxes", true),
                 giveResponseAsBytes(response, "image/png"));
         
-        byte[] actualBytes = graphiteHttpClient.getChart("hello.world", 300, 200, "-90minutes", null, LegendState.SHOW, AxesState.HIDE);
+        byte[] actualBytes = graphiteHttpClient.getChart(null,"hello.world", 300, 200, "-90minutes", null, LegendState.SHOW, AxesState.HIDE);
         
         assertThat(actualBytes, is(bytes));
     }
+    
+    @Test
+    public void axesCanBeHiddenWhenGettingChartFromNonDefaultGraphite() throws Exception {
+
+    }    
     
     @Test
     public void gettingChartFromGraphiteIsHandledWhenWarnThresholdIsProvided() throws Exception {
@@ -203,10 +236,15 @@ public class GraphiteHttpClientTest {
                         .withParam("target", "alias(dashed(color(constantLine(3.2),\"yellow\")),\"warn level\")"),
                 giveResponseAsBytes(response, "image/png"));
         
-        byte[] actualBytes = graphiteHttpClient.getChart("hello.world", 300, 200, "-1hours", null, LegendState.SHOW, AxesState.SHOW, new BigDecimal("3.2"), null);
+        byte[] actualBytes = graphiteHttpClient.getChart(null,"hello.world", 300, 200, "-1hours", null, LegendState.SHOW, AxesState.SHOW, new BigDecimal("3.2"), null);
         
         assertThat(actualBytes, is(bytes));
     }
+    
+    @Test
+    public void gettingChartFromNonDefaultGraphiteSourceIsHandledWhenWarnThresholdIsProvided() throws Exception {
+
+    }    
     
     @Test
     public void gettingChartFromGraphiteIsHandledWhenErrorThresholdIsProvided() throws Exception {
@@ -225,10 +263,15 @@ public class GraphiteHttpClientTest {
                         .withParam("target", "alias(dashed(color(constantLine(5.6),\"red\")),\"error level\")"),
                 giveResponseAsBytes(response, "image/png"));
         
-        byte[] actualBytes = graphiteHttpClient.getChart("hello.world", 300, 200, "-1hours", null, LegendState.SHOW, AxesState.SHOW, null, new BigDecimal("5.6"));
+        byte[] actualBytes = graphiteHttpClient.getChart(null,"hello.world", 300, 200, "-1hours", null, LegendState.SHOW, AxesState.SHOW, null, new BigDecimal("5.6"));
         
         assertThat(actualBytes, is(bytes));
     }
+    
+    @Test
+    public void gettingChartFromNonDefaultGraphiteSourceIsHandledWhenErrorThresholdIsProvided() throws Exception {
+
+    }    
     
     @Test
     public void gettingChartFromGraphiteIsHandledWhenBothThresholdsAreProvided() throws Exception {
@@ -248,10 +291,15 @@ public class GraphiteHttpClientTest {
                         .withParam("target", "alias(dashed(color(constantLine(5.6),\"red\")),\"error level\")"),
                 giveResponseAsBytes(response, "image/png"));
         
-        byte[] actualBytes = graphiteHttpClient.getChart("hello.world", 300, 200, "-1hours", null, LegendState.SHOW, AxesState.SHOW, new BigDecimal("3.2"), new BigDecimal("5.6"));
+        byte[] actualBytes = graphiteHttpClient.getChart(null,"hello.world", 300, 200, "-1hours", null, LegendState.SHOW, AxesState.SHOW, new BigDecimal("3.2"), new BigDecimal("5.6"));
         
         assertThat(actualBytes, is(bytes));
     }
+    
+    @Test
+    public void gettingChartFromNonDefaultGraphiteSourceIsHandledWhenBothThresholdsAreProvided() throws Exception {
+        
+    }    
     
     @Test
     public void authIsUsedGettingChartFromGraphite() throws Exception {
@@ -274,13 +322,18 @@ public class GraphiteHttpClientTest {
                         .withHeader("Authorization", "Basic c2V5cmVuOnMzeXIzTg=="),
                 giveResponseAsBytes(response, "image/png"));
         
-        byte[] actualBytes = graphiteHttpClient.getChart("hello.world", 300, 200, "-1hours", null, LegendState.SHOW, AxesState.SHOW);
+        byte[] actualBytes = graphiteHttpClient.getChart(null,"hello.world", 300, 200, "-1hours", null, LegendState.SHOW, AxesState.SHOW);
         
         assertThat(actualBytes, is(bytes));
         
         System.clearProperty("GRAPHITE_USERNAME");
         System.clearProperty("GRAPHITE_PASSWORD");
     }
+    
+    @Test
+    public void authIsUsedGettingChartFromNonDefaultGraphiteSource() throws Exception {
+        
+    }    
     
     private SeyrenConfig seyrenConfig(String graphiteUrl) {
         System.setProperty("GRAPHITE_URL", graphiteUrl);
