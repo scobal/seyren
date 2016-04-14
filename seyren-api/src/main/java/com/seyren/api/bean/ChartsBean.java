@@ -43,15 +43,12 @@ public class ChartsBean implements ChartsResource {
     
     @Override
     public Response getChart(String checkId, int width, int height, String from, String to, boolean hideThresholds, boolean hideLegend, boolean hideAxes) {
-        //System.out.println("get Chart 1 in ChartsBean");
+        
         Check check = checksStore.getCheck(checkId);
         if (check == null) {
             return Response.status(Status.NOT_FOUND).build();
         }
-        
-//        System.out.println(check.getGraphiteSourceUrl());
-//        System.out.println(check.getTarget());
-//        System.out.println(hideThresholds);
+
         String target = check.getTarget();
         
         if (hideThresholds) {
@@ -62,9 +59,9 @@ public class ChartsBean implements ChartsResource {
     }
     
     @Override
-    public Response getCustomChart(String target, int width, int height, String from, String to, String warnThreshold, String errorThreshold, boolean hideLegend,
+    public Response getCustomChart(String target, String graphiteSourceUrl, int width, int height, String from, String to, String warnThreshold, String errorThreshold, boolean hideLegend,
             boolean hideAxes) {
-        //System.out.println("get Custom Chart 1 in ChartsBean");
+
         BigDecimal warn;
         if (StringUtils.isEmpty(warnThreshold)) {
             warn = null;
@@ -79,12 +76,11 @@ public class ChartsBean implements ChartsResource {
             error = new BigDecimal(errorThreshold);
         }
         
-        return getChart(null, target, width, height, from, to, warn, error, hideLegend, hideAxes);
+        return getChart(graphiteSourceUrl, target, width, height, from, to, warn, error, hideLegend, hideAxes);
     }
     
     private Response getChart(String graphiteSource, String target, int width, int height, String from, String to, BigDecimal warnThreshold, BigDecimal errorThreshold, boolean hideLegend,
             boolean hideAxes) {
-        //System.out.println("get Chart 2 in ChartsBean");
         
         LegendState legendState;
         if (hideLegend) {

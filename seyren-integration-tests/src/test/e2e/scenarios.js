@@ -129,7 +129,7 @@ describe('check page', function () {
     });
 
     it('should have a \'Details\' informations', function () {
-        expect(element('div.col-lg-6 div.col-lg-10').count()).toBe(12);
+        expect(element('div.col-lg-6 div.col-lg-10').count()).toBe(13);
 
         expect(element('div.col-lg-6 div.detail-form:eq(0) label').text()).toBe('Name:');
         expect(element('div.col-lg-6 div.detail-form:eq(0) p').text()).toBe('load longterm usage');
@@ -139,6 +139,9 @@ describe('check page', function () {
 
         expect(element('div.col-lg-6 div.detail-form:eq(2) label').text()).toBe('State:');
         expect(element('div.col-lg-6 div.detail-form:eq(2) p span:visible').text()).toBe('WARN');
+
+        expect(element('div.col-lg-6 div.detail-form:eq(2) label').text()).toBe('Graphite source:');
+        expect(element('div.col-lg-6 div.detail-form:eq(2) p span:visible').text()).toBe('');
 
         expect(element('div.col-lg-6 div.detail-form:eq(3) label').text()).toBe('Target:');
         expect(element('div.col-lg-6 div.detail-form:eq(3) p').text()).toBe('prod.host1.load.longterm');
@@ -220,7 +223,7 @@ describe('edit check', function () {
     });
 
     it('edit and submit check', function () {
-        expect(element('div.col-lg-6 div.col-lg-10').count()).toBe(12);
+        expect(element('div.col-lg-6 div.col-lg-10').count()).toBe(13);
 
         expect(element('a:contains("edit")').count()).toBe(1);
         expect(element('div#editCheckModal:visible').count()).toBe(0);
@@ -379,7 +382,7 @@ describe('create new check', function () {
         input('check\\.error').enter('4.0');
         input('check\\.enabled').check();
 
-        expect(element('div#editCheckModal img').attr('src')).toBe('./api/chart/karma.metric/?&width=365&height=70&from=-1day&warn=2.0&error=4.0&hideLegend=true');
+        expect(element('div#editCheckModal img').attr('src')).toBe('./api/chart/karma.metric/?&width=365&height=70&from=-1day&warn=2.0&error=4.0&hideLegend=true&graphiteSourceUrl=http://localhost:8080');
 
         expect(element('button#createCheckButton:visible:enabled').count()).toEqual(1);
         expect(element('button#cancelCheckButton:visible:enabled').count()).toEqual(1);

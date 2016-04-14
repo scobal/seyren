@@ -23,6 +23,10 @@
                 placement: 'right',
                 title: 'Setting your warn level higher than your error level will result in Seyren generating alerts when the target value goes below the threshold.'
             });
+            $('#check\\.graphiteSourceUrl\\.hint').tooltip({
+                placement: 'right',
+                title: 'In this field you can define a different graphite source than the default.'
+            });            
         });
 
         $scope.create = function () {
@@ -65,9 +69,7 @@
 
         $scope.$watch('check.target + check.warn + check.error', function (value) {
             if ($scope.check !== undefined && ($scope.config === undefined || (value !== undefined && $scope.config.graphsEnabled))) {
-                console.log("Hit itt");
                 $scope.check.previewImage = Graph.previewImage($scope.check);
-                console.log($scope.check.previewImage);
             } else {
                 return "./img/preview-nodata.png";
             }
