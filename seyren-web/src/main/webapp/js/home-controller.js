@@ -2,7 +2,7 @@
 (function () {
     'use strict';
 
-    seyrenApp.controller('HomeController', function HomeController($scope, $rootScope, $location, Checks, Alerts, Seyren) {
+    seyrenApp.controller('HomeController', function HomeController($scope, $rootScope, $location, Checks, Alerts) {
         $scope.pollAlertsInSeconds = 5;
         $scope.checkNames = {};
 
@@ -43,10 +43,6 @@
             Checks.get({checkId: checkId}, function (data) {
                 $scope.checkNames[checkId] = data.name;
             });
-        };
-
-        $scope.swapCheckEnabled = function (check) {
-            Seyren.swapCheckEnabled(check);
         };
 
         $scope.countdownToRefresh = function () {

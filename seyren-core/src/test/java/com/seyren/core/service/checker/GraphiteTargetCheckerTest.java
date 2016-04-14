@@ -58,7 +58,7 @@ public class GraphiteTargetCheckerTest {
     public void singleValidTargetIsPresent() throws Exception {
         JsonNode node = MAPPER.readTree("[{\"target\": \"service.error.1MinuteRate\", \"datapoints\": [[0.06, 1337453460]]}]");
         
-        when(mockGraphiteHttpClient.getTargetJson("service.error.1MinuteRate", null, null)).thenReturn(node);
+        when(mockGraphiteHttpClient.getTargetJson(null,"service.error.1MinuteRate", null, null)).thenReturn(node);
         
         Map<String, Optional<BigDecimal>> values = checker.check(check());
         
@@ -66,22 +66,32 @@ public class GraphiteTargetCheckerTest {
     }
     
     @Test
+    public void singleValidTargetIsPresentAndDifferentGraphiteSourceIsSet() throws Exception {
+
+    }    
+    
+    @Test
     public void singleValidTargetHasCorrectValue() throws Exception {
         JsonNode node = MAPPER.readTree("[{\"target\": \"service.error.1MinuteRate\", \"datapoints\": [[0.06, 1337453460]]}]");
         
-        when(mockGraphiteHttpClient.getTargetJson("service.error.1MinuteRate", null, null)).thenReturn(node);
+        when(mockGraphiteHttpClient.getTargetJson(null,"service.error.1MinuteRate", null, null)).thenReturn(node);
         
         Map<String, Optional<BigDecimal>> values = checker.check(check());
         
         assertThat(values.get("service.error.1MinuteRate").isPresent(), is(true));
         assertThat(values.get("service.error.1MinuteRate").get(), is(new BigDecimal("0.06")));
     }
+
+    @Test
+    public void singleValidTargetHasCorrectValueAndDifferentGraphiteSourceIsSet() throws Exception {
+
+    }    
     
     @Test
     public void valueIsDeterminedByGoingThroughDatapointsInReverserOrder() throws Exception {
         JsonNode node = MAPPER.readTree("[{\"target\": \"service.error.1MinuteRate\", \"datapoints\": [[0.20, 1337453460],[0.01, 1337453463]]}]");
         
-        when(mockGraphiteHttpClient.getTargetJson("service.error.1MinuteRate", null, null)).thenReturn(node);
+        when(mockGraphiteHttpClient.getTargetJson(null,"service.error.1MinuteRate", null, null)).thenReturn(node);
         
         Map<String, Optional<BigDecimal>> values = checker.check(check());
         
@@ -92,7 +102,7 @@ public class GraphiteTargetCheckerTest {
     public void valueIsDeterminedBySkippingNullValues() throws Exception {
         JsonNode node = MAPPER.readTree("[{\"target\": \"service.error.1MinuteRate\", \"datapoints\": [[0.17, 1337453460],[null, 1337453463]]}]");
         
-        when(mockGraphiteHttpClient.getTargetJson("service.error.1MinuteRate", null, null)).thenReturn(node);
+        when(mockGraphiteHttpClient.getTargetJson(null,"service.error.1MinuteRate", null, null)).thenReturn(node);
         
         Map<String, Optional<BigDecimal>> values = checker.check(check());
         
@@ -103,7 +113,7 @@ public class GraphiteTargetCheckerTest {
     public void targetWhichOnlyHasNullValuesIsAbsent() throws Exception {
         JsonNode node = MAPPER.readTree("[{\"target\": \"service.error.1MinuteRate\", \"datapoints\": [[null, 1337453460],[null, 1337453463]]}]");
         
-        when(mockGraphiteHttpClient.getTargetJson("service.error.1MinuteRate", null, null)).thenReturn(node);
+        when(mockGraphiteHttpClient.getTargetJson(null,"service.error.1MinuteRate", null, null)).thenReturn(node);
         
         Map<String, Optional<BigDecimal>> values = checker.check(check());
         
@@ -117,7 +127,7 @@ public class GraphiteTargetCheckerTest {
                 "{\"target\": \"service.warn.1MinuteRate\", \"datapoints\": [[0.56, 1337453460],[0.78, 1337453463]]}" +
                 "]");
         
-        when(mockGraphiteHttpClient.getTargetJson("service.*.1MinuteRate", null, null)).thenReturn(node);
+        when(mockGraphiteHttpClient.getTargetJson(null,"service.*.1MinuteRate", null, null)).thenReturn(node);
         
         Map<String, Optional<BigDecimal>> values = checker.check(checkWithTarget("service.*.1MinuteRate"));
         
@@ -125,15 +135,25 @@ public class GraphiteTargetCheckerTest {
         assertThat(values.get("service.error.1MinuteRate").get(), is(new BigDecimal("0.01")));
         assertThat(values.get("service.warn.1MinuteRate").get(), is(new BigDecimal("0.78")));
     }
+
+    @Test
+    public void multipleTargetsFromDifferentGraphiteSourceAreHandledCorrectly() throws Exception {
+
+    }    
     
     @Test
     public void exceptionGettingDataFromGraphiteIsHandled() throws Exception {
-        when(mockGraphiteHttpClient.getTargetJson("service.*.1MinuteRate", null, null)).thenThrow(new GraphiteReadException("Graphite bad times", new RuntimeException("Bad times")));
+        when(mockGraphiteHttpClient.getTargetJson(null,"service.*.1MinuteRate", null, null)).thenThrow(new GraphiteReadException("Graphite bad times", new RuntimeException("Bad times")));
         
         Map<String, Optional<BigDecimal>> values = checker.check(checkWithTarget("service.*.1MinuteRate"));
         
         assertThat(values.size(), is(0));
     }
+    
+    @Test
+    public void exceptionGettingDataFromDifferentGraphiteSourceIsHandled() throws Exception {
+
+    }    
     
     private Check check() {
         return checkWithTarget("service.error.1MinuteRate");
@@ -146,5 +166,8 @@ public class GraphiteTargetCheckerTest {
                 .withWarn(new BigDecimal("0.15"))
                 .withError(new BigDecimal("0.20"));
     }
-    
+
+    private Check checkWithTargetAndSource(String target) {
+        return new Check();
+    }    
 }

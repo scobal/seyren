@@ -51,6 +51,7 @@ public class Check {
     private AlertType state;
     private DateTime lastCheck;
     private List<Subscription> subscriptions = new ArrayList<Subscription>();
+    private String graphiteSourceUrl;
     
     public String getId() {
         return id;
@@ -239,4 +240,16 @@ public class Check {
         return this;
     }
     
+    public String getGraphiteSourceUrl() {
+        return graphiteSourceUrl;
+    }
+    
+    public void setGraphiteSourceUrl(String graphiteSourceUrl) {
+        this.graphiteSourceUrl = graphiteSourceUrl;
+    }
+    
+    public Check withGraphiteSourceUrl(String graphiteSourceUrl) {
+        setGraphiteSourceUrl(graphiteSourceUrl);
+        return this;
+    }
 }

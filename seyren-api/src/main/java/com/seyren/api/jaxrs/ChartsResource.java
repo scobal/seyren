@@ -40,6 +40,7 @@ public interface ChartsResource {
     @Produces("image/png")
     @Path("/chart/{target}")
     Response getCustomChart(@PathParam("target") String target,
+            @QueryParam("graphiteSourceUrl") String graphiteSourceUrl,
             @QueryParam("width") @DefaultValue("1200") int width,
             @QueryParam("height") @DefaultValue("350") int height,
             @QueryParam("from") @DefaultValue("-24hours") String from,
