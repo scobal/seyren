@@ -104,16 +104,16 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-context-support</artifactId>
         </dependency>
-<!--         <dependency>
+         <dependency>
         	<groupId>com.opsgenie.integration</groupId>
         	<artifactId>sdk</artifactId>
-    	</dependency> -->
-<!--        <dependency>
+    	</dependency> 
+        <dependency>
             <groupId>com.opsgenie.integration</groupId>
             <artifactId>sdk</artifactId>
             <version>2.2.0</version>
             <type>jar</type>
-        </dependency>-->
+        </dependency>
     </dependencies>
 	<repositories>
 	  <repository>
