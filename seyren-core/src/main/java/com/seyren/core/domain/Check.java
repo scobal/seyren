@@ -55,6 +55,7 @@ public class Check {
     private DateTime timeLastNotificationSent;
     private BigDecimal notificationDelay;
     private BigDecimal notificationInterval;
+    private String tag;
     
     public String getId() {
         return id;
@@ -270,34 +271,40 @@ public class Check {
         setTimeLastNotificationSent(timeLastNotificationSent);
         return this;
     }
-    
     @JsonSerialize(using = BigDecimalSerializer.class)   
     public BigDecimal getNotificationDelay () {
         return notificationDelay;
     }
-    
     @JsonDeserialize(using = BigDecimalDeserializer.class)
     public void setNotificationDelay (BigDecimal notificationDelay) {
         this.notificationDelay = notificationDelay;
     }
-    
     public Check withNotificationDelay (BigDecimal notificationDelay) {
         setNotificationDelay(notificationDelay);
         return this;
     }
-    
     @JsonSerialize(using = BigDecimalSerializer.class)    
     public BigDecimal getNotificationInterval () {
         return notificationInterval;
     }
-    
     @JsonDeserialize(using = BigDecimalDeserializer.class)
     public void setNotificationInterval (BigDecimal notificationInterval) {
         this.notificationInterval = notificationInterval;
     }
-    
     public Check withNotificationInterval (BigDecimal notificationInterval) {
         setNotificationInterval(notificationInterval);
         return this;
     }    
+    public String getTag() {
+        return tag;
+    }
+    
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
+    
+    public Check withTag(String tag) {
+        setTag(tag);
+        return this;
+    }
 }

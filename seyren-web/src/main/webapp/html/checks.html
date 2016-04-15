@@ -24,6 +24,7 @@
                     <th><a href="" ng-click="predicate='warn';reverse=!reverse">Warn</a></th>
                     <th><a href="" ng-click="predicate='error';reverse=!reverse">Error</a></th>
                     <th><a href="" ng-click="predicate='enabled';reverse=!reverse">Enabled</a></th>
+                    <th><a href="" ng-click="loadChecks()">Tag  <span ng-show="display_tags_filtered == 'true'" class="glyphicon glyphicon-remove-circle pull-right"></span></a></th>
                 </tr>
             </thead>
             <tbody>
@@ -41,6 +42,9 @@
                     <td>{{ check.warn }}</td>
                     <td>{{ check.error }}</td>
                     <td><input type="checkbox" ng-checked="check.enabled" ng-click="swapCheckEnabled(check); $event.stopPropagation();" /></td>
+                    <td>
+                        <span ng-show="check.tag != ''" class="label label-primary" ng-click="getChecksByTag(check.tag); $event.stopPropagation();">{{check.tag}}</span>
+                    </td>
                 </tr>
             </tbody>
         </table>

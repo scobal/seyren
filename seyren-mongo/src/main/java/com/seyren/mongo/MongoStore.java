@@ -186,6 +186,28 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
                 .withValues(checks)
                 .withTotal(dbc.count());
     }
+    
+    @Override
+    public SeyrenResponse<Check> getChecksByTag(Set<String> tag, Boolean enabled) {
+        List<Check> checks = new ArrayList<Check>();
+        
+        DBObject query = new BasicDBObject();
+        query.put("tag", object("$in", tag.toArray()));
+        if (enabled != null) {
+            query.put("enabled", enabled);
+        }
+        
+        DBCursor dbc = getChecksCollection().find(query);
+
+        while (dbc.hasNext()) {
+            checks.add(mapper.checkFrom(dbc.next()));
+        }
+        dbc.close();
+        
+        return new SeyrenResponse<Check>()
+                .withValues(checks)
+                .withTotal(dbc.count());
+    }    
 
     @Override
     public SeyrenResponse getChecksByPattern(List<String> checkFields, List<Pattern> patterns, Boolean enabled) {
@@ -235,7 +257,7 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
         
         DateTime lastCheck = check.getLastCheck();
         DateTime timeFirstErrorOccured = check.getTimeFirstErrorOccured();
-        
+
         DBObject partialObject = object("name", check.getName())
                 .with("description", check.getDescription())
                 .with("target", check.getTarget())
@@ -250,7 +272,8 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
                 .with("state", check.getState().toString())
                 .with("timeFirstErrorOccured", timeFirstErrorOccured == null ? null : new Date(timeFirstErrorOccured.getMillis()))
                 .with("notificationDelay", check.getNotificationDelay() == null ? null : check.getNotificationDelay().toPlainString())
-                .with("notificationInterval", check.getNotificationInterval() == null ? null : check.getNotificationInterval().toPlainString());
+                .with("notificationInterval", check.getNotificationInterval() == null ? null : check.getNotificationInterval().toPlainString())
+                .with("tag", check.getTag());
         
         DBObject setObject = object("$set", partialObject);
         
