@@ -273,7 +273,8 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
                 .with("timeFirstErrorOccured", timeFirstErrorOccured == null ? null : new Date(timeFirstErrorOccured.getMillis()))
                 .with("notificationDelay", check.getNotificationDelay() == null ? null : check.getNotificationDelay().toPlainString())
                 .with("notificationInterval", check.getNotificationInterval() == null ? null : check.getNotificationInterval().toPlainString())
-                .with("tag", check.getTag());
+                .with("tag", check.getTag())
+                .with("graphiteSourceUrl", check.getGraphiteSourceUrl());
         
         DBObject setObject = object("$set", partialObject);
         
@@ -409,5 +410,4 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
         DBObject updateObject = object("$set", object("subscriptions.$", subscriptionObject));
         getChecksCollection().update(checkFindObject, updateObject);
     }
-    
 }

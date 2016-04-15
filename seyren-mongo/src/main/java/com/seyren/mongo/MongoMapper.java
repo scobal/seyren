@@ -60,6 +60,7 @@ public class MongoMapper {
         BigDecimal notificationDelay = getBigDecimal(dbo, "notificationDelay");
         BigDecimal notificationInterval = getBigDecimal(dbo, "notificationInterval");
         String tag = getString(dbo, "tag");
+        String graphiteSourceUrl = getString(dbo, "graphiteSourceUrl");
         
         return new Check().withId(id)
                 .withName(name)
@@ -79,7 +80,8 @@ public class MongoMapper {
                 .withTimeLastNotificationSent(timeLastNotificationSent)
                 .withNotificationDelay(notificationDelay)
                 .withNotificationInterval(notificationInterval)
-                .withTag(tag);
+                .withTag(tag)
+                .withGraphiteSourceUrl(graphiteSourceUrl);
     }
     
     public Subscription subscriptionFrom(DBObject dbo) {
@@ -201,6 +203,7 @@ public class MongoMapper {
             map.put("notificationInterval", check.getNotificationInterval().toPlainString());            
         }
         map.put("tag", check.getTag());
+        map.put("graphiteSourceUrl",check.getGraphiteSourceUrl());
         return map;
     }
     

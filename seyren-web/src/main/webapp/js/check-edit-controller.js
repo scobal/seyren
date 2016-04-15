@@ -17,7 +17,9 @@
             totalMetric: '-',
             notificationDelay: null,
             notificationInterval: null,
-            tag: null
+            lastNotificationSent:null,
+            tag: null,
+            graphiteSourceUrl: null
         };
         
         $scope.getAllTags = function() {
@@ -44,6 +46,10 @@
                 placement: 'right',
                 title: 'Setting your warn level higher than your error level will result in Seyren generating alerts when the target value goes below the threshold.'
             });
+            $('#check\\.graphiteSourceUrl\\.hint').tooltip({
+                placement: 'right',
+                title: 'In this field you can define a different graphite source than the default.'
+            });            
         });
 
         $scope.create = function () {
@@ -96,7 +102,6 @@
                 return "./img/preview-nodata.png";
             }
         });
-
 
         $scope.$watch('check.target', function(value) {
             if (value) {

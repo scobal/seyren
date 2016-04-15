@@ -56,6 +56,7 @@ public class Check {
     private BigDecimal notificationDelay;
     private BigDecimal notificationInterval;
     private String tag;
+    private String graphiteSourceUrl;
     
     public String getId() {
         return id;
@@ -298,13 +299,21 @@ public class Check {
     public String getTag() {
         return tag;
     }
-    
     public void setTag(String tag) {
         this.tag = tag;
     }
-    
     public Check withTag(String tag) {
         setTag(tag);
+        return this;
+    }
+    public String getGraphiteSourceUrl() {
+        return graphiteSourceUrl;
+    }
+    public void setGraphiteSourceUrl(String graphiteSourceUrl) {
+        this.graphiteSourceUrl = graphiteSourceUrl;
+    }
+    public Check withGraphiteSourceUrl(String graphiteSourceUrl) {
+        setGraphiteSourceUrl(graphiteSourceUrl);
         return this;
     }
 }

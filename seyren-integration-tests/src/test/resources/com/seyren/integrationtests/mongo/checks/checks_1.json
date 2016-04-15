@@ -8,5 +8,11 @@
     "enabled": true,
     "state": "WARN",
     "lastCheck": { "$date": "2013-07-12T10:10:00.000Z"},
-    "subscriptions": [ ]
+    "subscriptions": [ ],
+    "timeFirstErrorOccured":{ "$date": "2013-07-12T10:10:00.000Z"},
+    "timeLastNotificationSent":{ "$date": "2013-07-12T10:10:00.000Z"},
+    "notificationDelay":{ "$date": "2013-07-12T10:10:00.000Z"},
+    "notificationInterval":{ "$date": "2013-07-12T10:10:00.000Z"},
+    "tag":"",
+    "graphiteSourceUrl": "localhost:8080"
 }
