@@ -112,7 +112,6 @@ public class SeyrenConfig {
         this.graphiteSocketTimeout = Integer.parseInt(configOrDefault("GRAPHITE_SOCKET_TIMEOUT", "0"));
 
         // HTTP
-
         this.httpNotificationUrl = configOrDefault("HTTP_NOTIFICATION_URL", "");
 
         // SMTP
