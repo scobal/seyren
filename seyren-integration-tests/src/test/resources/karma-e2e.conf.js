@@ -5,7 +5,7 @@ module.exports = function (config) {
         plugins: [
             'karma-ng-scenario',
             'karma-jasmine',
-            'karma-phantomjs-launcher'
+            'karma-firefox-launcher'
         ],
         files: [
             'test/e2e/**/*.js',
@@ -25,7 +25,7 @@ module.exports = function (config) {
         logLevel: config.LOG_INFO,
         logColors: true,
         browsers: [
-            'PhantomJS'
+            'Firefox'
         ],
         reporters: 'dots'
 

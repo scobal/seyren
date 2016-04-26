@@ -66,11 +66,6 @@ public class GraphiteTargetCheckerTest {
     }
     
     @Test
-    public void singleValidTargetIsPresentAndDifferentGraphiteSourceIsSet() throws Exception {
-
-    }    
-    
-    @Test
     public void singleValidTargetHasCorrectValue() throws Exception {
         JsonNode node = MAPPER.readTree("[{\"target\": \"service.error.1MinuteRate\", \"datapoints\": [[0.06, 1337453460]]}]");
         
@@ -81,11 +76,6 @@ public class GraphiteTargetCheckerTest {
         assertThat(values.get("service.error.1MinuteRate").isPresent(), is(true));
         assertThat(values.get("service.error.1MinuteRate").get(), is(new BigDecimal("0.06")));
     }
-
-    @Test
-    public void singleValidTargetHasCorrectValueAndDifferentGraphiteSourceIsSet() throws Exception {
-
-    }    
     
     @Test
     public void valueIsDeterminedByGoingThroughDatapointsInReverserOrder() throws Exception {
@@ -135,11 +125,6 @@ public class GraphiteTargetCheckerTest {
         assertThat(values.get("service.error.1MinuteRate").get(), is(new BigDecimal("0.01")));
         assertThat(values.get("service.warn.1MinuteRate").get(), is(new BigDecimal("0.78")));
     }
-
-    @Test
-    public void multipleTargetsFromDifferentGraphiteSourceAreHandledCorrectly() throws Exception {
-
-    }    
     
     @Test
     public void exceptionGettingDataFromGraphiteIsHandled() throws Exception {
@@ -148,12 +133,7 @@ public class GraphiteTargetCheckerTest {
         Map<String, Optional<BigDecimal>> values = checker.check(checkWithTarget("service.*.1MinuteRate"));
         
         assertThat(values.size(), is(0));
-    }
-    
-    @Test
-    public void exceptionGettingDataFromDifferentGraphiteSourceIsHandled() throws Exception {
-
-    }    
+    }  
     
     private Check check() {
         return checkWithTarget("service.error.1MinuteRate");
