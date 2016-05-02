@@ -96,7 +96,7 @@ public class SeyrenConfig {
         this.graphsEnable = configOrDefault("GRAPHS_ENABLE", "true");
         this.noOfThreads = Integer.parseInt(configOrDefault("SEYREN_THREADS", "8"));
         this.alertNotificationDelayInSeconds = Integer.parseInt(configOrDefault("SEYREN_NOTIFICATION_DELAY","0"));
-        this.alertNotificationIntervalInSeconds = Integer.parseInt(configOrDefault("SEYREN_NOTIFICATION_INTERVAL", "20"));
+        this.alertNotificationIntervalInSeconds = Integer.parseInt(configOrDefault("SEYREN_NOTIFICATION_INTERVAL", "120"));
         
         // Graphite
         this.graphiteUrl = stripEnd(configOrDefault("GRAPHITE_URL", "http://localhost:80"), "/");
