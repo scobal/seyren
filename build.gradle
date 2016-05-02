@@ -1,0 +1,105 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven { url "https://plugins.gradle.org/m2/" }
+    }
+    dependencies {
+        classpath 'com.sourcemuse.gradle.plugin:gradle-mongo-plugin:0.13.0'
+        classpath 'gradle.plugin.com.craigburke.gradle:karma-gradle:1.4.3'
+        classpath 'gradle.plugin.com.github.scobal.eslint:gradle-eslint-plugin:1.0.1'
+        classpath 'gradle.plugin.nl.javadude.gradle.plugins:license-gradle-plugin:0.12.1'
+    }
+}
+repositories {
+    mavenCentral()
+    maven { url "https://oosnmp.net/dist/release" }
+    maven { url "http://repo.opsgenie.com:9393/content/groups/public" }
+}
+
+apply plugin: 'checkstyle'
+apply plugin: 'com.github.hierynomus.license'
+apply plugin: 'com.github.scobal.eslint'
+//apply plugin: 'com.craigburke.karma'
+apply plugin: 'mongo'
+apply plugin: 'java'
+apply plugin: 'jetty'
+apply plugin: 'war'
+
+group = 'com.github.scobal.seyren'
+version = '1.4.0'
+
+
+// Test configuration
+mongo {
+    mongoVersion '3.2.6'
+}
+test {
+    runWithMongoDb = true
+}
+test.doFirst {
+    [jettyRun, jettyRunWar]*.daemon = true
+    [jettyRun, jettyRunWar]*.contextPath = '/seyren'
+    [jettyRun, jettyRunWar, jettyStop]*.stopKey = 'seyrenStopKey'
+    [jettyRun, jettyRunWar, jettyStop]*.stopPort = 8090
+    tasks.jettyRun.execute()
+}
+test.doLast {
+    tasks.jettyStop.execute()
+}
+
+// Formatting
+eslint {
+    inputs = ['src/main/webapp/js/*.js']
+}
+assemble.dependsOn eslint
+
+license {
+    include "**/*.java"
+}
+assemble.dependsOn licenseFormat
+
+dependencies {
+
+    compile 'com.google.guava:guava:18.0'
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.5.0'
+    compile 'com.fasterxml.jackson.datatype:jackson-datatype-joda:2.5.0'
+    compile 'com.google.guava:guava:18.0'
+    compile 'com.opsgenie.integration:sdk:2.0.7'
+    compile 'com.squareup.pagerduty:pagerduty-incidents:1.0.1'
+    compile 'commons-io:commons-io:2.4'
+    compile 'commons-lang:commons-lang:2.6'
+    compile 'javax.inject:javax.inject:1'
+    compile 'javax.mail:mail:1.4.7'
+    compile 'joda-time:joda-time:2.6'
+    compile 'org.apache.httpcomponents:httpclient:4.3.6'
+    compile 'org.apache.httpcomponents:httpmime:4.3.6'
+    compile 'org.apache.velocity:velocity:1.7'
+    compile('org.jboss.resteasy:resteasy-jaxrs:3.0.10.Final') {
+        exclude(module: 'slf4j-simple')
+    }
+    compile 'org.mongodb:mongo-java-driver:3.2.2'
+    compile 'org.python:jython-standalone:2.5.3'
+    compile 'org.slf4j:slf4j-api:1.7.9'
+    compile('org.snmp4j:snmp4j:2.3.3') {
+        exclude(module: 'log4j')
+    }
+    compile 'org.springframework:spring-context:4.1.4.RELEASE'
+    compile 'org.springframework:spring-context-support:4.1.4.RELEASE'
+
+    testCompile 'com.github.rest-driver:rest-client-driver:1.1.42'
+    testCompile 'com.github.rest-driver:rest-server-driver:1.1.42'
+    testCompile 'commons-io:commons-io:2.4'
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.hamcrest:hamcrest-library:1.3'
+    testCompile 'org.mockito:mockito-core:1.9.5'
+    testCompile 'org.slf4j:slf4j-nop:1.7.9'
+
+    runtime 'com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:2.5.0'
+    runtime 'ch.qos.logback:logback-classic:1.1.2'
+    runtime 'org.jboss.resteasy:resteasy-spring:3.0.10.Final'
+    runtime 'org.slf4j:jcl-over-slf4j:1.7.9'
+    runtime 'org.slf4j:jul-to-slf4j:1.7.9'
+    runtime 'org.slf4j:log4j-over-slf4j:1.7.9'
+    runtime 'org.springframework:spring-beans:4.1.4.RELEASE'
+    runtime 'org.springframework:spring-web:4.1.4.RELEASE'
+}

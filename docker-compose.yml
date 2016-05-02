@@ -20,21 +20,21 @@ collectd:
     GRAPHITE_PORT: 2003
     INSTANCE_ID: seyren
 
-web:
-  build: seyren-web
-  links:
-    - mongodb
-    - graphite
-  command: /bin/bash -c "/usr/share/maven/bin/mvn clean install -am -pl seyren-web -Dmaven.test.skip && /usr/share/maven/bin/mvn tomcat7:run-war -pl seyren-web"
-  environment:
-    MONGO_URL: mongodb://mongodb:27017/seyren
-    GRAPHITE_URL: http://graphite
-    GRAPHITE_USERNAME: guest
-    GRAPHITE_PASSWORD: guest
-    SEYREN_LOG_PATH: /root
-  volumes:
-    - ./:/data
-    - ~/.m2:/root/.m2
-  ports:
-    - 8080:8080
-    - 8000:8000
+#web:
+#  build: seyren-web
+#  links:
+#    - mongodb
+#    - graphite
+#  command: /bin/bash -c "/usr/share/maven/bin/mvn clean install -am -pl seyren-web -Dmaven.test.skip && /usr/share/maven/bin/mvn tomcat7:run-war -pl seyren-web"
+#  environment:
+#    MONGO_URL: mongodb://mongodb:27017/seyren
+#    GRAPHITE_URL: http://graphite
+#    GRAPHITE_USERNAME: guest
+#    GRAPHITE_PASSWORD: guest
+#    SEYREN_LOG_PATH: /root
+#  volumes:
+#    - ./:/data
+#    - ~/.m2:/root/.m2
+#  ports:
+#    - 8080:8080
+#    - 8000:8000

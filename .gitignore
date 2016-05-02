@@ -1,3 +1,5 @@
+.gradle/
+build/
 .DS_Store
 *.iml
 *.log
@@ -6,6 +8,3 @@
 .idea/
 .project
 .settings/
-META-INF/
-target/
-node_modules/

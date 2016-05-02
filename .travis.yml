@@ -2,11 +2,17 @@ language:
   - java
   - node_js
 node_js:
-  - "0.10"
+  - 0.10
+before_install:
+  - npm install eslint --quiet --global
+  - wget http://services.gradle.org/distributions/gradle-2.9-bin.zip
+  - unzip -qq gradle-2.9-bin.zip
+  - export GRADLE_HOME=$PWD/gradle-2.9
+  - export PATH=$GRADLE_HOME/bin:$PATH
 before_script:
-  - "export DISPLAY=:99.0"
-  - "sh -e /etc/init.d/xvfb start"
+  - export DISPLAY=:99.0
+  - sh -e /etc/init.d/xvfb start
   - sleep 5 # give xvfb some time to start
-  - "npm install karma-cli karma-ng-scenario karma-jasmine karma-phantomjs-launcher --quiet --global"
+  - npm install karma-cli karma-ng-scenario karma-jasmine karma-phantomjs-launcher --quiet --global
 script:
-  - "mvn clean verify -Pkarma"
+  - gradle clean build -is
