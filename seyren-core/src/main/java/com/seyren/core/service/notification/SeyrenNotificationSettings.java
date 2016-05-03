@@ -65,24 +65,35 @@ public class SeyrenNotificationSettings implements NotificationServiceSettings {
         
         if (check.getNotificationInterval() != null) {
             seyrenNotificationIntervalInSeconds = check.getNotificationInterval().longValue();            
-        }      
+        }
+        
+        System.out.println(delayInSeconds);
+        System.out.println(seyrenNotificationIntervalInSeconds);
+        System.out.println(timeElapsedSinceFirstErrorOccured);
         
         // State is still error and must exist longer than delayInSeconds
-        if (stateIsTheSame(lastState, currentState) && currentState == AlertType.ERROR && timeElapsedSinceFirstErrorOccured > delayInSeconds) {    
+        if (stateIsTheSame(lastState, currentState) && currentState == AlertType.ERROR && timeElapsedSinceFirstErrorOccured > delayInSeconds) {
             long timeSinceLastNotificationInSeconds = check.getTimeLastNotificationSent() == null ? seyrenNotificationIntervalInSeconds : (now.getMillis() - check.getTimeLastNotificationSent().getMillis()) / 1000;
 
             // Time since the first error is not longer ago than the interval and no notification has been sent
-            if (timeElapsedSinceFirstErrorOccured < seyrenNotificationIntervalInSeconds && check.getTimeLastNotificationSent() == null) {
+            // if (timeElapsedSinceFirstErrorOccured > seyrenNotificationIntervalInSeconds && check.getTimeLastNotificationSent() == null) {
+            if (check.getTimeLastNotificationSent() == null) {
                 check.setTimeLastNotificationSent(now);
                 checksStore.updateTimeLastNotification(check.getId(), now);
                 notificationShouldBeSent = true;
             }
             
+            //We houden het wel op vrijdag
+            //Hier gaat iets mis.....  Onderstaande variabel is de hele tijd 0  ---- My reasoning appears to be flawed here.
+            System.out.println(lastState);
+            System.out.println(currentState);
+            System.out.println(timeSinceLastNotificationInSeconds);
+            
             // Last notification is also greater than interval and first notification has been sent
             if (timeSinceLastNotificationInSeconds > seyrenNotificationIntervalInSeconds) {
                 check.setTimeLastNotificationSent(now);
                 checksStore.updateTimeLastNotification(check.getId(), now);
-                notificationShouldBeSent = true;                
+                notificationShouldBeSent = true;
             }
         }
 
@@ -92,10 +103,10 @@ public class SeyrenNotificationSettings implements NotificationServiceSettings {
             check.setTimeLastNotificationSent(null);
         }
 
-        return notificationShouldBeSent;                
+        return notificationShouldBeSent;
     }
     
     private boolean stateIsTheSame(AlertType last, AlertType current) {
         return last == current;
-    }    
+    }
 }

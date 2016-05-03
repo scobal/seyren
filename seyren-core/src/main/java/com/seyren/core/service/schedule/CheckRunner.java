@@ -68,6 +68,7 @@ public class CheckRunner implements Runnable {
         }
         
         try {
+            System.out.println("Checkrunner method!");
             Map<String, Optional<BigDecimal>> targetValues = targetChecker.check(check);
             DateTime now = new DateTime();
             BigDecimal warn = check.getWarn();
@@ -131,6 +132,10 @@ public class CheckRunner implements Runnable {
                 } else if(!stateIsTheSame(lastState, currentState)) {
                     sendNotification = true;
                 }
+                
+                System.out.println(check.getName());
+                System.out.println(sendNotification);
+                
                 if (sendNotification) {
                     interestingAlerts.add(alert);
                 }

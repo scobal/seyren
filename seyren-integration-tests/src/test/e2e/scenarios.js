@@ -128,8 +128,8 @@ describe('check page', function () {
         expect(element('div.col-lg-12:eq(2) div').text()).toBe('This check has no subscriptions');
     });
 
-    it('should have a \'Details\' informations', function () {
-        expect(element('div.col-lg-6 div.col-lg-10').count()).toBe(17);
+    it('should have a \'Details\' information', function () {
+        expect(element('div.col-lg-6 div.col-lg-10').count()).toBe(16);
 
         expect(element('div.col-lg-6 div.detail-form:eq(0) label').text()).toBe('Name:');
         expect(element('div.col-lg-6 div.detail-form:eq(0) p').text()).toBe('load longterm usage');
@@ -171,13 +171,10 @@ describe('check page', function () {
         expect(element('div.col-lg-6 div.detail-form:eq(12) p').text()).toMatch('[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}');
         
         expect(element('div.col-lg-6 div.detail-form:eq(13) label').text()).toBe('Notification delay (in seconds):');
-        expect(element('div.col-lg-6 div.detail-form:eq(13) p').text()).toMatch('');
+        expect(element('div.col-lg-6 div.detail-form:eq(13) p').text()).toMatch('');      
         
-        expect(element('div.col-lg-6 div.detail-form:eq(14) label').text()).toBe('Notification interval (in seconds):');
+        expect(element('div.col-lg-6 div.detail-form:eq(14) label').text()).toBe('Last notification sent:');
         expect(element('div.col-lg-6 div.detail-form:eq(14) p').text()).toMatch('');        
-        
-        expect(element('div.col-lg-6 div.detail-form:eq(15) label').text()).toBe('Last notification sent:');
-        expect(element('div.col-lg-6 div.detail-form:eq(15) p').text()).toMatch('');        
     });
 
     it('should have \'Graphs\' thumbnail', function () {
@@ -232,7 +229,7 @@ describe('edit check', function () {
     });
 
     it('edit and submit check', function () {
-        expect(element('div.col-lg-6 div.col-lg-10').count()).toBe(17);
+        expect(element('div.col-lg-6 div.col-lg-10').count()).toBe(16);
 
         expect(element('a:contains("edit")').count()).toBe(1);
         expect(element('div#editCheckModal:visible').count()).toBe(0);
