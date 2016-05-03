@@ -68,7 +68,6 @@ public class CheckRunner implements Runnable {
         }
         
         try {
-            System.out.println("Checkrunner method!");
             Map<String, Optional<BigDecimal>> targetValues = targetChecker.check(check);
             DateTime now = new DateTime();
             BigDecimal warn = check.getWarn();
