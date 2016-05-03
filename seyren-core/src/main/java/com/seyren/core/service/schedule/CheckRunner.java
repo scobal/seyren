@@ -127,14 +127,11 @@ public class CheckRunner implements Runnable {
                 
                 if (singleCheckNotificationDelayInSeconds != null) {
                     sendNotification = notificationServiceSettings.applyNotificationDelayAndIntervalProperties(check, lastState, currentState, now);
-                } else if(globalNofiticationDelayInSeconds != 0) {
-                    sendNotification = notificationServiceSettings.applyNotificationDelayAndIntervalProperties(check, lastState, currentState, now);
+                } else if(globalNofiticationDelayInSeconds != 0) { 
+                   sendNotification = notificationServiceSettings.applyNotificationDelayAndIntervalProperties(check, lastState, currentState, now);
                 } else if(!stateIsTheSame(lastState, currentState)) {
                     sendNotification = true;
                 }
-                
-                System.out.println(check.getName());
-                System.out.println(sendNotification);
                 
                 if (sendNotification) {
                     interestingAlerts.add(alert);
