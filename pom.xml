@@ -48,7 +48,7 @@
     </modules>
 
     <properties>
-        <mongo.version>2.6.3</mongo.version>
+        <mongo.version>3.2.6</mongo.version>
         
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -73,7 +73,7 @@
         <org.hamcrest.version>1.3</org.hamcrest.version>
         <org.jboss.resteasy.version>3.0.10.Final</org.jboss.resteasy.version>
         <org.mockito.version>1.9.5</org.mockito.version>
-        <org.mongodb.version>2.12.4</org.mongodb.version>
+        <org.mongodb.version>3.2.2</org.mongodb.version>
         <org.python.version>2.5.3</org.python.version>
         <org.slf4j.version>1.7.9</org.slf4j.version>
         <org.snmp4j.version>2.3.3</org.snmp4j.version>
