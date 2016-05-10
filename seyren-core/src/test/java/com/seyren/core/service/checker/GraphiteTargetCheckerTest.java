@@ -146,8 +146,4 @@ public class GraphiteTargetCheckerTest {
                 .withWarn(new BigDecimal("0.15"))
                 .withError(new BigDecimal("0.20"));
     }
-
-    private Check checkWithTargetAndSource(String target) {
-        return new Check();
-    }    
 }
