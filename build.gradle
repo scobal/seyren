@@ -5,7 +5,6 @@ buildscript {
     }
     dependencies {
         classpath 'com.sourcemuse.gradle.plugin:gradle-mongo-plugin:0.13.0'
-        classpath 'gradle.plugin.com.craigburke.gradle:karma-gradle:1.4.3'
         classpath 'gradle.plugin.com.github.scobal.eslint:gradle-eslint-plugin:1.0.1'
         classpath 'gradle.plugin.nl.javadude.gradle.plugins:license-gradle-plugin:0.12.1'
     }
@@ -19,7 +18,6 @@ repositories {
 apply plugin: 'checkstyle'
 apply plugin: 'com.github.hierynomus.license'
 apply plugin: 'com.github.scobal.eslint'
-//apply plugin: 'com.craigburke.karma'
 apply plugin: 'mongo'
 apply plugin: 'java'
 apply plugin: 'jetty'
@@ -46,6 +44,11 @@ test.doFirst {
 test.doLast {
     tasks.jettyStop.execute()
 }
+
+task karma(type:Exec) {
+    commandLine 'karma', 'start', 'src/test/js/karma.conf.js'
+}
+test.dependsOn karma
 
 // Formatting
 eslint {

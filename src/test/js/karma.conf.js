@@ -8,8 +8,8 @@ module.exports = function (config) {
             'karma-phantomjs-launcher'
         ],
         files: [
-            'test/e2e/**/*.js',
-            '../../seyren-web/src/main/webapp/js/lib/jquery-1.7.2.min.js'
+            'test/js/scenarios.js',
+            'main/webapp/js/lib/jquery-1.7.2.min.js'
         ],
         proxies: {
             '/': 'http://localhost:8080/seyren/'
@@ -17,8 +17,8 @@ module.exports = function (config) {
         captureTimeout: 50000,
         urlRoot: '/_karma_/',
         junitReporter: {
-            outputFile: 'test_out/e2e.xml',
-            suite: 'e2e'
+            outputFile: 'test_out/js.xml',
+            suite: 'js'
         },
         autoWatch: false,
         singleRun: true,
