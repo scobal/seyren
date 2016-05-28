@@ -13,20 +13,17 @@
  */
 package com.seyren.core.service.notification;
 
-import static com.github.restdriver.clientdriver.RestClientDriver.giveEmptyResponse;
-import static com.github.restdriver.clientdriver.RestClientDriver.onRequestTo;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static com.github.restdriver.clientdriver.RestClientDriver.*;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
-import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.hamcrest.Matchers;
 import org.joda.time.DateTime;
@@ -35,10 +32,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.restdriver.clientdriver.ClientDriverRequest;
 import com.github.restdriver.clientdriver.ClientDriverRule;
 import com.github.restdriver.clientdriver.capture.StringBodyCapture;
@@ -50,9 +43,6 @@ import com.seyren.core.domain.SubscriptionType;
 import com.seyren.core.util.config.SeyrenConfig;
 
 public class SlackNotificationServiceTest {
-    private static final String USERNAME = "Seyren";
-    private static final String SLACK_URI_TO_POST = "/services/SOMETHING/ANOTHERTHING/FINALTHING";
-
     private NotificationService notificationService;
     private SeyrenConfig mockSeyrenConfig;
 
@@ -63,11 +53,11 @@ public class SlackNotificationServiceTest {
     public void before() {
         mockSeyrenConfig = mock(SeyrenConfig.class);
         when(mockSeyrenConfig.getBaseUrl()).thenReturn(clientDriver.getBaseUrl() + "/slack");
-        when(mockSeyrenConfig.getSlackWebhook()).thenReturn(clientDriver.getBaseUrl() + SLACK_URI_TO_POST);
         when(mockSeyrenConfig.getSlackEmojis()).thenReturn("");
         when(mockSeyrenConfig.getSlackIconUrl()).thenReturn("");
-        when(mockSeyrenConfig.getSlackUsername()).thenReturn(USERNAME);
-        notificationService = new SlackNotificationService(mockSeyrenConfig);
+        when(mockSeyrenConfig.getSlackToken()).thenReturn("");
+        when(mockSeyrenConfig.getSlackUsername()).thenReturn("Seyren");
+        notificationService = new SlackNotificationService(mockSeyrenConfig, clientDriver.getBaseUrl());
     }
 
     @After
@@ -87,73 +77,117 @@ public class SlackNotificationServiceTest {
     }
 
     @Test
-    public void basicSlackTest() throws JsonParseException, JsonMappingException, IOException {
-	// Given
-        Check check = givenCheck();
+    public void basicSlackTest() {
+        BigDecimal value = new BigDecimal("1.0");
 
-        Subscription subscription = givenSubsciption();
-
-        Alert alert = givenAlert();
-        List<Alert> alerts = Arrays.asList(alert);
-
-        StringBodyCapture bodyCapture = new StringBodyCapture();
-
-        clientDriver.addExpectation(
-                onRequestTo(SLACK_URI_TO_POST)
-                        .withMethod(ClientDriverRequest.Method.POST)
-                        .capturingBodyIn(bodyCapture)
-                        .withHeader("accept", "application/json"),
-                giveEmptyResponse());
-
-        // When
-        notificationService.sendNotification(check, subscription, alerts);
-
-        // Then
-        String content = bodyCapture.getContent();
-
-        Map<String,String> map = new HashMap<String,String>();
-        ObjectMapper mapper = new ObjectMapper();
-        TypeReference<HashMap<String,Object>> typeRef = new TypeReference<HashMap<String,Object>>() {};
-        map = mapper.readValue(content, typeRef);
-
-        assertThat(map.get("channel"), Matchers.is(subscription.getTarget()));
-        assertThat(map.get("text"), Matchers.containsString("*" + check.getState().name() + "* "));
-        assertThat(map.get("text"), Matchers.containsString("/#/checks/" + check.getId()));
-        assertThat(map.get("text"), Matchers.containsString(check.getName()));
-        assertThat(map.get("username"), Matchers.is(USERNAME));
-        assertThat(map.get("icon_url"), Matchers.isEmptyString());
-
-        verify(mockSeyrenConfig).getSlackWebhook();
-        verify(mockSeyrenConfig).getSlackEmojis();
-        verify(mockSeyrenConfig).getSlackIconUrl();
-        verify(mockSeyrenConfig).getSlackUsername();
-        verify(mockSeyrenConfig).getBaseUrl();
-    }
-
-    Check givenCheck() {
         Check check = new Check()
                 .withId("123")
                 .withEnabled(true)
                 .withName("test-check")
                 .withState(AlertType.ERROR);
-        return check;
-    }
-
-    Subscription givenSubsciption() {
-	Subscription subscription = new Subscription()
+        Subscription subscription = new Subscription()
                 .withEnabled(true)
                 .withType(SubscriptionType.SLACK)
                 .withTarget("target");
-	return subscription;
-    }
-
-    Alert givenAlert() {
-	Alert alert = new Alert()
-                .withValue(new BigDecimal("1.0"))
+        Alert alert = new Alert()
+                .withValue(value)
                 .withTimestamp(new DateTime())
                 .withFromType(AlertType.OK)
                 .withToType(AlertType.ERROR);
-	return alert;
+        List<Alert> alerts = Arrays.asList(alert);
+
+        StringBodyCapture bodyCapture = new StringBodyCapture();
+
+        clientDriver.addExpectation(
+                onRequestTo("/api/chat.postMessage")
+                        .withMethod(ClientDriverRequest.Method.POST)
+                        .capturingBodyIn(bodyCapture)
+                        .withHeader("accept", "application/json"),
+                giveEmptyResponse());
+
+        notificationService.sendNotification(check, subscription, alerts);
+
+        String content = bodyCapture.getContent();
+        System.out.println(decode(content));
+
+        assertThat(content, Matchers.containsString("token="));
+        assertThat(content, Matchers.containsString("&channel=target"));
+        assertThat(content, not(Matchers.containsString(encode("<!channel>"))));
+        assertThat(content, Matchers.containsString(encode("*ERROR* test-check")));
+        assertThat(content, Matchers.containsString(encode("/#/checks/123")));
+        assertThat(content, Matchers.containsString("&username=Seyren"));
+        assertThat(content, Matchers.containsString("&icon_url="));
+
+        verify(mockSeyrenConfig).getSlackEmojis();
+        verify(mockSeyrenConfig).getSlackIconUrl();
+        verify(mockSeyrenConfig).getSlackToken();
+        verify(mockSeyrenConfig).getSlackUsername();
+        verify(mockSeyrenConfig).getBaseUrl();
+    }
+
+    @Test
+    public void mentionChannelWhenTargetContainsExclamationTest() {
+        BigDecimal value = new BigDecimal("1.0");
+
+        Check check = new Check()
+                .withId("123")
+                .withEnabled(true)
+                .withName("test-check")
+                .withState(AlertType.ERROR);
+        Subscription subscription = new Subscription()
+                .withEnabled(true)
+                .withType(SubscriptionType.SLACK)
+                .withTarget("target!");
+        Alert alert = new Alert()
+                .withValue(value)
+                .withTimestamp(new DateTime())
+                .withFromType(AlertType.OK)
+                .withToType(AlertType.ERROR);
+        List<Alert> alerts = Arrays.asList(alert);
+
+        StringBodyCapture bodyCapture = new StringBodyCapture();
+
+        clientDriver.addExpectation(
+                onRequestTo("/api/chat.postMessage")
+                        .withMethod(ClientDriverRequest.Method.POST)
+                        .capturingBodyIn(bodyCapture)
+                        .withHeader("accept", "application/json"),
+                giveEmptyResponse());
+
+        notificationService.sendNotification(check, subscription, alerts);
+
+        String content = bodyCapture.getContent();
+        System.out.println(decode(content));
+
+        assertThat(content, Matchers.containsString("token="));
+        assertThat(content, Matchers.containsString("&channel=target"));
+        assertThat(content, Matchers.containsString(encode("<!channel>")));
+        assertThat(content, Matchers.containsString(encode("*ERROR* test-check")));
+        assertThat(content, Matchers.containsString(encode("/#/checks/123")));
+        assertThat(content, Matchers.containsString("&username=Seyren"));
+        assertThat(content, Matchers.containsString("&icon_url="));
+
+        verify(mockSeyrenConfig).getSlackEmojis();
+        verify(mockSeyrenConfig).getSlackIconUrl();
+        verify(mockSeyrenConfig).getSlackToken();
+        verify(mockSeyrenConfig).getSlackUsername();
+        verify(mockSeyrenConfig).getBaseUrl();
+    }
+
+    String encode(String data) {
+        try {
+            return URLEncoder.encode(data, "ISO-8859-1");
+        } catch (UnsupportedEncodingException e) {
+            return null;
+        }
+    }
+
+    String decode(String data) {
+        try {
+            return URLDecoder.decode(data, "ISO-8859-1");
+        } catch (UnsupportedEncodingException e) {
+            return null;
+        }
     }
 
 }

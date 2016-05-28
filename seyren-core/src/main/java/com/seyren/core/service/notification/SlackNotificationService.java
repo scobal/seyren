@@ -13,11 +13,11 @@
  */
 package com.seyren.core.service.notification;
 
-import static com.google.common.collect.Iterables.transform;
+import static com.google.common.collect.Iterables.*;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.Locale;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -25,17 +25,15 @@ import javax.inject.Named;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.HttpClientUtils;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
@@ -53,33 +51,50 @@ public class SlackNotificationService implements NotificationService {
     private static final Logger LOGGER = LoggerFactory.getLogger(SlackNotificationService.class);
 
     private final SeyrenConfig seyrenConfig;
+    private final String baseUrl;
 
     @Inject
     public SlackNotificationService(SeyrenConfig seyrenConfig) {
         this.seyrenConfig = seyrenConfig;
+        this.baseUrl = "https://slack.com";
+    }
+
+    protected SlackNotificationService(SeyrenConfig seyrenConfig, String baseUrl) {
+        this.seyrenConfig = seyrenConfig;
+        this.baseUrl = baseUrl;
     }
 
     @Override
     public void sendNotification(Check check, Subscription subscription, List<Alert> alerts) throws NotificationFailedException {
-        String webhookUrl = seyrenConfig.getSlackWebhook();
+        String token = seyrenConfig.getSlackToken();
+        String channel = subscription.getTarget();
+        String username = seyrenConfig.getSlackUsername();
+        String iconUrl = seyrenConfig.getSlackIconUrl();
 
         List<String> emojis = Lists.newArrayList(
                 Splitter.on(',').omitEmptyStrings().trimResults().split(seyrenConfig.getSlackEmojis())
         );
 
+        String url = String.format("%s/api/chat.postMessage", baseUrl);
         HttpClient client = HttpClientBuilder.create().useSystemProperties().build();
-        HttpPost post = new HttpPost(webhookUrl);
+        HttpPost post = new HttpPost(url);
         post.addHeader("accept", "application/json");
 
+        List<BasicNameValuePair> parameters = new ArrayList<BasicNameValuePair>();
+        parameters.add(new BasicNameValuePair("token", token));
+        parameters.add(new BasicNameValuePair("channel", StringUtils.removeEnd(channel, "!")));
+        parameters.add(new BasicNameValuePair("text", formatContent(emojis, check, subscription, alerts)));
+        parameters.add(new BasicNameValuePair("username", username));
+        parameters.add(new BasicNameValuePair("icon_url", iconUrl));
+
         try {
-            String message = generateMessage(emojis, check, subscription, alerts);
-            post.setEntity(new StringEntity(message, ContentType.APPLICATION_JSON));
+            post.setEntity(new UrlEncodedFormEntity(parameters));
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.info("> message: {}", message);
+                LOGGER.info("> parameters: {}", parameters);
             }
             HttpResponse response = client.execute(post);
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.info("> message: {}", message);
+                LOGGER.info("> parameters: {}", parameters);
                 LOGGER.debug("Status: {}, Body: {}", response.getStatusLine(), new BasicResponseHandler().handleResponse(response));
             }
         } catch (Exception e) {
@@ -96,17 +111,6 @@ public class SlackNotificationService implements NotificationService {
         return subscriptionType == SubscriptionType.SLACK;
     }
 
-    private String generateMessage(List<String> emojis, Check check, Subscription subscription, List<Alert> alerts) throws JsonProcessingException {
-	Map<String,String> payload = new HashMap<String, String>();
-	payload.put("channel", subscription.getTarget());
-	payload.put("username", seyrenConfig.getSlackUsername());
-	payload.put("text", formatContent(emojis, check, subscription, alerts));
-	payload.put("icon_url", seyrenConfig.getSlackIconUrl());
-
-	String message = new ObjectMapper().writeValueAsString(payload);
-	return message;
-    }
-
     private String formatContent(List<String> emojis, Check check, Subscription subscription, List<Alert> alerts) {
         String url = String.format("%s/#/checks/%s", seyrenConfig.getBaseUrl(), check.getId());
         String alertsString = Joiner.on("\n").join(transform(alerts, new Function<Alert, String>() {
@@ -115,6 +119,8 @@ public class SlackNotificationService implements NotificationService {
                 return String.format("%s = %s (%s to %s)", input.getTarget(), input.getValue().toString(), input.getFromType(), input.getToType());
             }
         }));
+
+        String channel = subscription.getTarget().contains("!") ? "<!channel>" : "";
 
         String description;
         if (StringUtils.isNotBlank(check.getDescription())) {
@@ -125,13 +131,15 @@ public class SlackNotificationService implements NotificationService {
 
         final String state = check.getState().toString();
 
-        return String.format("%s *%s* %s (<%s|Open>)%s\n```\n%s\n```",
+        return String.format("%s*%s* %s [%s]%s\n```\n%s\n```\n#%s %s",
                 Iterables.get(emojis, check.getState().ordinal(), ""),
                 state,
                 check.getName(),
                 url,
                 description,
-                alertsString
+                alertsString,
+                state.toLowerCase(Locale.getDefault()),
+                channel
         );
     }
 }
