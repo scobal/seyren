@@ -13,10 +13,15 @@
  */
 package com.seyren.core.service.notification;
 
-import static com.github.restdriver.clientdriver.RestClientDriver.*;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static com.github.restdriver.clientdriver.RestClientDriver.giveEmptyResponse;
+import static com.github.restdriver.clientdriver.RestClientDriver.onRequestTo;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
@@ -25,7 +30,7 @@ import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.List;
 
-import org.hamcrest.Matchers;
+import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Before;
@@ -43,6 +48,9 @@ import com.seyren.core.domain.SubscriptionType;
 import com.seyren.core.util.config.SeyrenConfig;
 
 public class SlackNotificationServiceTest {
+    private static final String USERNAME = "Seyren";
+    private static final String CONTENT_ENCODING = "ISO-8859-1";
+
     private NotificationService notificationService;
     private SeyrenConfig mockSeyrenConfig;
 
@@ -56,7 +64,7 @@ public class SlackNotificationServiceTest {
         when(mockSeyrenConfig.getSlackEmojis()).thenReturn("");
         when(mockSeyrenConfig.getSlackIconUrl()).thenReturn("");
         when(mockSeyrenConfig.getSlackToken()).thenReturn("");
-        when(mockSeyrenConfig.getSlackUsername()).thenReturn("Seyren");
+        when(mockSeyrenConfig.getSlackUsername()).thenReturn(USERNAME);
         notificationService = new SlackNotificationService(mockSeyrenConfig, clientDriver.getBaseUrl());
     }
 
@@ -66,7 +74,7 @@ public class SlackNotificationServiceTest {
     }
 
     @Test
-    public void notifcationServiceCanOnlyHandleSlackSubscription() {
+    public void notificationServiceCanOnlyHandleSlackSubscription() {
         assertThat(notificationService.canHandle(SubscriptionType.SLACK), is(true));
         for (SubscriptionType type : SubscriptionType.values()) {
             if (type == SubscriptionType.SLACK) {
@@ -78,22 +86,11 @@ public class SlackNotificationServiceTest {
 
     @Test
     public void basicSlackTest() {
-        BigDecimal value = new BigDecimal("1.0");
+        // Given
+        Check check = givenCheck();
+        Subscription subscription = givenSlackSubscriptionWithTarget("target");
+        Alert alert = givenAlert();
 
-        Check check = new Check()
-                .withId("123")
-                .withEnabled(true)
-                .withName("test-check")
-                .withState(AlertType.ERROR);
-        Subscription subscription = new Subscription()
-                .withEnabled(true)
-                .withType(SubscriptionType.SLACK)
-                .withTarget("target");
-        Alert alert = new Alert()
-                .withValue(value)
-                .withTimestamp(new DateTime())
-                .withFromType(AlertType.OK)
-                .withToType(AlertType.ERROR);
         List<Alert> alerts = Arrays.asList(alert);
 
         StringBodyCapture bodyCapture = new StringBodyCapture();
@@ -105,18 +102,16 @@ public class SlackNotificationServiceTest {
                         .withHeader("accept", "application/json"),
                 giveEmptyResponse());
 
+        // When
         notificationService.sendNotification(check, subscription, alerts);
 
+        // Then
         String content = bodyCapture.getContent();
         System.out.println(decode(content));
 
-        assertThat(content, Matchers.containsString("token="));
-        assertThat(content, Matchers.containsString("&channel=target"));
-        assertThat(content, not(Matchers.containsString(encode("<!channel>"))));
-        assertThat(content, Matchers.containsString(encode("*ERROR* test-check")));
-        assertThat(content, Matchers.containsString(encode("/#/checks/123")));
-        assertThat(content, Matchers.containsString("&username=Seyren"));
-        assertThat(content, Matchers.containsString("&icon_url="));
+        assertContent(content, check, subscription);
+        assertThat(content, containsString("&channel=" + subscription.getTarget()));
+        assertThat(content, not(containsString(encode("<!channel>"))));
 
         verify(mockSeyrenConfig).getSlackEmojis();
         verify(mockSeyrenConfig).getSlackIconUrl();
@@ -127,22 +122,11 @@ public class SlackNotificationServiceTest {
 
     @Test
     public void mentionChannelWhenTargetContainsExclamationTest() {
-        BigDecimal value = new BigDecimal("1.0");
+        //Given
+        Check check = givenCheck();
+        Subscription subscription = givenSlackSubscriptionWithTarget("target!");
+        Alert alert = givenAlert();
 
-        Check check = new Check()
-                .withId("123")
-                .withEnabled(true)
-                .withName("test-check")
-                .withState(AlertType.ERROR);
-        Subscription subscription = new Subscription()
-                .withEnabled(true)
-                .withType(SubscriptionType.SLACK)
-                .withTarget("target!");
-        Alert alert = new Alert()
-                .withValue(value)
-                .withTimestamp(new DateTime())
-                .withFromType(AlertType.OK)
-                .withToType(AlertType.ERROR);
         List<Alert> alerts = Arrays.asList(alert);
 
         StringBodyCapture bodyCapture = new StringBodyCapture();
@@ -154,18 +138,16 @@ public class SlackNotificationServiceTest {
                         .withHeader("accept", "application/json"),
                 giveEmptyResponse());
 
+        // When
         notificationService.sendNotification(check, subscription, alerts);
 
+        // Then
         String content = bodyCapture.getContent();
         System.out.println(decode(content));
 
-        assertThat(content, Matchers.containsString("token="));
-        assertThat(content, Matchers.containsString("&channel=target"));
-        assertThat(content, Matchers.containsString(encode("<!channel>")));
-        assertThat(content, Matchers.containsString(encode("*ERROR* test-check")));
-        assertThat(content, Matchers.containsString(encode("/#/checks/123")));
-        assertThat(content, Matchers.containsString("&username=Seyren"));
-        assertThat(content, Matchers.containsString("&icon_url="));
+        assertContent(content, check, subscription);
+        assertThat(content, containsString("&channel=" + StringUtils.removeEnd(subscription.getTarget(), "!")));
+        assertThat(content, containsString(encode("<!channel>")));
 
         verify(mockSeyrenConfig).getSlackEmojis();
         verify(mockSeyrenConfig).getSlackIconUrl();
@@ -174,9 +156,43 @@ public class SlackNotificationServiceTest {
         verify(mockSeyrenConfig).getBaseUrl();
     }
 
+    Check givenCheck() {
+        Check check = new Check()
+                .withId("123")
+                .withEnabled(true)
+                .withName("test-check")
+                .withState(AlertType.ERROR);
+        return check;
+    }
+
+    Subscription givenSlackSubscriptionWithTarget(String target) {
+	Subscription subscription = new Subscription()
+                .withEnabled(true)
+                .withType(SubscriptionType.SLACK)
+                .withTarget(target);
+        return subscription;
+    }
+
+    Alert givenAlert() {
+        Alert alert = new Alert()
+                .withValue(new BigDecimal("1.0"))
+                .withTimestamp(new DateTime())
+                .withFromType(AlertType.OK)
+                .withToType(AlertType.ERROR);
+        return alert;
+    }
+
+    private void assertContent(String content, Check check, Subscription subscription) {
+      assertThat(content, containsString("token="));
+      assertThat(content, containsString(encode("*" + check.getState().name() + "* " + check.getName())));
+      assertThat(content, containsString(encode("/#/checks/" + check.getId())));
+      assertThat(content, containsString("&username=" + USERNAME));
+      assertThat(content, containsString("&icon_url="));
+    }
+
     String encode(String data) {
         try {
-            return URLEncoder.encode(data, "ISO-8859-1");
+            return URLEncoder.encode(data, CONTENT_ENCODING);
         } catch (UnsupportedEncodingException e) {
             return null;
         }
@@ -184,7 +200,7 @@ public class SlackNotificationServiceTest {
 
     String decode(String data) {
         try {
-            return URLDecoder.decode(data, "ISO-8859-1");
+            return URLDecoder.decode(data, CONTENT_ENCODING);
         } catch (UnsupportedEncodingException e) {
             return null;
         }
