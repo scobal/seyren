@@ -17,18 +17,25 @@ import static com.github.restdriver.clientdriver.RestClientDriver.giveEmptyRespo
 import static com.github.restdriver.clientdriver.RestClientDriver.onRequestTo;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.isEmptyString;
 import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
@@ -37,6 +44,10 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.restdriver.clientdriver.ClientDriverRequest;
 import com.github.restdriver.clientdriver.ClientDriverRule;
 import com.github.restdriver.clientdriver.capture.StringBodyCapture;
@@ -48,7 +59,10 @@ import com.seyren.core.domain.SubscriptionType;
 import com.seyren.core.util.config.SeyrenConfig;
 
 public class SlackNotificationServiceTest {
-    private static final String USERNAME = "Seyren";
+    private static final String SLACK_USERNAME = "Seyren";
+    private static final String SLACK_TOKEN = "A_TOKEN";
+    private static final String SLACK_WEBHOOK_URI_TO_POST = "/services/SOMETHING/ANOTHERTHING/FINALTHING";
+
     private static final String CONTENT_ENCODING = "ISO-8859-1";
 
     private NotificationService notificationService;
@@ -63,8 +77,7 @@ public class SlackNotificationServiceTest {
         when(mockSeyrenConfig.getBaseUrl()).thenReturn(clientDriver.getBaseUrl() + "/slack");
         when(mockSeyrenConfig.getSlackEmojis()).thenReturn("");
         when(mockSeyrenConfig.getSlackIconUrl()).thenReturn("");
-        when(mockSeyrenConfig.getSlackToken()).thenReturn("");
-        when(mockSeyrenConfig.getSlackUsername()).thenReturn(USERNAME);
+        when(mockSeyrenConfig.getSlackUsername()).thenReturn(SLACK_USERNAME);
         notificationService = new SlackNotificationService(mockSeyrenConfig, clientDriver.getBaseUrl());
     }
 
@@ -85,8 +98,10 @@ public class SlackNotificationServiceTest {
     }
 
     @Test
-    public void basicSlackTest() {
+    public void useSlackApiTokenTest() {
         // Given
+        when(mockSeyrenConfig.getSlackToken()).thenReturn(SLACK_TOKEN);
+
         Check check = givenCheck();
         Subscription subscription = givenSlackSubscriptionWithTarget("target");
         Alert alert = givenAlert();
@@ -107,7 +122,7 @@ public class SlackNotificationServiceTest {
 
         // Then
         String content = bodyCapture.getContent();
-        System.out.println(decode(content));
+        //System.out.println(decode(content));
 
         assertContent(content, check, subscription);
         assertThat(content, containsString("&channel=" + subscription.getTarget()));
@@ -115,7 +130,8 @@ public class SlackNotificationServiceTest {
 
         verify(mockSeyrenConfig).getSlackEmojis();
         verify(mockSeyrenConfig).getSlackIconUrl();
-        verify(mockSeyrenConfig).getSlackToken();
+        verify(mockSeyrenConfig, atLeast(2)).getSlackToken();
+        verify(mockSeyrenConfig, times(0)).getSlackWebhook();
         verify(mockSeyrenConfig).getSlackUsername();
         verify(mockSeyrenConfig).getBaseUrl();
     }
@@ -123,6 +139,8 @@ public class SlackNotificationServiceTest {
     @Test
     public void mentionChannelWhenTargetContainsExclamationTest() {
         //Given
+        when(mockSeyrenConfig.getSlackToken()).thenReturn(SLACK_TOKEN);
+
         Check check = givenCheck();
         Subscription subscription = givenSlackSubscriptionWithTarget("target!");
         Alert alert = givenAlert();
@@ -143,7 +161,7 @@ public class SlackNotificationServiceTest {
 
         // Then
         String content = bodyCapture.getContent();
-        System.out.println(decode(content));
+        //System.out.println(decode(content));
 
         assertContent(content, check, subscription);
         assertThat(content, containsString("&channel=" + StringUtils.removeEnd(subscription.getTarget(), "!")));
@@ -151,7 +169,57 @@ public class SlackNotificationServiceTest {
 
         verify(mockSeyrenConfig).getSlackEmojis();
         verify(mockSeyrenConfig).getSlackIconUrl();
-        verify(mockSeyrenConfig).getSlackToken();
+        verify(mockSeyrenConfig, atLeast(2)).getSlackToken();
+        verify(mockSeyrenConfig, times(0)).getSlackWebhook();
+        verify(mockSeyrenConfig).getSlackUsername();
+        verify(mockSeyrenConfig).getBaseUrl();
+    }
+
+    @Test
+    public void useSlackWebHookTest() throws JsonParseException, JsonMappingException, IOException {
+        // Given
+        when(mockSeyrenConfig.getSlackToken()).thenReturn("");
+        when(mockSeyrenConfig.getSlackWebhook()).thenReturn(clientDriver.getBaseUrl() + SLACK_WEBHOOK_URI_TO_POST);
+
+        Check check = givenCheck();
+
+        Subscription subscription = givenSlackSubscriptionWithTarget("target");
+
+        Alert alert = givenAlert();
+        List<Alert> alerts = Arrays.asList(alert);
+
+        StringBodyCapture bodyCapture = new StringBodyCapture();
+
+        clientDriver.addExpectation(
+                onRequestTo(SLACK_WEBHOOK_URI_TO_POST)
+                        .withMethod(ClientDriverRequest.Method.POST)
+                        .capturingBodyIn(bodyCapture)
+                        .withHeader("accept", "application/json"),
+                giveEmptyResponse());
+
+        // When
+        notificationService.sendNotification(check, subscription, alerts);
+
+        // Then
+        String content = bodyCapture.getContent();
+        assertThat(content, is(notNullValue()));
+
+        Map<String,String> map = new HashMap<String,String>();
+        ObjectMapper mapper = new ObjectMapper();
+        TypeReference<HashMap<String,Object>> typeRef = new TypeReference<HashMap<String,Object>>() {};
+        map = mapper.readValue(content, typeRef);
+
+        assertThat(map.get("channel"), is(subscription.getTarget()));
+        assertThat(map.get("text"), containsString("*" + check.getState().name() + "* "));
+        assertThat(map.get("text"), containsString("/#/checks/" + check.getId()));
+        assertThat(map.get("text"), containsString(check.getName()));
+        assertThat(map.get("username"), is(SLACK_USERNAME));
+        assertThat(map.get("icon_url"), isEmptyString());
+
+        verify(mockSeyrenConfig, atLeast(2)).getSlackWebhook();
+        verify(mockSeyrenConfig, times(1)).getSlackToken();
+        verify(mockSeyrenConfig).getSlackEmojis();
+        verify(mockSeyrenConfig).getSlackIconUrl();
         verify(mockSeyrenConfig).getSlackUsername();
         verify(mockSeyrenConfig).getBaseUrl();
     }
@@ -183,10 +251,10 @@ public class SlackNotificationServiceTest {
     }
 
     private void assertContent(String content, Check check, Subscription subscription) {
-      assertThat(content, containsString("token="));
+      assertThat(content, containsString("token=" + SLACK_TOKEN));
       assertThat(content, containsString(encode("*" + check.getState().name() + "* " + check.getName())));
       assertThat(content, containsString(encode("/#/checks/" + check.getId())));
-      assertThat(content, containsString("&username=" + USERNAME));
+      assertThat(content, containsString("&username=" + SLACK_USERNAME));
       assertThat(content, containsString("&icon_url="));
     }
 

@@ -116,9 +116,11 @@ To generate a "Service API Key", see [PagerDuty Support: Adding Services](https:
 
 ##### [Slack](https://www.slack.com)
 
-The target for a Slack subscription will be the channel name (including the `#`, for example `#channel`). You can optionally suffix the channel name with `!` and that will cause the alerts to include a `@channel` mention (for example `#channel!`).
+You can specify either `SLACK_TOKEN` (which will be evaluated first for compatibility reason) or `SLACK_WEBHOOK_URL` (which should be the preferred method).
+If you set `SLACK_TOKEN`, the target for a Slack subscription will be the channel name (including the `#`, for example `#channel`). You can optionally suffix the channel name with `!` and that will cause the alerts to include a `@channel` mention (for example `#channel!`). If you set `SLACK_WEBHOOK_URL`, you don't need to suffix the channel, you can simply use `#channel` or `@channel`.
 
 * `SLACK_TOKEN` - The Slack api auth token. Default: ``
+* `SLACK_WEBHOOK_URL` - The Slack webhook URL. Default: ``
 * `SLACK_USERNAME` - The username that messages will be sent to slack. Default: `Seyren`
 * `SLACK_ICON_URL` - The user icon URL. Default: ``
 * `SLACK_EMOJIS` - Mapping between state and emojis unicode. Default: ``
