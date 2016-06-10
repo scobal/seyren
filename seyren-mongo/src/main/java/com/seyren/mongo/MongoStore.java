@@ -370,7 +370,7 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore,
 
     @Override
     public void deleteFilter(String filterId) {
-
+        getFiltersCollection().remove(forId(filterId));
     }
 
 }

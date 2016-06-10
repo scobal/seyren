@@ -8,9 +8,21 @@
             $scope.filter = $location.search().filter;
         }
 
-        $scope.searchByFilter = function (filterKeyword) {
-          $("#addFilterModal").modal();
-        }
+        $scope.deleteFilter = function (filter, event) {
+          event.stopPropagation();
+          Filters.remove({filterId: filter.id}, filter, function () {
+              $scope.loadFilters();
+          }, function (err) {
+              console.log('Deleting filter failed');
+          });
+        };
+
+        $scope.searchByFilter = function (filter, event) {
+          event.preventDefault();
+          $scope.toggleSavedFiltersPanel();
+          $scope.filter = filter;
+          $scope.filterToUrl();
+        };
 
         $scope.addFilter = function () {
           $("#addFilterModal").modal();
@@ -42,6 +54,10 @@
             });
         };
 
+        $scope.filterToUrl = function () {
+            $location.search('filter', $scope.filter);
+        };
+
         $scope.countdownToRefresh = function () {
             $scope.loadChecks();
         };
@@ -56,7 +72,8 @@
             clearInterval($scope.timerId);
         });
 
-        $scope.selectCheck = function (id) {
+        $scope.selectCheck = function (id, $event) {
+            $location.search('filter', null);
             $location.path('/checks/' + id);
         };
 
