@@ -348,7 +348,7 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore,
     }
 
     @Override
-    public Filter createFilter(String filterId, Filter filter) {
+    public Filter createFilter(Filter filter) {
         filter.setId(ObjectId.get().toString());
         getFiltersCollection().insert(mapper.filterToDBObject(filter));
 

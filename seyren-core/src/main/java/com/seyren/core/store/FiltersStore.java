@@ -31,7 +31,7 @@ import com.seyren.core.domain.SeyrenResponse;
 
 public interface FiltersStore {
 
-    Filter createFilter(String filterId, Filter filter);
+    Filter createFilter(Filter filter);
 
     SeyrenResponse<Filter> getFilters();
 
