@@ -16,6 +16,10 @@
             });
         };
 
+        $scope.filterToUrl = function () {
+            $location.search('filter', $scope.filter);
+        };
+
         $scope.countdownToRefresh = function () {
             $scope.loadChecks();
         };
@@ -30,7 +34,8 @@
             clearInterval($scope.timerId);
         });
 
-        $scope.selectCheck = function (id) {
+        $scope.selectCheck = function (id, $event) {
+            $location.search('filter', null);
             $location.path('/checks/' + id);
         };
 

@@ -10,7 +10,7 @@
     <br/>
     <div class="col-lg-2">
         <div class="form-group">
-            <input name="filter" ng-model="filter" type="text" placeholder="Filter..." class="form-control input-sm" />
+            <input name="filter" ng-model="filter" type="text" placeholder="Filter..." ng-blur="filterToUrl()" class="form-control input-sm" />
         </div>
     </div>
 </div>
@@ -27,7 +27,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="check in checks.values  | filter:filter | orderBy:[predicate,'-name']:reverse" ng-click="selectCheck(check.id)" style="cursor: pointer;">
+                <tr ng-repeat="check in checks.values  | filter:filter | orderBy:[predicate,'-name']:reverse" ng-click="selectCheck(check.id, $event)" style="cursor: pointer;">
                     <td title="{{ check.target }}">
                         <a href='#/checks/{{ check.id }}'>{{ check.name }}</a>
                     </td>
