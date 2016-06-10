@@ -8,11 +8,40 @@
 </div>
 <div class="row">
     <br/>
-    <div class="col-lg-2">
+    <!-- new stuff -->
+    <div class="col-lg-6">
+        <form class="form-inline">
         <div class="form-group">
-            <input name="filter" ng-model="filter" type="text" placeholder="Filter..." class="form-control input-sm" />
+            <input name="filter" ng-model="filter" type="text" placeholder="Filter..." class="form-control input-sm"/>
         </div>
+        <div class="form-group">
+          <button ng-click="addFilter()" class="btn btn-default saved-filters-toggle" type="button" id="saveFiltersButton">
+              Save filters
+          </button>
+        </div>
+        <div class="form-group">
+            <button ng-click="toggleSavedFiltersPanel()" class="btn btn-warning" type="button" id="savedFiltersButton">
+                Saved filters
+                <span class="caret"></span>
+            </button>
+            <div class="panel panel-default" id="panel-saved-filters">
+              <div class="panel-heading">
+                <h3 class="panel-title">
+                  <input name="savedFilterSearch" ng-model="filterSearch" type="text" placeholder="Filter..." class="form-control input-sm" />
+                </h3>
+              </div>
+              <div class="panel-body">
+                <ul class="nav nav-pills nav-stacked">
+                  <li ng-repeat="savedFilter in savedFilters.values | filter:filterSearch">
+                    <a href="#" ng-click="searchByFilter(savedFilter.filter)"> {{ savedFilter.name }} </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+        </div>
+        </form>
     </div>
+    <!-- /new stuff -->
 </div>
 <div class="row">
     <div class="col-lg-12">
@@ -49,5 +78,5 @@
 
 </div>
 
-<div class="absolute modal" tabindex="-1" role="dialog" ng-include="'./html/modal-partial-check.html'" id="editCheckModal">
-</div>
+<div class="absolute modal" tabindex="-1" role="dialog" ng-include="'./html/modal-partial-check.html'" id="editCheckModal"></div>
+<div class="absolute modal" tabindex="-1" role="dialog" ng-include="'./html/modal-partial-add-filter.html'" id="addFilterModal"></div>

@@ -1,12 +1,38 @@
 /*global seyrenApp,console,$ */
 (function () {
     'use strict';
-    seyrenApp.controller('ChecksController', function ChecksController($scope, $location, Checks, Seyren) {
+    seyrenApp.controller('ChecksController', function ChecksController($scope, $location, Checks, Filters, Seyren) {
         $scope.pollChecksInSeconds = 30;
 
         if ($location.search().filter) {
             $scope.filter = $location.search().filter;
         }
+
+        $scope.searchByFilter = function (filterKeyword) {
+          $("#addFilterModal").modal();
+        }
+
+        $scope.addFilter = function () {
+          $("#addFilterModal").modal();
+        };
+
+        $scope.loadFilters = function () {
+            Filters.get(function (data) {
+                console.log(data);
+                $scope.savedFilters = data;
+            }, function (err) {
+                console.log('Loading filters failed');
+            });
+        };
+
+        $scope.toggleSavedFiltersPanel = function () {
+          var elem = $("#panel-saved-filters");
+          if (elem.is(":visible")) {
+            elem.hide();
+          } else {
+            elem.show();
+          }
+        };
 
         $scope.loadChecks = function () {
             Checks.query(function (data) {
@@ -41,6 +67,11 @@
         $scope.$on('check:created', function () {
             $scope.loadChecks();
         });
+
+        $scope.$on('filter:created', function () {
+            $scope.loadFilters();
+        });
+        $scope.loadFilters();
 
         $scope.editSubscription = function (check) {
             Seyren.editSubscription(check);
