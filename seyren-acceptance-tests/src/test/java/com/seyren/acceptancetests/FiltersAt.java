@@ -32,6 +32,7 @@ public class FiltersAT {
         String body = "{ \"name\" : \"TestFilter\", \"filter\" : \"app.mx.test.rate5\" }";
         Response response = post(filters(), body(body, "application/json"));
         assertThat(response, hasStatusCode(201));
+
         body = "{ \"name\" : \"TestFilter2\", \"filter\" : \"app.ar.test.rate5\" }";
         response = post(filters(), body(body, "application/json"));
         assertThat(response, hasStatusCode(201));
@@ -40,9 +41,11 @@ public class FiltersAT {
         assertThat(newResponse, hasStatusCode(200));
         JsonNode responseJson = newResponse.asJson();
         assertThat(responseJson.findValues("id").size(), greaterThanOrEqualTo(2));
+
         String idToBeDeleted = responseJson.findValues("id").get(0).asText();
         response = delete(new StringBuilder().append(filters()).append("/").append(idToBeDeleted));
         assertThat(response, hasStatusCode(204));
+
         newResponse = get(filters());
         responseJson = newResponse.asJson();
         assertThat(newResponse, hasStatusCode(200));
