@@ -13,48 +13,34 @@
  */
 package com.seyren.mongo;
 
-import static com.seyren.mongo.NiceDBObject.*;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-import java.util.regex.Pattern;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import com.google.common.base.Strings;
+import com.mongodb.*;
+import com.seyren.core.domain.*;
+import com.seyren.core.store.AlertsStore;
+import com.seyren.core.store.ChecksStore;
+import com.seyren.core.store.FiltersStore;
+import com.seyren.core.store.SubscriptionsStore;
+import com.seyren.core.util.config.SeyrenConfig;
+import com.seyren.core.util.hashing.TargetHash;
 import org.apache.commons.lang.Validate;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.Bytes;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientURI;
-import com.mongodb.MongoCommandException;
-import com.mongodb.MongoException;
-import com.mongodb.WriteConcern;
-import com.seyren.core.domain.Alert;
-import com.seyren.core.domain.AlertType;
-import com.seyren.core.domain.Check;
-import com.seyren.core.domain.SeyrenResponse;
-import com.seyren.core.domain.Subscription;
-import com.seyren.core.store.AlertsStore;
-import com.seyren.core.store.ChecksStore;
-import com.seyren.core.store.SubscriptionsStore;
-import com.seyren.core.util.config.SeyrenConfig;
-import com.seyren.core.util.hashing.TargetHash;
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
+import java.util.regex.Pattern;
+
+import static com.seyren.mongo.NiceDBObject.forId;
+import static com.seyren.mongo.NiceDBObject.object;
 
 @Named
-public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore {
+public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore, FiltersStore {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(MongoStore.class);
     
@@ -132,6 +118,10 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
     
     private DBCollection getAlertsCollection() {
         return mongo.getCollection("alerts");
+    }
+
+    private DBCollection getFiltersCollection() {
+        return mongo.getCollection("filters");
     }
 
     protected SeyrenResponse executeQueryAndCollectResponse(DBObject query) {
@@ -356,5 +346,31 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
         DBObject updateObject = object("$set", object("subscriptions.$", subscriptionObject));
         getChecksCollection().update(checkFindObject, updateObject);
     }
-    
+
+    @Override
+    public Filter createFilter(String filterId, Filter filter) {
+        filter.setId(ObjectId.get().toString());
+        getFiltersCollection().insert(mapper.filterToDBObject(filter));
+
+        return filter;
+    }
+
+    @Override
+    public SeyrenResponse<Filter> getFilters() {
+        DBCursor dbc = getFiltersCollection().find();
+        List<Filter> filters = new ArrayList<Filter>();
+        while (dbc.hasNext()) {
+            filters.add(mapper.filterFrom(dbc.next()));
+        }
+        dbc.close();
+        return new SeyrenResponse<Filter>()
+                .withValues(filters)
+                .withTotal(dbc.count());
+    }
+
+    @Override
+    public void deleteFilter(String filterId) {
+
+    }
+
 }
