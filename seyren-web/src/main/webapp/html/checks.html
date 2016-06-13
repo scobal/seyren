@@ -8,45 +8,25 @@
 </div>
 <div class="row">
     <br/>
-    <!-- new stuff -->
     <div class="col-lg-6">
-        <form class="form-inline">
-        <div class="form-group">
-            <input name="filter" ng-model="filter" type="text" placeholder="Filter..." ng-blur="filterToUrl()" class="form-control input-sm" />
-        </div>
-        <div class="form-group">
-          <button ng-click="addFilter()" class="btn btn-default saved-filters-toggle" type="button" id="saveFiltersButton">
-              Save filters
-          </button>
-        </div>
-        <div class="form-group">
-            <button ng-click="toggleSavedFiltersPanel()" class="btn btn-warning" type="button" id="savedFiltersButton">
-                Saved filters
-                <span class="caret"></span>
-            </button>
-            <div class="panel panel-default" id="panel-saved-filters">
-              <div class="panel-heading">
-                <h3 class="panel-title">
-                  <input name="savedFilterSearch" ng-model="filterSearch" type="text" placeholder="Filter..." class="form-control input-sm" />
-                </h3>
-              </div>
-              <div class="panel-body">
-                <ul class="nav nav-pills nav-stacked">
-                  <li ng-repeat="savedFilter in savedFilters.values | filter:filterSearch">
-                    <a href="#" ng-click="searchByFilter(savedFilter.filter, $event)">
-                      {{ savedFilter.name }}
-                      <button class="btn btn-danger btn-xs" style="float: right" ng-click="deleteFilter(savedFilter, $event)">&#x274C;</button>
-                      <div style="clear:both;"></div>
-                    </a>
-                  </li>
-                </ul>
-                <p ng-hide="savedFilters.values.length > 0">We've got no filters. Why not create one?</p>
-              </div>
+        <form class="form-inline" id="filter-form">
+            <div class="form-group">
+                    <input name="filter" ng-model="filter" type="text" placeholder="Filter..." ng-blur="filterToUrl()" class="form-control input-sm" />
             </div>
-        </div>
+            <div class="form-group">
+                <button ng-click="addFilter()" class="btn btn-sm btn-default saved-filters-toggle" type="button" id="saveFiltersButton">
+                    Save filters
+                </button>
+            </div>
+            <div class="form-group">
+                <button ng-click="toggleFiltersPanel()" class="btn btn-sm btn-warning" type="button" id="savedFiltersButton">
+                    Saved filters
+                    <span class="caret"></span>
+                </button>
+                <div class="panel panel-default" ng-include="'./html/filter-panel-partial.html'" id="filter-panel"></div>
+            </div>
         </form>
     </div>
-    <!-- /new stuff -->
 </div>
 <div class="row">
     <div class="col-lg-12">

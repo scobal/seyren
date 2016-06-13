@@ -8,8 +8,7 @@
             $scope.filter = $location.search().filter;
         }
 
-        $scope.deleteFilter = function (filter, event) {
-          event.stopPropagation();
+        $scope.deleteFilter = function (filter) {
           Filters.remove({filterId: filter.id}, filter, function () {
               $scope.loadFilters();
           }, function (err) {
@@ -17,9 +16,8 @@
           });
         };
 
-        $scope.searchByFilter = function (filter, event) {
-          event.preventDefault();
-          $scope.toggleSavedFiltersPanel();
+        $scope.searchByFilter = function (filter) {
+          $scope.toggleFiltersPanel();
           $scope.filter = filter;
           $scope.filterToUrl();
         };
@@ -30,15 +28,14 @@
 
         $scope.loadFilters = function () {
             Filters.get(function (data) {
-                console.log(data);
                 $scope.savedFilters = data;
             }, function (err) {
                 console.log('Loading filters failed');
             });
         };
 
-        $scope.toggleSavedFiltersPanel = function () {
-          var elem = $("#panel-saved-filters");
+        $scope.toggleFiltersPanel = function () {
+          var elem = $("#filter-panel");
           if (elem.is(":visible")) {
             elem.hide();
           } else {
