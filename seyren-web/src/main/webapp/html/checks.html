@@ -9,38 +9,21 @@
 <div class="row">
     <br/>
     <div class="col-lg-6">
-        <form class="form-inline">
+        <form class="form-inline" id="filter-form">
             <div class="form-group">
                     <input name="filter" ng-model="filter" type="text" placeholder="Filter..." ng-blur="filterToUrl()" class="form-control input-sm" />
             </div>
             <div class="form-group">
-                <button ng-click="addFilter()" class="btn btn-default saved-filters-toggle" type="button" id="saveFiltersButton">
+                <button ng-click="addFilter()" class="btn btn-sm btn-default saved-filters-toggle" type="button" id="saveFiltersButton">
                     Save filters
                 </button>
             </div>
             <div class="form-group">
-                <button ng-click="toggleFiltersPanel()" class="btn btn-warning" type="button" id="savedFiltersButton">
+                <button ng-click="toggleFiltersPanel()" class="btn btn-sm btn-warning" type="button" id="savedFiltersButton">
                     Saved filters
                     <span class="caret"></span>
                 </button>
-                <div class="panel panel-default filter-panel">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">
-                            <input name="savedFilterSearch" ng-model="filterSearch" type="text" placeholder="Filter..." class="form-control input-sm" />
-                        </h3>
-                    </div>
-                    <div class="panel-body">
-                        <div class="filter-panel-row" ng-repeat="savedFilter in savedFilters.values | filter:filterSearch">
-                            <div class="filter-panel-row-label filter-panel-column" ng-click="searchByFilter(savedFilter.filter)">
-                                {{ savedFilter.name }}
-                            </div>
-                            <div class="filter-panel-row-delete filter-panel-column">
-                                <div class="btn btn-danger btn-xs" ng-click="deleteFilter(savedFilter)">&#x274C;</div>
-                            </div>
-                        </div>
-                        <p ng-hide="savedFilters.values.length > 0">We've got no filters. Why not create one?</p>
-                    </div>
-                </div>
+                <div class="panel panel-default" ng-include="'./html/filter-panel-partial.html'" id="filter-panel"></div>
             </div>
         </form>
     </div>

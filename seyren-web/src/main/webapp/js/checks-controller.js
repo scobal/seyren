@@ -35,7 +35,7 @@
         };
 
         $scope.toggleFiltersPanel = function () {
-          var elem = $(".filter-panel");
+          var elem = $("#filter-panel");
           if (elem.is(":visible")) {
             elem.hide();
           } else {
