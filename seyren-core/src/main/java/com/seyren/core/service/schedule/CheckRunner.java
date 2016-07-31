@@ -77,6 +77,7 @@ public class CheckRunner implements Runnable {
             }
             
             List<Alert> interestingAlerts = new ArrayList<Alert>();
+            List<Alert> allAlerts = new ArrayList<Alert>();
             
             for (Entry<String, Optional<BigDecimal>> entry : targetValues.entrySet()) {
                 
@@ -107,12 +108,13 @@ public class CheckRunner implements Runnable {
                 if (currentState.isWorseThan(worstState)) {
                     worstState = currentState;
                 }
+
+                Alert alert = createAlert(target, currentValue, warn, error, lastState, currentState, now);
+                allAlerts.add(alert);
                 
                 if (isStillOk(lastState, currentState)) {
                     continue;
                 }
-                
-                Alert alert = createAlert(target, currentValue, warn, error, lastState, currentState, now);
                 
                 alertsStore.createAlert(check.getId(), alert);
                 
@@ -127,19 +129,20 @@ public class CheckRunner implements Runnable {
 
             Check updatedCheck = checksStore.updateStateAndLastCheck(check.getId(), worstState, DateTime.now());
 
+
             if (interestingAlerts.isEmpty()) {
                 return;
             }
             
             for (Subscription subscription : updatedCheck.getSubscriptions()) {
-                if (!subscription.shouldNotify(now, worstState)) {
+                if (!subscription.shouldNotify(now, worstState) && !subscription.shouldBroadcastAllAlerts()) {
                     continue;
                 }
                 
                 for (NotificationService notificationService : notificationServices) {
                     if (notificationService.canHandle(subscription.getType())) {
                         try {
-                            notificationService.sendNotification(updatedCheck, subscription, interestingAlerts);
+                            notificationService.sendNotification(updatedCheck, subscription, subscription.shouldBroadcastAllAlerts() ? allAlerts : interestingAlerts);
                         } catch (Exception e) {
                             LOGGER.warn("Notifying {} by {} failed.", subscription.getTarget(), subscription.getType(), e);
                         }
