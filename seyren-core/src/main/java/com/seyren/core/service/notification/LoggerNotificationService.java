@@ -53,6 +53,6 @@ public class LoggerNotificationService implements NotificationService {
     }
 
     String url(Check check) {
-        return String.format("%s/#/checks/%s", seyrenConfig.getBaseUrl(), check.getName());
+        return String.format("%s/#/checks/%s", seyrenConfig.getBaseUrl(), check.getId());
     }
 }
