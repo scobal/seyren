@@ -14,7 +14,8 @@
             live: false,
             allowNoData: false,
             totalMetric: '-',
-            graphiteBaseUrl: ''
+            graphiteBaseUrl: '',
+            enableConsecutiveChecks: false
         };
 
         Config.query({}, function(config) {

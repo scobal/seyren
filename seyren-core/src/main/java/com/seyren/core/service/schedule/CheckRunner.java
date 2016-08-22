@@ -20,15 +20,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.seyren.core.domain.*;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
-import com.seyren.core.domain.Alert;
-import com.seyren.core.domain.AlertType;
-import com.seyren.core.domain.Check;
-import com.seyren.core.domain.Subscription;
 import com.seyren.core.service.checker.TargetChecker;
 import com.seyren.core.service.checker.ValueChecker;
 import com.seyren.core.service.notification.NotificationService;
@@ -139,13 +136,41 @@ public class CheckRunner implements Runnable {
                 saveAlert(alert);
                 
                 // Only notify if the alert has changed state
-                if (stateIsTheSame(lastState, currentState)) {
-                	LOGGER.info("        Check #{}, Target #{} :: Current alert comparison reveals state is the same", check.getId(), target );
-                    continue;
+
+                if(null != check.isEnableConsecutiveChecks() && check.isEnableConsecutiveChecks() && null != check.getConsecutiveChecks()){
+                    SeyrenResponse<Alert> previousResponse= alertsStore.getAlerts(check.getId(), 0, check.getConsecutiveChecks());
+                    if(null != previousResponse) {
+                        List<Alert> previousAlerts = previousResponse.getValues();
+                        if(previousAlerts.size() < check.getConsecutiveChecks()){
+                            continue;
+                        }
+                        else{
+                            Integer errorCount = 0;
+                            for(Alert pastAlert : previousAlerts ){
+                                AlertType pastErrorState = valueChecker.checkValue(pastAlert.getValue(), warn, error);
+                                if(pastErrorState.equals(AlertType.ERROR)){
+                                    errorCount ++;
+                                }
+                            }
+                            if(errorCount > (check.getConsecutiveChecks() * check.getConsecutiveChecksTolerance()) / 100){
+                                interestingAlerts.add(alert);
+                            }
+                            else{
+                                continue;
+                            }
+                        }
+                    }
                 }
-                // If the state has changed, add the alert to the interesting alerts collection
-                LOGGER.info("        Check #{}, Target #{} :: Adding current alert as an 'Interesting Alert'", check.getId(), target );
-                interestingAlerts.add(alert);
+                else {
+                    if (stateIsTheSame(lastState, currentState)) {
+                        LOGGER.info("        Check #{}, Target #{} :: Current alert comparison reveals state is the same", check.getId(), target );
+                        continue;
+                    }
+                    // If the state has changed, add the alert to the interesting alerts collection
+                    LOGGER.info("        Check #{}, Target #{} :: Adding current alert as an 'Interesting Alert'", check.getId(), target );
+
+                    interestingAlerts.add(alert);
+                }
                 
             }
             // Notify the Check Governor that the check has been completed

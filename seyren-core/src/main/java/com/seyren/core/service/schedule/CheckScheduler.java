@@ -14,12 +14,10 @@
 package com.seyren.core.service.schedule;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
@@ -64,7 +62,7 @@ public class CheckScheduler {
         this.checkExecutionTimeoutSeconds = seyrenConfig.getMaxCheckExecutionTimeInSeconds();
     }
     
-    @Scheduled(fixedRateString = "${GRAPHITE_REFRESH:60000}")
+    @Scheduled(fixedRateString = "${GRAPHITE_REFRESH:10000}")
     public void performChecks() {
     	int checksInScope = 0;
     	int checksWereRun = 0;
@@ -75,6 +73,10 @@ public class CheckScheduler {
         		continue;
         	}
         	checksInScope++;
+			if(null != check.isEnableConsecutiveChecks() && check.isEnableConsecutiveChecks() && null!= check.getConsecutiveChecks()){
+				// Do something
+				System.out.print(check.getConsecutiveChecks());
+			}
         	// See if this check is currently running, if so, return and log the 
         	// missed cycle
         	if (!CheckConcurrencyGovernor.instance().isCheckRunning(check)){
