@@ -251,6 +251,10 @@ public class Subscription {
         setEnabled(enabled);
         return this;
     }
+
+    public boolean shouldBroadcastAllAlerts() {
+        return isEnabled() && type == SubscriptionType.HTTPBROADCAST;
+    }
     
     public boolean shouldNotify(DateTime time, AlertType alertType) {
         if (!isEnabled()) {

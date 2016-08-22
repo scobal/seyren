@@ -129,6 +129,33 @@ public class SubscriptionTest {
                 .withIgnoreOk(false);
         assertThat(sub.shouldNotify(dateTime("1015"), AlertType.OK), is(true));
     }
+
+    @Test
+    public void subscriptionShouldBroadcastWhenCorrectType() {
+        Subscription sub = new Subscription()
+                .withEnabled(true)
+                .withType(SubscriptionType.HTTPBROADCAST);
+
+        assertThat(sub.shouldBroadcastAllAlerts(), is(true));
+    }
+
+    @Test
+    public void subscriptionShouldNotBroadcastWhenIncorrectType() {
+        Subscription sub = new Subscription()
+                .withEnabled(true)
+                .withType(SubscriptionType.EMAIL);
+
+        assertThat(sub.shouldBroadcastAllAlerts(), is(false));
+    }
+
+    @Test
+    public void subscriptionShouldNotBroadcastWhenDisabled() {
+        Subscription sub = new Subscription()
+                .withEnabled(false)
+                .withType(SubscriptionType.HTTPBROADCAST);
+
+        assertThat(sub.shouldBroadcastAllAlerts(), is(false));
+    }
     
     private DateTime dateTime(String time) {
         return new DateTime(2012, 01, 01, Integer.valueOf(time.substring(0, 2)), Integer.valueOf(time.substring(2)));

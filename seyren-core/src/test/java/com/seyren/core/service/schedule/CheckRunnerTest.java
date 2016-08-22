@@ -26,6 +26,7 @@ import java.util.Map;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 
 import com.google.common.base.Optional;
@@ -325,10 +326,96 @@ public class CheckRunnerTest {
         when(mockSubscription.shouldNotify(any(DateTime.class), eq(AlertType.ERROR))).thenReturn(true);
         when(mockNotificationService.canHandle(SubscriptionType.EMAIL)).thenReturn(true);
         Mockito.doThrow(new NotificationFailedException("Boom!")).when(mockNotificationService).sendNotification(eq(mockCheck), eq(mockSubscription), any(List.class));
-        
+
         checkRunner.run();
-        
+
         verify(mockAlertsStore).createAlert(eq("id"), any(Alert.class));
     }
-    
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void broadcastAllAlertsWhenApplicable() throws Exception {
+        Subscription mockSubscription = mock(Subscription.class);
+        when(mockSubscription.getType()).thenReturn(SubscriptionType.HTTPBROADCAST);
+
+        BigDecimal value = BigDecimal.ONE;
+        BigDecimal value2 = BigDecimal.valueOf(2);
+        BigDecimal warn = BigDecimal.valueOf(4);
+        BigDecimal error = BigDecimal.valueOf(5);
+
+        when(mockCheck.getId()).thenReturn("id");
+        when(mockCheck.isEnabled()).thenReturn(true);
+        when(mockCheck.getWarn()).thenReturn(warn);
+        when(mockCheck.getError()).thenReturn(error);
+        when(mockCheck.getSubscriptions()).thenReturn(Arrays.asList(mockSubscription));
+
+        Map<String, Optional<BigDecimal>> targetValues = new HashMap<String, Optional<BigDecimal>>();
+        targetValues.put("target", Optional.of(value));
+        targetValues.put("target2", Optional.of(value2));
+        when(mockTargetChecker.check(mockCheck)).thenReturn(targetValues);
+        when(mockAlertsStore.getLastAlertForTargetOfCheck("target", "id")).thenReturn(new Alert().withToType(AlertType.WARN));
+        when(mockAlertsStore.getLastAlertForTargetOfCheck("target2", "id")).thenReturn(new Alert().withToType(AlertType.OK));
+        when(mockValueChecker.checkValue(value, warn, error)).thenReturn(AlertType.ERROR);
+        when(mockValueChecker.checkValue(value2, warn, error)).thenReturn(AlertType.OK);
+
+        Alert alert = new Alert();
+
+        when(mockAlertsStore.createAlert(eq("id"), any(Alert.class))).thenReturn(alert);
+        when(mockChecksStore.updateStateAndLastCheck(eq("id"), eq(AlertType.ERROR), any(DateTime.class))).thenReturn(mockCheck);
+        when(mockSubscription.shouldBroadcastAllAlerts()).thenReturn(true);
+        when(mockNotificationService.canHandle(SubscriptionType.HTTPBROADCAST)).thenReturn(true);
+
+        checkRunner.run();
+
+        verify(mockNotificationService, times(1)).sendNotification(eq(mockCheck), eq(mockSubscription), argThat(new IsListOfNElements(2)));
+    }
+
+    @Test
+    public void notBroadcastAllAlertsWhenNotApplicable() throws Exception {
+        Subscription mockSubscription = mock(Subscription.class);
+        when(mockSubscription.getType()).thenReturn(SubscriptionType.EMAIL);
+
+        BigDecimal value = BigDecimal.ONE;
+        BigDecimal value2 = BigDecimal.valueOf(2);
+        BigDecimal warn = BigDecimal.valueOf(4);
+        BigDecimal error = BigDecimal.valueOf(5);
+
+        when(mockCheck.getId()).thenReturn("id");
+        when(mockCheck.isEnabled()).thenReturn(true);
+        when(mockCheck.getWarn()).thenReturn(warn);
+        when(mockCheck.getError()).thenReturn(error);
+        when(mockCheck.getSubscriptions()).thenReturn(Arrays.asList(mockSubscription));
+
+        Map<String, Optional<BigDecimal>> targetValues = new HashMap<String, Optional<BigDecimal>>();
+        targetValues.put("target", Optional.of(value));
+        targetValues.put("target2", Optional.of(value2));
+        when(mockTargetChecker.check(mockCheck)).thenReturn(targetValues);
+        when(mockAlertsStore.getLastAlertForTargetOfCheck("target", "id")).thenReturn(new Alert().withToType(AlertType.WARN));
+        when(mockAlertsStore.getLastAlertForTargetOfCheck("target2", "id")).thenReturn(new Alert().withToType(AlertType.OK));
+        when(mockValueChecker.checkValue(value, warn, error)).thenReturn(AlertType.ERROR);
+        when(mockValueChecker.checkValue(value2, warn, error)).thenReturn(AlertType.OK);
+
+        Alert alert = new Alert();
+
+        when(mockAlertsStore.createAlert(eq("id"), any(Alert.class))).thenReturn(alert);
+        when(mockChecksStore.updateStateAndLastCheck(eq("id"), eq(AlertType.ERROR), any(DateTime.class))).thenReturn(mockCheck);
+        when(mockSubscription.shouldNotify(any(DateTime.class), eq(AlertType.ERROR))).thenReturn(true);
+        when(mockSubscription.shouldNotify(any(DateTime.class), eq(AlertType.OK))).thenReturn(false);
+        when(mockNotificationService.canHandle(SubscriptionType.EMAIL)).thenReturn(true);
+
+        checkRunner.run();
+
+        verify(mockNotificationService, times(1)).sendNotification(eq(mockCheck), eq(mockSubscription), argThat(new IsListOfNElements(1)));
+    }
+
+    class IsListOfNElements extends ArgumentMatcher<List> {
+        private int n;
+
+        public IsListOfNElements(int n) {
+            this.n = n;
+        }
+        public boolean matches(Object list) {
+            return ((List) list).size() == n;
+        }
+    }
 }

@@ -101,7 +101,7 @@ public class HttpNotificationService implements NotificationService {
     
     @Override
     public boolean canHandle(SubscriptionType subscriptionType) {
-        return subscriptionType == SubscriptionType.HTTP;
+        return subscriptionType == SubscriptionType.HTTP || subscriptionType == SubscriptionType.HTTPBROADCAST;
     }
    
     private String getPreviewImage(Check check)

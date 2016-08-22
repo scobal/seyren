@@ -57,8 +57,9 @@ public class HttpNotificationServiceTest {
     @Test
     public void notifcationServiceCanOnlyHandleHttpSubscription() {
         assertThat(service.canHandle(SubscriptionType.HTTP), is(true));
+        assertThat(service.canHandle(SubscriptionType.HTTPBROADCAST), is(true));
         for (SubscriptionType type : SubscriptionType.values()) {
-            if (type == SubscriptionType.HTTP) {
+            if (type == SubscriptionType.HTTP || type == SubscriptionType.HTTPBROADCAST) {
                 continue;
             }
             assertThat(service.canHandle(type), is(false));
