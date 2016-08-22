@@ -73,10 +73,6 @@ public class CheckScheduler {
         		continue;
         	}
         	checksInScope++;
-			if(null != check.isEnableConsecutiveChecks() && check.isEnableConsecutiveChecks() && null!= check.getConsecutiveChecks()){
-				// Do something
-				System.out.print(check.getConsecutiveChecks());
-			}
         	// See if this check is currently running, if so, return and log the 
         	// missed cycle
         	if (!CheckConcurrencyGovernor.instance().isCheckRunning(check)){

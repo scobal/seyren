@@ -20,7 +20,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.seyren.core.domain.*;
+import com.seyren.core.domain.Alert;
+import com.seyren.core.domain.AlertType;
+import com.seyren.core.domain.Check;
+import com.seyren.core.domain.Subscription;
+import com.seyren.core.domain.SeyrenResponse;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +51,7 @@ public class CheckRunner implements Runnable {
 	private static final HashMap<String, Alert> lastAlerts = new HashMap<String, Alert>();
     
     public CheckRunner(Check check, AlertsStore alertsStore, ChecksStore checksStore, TargetChecker targetChecker, ValueChecker valueChecker,
-            Iterable<NotificationService> notificationServices) {
+                       Iterable<NotificationService> notificationServices) {
         this.check = check;
         this.alertsStore = alertsStore;
         this.checksStore = checksStore;
@@ -137,28 +141,9 @@ public class CheckRunner implements Runnable {
                 
                 // Only notify if the alert has changed state
 
-                if(null != check.isEnableConsecutiveChecks() && check.isEnableConsecutiveChecks() && null != check.getConsecutiveChecks()){
-                    SeyrenResponse<Alert> previousResponse= alertsStore.getAlerts(check.getId(), 0, check.getConsecutiveChecks());
-                    if(null != previousResponse) {
-                        List<Alert> previousAlerts = previousResponse.getValues();
-                        if(previousAlerts.size() < check.getConsecutiveChecks()){
-                            continue;
-                        }
-                        else{
-                            Integer errorCount = 0;
-                            for(Alert pastAlert : previousAlerts ){
-                                AlertType pastErrorState = valueChecker.checkValue(pastAlert.getValue(), warn, error);
-                                if(pastErrorState.equals(AlertType.ERROR)){
-                                    errorCount ++;
-                                }
-                            }
-                            if(errorCount > (check.getConsecutiveChecks() * check.getConsecutiveChecksTolerance()) / 100){
-                                interestingAlerts.add(alert);
-                            }
-                            else{
-                                continue;
-                            }
-                        }
+                if(null != check.isEnableConsecutiveChecks() && check.isEnableConsecutiveChecks() && null != check.getConsecutiveChecks() && null != check.getConsecutiveChecksTolerance()){
+                    if (analysePastAlertsAndRaiseAlarm(warn, error, interestingAlerts, alert, target)){
+                        continue;
                     }
                 }
                 else {
@@ -215,7 +200,34 @@ public class CheckRunner implements Runnable {
             CheckConcurrencyGovernor.instance().notifyCheckIsComplete(this.check);
         }
     }
-    
+
+    private boolean analysePastAlertsAndRaiseAlarm(BigDecimal warn, BigDecimal error, List<Alert> interestingAlerts, Alert alert, String target) {
+        SeyrenResponse<Alert> previousResponse= alertsStore.getAlerts(check.getId(), 0, check.getConsecutiveChecks());
+        if(null != previousResponse) {
+            List<Alert> previousAlerts = previousResponse.getValues();
+            if(previousAlerts.size() < check.getConsecutiveChecks()){
+                return true;
+            }
+            else{
+                Integer errorCount = 0;
+                for(Alert pastAlert : previousAlerts ){
+                    AlertType pastErrorState = valueChecker.checkValue(pastAlert.getValue(), warn, error);
+                    if(pastErrorState.equals(AlertType.ERROR)){
+                        errorCount ++;
+                    }
+                }
+                if(errorCount > (check.getConsecutiveChecks() * check.getConsecutiveChecksTolerance()) / 100){
+                    LOGGER.info("        Check #{}, Target #{}, Errors Count #{}, Tolerance #{} :: Adding current alert as an 'Interesting Alert'", check.getId(), target, check.getConsecutiveChecks(), check.getConsecutiveChecksTolerance() );
+                    interestingAlerts.add(alert);
+                }
+                else{
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public static void flushLastAlerts() {
     	lastAlerts.clear();
     }
