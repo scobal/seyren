@@ -53,24 +53,24 @@ public class ScriptNotificationService implements NotificationService {
 				throw new NotificationFailedException("Invalid subscription; script has no hostname position");
 			}
 			
-	        LOGGER.info("Script Location: {}", seyrenConfig.getScriptPath());
+	        LOGGER.info("Check#{}, Script Location: {}", check.getId(), seyrenConfig.getScriptPath());
 	    	for(Alert alert: alerts) {
 	    		try {
 	    			String hostname = getHostName(alert, hostPosition);
 	    			String resourceUrl = subscription.getTarget();
 	    			ProcessBuilder pb = new ProcessBuilder(seyrenConfig.getScriptType(), seyrenConfig.getScriptPath(), hostname, new Gson().toJson(check), seyrenConfig.getBaseUrl(), resourceUrl);
-	                LOGGER.info("Script Start");
+	                LOGGER.info("Check#{}, Script Start", check.getId());
 	                Process p = pb.start();
 	                BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
 	                String line;
 	                while ((line = reader.readLine()) != null) {
-	                    LOGGER.info(line);
+	                    LOGGER.info("Check#{}, {}" check.getId(), line);
 	                    //System.out.println(line);
 	                }
-	                LOGGER.info("Script End");
+	                LOGGER.info("Check#{}, Script End", check.getId());
 	    		}
 	    		catch (Exception e) {
-	                LOGGER.error("Script could not be sent: {}", e);
+	                LOGGER.error("Check#{}, Script could not be sent: {}", check.getId(), e);
 	                throw new NotificationFailedException("Could not send message through the script");
 	    		}
 	    	}
