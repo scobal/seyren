@@ -82,6 +82,8 @@ public class SeyrenConfig {
     private final String victorOpsRestAPIEndpoint;
     private final String emailTemplateFileName;
     private final String emailSubjectTemplateFileName;
+    private final String bigPandaNotificationUrl;
+    private final String bigPandaAuthBearer;
     private final int noOfThreads;
     private final String httpNotificationUrl;
     public SeyrenConfig() {
@@ -161,6 +163,10 @@ public class SeyrenConfig {
 
         //VictorOps
         this.victorOpsRestAPIEndpoint = configOrDefault("VICTOROPS_REST_ENDPOINT", "");
+
+        //BigPanda
+        this.bigPandaNotificationUrl = configOrDefault("BIGPANDA_NOTIFICATION_URL", "");
+        this.bigPandaAuthBearer = configOrDefault("BIGPANDA_AUTH_BEARER", "");
 
         // Template
         this.emailTemplateFileName = configOrDefault("TEMPLATE_EMAIL_FILE_PATH","com/seyren/core/service/notification/email-template.vm");
@@ -409,6 +415,16 @@ public class SeyrenConfig {
     @JsonIgnore
     public String getSlackEmojis() {
       return slackEmojis;
+    }
+
+    @JsonIgnore
+    public String getBigPandaNotificationUrl() {
+        return bigPandaNotificationUrl;
+    }
+
+    @JsonIgnore
+    public String getBigPandaAuthBearer() {
+        return bigPandaAuthBearer;
     }
 
     @JsonIgnore

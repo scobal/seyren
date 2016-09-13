@@ -77,6 +77,13 @@ The following options can be supplied as system properties or environment variab
 ##### [HTTP]
 * `HTTP_NOTIFICATION_URL` - The url for a resource that contains a POST HTTP Method. Default: ``
 
+##### [BigPanda.io](https://bigpanda.io)
+
+Use a [Big Panda App Key](https://a.bigpanda.io/#/app/integrations/alertsapi/instructions/alertsapi) as Target when adding a new subscription.
+
+* `BIGPANDA_NOTIFICATION_URL` - The url for a resource that contains a POST HTTP Method. Default: ``
+* `BIGPANDA_AUTH_BEARER` - The Authorization Bearer header that is assigned to each customer by BigPanda. See [Alerts API integration](https://a.bigpanda.io/#/app/integrations/alertsapi/instructions/alertsapi) Default: ``
+
 ##### [Flowdock](https://www.flowdock.com)
 
 Use a [Flow API token](https://www.flowdock.com/account/tokens) as Target when adding a new subscription.
