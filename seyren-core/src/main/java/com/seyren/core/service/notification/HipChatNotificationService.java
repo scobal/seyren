@@ -15,6 +15,7 @@ package com.seyren.core.service.notification;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.net.URLEncoder;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -86,10 +87,11 @@ public class HipChatNotificationService implements NotificationService {
         for (String roomId : roomIds) {
             LOGGER.info("Posting: {} to {}: {} {}", from, roomId, message, color);
             HttpClient client = HttpClientBuilder.create().useSystemProperties().build();
-            String url = baseUrl + "/v2/room/" + roomId + "/notification?auth_token=" + authToken;
-            HttpPost post = new HttpPost(url);
+            HttpPost post = new HttpPost();
 
             try {
+                String url = baseUrl + "/v2/room/" + URLEncoder.encode(roomId, "UTF-8").replaceAll("\\+", "%20") + "/notification?auth_token=" + authToken;
+                post = new HttpPost(url);
                 List<BasicNameValuePair> parameters = new ArrayList<BasicNameValuePair>();
                 parameters.add(new BasicNameValuePair("message", message));
                 parameters.add(new BasicNameValuePair("color", color.name().toLowerCase()));
