@@ -127,6 +127,10 @@
             $scope.loadCheck();
         });
 
+        $scope.$on('check:swapEnableConsecutiveCheckEnabled', function () {
+            $scope.loadCheck();
+        });
+
         $scope.$on('check:swapSubscriptionEnabled', function () {
             $scope.loadCheck();
         });
@@ -141,6 +145,10 @@
 
         $scope.swapCheckEnabled = function (check) {
             Seyren.swapCheckEnabled(check);
+        };
+
+        $scope.swapConsecutiveChecksEnabled = function (check) {
+            Seyren.swapConsecutiveChecksEnabled(check);
         };
 
         $scope.swapSubscriptionEnabled = function (check, subscription) {

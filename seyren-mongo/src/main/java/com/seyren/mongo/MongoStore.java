@@ -284,7 +284,10 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore,
                 .with("live", check.isLive())
                 .with("allowNoData", check.isAllowNoData())
                 .with("lastCheck", lastCheck == null ? null : new Date(lastCheck.getMillis()))
-                .with("state", check.getState().toString());
+                .with("state", check.getState().toString())
+                .with("enableConsecutiveChecks", check.isEnableConsecutiveChecks())
+                .with("consecutiveChecks", check.getConsecutiveChecks())
+                .with("consecutiveChecksTolerance", check.getConsecutiveChecksTolerance());
 
         DBObject setObject = object("$set", partialObject);
 

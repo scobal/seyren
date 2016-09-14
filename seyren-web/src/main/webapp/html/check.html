@@ -84,6 +84,24 @@
                     <p class="form-control-static"><input type="checkbox" ng-checked="check.enabled" ng-click="swapCheckEnabled(check)" /> </p>
                 </div>
             </div>
+            <div class="form-group detail-form">
+                <label class="col-lg-2 control-label">Enable Consecutive Checks:</label>
+                <div class="col-lg-10">
+                    <p class="form-control-static"><input type="checkbox" ng-checked="check.enableConsecutiveChecks" ng-click="swapConsecutiveChecksEnabled(check)"/> </p>
+                </div>
+            </div>
+            <div class="form-group detail-form">
+                <label class="col-lg-2 control-label">Consecutive Checks:</label>
+                <div class="col-lg-10">
+                    <p class="form-control-static">{{check.consecutiveChecks}}</p>
+                </div>
+            </div>
+            <div class="form-group detail-form">
+                <label class="col-lg-2 control-label">Tolerance Level:</label>
+                <div class="col-lg-10">
+                    <p class="form-control-static">{{check.consecutiveChecksTolerance}}</p>
+                </div>
+            </div>
             <div class="form-group detail-form" ng-show="liveEnabled()">
                 <label class="col-lg-2 control-label">Live:</label>
                 <div class="col-lg-10">

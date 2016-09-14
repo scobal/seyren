@@ -52,6 +52,9 @@ public class Check {
     private AlertType state;
     private DateTime lastCheck;
     private List<Subscription> subscriptions = new ArrayList<Subscription>();
+    private Integer consecutiveChecks;
+    private Boolean enableConsecutiveChecks;
+    private Integer consecutiveChecksTolerance;
     /** Flag which signifies that an exception occurred during a Graphite, etc. server read 
      * in performing this specific check */
     private boolean remoteServerErrorOccurred = false;
@@ -263,4 +266,44 @@ public class Check {
 	public void setRemoteServerErrorOccurred(boolean remoteServerErrorOccurred) {
 		this.remoteServerErrorOccurred = remoteServerErrorOccurred;
 	}
+
+    public Integer getConsecutiveChecks() {
+        return consecutiveChecks;
+    }
+
+    public void setConsecutiveChecks(Integer consecutiveChecks) {
+        this.consecutiveChecks = consecutiveChecks;
+    }
+
+    public Boolean isEnableConsecutiveChecks() {
+        return enableConsecutiveChecks;
+    }
+
+    public void setEnableConsecutiveChecks(Boolean enableConsecutiveChecks) {
+        this.enableConsecutiveChecks = enableConsecutiveChecks;
+    }
+
+    public Check withEnableConsecutiveChecks(Boolean enableConsecutiveChecks) {
+        setEnableConsecutiveChecks(enableConsecutiveChecks);
+        return this;
+    }
+
+    public Check withConsecutiveChecks(Integer consecutiveChecks) {
+        setConsecutiveChecks(consecutiveChecks);
+        return this;
+    }
+
+    public Integer getConsecutiveChecksTolerance() {
+        return consecutiveChecksTolerance;
+    }
+
+    public void setConsecutiveChecksTolerance(Integer consecutiveChecksTolerance) {
+        this.consecutiveChecksTolerance = consecutiveChecksTolerance;
+    }
+
+    public Check withConsecutiveChecksTolerance(Integer consecutiveChecksTolerance) {
+        setConsecutiveChecksTolerance(consecutiveChecksTolerance);
+        return this;
+    }
 }
+

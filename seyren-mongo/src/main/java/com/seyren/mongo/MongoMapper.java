@@ -49,6 +49,9 @@ public class MongoMapper {
         for (Object o : list) {
             subscriptions.add(subscriptionFrom((DBObject) o));
         }
+        Boolean enableConsecutiveChecks = getBooleanValue(dbo, "enableConsecutiveChecks");
+        Integer consecutiveChecks = getInteger(dbo, "consecutiveChecks");
+        Integer consecutiveChecksTolerance = getInteger(dbo, "consecutiveChecksTolerance");
         
         return new Check().withId(id)
                 .withName(name)
@@ -65,7 +68,10 @@ public class MongoMapper {
                 .withAllowNoData(allowNoData)
                 .withState(state)
                 .withLastCheck(lastCheck)
-                .withSubscriptions(subscriptions);
+                .withSubscriptions(subscriptions)
+                .withEnableConsecutiveChecks(enableConsecutiveChecks)
+                .withConsecutiveChecks(consecutiveChecks)
+                .withConsecutiveChecksTolerance(consecutiveChecksTolerance);
     }
     
     public Subscription subscriptionFrom(DBObject dbo) {
@@ -206,6 +212,10 @@ public class MongoMapper {
 
             map.put("subscriptions", dbSubscriptions);
         }
+        map.put("enableConsecutiveChecks",check.isEnableConsecutiveChecks());
+        map.put("consecutiveChecks",check.getConsecutiveChecks());
+        map.put("consecutiveChecksTolerance", check.getConsecutiveChecksTolerance());
+
         return map;
     }
     
@@ -283,6 +293,13 @@ public class MongoMapper {
     
     private boolean getBoolean(DBObject dbo, String key) {
         return (Boolean) dbo.get(key);
+    }
+
+    private Boolean getBooleanValue(DBObject dbo, String key) {
+        if(null != dbo.get(key)) {
+            return (Boolean) dbo.get(key);
+        }
+        return null;
     }
     
     private boolean getOptionalBoolean(DBObject dbo, String key, boolean defaultValue) {

@@ -51,7 +51,15 @@
             Seyren.swapCheckEnabled(check);
         };
 
+        $scope.swapConsecutiveChecksEnabled = function (check) {
+            Seyren.swapConsecutiveChecksEnabled(check);
+        };
+
         $scope.$on('check:swapCheckEnabled', function () {
+            $scope.loadChecks();
+        });
+
+        $scope.$on('check:swapConsecutiveChecksEnabled', function () {
             $scope.loadChecks();
         });
 

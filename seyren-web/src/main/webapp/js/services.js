@@ -200,6 +200,18 @@
                         console.log('Saving check failed');
                     });
                 },
+                swapConsecutiveChecksEnabled: function (check) {
+                    check.enableConsecutiveChecks = !check.enableConsecutiveChecks;
+                    if(! check.enableConsecutiveChecks){
+                        check.consecutiveChecksTolerance ="";
+                        check.consecutiveChecks = "";
+                    }
+                    Checks.update({ checkId:  check.id}, check, function (data) {
+                        $rootScope.$broadcast('check:swapEnableConsecutiveCheckEnabled');
+                    }, function (err) {
+                        console.log('Saving check failed');
+                    });
+                },
                 swapSubscriptionEnabled: function (check, subscription) {
                     subscription.enabled = !subscription.enabled;
                     Subscriptions.update({ checkId:  check.id, subscriptionId:  subscription.id}, subscription, function (data) {
