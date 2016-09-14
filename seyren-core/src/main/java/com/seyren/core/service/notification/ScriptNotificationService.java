@@ -46,13 +46,13 @@ public class ScriptNotificationService implements NotificationService {
     public void sendNotification(Check check, Subscription subscription, List<Alert> alerts) throws NotificationFailedException {
 	    if (check.getState() == AlertType.ERROR) {
 			String hostPosition = subscription.getPosition();
-			
+
 			// Check for a valid position
 			if (hostPosition == null) {
 				LOGGER.info("No hostname position for subscription: {}", subscription.getId());
 				throw new NotificationFailedException("Invalid subscription; script has no hostname position");
 			}
-			
+
 	        LOGGER.info("Check#{}, Script Location: {}", check.getId(), seyrenConfig.getScriptPath());
 	    	for(Alert alert: alerts) {
 	    		try {
@@ -64,7 +64,7 @@ public class ScriptNotificationService implements NotificationService {
 	                BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
 	                String line;
 	                while ((line = reader.readLine()) != null) {
-	                    LOGGER.info("Check#{}, {}" check.getId(), line);
+	                    LOGGER.info("Check#{}, {}", check.getId(), line);
 	                    //System.out.println(line);
 	                }
 	                LOGGER.info("Check#{}, Script End", check.getId());
@@ -82,7 +82,7 @@ public class ScriptNotificationService implements NotificationService {
         //LOGGER.info("******* hostPostion found : "+pos);
         String[] target = alert.getTarget().split("\\.");
         String hostname = target[pos-1];
-        //LOGGER.info("******* Retuning Hostname " +hostname); 
+        //LOGGER.info("******* Retuning Hostname " +hostname);
         return hostname;
     }
 
