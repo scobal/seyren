@@ -37,7 +37,8 @@ import com.seyren.core.store.AlertsStore;
 import com.seyren.core.store.ChecksStore;
 
 public class CheckRunner implements Runnable {
-    
+
+    private String graphiteRefreshRate;
     private static final Logger LOGGER = LoggerFactory.getLogger(CheckRunner.class);
     
     private final Check check;
@@ -51,13 +52,14 @@ public class CheckRunner implements Runnable {
 	private static final HashMap<String, Alert> lastAlerts = new HashMap<String, Alert>();
     
     public CheckRunner(Check check, AlertsStore alertsStore, ChecksStore checksStore, TargetChecker targetChecker, ValueChecker valueChecker,
-                       Iterable<NotificationService> notificationServices) {
+                       Iterable<NotificationService> notificationServices, String graphiteRefreshRate) {
         this.check = check;
         this.alertsStore = alertsStore;
         this.checksStore = checksStore;
         this.targetChecker = targetChecker;
         this.valueChecker = valueChecker;
         this.notificationServices = notificationServices;
+        this.graphiteRefreshRate = graphiteRefreshRate;
     }
     
     @Override
@@ -142,7 +144,7 @@ public class CheckRunner implements Runnable {
                 // Only notify if the alert has changed state
 
                 if(null != check.isEnableConsecutiveChecks() && check.isEnableConsecutiveChecks() && null != check.getConsecutiveChecks() && null != check.getConsecutiveChecksTolerance()){
-                    if (analysePastAlertsAndRaiseAlarm(warn, error, interestingAlerts, alert, target)){
+                    if (analysePastAlertsAndRaiseAlarm(warn, error, interestingAlerts, alert, target, now)){
                         continue;
                     }
                 }
@@ -201,7 +203,7 @@ public class CheckRunner implements Runnable {
         }
     }
 
-    private boolean analysePastAlertsAndRaiseAlarm(BigDecimal warn, BigDecimal error, List<Alert> interestingAlerts, Alert alert, String target) {
+    private boolean analysePastAlertsAndRaiseAlarm(BigDecimal warn, BigDecimal error, List<Alert> interestingAlerts, Alert alert, String target, DateTime nowDate) {
         SeyrenResponse<Alert> previousResponse= alertsStore.getAlerts(check.getId(), 0, check.getConsecutiveChecks());
         if(null != previousResponse) {
             List<Alert> previousAlerts = previousResponse.getValues();
@@ -212,7 +214,7 @@ public class CheckRunner implements Runnable {
                 Integer errorCount = 0;
                 for(Alert pastAlert : previousAlerts ){
                     AlertType pastErrorState = valueChecker.checkValue(pastAlert.getValue(), warn, error);
-                    if(pastErrorState.equals(AlertType.ERROR)){
+                    if(pastErrorState.equals(AlertType.ERROR) && pastAlert.getTimestamp().getMillis() +  check.getConsecutiveChecks()* Integer.parseInt(graphiteRefreshRate) > nowDate.getMillis()){
                         errorCount ++;
                     }
                 }

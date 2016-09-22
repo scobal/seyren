@@ -94,6 +94,7 @@ public class SeyrenConfig {
     private final String scriptPath;
     private final String scriptType;
     private final String scriptResourceUrls;
+    private final String graphiteRefreshRate;
     public SeyrenConfig() {
         
         // Base
@@ -118,6 +119,7 @@ public class SeyrenConfig {
         this.graphiteConnectTimeout = Integer.parseInt(configOrDefault("GRAPHITE_CONNECT_TIMEOUT", "0"));
         this.graphiteSocketTimeout = Integer.parseInt(configOrDefault("GRAPHITE_SOCKET_TIMEOUT", "0"));
         this.graphiteScheme = configOrDefault("GRAPHITE_SCHEME", "http");
+        this.graphiteRefreshRate = configOrDefault("GRAPHITE_REFRESH", "60000");
 
         // HTTP
 
@@ -502,8 +504,12 @@ public class SeyrenConfig {
         return scriptResourceUrls;
     }
 
+    @JsonIgnore
+    public String getGraphiteRefreshRate() {
+        return graphiteRefreshRate;
+    }
 
-  private static String configOrDefault(String propertyName, String defaultValue) {
+    private static String configOrDefault(String propertyName, String defaultValue) {
         return configOrDefault(list(propertyName), defaultValue);
     }
     

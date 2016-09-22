@@ -62,7 +62,7 @@ public class CheckScheduler {
         this.checkExecutionTimeoutSeconds = seyrenConfig.getMaxCheckExecutionTimeInSeconds();
     }
     
-    @Scheduled(fixedRateString = "${GRAPHITE_REFRESH:60000}")
+    @Scheduled(fixedRateString = "${GRAPHITE_REFRESH}")
     public void performChecks() {
     	int checksInScope = 0;
     	int checksWereRun = 0;

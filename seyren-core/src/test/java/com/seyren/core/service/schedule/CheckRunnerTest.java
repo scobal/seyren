@@ -67,7 +67,7 @@ public class CheckRunnerTest {
                 mockChecksStore,
                 mockTargetChecker,
                 mockValueChecker,
-                mockNotificationServices);
+                mockNotificationServices, "60000");
         
         // Clear all cached values so that initial state is true even between tests
         CheckRunner.flushLastAlerts();
