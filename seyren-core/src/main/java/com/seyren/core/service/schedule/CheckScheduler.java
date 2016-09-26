@@ -38,19 +38,19 @@ public class CheckScheduler {
     private static final Logger LOGGER = LoggerFactory.getLogger(CheckScheduler.class);
 
     private static final int GUID_MAX_CHECK_VALUES = 65536; // 4 unsigned hex digits, values range 0 - 16 ^ 4 - 1
-    
+
     private final ScheduledExecutorService executor;
-    
+
     private final ChecksStore checksStore;
-    
+
     private final CheckRunnerFactory checkRunnerFactory;
-    
+
     private final int instanceIndex;
-    
+
     private final int totalWorkers;
 
     private final int checkExecutionTimeoutSeconds;
-    
+
     @Inject
     public CheckScheduler(ChecksStore checksStore, CheckRunnerFactory checkRunnerFactory, SeyrenConfig seyrenConfig) {
         this.checksStore = checksStore;
@@ -61,7 +61,7 @@ public class CheckScheduler {
         this.totalWorkers = seyrenConfig.getCheckExecutorTotalInstances();
         this.checkExecutionTimeoutSeconds = seyrenConfig.getMaxCheckExecutionTimeInSeconds();
     }
-    
+
     @Scheduled(fixedRateString = "${GRAPHITE_REFRESH}")
     public void performChecks() {
     	int checksInScope = 0;
@@ -73,7 +73,7 @@ public class CheckScheduler {
         		continue;
         	}
         	checksInScope++;
-        	// See if this check is currently running, if so, return and log the 
+        	// See if this check is currently running, if so, return and log the
         	// missed cycle
         	if (!CheckConcurrencyGovernor.instance().isCheckRunning(check)){
         		checksWereRun++;
@@ -87,12 +87,12 @@ public class CheckScheduler {
             	    	 checkExecutionFuture.cancel(true);
             	    	 // Log that it was cancelled, if it was terminated
             	    	 if (checkExecutionFuture.isCancelled()) {
-            	    		 LOGGER.warn("  *** Check #{} :: Check timed out", check.getId());
+            	    		 LOGGER.warn("  *** Check=#{} :: Message='Check timed out'", check.getId());
 
             	    		 // Free this check as a fail-safe to not allow a resource issue to prevent checks from occurring
             	             CheckConcurrencyGovernor.instance().notifyCheckIsComplete(check);
             	    	 }
-            	     }      
+            	     }
             	 }, this.checkExecutionTimeoutSeconds, TimeUnit.SECONDS);
         	}
         	else {
@@ -117,13 +117,13 @@ public class CheckScheduler {
     			int high = (int)(GUID_MAX_CHECK_VALUES * instanceIndex / totalWorkers);
         		if (low <= checkIndex && checkIndex < high) {
         			return true;
-        		}    		
+        		}
     		}
     		else if (id.length() == 24) {
     			// ObjectId-based id work sharding; get the last two hex characters of the timestamp portion
     			// which is the first 4 bytes or 8 characters
         		int checkIndex = Integer.parseInt(id.substring(6,8), 16);
-        		
+
         		if ((checkIndex % totalWorkers) == (instanceIndex - 1)) {
         			return true;
         		}

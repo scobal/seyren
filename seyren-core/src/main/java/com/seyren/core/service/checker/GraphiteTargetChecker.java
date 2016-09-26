@@ -32,33 +32,33 @@ import com.seyren.core.util.graphite.GraphiteReadException;
 
 @Named
 public class GraphiteTargetChecker implements TargetChecker {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(GraphiteTargetChecker.class);
-    
+
     private final GraphiteHttpClient graphiteHttpClient;
-    
+
     @Inject
     public GraphiteTargetChecker(GraphiteHttpClient graphiteHttpClient) {
         this.graphiteHttpClient = graphiteHttpClient;
     }
-    
+
     @Override
     public Map<String, Optional<BigDecimal>> check(Check check) throws Exception {
         Map<String, Optional<BigDecimal>> targetValues = new HashMap<String, Optional<BigDecimal>>();
-        
+
         try {
             JsonNode node = graphiteHttpClient.getTargetJson(check.getGraphiteBaseUrl(), check.getTarget(), check.getFrom(), check.getUntil());
             boolean hasDataAndHasErrors = false;
             for (JsonNode metric : node) {
                 String target = metric.path("target").asText();
-                LOGGER.info("    Checking graphite for value of target#{} using check ID #{}", target, check.getId());
+                LOGGER.info("    Message='Checking graphite for value of target#{} using check ID #{}'", target, check.getId());
                 try {
                     BigDecimal value = getLatestValue(metric);
                     targetValues.put(target, Optional.of(value));
-                    LOGGER.info("       Value found - target#{} using check ID #{}: {}, where WARN is '{}' and ERROR is '{}'", target, check.getId() ,value, check.getWarn(), check.getError());
+                    LOGGER.info("       Message='Value found - target#{} using check ID #{}: {}, where WARN is '{}' and ERROR is '{}''", target, check.getId() ,value, check.getWarn(), check.getError());
                 } catch (InvalidGraphiteValueException e) {
                     // Silence these - we don't know what's causing Graphite to return null values
-                    LOGGER.warn("       Warning - target#{} using check ID #{}: {} failed to read valid value from Graphite", check.getName(), e);
+                    LOGGER.warn("       Message'Warning - target#{} using check ID #{}: {} failed to read valid value from Graphite'", check.getName(), e);
                     targetValues.put(target, Optional.<BigDecimal> absent());
                     hasDataAndHasErrors = true;
                 }
@@ -68,12 +68,12 @@ public class GraphiteTargetChecker implements TargetChecker {
             }
         } catch (GraphiteReadException e) {
         	check.setRemoteServerErrorOccurred(true);
-        	LOGGER.warn("       Warning - Check ID #{}: {}, Graphite read error", check.getId());
-            LOGGER.warn(check.getName() + " failed to read from Graphite", e);
+        	LOGGER.warn("       Message='Warning - Check ID #{}: {}, Graphite read error'", check.getId());
+            LOGGER.warn("Check=" + check.getName() + " Message=failed to read from Graphite", e);
         }
         return targetValues;
     }
-    
+
     /**
      * Loop through the datapoints in reverse order until we find the latest non-null value
      */
@@ -86,9 +86,9 @@ public class GraphiteTargetChecker implements TargetChecker {
                 return new BigDecimal(value);
             }
         }
-        
+
         LOGGER.warn("{}", node);
-        throw new InvalidGraphiteValueException("Could not find a valid datapoint for target: " + node.get("target"));
+        throw new InvalidGraphiteValueException("Message='Could not find a valid datapoint for target: '" + node.get("target"));
     }
-    
+
 }
