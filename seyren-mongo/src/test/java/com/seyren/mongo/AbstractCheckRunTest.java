@@ -158,6 +158,6 @@ public abstract class AbstractCheckRunTest {
 		List<NotificationService> notificationServices = new ArrayList<NotificationService>();
 		notificationServices.add(this.notificationService);
 		runner = new CheckRunner(this.check, mongoStore, mongoStore, checker,  new DefaultValueChecker(),
-	            notificationServices);
+	            notificationServices, "60000");
 	}
 }
