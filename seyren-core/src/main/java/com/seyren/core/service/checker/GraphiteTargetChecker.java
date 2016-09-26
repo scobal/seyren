@@ -58,7 +58,7 @@ public class GraphiteTargetChecker implements TargetChecker {
                     LOGGER.info("       Message='Value found - target#{} using check ID #{}: {}, where WARN is '{}' and ERROR is '{}''", target, check.getId() ,value, check.getWarn(), check.getError());
                 } catch (InvalidGraphiteValueException e) {
                     // Silence these - we don't know what's causing Graphite to return null values
-                    LOGGER.warn("       Message'Warning - target#{} using check ID #{}: {} failed to read valid value from Graphite'", check.getName(), e);
+                    LOGGER.warn("       Message='Warning - target#{} using check ID #{}: {} failed to read valid value from Graphite'", check.getName(), e);
                     targetValues.put(target, Optional.<BigDecimal> absent());
                     hasDataAndHasErrors = true;
                 }
