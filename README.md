@@ -29,9 +29,9 @@ Seyren ([/ˈsaɪ.rʌn/](http://en.wikipedia.org/wiki/Wikipedia:IPA_for_English#K
 ###Run
 
 ```
-wget https://github.com/scobal/seyren/releases/download/1.3.0/seyren-1.3.0.jar
+wget https://github.com/scobal/seyren/releases/download/1.5.0/seyren-1.5.0.jar
 export GRAPHITE_URL=http://graphite.foohost.com:80
-java -jar seyren-1.3.0.jar
+java -jar seyren-1.5.0.jar
 open http://localhost:8080
 ```
 
@@ -39,7 +39,7 @@ To run seyren on another port:
 
 ```
 export SEYREN_URL="http://localhost:8081/seyren"
-java -jar seyren-1.3.0.jar -httpPort=8081
+java -jar seyren-1.5.0.jar -httpPort=8081
 ```
 
 ###Config
