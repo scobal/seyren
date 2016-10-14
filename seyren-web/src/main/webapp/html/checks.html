@@ -23,6 +23,7 @@
                     <th><a href="" ng-click="predicate=sortByState;reverse=!reverse">State</a></th>
                     <th><a href="" ng-click="predicate='warn';reverse=!reverse">Warn</a></th>
                     <th><a href="" ng-click="predicate='error';reverse=!reverse">Error</a></th>
+                    <th><a href="">Subscription</a></th>
                     <th><a href="" ng-click="predicate='enabled';reverse=!reverse">Enabled</a></th>
                 </tr>
             </thead>
@@ -38,6 +39,9 @@
                     </td>
                     <td>{{ check.warn }}</td>
                     <td>{{ check.error }}</td>
+                    <td>
+                      <span ng-repeat="subscription in check.subscriptions" ng-show="subscription.enabled" class="label label-info" style="margin:.5%" align="center"> {{subscription.type}}</span>
+                    </td>
                     <td><input type="checkbox" ng-checked="check.enabled" ng-click="swapCheckEnabled(check); $event.stopPropagation();" /></td>
                 </tr>
             </tbody>
