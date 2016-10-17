@@ -76,7 +76,7 @@ public class SlackNotificationService implements NotificationService {
         );
 
         String url = String.format("%s/api/chat.postMessage", baseUrl);
-        HttpClient client = HttpClientBuilder.create().build();
+        HttpClient client = HttpClientBuilder.create().useSystemProperties().build();
         HttpPost post = new HttpPost(url);
         post.addHeader("accept", "application/json");
 

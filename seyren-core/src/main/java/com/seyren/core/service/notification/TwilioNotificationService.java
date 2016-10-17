@@ -65,9 +65,11 @@ public class TwilioNotificationService implements NotificationService {
         
         String body;
         if (check.getState() == AlertType.ERROR) {
-            body = "ERROR Check "+check.getName()+" has exceeded its threshold.";
+            body = "ERROR Check " + check.getName() + " has exceeded its threshold.";
         } else if (check.getState() == AlertType.OK) {
-            body = "OK Check "+check.getName()+" has been resolved.";
+            body = "OK Check " + check.getName() + " has been resolved.";
+        } else if (check.getState() == AlertType.WARN) {
+            body = "WARN Check " + check.getName() + " has exceeded its threshold.";
         } else {
             LOGGER.warn("Did not send notification to Twilio for check in state: {}", check.getState());
             body = null;
@@ -78,7 +80,7 @@ public class TwilioNotificationService implements NotificationService {
         params.add(new BasicNameValuePair("From", seyrenConfig.getTwilioPhoneNumber()));
         params.add(new BasicNameValuePair("Body", body));
 
-        HttpClient client = HttpClientBuilder.create().build();
+        HttpClient client = HttpClientBuilder.create().useSystemProperties().build();
         
         HttpPost post = new HttpPost(twilioUrl + "/"+seyrenConfig.getTwilioAccountSid()+"/Messages");
         try {

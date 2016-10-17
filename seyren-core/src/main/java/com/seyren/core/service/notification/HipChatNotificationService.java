@@ -15,6 +15,7 @@ package com.seyren.core.service.notification;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.net.URLEncoder;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -39,23 +40,23 @@ import com.seyren.core.util.config.SeyrenConfig;
 
 @Named
 public class HipChatNotificationService implements NotificationService {
-    
+
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(HipChatNotificationService.class);
-    
+
     private final SeyrenConfig seyrenConfig;
     private final String baseUrl;
-    
+
     @Inject
     public HipChatNotificationService(SeyrenConfig seyrenConfig) {
         this.seyrenConfig = seyrenConfig;
         this.baseUrl = seyrenConfig.getHipChatBaseUrl();
     }
-    
+
     protected HipChatNotificationService(SeyrenConfig seyrenConfig, String baseUrl) {
         this.seyrenConfig = seyrenConfig;
         this.baseUrl = baseUrl;
     }
-    
+
     @Override
     public void sendNotification(Check check, Subscription subscription, List<Alert> alerts) throws NotificationFailedException {
         String token = seyrenConfig.getHipChatAuthToken();
@@ -78,29 +79,21 @@ public class HipChatNotificationService implements NotificationService {
             throw new NotificationFailedException("Failed to send notification to HipChat", e);
         }
     }
-    
+
     private String getHipChatMessage(Check check) {
         String message = "Check <a href=" + seyrenConfig.getBaseUrl() + "/#/checks/" + check.getId() + ">" + check.getName() + "</a> has entered its " + check.getState().toString() + " state.";
         return message;
     }
-    
+
     private void sendMessage(String message, MessageColor color, String[] roomIds, String from, String authToken, boolean notify) {
         for (String roomId : roomIds) {
             LOGGER.info("Posting: {} to {}: {} {}", from, roomId, message, color);
-            HttpClient client = HttpClientBuilder.create().build();
+            HttpClient client = HttpClientBuilder.create().useSystemProperties().build();
+            HttpPost post = new HttpPost();
 
             try {
-                roomId = URLEncoder.encode(roomId, "UTF-8");
-                roomId = roomId.replaceAll("\\+", "%20");
-            }
-            catch (UnsupportedEncodingException e) {
-                LOGGER.warn("Unable to URLEncode HipChat RoomID", e);
-            }
-
-            String url = baseUrl + "/v2/room/" + roomId + "/notification?auth_token=" + authToken;
-            HttpPost post = new HttpPost(url);
-
-            try {
+                String url = baseUrl + "/v2/room/" + URLEncoder.encode(roomId, "UTF-8").replaceAll("\\+", "%20") + "/notification?auth_token=" + authToken;
+                post = new HttpPost(url);
                 List<BasicNameValuePair> parameters = new ArrayList<BasicNameValuePair>();
                 parameters.add(new BasicNameValuePair("message", message));
                 parameters.add(new BasicNameValuePair("color", color.name().toLowerCase()));
@@ -118,12 +111,12 @@ public class HipChatNotificationService implements NotificationService {
             }
         }
     }
-    
+
     @Override
     public boolean canHandle(SubscriptionType subscriptionType) {
         return subscriptionType == SubscriptionType.HIPCHAT;
     }
-    
+
     private enum MessageColor {
         YELLOW, RED, GREEN, PURPLE, RANDOM;
     }

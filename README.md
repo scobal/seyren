@@ -77,6 +77,13 @@ The following options can be supplied as system properties or environment variab
 ##### [HTTP]
 * `HTTP_NOTIFICATION_URL` - The url for a resource that contains a POST HTTP Method. Default: ``
 
+##### [BigPanda.io](https://bigpanda.io)
+
+Use a [Big Panda App Key](https://a.bigpanda.io/#/app/integrations/alertsapi/instructions/alertsapi) as Target when adding a new subscription.
+
+* `BIGPANDA_NOTIFICATION_URL` - The url for a resource that contains a POST HTTP Method. Default: ``
+* `BIGPANDA_AUTH_BEARER` - The Authorization Bearer header that is assigned to each customer by BigPanda. See [Alerts API integration](https://a.bigpanda.io/#/app/integrations/alertsapi/instructions/alertsapi) Default: ``
+
 ##### [Flowdock](https://www.flowdock.com)
 
 Use a [Flow API token](https://www.flowdock.com/account/tokens) as Target when adding a new subscription.
@@ -135,6 +142,7 @@ The target for a Slack subscription will be the channel name (including the `#`,
 ##### [Victorops](https://www.victorops.com/)
 * `VICTOROPS_REST_ENDPOINT` - The REST Endpoint given by Victorops. See [REST Integration]( http://victorops.force.com/knowledgebase/articles/Integration/Alert-Ingestion-API-Documentation/) Default ``
 
+<<<<<<< HEAD
 ##### [Script]
 * `SCRIPT_FILE_PATH` - The Script file path on the file system. Default ``
 * `SCRIPT_TYPE` - The Script type. Default `python`
@@ -147,6 +155,11 @@ The target for a Slack subscription will be the channel name (including the `#`,
 * password.encoder - Password used to encode when stored in the DB. [string]
 * authentication.service - Authentication provider for spring. Options: [ldap, mongo]
 * ldap.url - Ldap url . [string, optional if you are using mongodb provider]
+=======
+##### [Proxy](http://hc.apache.org/httpcomponents-client-ga/httpclient/apidocs/org/apache/http/impl/client/HttpClientBuilder.html#useSystemProperties())
+The Proxy settings are changed by using JAVA_OPTS. It important that you exclude your graphite server or you will proxy these requests also.
+* `JAVA_OPTS Example` JAVA_OPTS="-server -Dhttps.proxyHost=`PROXYSERVER` -Dhttps.proxyPort=`PROXYPORT` -Dhttp.proxyHost=`PROXYSERVER` -Dhttp.proxyPort=`PROXYPORT` -Dhttp.nonProxyHosts=`GRAPHITESERVER|*YOURDOMAIN.COM|INTERNALHIPCHAT`"
+>>>>>>> 1.5.0
 
 ##Seyren API
 
@@ -167,6 +180,7 @@ Then, you just need to start Docker Compose:
 docker-compose up
 ```
 and open [http://localhost:8080/seyren](http://localhost:8080/seyren).
+Graphite is available on [http://localhost:8081/](http://localhost:8081/) with Basic Auth guest/guest.
 
 ##Init script
 
