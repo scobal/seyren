@@ -54,7 +54,6 @@ public class PickleHandler implements Runnable {
     public PickleHandler(Socket socket, Executor executor, ChecksStore checksStore, CheckRunnerFactory checkRunnerFactory) {
         this.socket = socket;
         this.executor = executor;
-        this.executor = executor;
         this.checksStore = checksStore;
         this.checkRunnerFactory = checkRunnerFactory;
     }

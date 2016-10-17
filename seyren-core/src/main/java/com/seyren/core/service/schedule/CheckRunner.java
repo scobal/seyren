@@ -104,6 +104,7 @@ public class CheckRunner implements Runnable {
                 String target = entry.getKey();
             	LOGGER.info("        Check={}, Target={} :: Message='Evaluating value target.''", check.getId(), target);
                 Optional<BigDecimal> value = entry.getValue();
+
                 // If there is no value in the entry, move to the next one
                 if (!value.isPresent()) {
                     LOGGER.info("        Check={}, Target={} :: Message='No value present.''", check.getId(), target);

@@ -77,7 +77,7 @@ public class FlowdockNotificationService implements NotificationService {
                 );
         
         String url = String.format("%s/v1/messages/chat/%s", baseUrl, token);
-        HttpClient client = HttpClientBuilder.create().build();
+        HttpClient client = HttpClientBuilder.create().useSystemProperties().build();
         HttpPost post = new HttpPost(url);
         post.addHeader("Content-Type", "application/json");
         post.addHeader("accept", "application/json");

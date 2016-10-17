@@ -74,7 +74,7 @@ public class HttpNotificationService implements NotificationService {
         body.put("alerts", alerts);        
         body.put("preview", getPreviewImage(check)); 
         
-        HttpClient client = HttpClientBuilder.create().build();
+        HttpClient client = HttpClientBuilder.create().useSystemProperties().build();
         HttpPost post;
 
         if(StringUtils.isNotBlank(seyrenConfig.getHttpNotificationUrl())) {
@@ -122,7 +122,7 @@ public class HttpNotificationService implements NotificationService {
         cal.add(Calendar.HOUR, 1);
         String until = format.format(cal.getTime());
 
-        return "&from=" + until.toString() + "&until=" + from.toString();   
+        return "&from=" + until + "&until=" + from;
     }
     
 }

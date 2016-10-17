@@ -326,7 +326,7 @@ GET /api/checks?enabled=true&state=ERROR&state=WARN&state=EXCEPTION&state=UNKNOW
 
 ### Create a check
 
-* **URL** /checks
+* **URL** /api/checks
 
 * **Method** POST
 
@@ -354,7 +354,7 @@ None
 
 * **Response**
 
-POST /checks
+POST /api/checks
 
 ```json
 {  
@@ -375,7 +375,7 @@ Response '201 Created'
 
 ### Get a check
 
-* **URL** /checks/{checkId}
+* **URL** /api/checks/{checkId}
 
 * **Method** GET
 
@@ -395,7 +395,7 @@ None
 
 * **Response**
 
-GET /checks/540571f4f562fe8c51873ad1
+GET /api/checks/540571f4f562fe8c51873ad1
 
 ```json
 {  
@@ -436,10 +436,60 @@ GET /checks/540571f4f562fe8c51873ad1
 
 ### Update a check
 
+* **URL** /api/checks/{checkId}
+
+* **Method** PUT
+
+* **URL Params**
+
+| Parameter      | Required         | Description            | Type      |
+|----------------|------------------|------------------------|-----------|
+| checkId         |  true           | Check id               | String    |
+
+* **Query Params**
+
+None
+
+* **Body**
+
+ Parameter | Required   | Description            | Type    |
+|-----------|------------|------------------------|---------|
+| name | true      | Name of the check | String |
+| description | false      | Description of the check | String |
+| target | true      | Name of the metric in graphite | String |
+| warn | true      | Warn level |  String |
+| error | true      | Error level | String |
+| enabled | true      | Enable/Disable value | boolean |
+| live | false      | Live value (pickle protocol) | boolean |
+| from | false      | Specifies the beginning  | String |
+| until | false      | Specifies the end | String |
+| state| false | Specifies the state | String |
+
+* **Response**
+
+PUT /api/checks/540571f4f562fe8c51873ad1
+
+```json
+{  
+   "id": "540571f4f562fe8c51873ad1",
+   "name":"2222",
+   "description":"2222",
+   "target":"3333",
+   "warn":"6666",
+   "error":"7777",
+   "enabled":true,
+   "live":false,
+   "from":"4444",
+   "until":"5555",
+   "state": "OK"
+}
+```
+
+Return '200 OK'
 
 ### Delete a check
 
-* **URL** /checks/{checkId}
+* **URL** /api/checks/{checkId}
 
 * **Method** DELETE
 
@@ -498,7 +548,7 @@ Return '204 No Content'
 
 ### Get metric count
 
-* **URL** /metrics/{target}/total
+* **URL** /api/metrics/{target}/total
 
 * **Method** GET
 
@@ -573,7 +623,7 @@ Return '201 Created'
 
 ### Update a subscription
 
-* **URL** /checks/{checkId}/subscriptions/{subscriptionId}
+* **URL** /api/checks/{checkId}/subscriptions/{subscriptionId}
 
 * **Method** PUT
 
@@ -620,7 +670,7 @@ Return '204 No Content'
 
 ### Delete a subscription
 
-* **URL** /checks/{checkId}/subscriptions/{subscriptionId}
+* **URL** /api/checks/{checkId}/subscriptions/{subscriptionId}
 
 * **Method** DELETE
 
@@ -647,7 +697,7 @@ Return '204 No Content'
  
 ### Test a subscription
 
-* **URL** /checks/{checkId}/subscriptions/{subscriptionId}/test
+* **URL** /api/checks/{checkId}/subscriptions/{subscriptionId}/test
 
 * **Method** PUT
 

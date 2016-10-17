@@ -98,7 +98,7 @@
                         </div>
                     </div>
                     <div ng-class="{ 'form-group': true, 'has-error': ! check.consecutiveChecksTolerance && check.enableConsecutiveChecks  }">
-                        <label class="col-sm-3 control-label" for="check.consecutiveChecksTolerance">Tolerance Level:</label>
+                        <label class="col-sm-3 control-label" for="check.consecutiveChecksTolerance">Tolerance Level Percentage(1-100):</label>
                         <div class="col-sm-7">
                             <input id="check.consecutiveChecksTolerance" class="form-control" name="check.consecutiveChecksTolerance" ng-model="check.consecutiveChecksTolerance" ng-disabled = "! check.enableConsecutiveChecks" type="text" />
                         </div>

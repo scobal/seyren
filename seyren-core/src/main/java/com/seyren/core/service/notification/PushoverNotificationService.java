@@ -71,7 +71,7 @@ public class PushoverNotificationService implements NotificationService {
         }
 
 
-        HttpClient client = HttpClientBuilder.create().build();
+        HttpClient client = HttpClientBuilder.create().useSystemProperties().build();
         HttpPost post = new HttpPost("https://api.pushover.net/1/messages.json");
 
         try {

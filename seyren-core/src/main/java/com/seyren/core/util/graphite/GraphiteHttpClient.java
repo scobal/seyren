@@ -182,7 +182,7 @@ public class GraphiteHttpClient {
     }
 
     private HttpClient createHttpClient() {
-        HttpClientBuilder clientBuilder = HttpClientBuilder.create()
+        HttpClientBuilder clientBuilder = HttpClientBuilder.create().useSystemProperties()
                 .setConnectionManager(createConnectionManager())
                 .setDefaultRequestConfig(RequestConfig.custom()
                         .setConnectionRequestTimeout(graphiteConnectionRequestTimeout)

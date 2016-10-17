@@ -23,11 +23,12 @@
                     <th><a href="" ng-click="predicate=sortByState;reverse=!reverse">State</a></th>
                     <th><a href="" ng-click="predicate='warn';reverse=!reverse">Warn</a></th>
                     <th><a href="" ng-click="predicate='error';reverse=!reverse">Error</a></th>
-                    <th><a href="">Subscription</a></th>
+                    <th><a href="" ng-click="predicate='EMAIL';reverse=!reverse">Enabled Subscription</a></th>
                     <th><a href="" ng-click="predicate='enabled';reverse=!reverse">Enabled</a></th>
                 </tr>
             </thead>
             <tbody>
+
                 <tr ng-repeat="check in checks.values  | filter:filter | orderBy:predicate:reverse" style="cursor: pointer;">
                     <td title="{{ check.target }}"><a ng-href="#/checks/{{check.id}}" target="_blank">{{ check.name }}</a></td>
                     <td>
@@ -40,7 +41,7 @@
                     <td>{{ check.warn }}</td>
                     <td>{{ check.error }}</td>
                     <td>
-                      <span ng-repeat="subscription in check.subscriptions" ng-show="subscription.enabled" class="label label-info" style="margin:.5%" align="center"> {{subscription.type}}</span>
+                      <span ng-repeat="subscription in check.subscriptions" ng-show="subscription.enabled" class="label label-info" style="margin:.2%" align="center"> {{subscription.type}}</span>
                     </td>
                     <td><input type="checkbox" ng-checked="check.enabled" ng-click="swapCheckEnabled(check); $event.stopPropagation();" /></td>
                 </tr>
