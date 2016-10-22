@@ -42,12 +42,13 @@ public class SnsNotificationService implements NotificationService {
     private static final Logger LOGGER = LoggerFactory.getLogger(SnsNotificationService.class);
 
     private AmazonSNSClient snsClient;
-    private SeyrenConfig seyrenConfig;
 
     @Inject
     public SnsNotificationService(SeyrenConfig seyrenConfig) {
+      String snsRegion = seyrenConfig.getSnsRegion();
+
       this.snsClient = new AmazonSNSClient();
-      this.seyrenConfig = seyrenConfig;
+      this.snsClient.setRegion(Region.getRegion(Regions.fromName(snsRegion)));
     }
 
     @Override

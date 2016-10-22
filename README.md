@@ -143,6 +143,7 @@ The target for a Slack subscription will be the channel name (including the `#`,
 * `VICTOROPS_REST_ENDPOINT` - The REST Endpoint given by Victorops. See [REST Integration]( http://victorops.force.com/knowledgebase/articles/Integration/Alert-Ingestion-API-Documentation/) Default ``
 
 ##### [SNS](https://aws.amazon.com/sns/)
+* `SNS_REGION` - The region of the SNS ARN. Default `eu-west-1`. Must match the [region from the list](http://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/regions/Regions.html#valueOf-java.lang.String-).
 * AWS SNS Client uses [default AWS credentials provider chain.](http://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/auth/DefaultAWSCredentialsProviderChain.html)
 * Target is an ARN of the SNS Topic.
 
