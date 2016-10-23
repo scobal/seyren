@@ -42,10 +42,13 @@ public class SnsNotificationService implements NotificationService {
     private static final Logger LOGGER = LoggerFactory.getLogger(SnsNotificationService.class);
 
     private AmazonSNSClient snsClient;
+    private SeyrenConfig seyrenConfig;
 
     @Inject
     public SnsNotificationService(SeyrenConfig seyrenConfig) {
-      String snsRegion = seyrenConfig.getSnsRegion();
+      this.seyrenConfig = seyrenConfig;
+
+      String snsRegion = this.seyrenConfig.getSnsRegion();
 
       this.snsClient = new AmazonSNSClient();
       this.snsClient.setRegion(Region.getRegion(Regions.fromName(snsRegion)));
@@ -53,11 +56,13 @@ public class SnsNotificationService implements NotificationService {
 
     @Override
     public void sendNotification(Check check, Subscription subscription, List<Alert> alerts) {
+      String checkUrl = this.seyrenConfig.getBaseUrl() + "/#/checks/" + check.getId();
       String topicArn = subscription.getTarget();
 
-      String msg = String.format("Seyren notification '%s' changed state to '%s'",
+      String msg = String.format("Seyren notification '%s' changed state to '%s' %s",
           check.getName(),
-          check.getState().name());
+          check.getState().name(),
+          checkUrl);
 
       LOGGER.info("Sending Notification to SNS Topic: " + topicArn + " with message " + msg);
 
