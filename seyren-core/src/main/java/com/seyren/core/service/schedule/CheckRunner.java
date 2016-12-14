@@ -145,13 +145,15 @@ public class CheckRunner implements Runnable {
                 // Only notify if the alert has changed state
 
 
-                if(isNowOk(lastState, currentState)){
-                    LOGGER.info("        Check={}, Target={} :: Message='Is now in an ok state'", check.getId(), target );
-                    LOGGER.info("        Check={}, Target={} :: Message='Adding current alert as an 'Interesting Alert''", check.getId(), target );
-                    interestingAlerts.add(alert);
 
-                }
-                else if(null != check.isEnableConsecutiveChecks() && check.isEnableConsecutiveChecks() && null != check.getConsecutiveChecks() && null != check.getConsecutiveChecksTolerance()){
+                if(null != check.isEnableConsecutiveChecks() && check.isEnableConsecutiveChecks() && null != check.getConsecutiveChecks() && null != check.getConsecutiveChecksTolerance()){
+
+                    if(isNowOk(lastState, currentState)){
+                        LOGGER.info("        Check={}, Target={} :: Message='This consecutive alert is now in an ok state'", check.getId(), target );
+                        LOGGER.info("        Check={}, Target={} :: Message='Adding current alert as an 'Interesting Alert''", check.getId(), target );
+                        interestingAlerts.add(alert);
+                        continue;
+                    }
                     if (analysePastAlertsAndRaiseAlarm(warn, error, interestingAlerts, alert, target, now)){
                         continue;
                     }
