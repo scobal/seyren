@@ -15,6 +15,7 @@ package com.seyren.core.service.notification;
 
 import static com.google.common.collect.Iterables.transform;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,6 +26,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -77,62 +79,83 @@ public class SlackNotificationService implements NotificationService {
 
     @Override
     public void sendNotification(Check check, Subscription subscription, List<Alert> alerts) throws NotificationFailedException {
-        if ( !seyrenConfig.getSlackToken().isEmpty() ) {
-            LOGGER.info("Will use API token");
-            notifyUsingApiToken(check, subscription, alerts);
+    	String token = seyrenConfig.getSlackToken();
+    	String webhookUrl = seyrenConfig.getSlackWebhook();
+        
+        String url;
+        HttpEntity entity;
+
+        if (!webhookUrl.isEmpty()) {
+            LOGGER.debug("Publishing notification using configured Webhook");
+            url = webhookUrl;
+            try {
+                entity = createJsonEntity(check, subscription, alerts);
+            } catch (JsonProcessingException e) {
+                throw new NotificationFailedException("Failed to serialize message alert.", e);
+            }
+        } else if (!token.isEmpty()){
+            LOGGER.debug("Publishing notification using slack web API");
+            url = String.format("%s/api/chat.postMessage", baseUrl);
+            try {
+                entity = createFormEntity(check, subscription, alerts);
+            } catch (UnsupportedEncodingException e) {
+                throw new NotificationFailedException("Failed to serialize alert.", e);
+            }
+        } else {
+            LOGGER.warn("No SLACK_WEBHOOK_URL or SLACK_TOKEN set. Cannot notify slack.");
+            return;
         }
-        else if ( !seyrenConfig.getSlackWebhook().isEmpty() ) {
-            LOGGER.info("Will use Webhook");
-            notifyUsingWebhook(check, subscription, alerts);
+        
+        HttpClient client = HttpClientBuilder.create().useSystemProperties().build();
+        HttpPost post = new HttpPost(url);
+        post.addHeader("accept", "application/json");
+        
+        try {
+            post.setEntity(entity);
+            HttpResponse response = client.execute(post);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Status: {}, Body: {}", response.getStatusLine(), new BasicResponseHandler().handleResponse(response));
+            }
+        } catch (Exception e) {
+            LOGGER.warn("Error posting to Slack", e);
+        } finally {
+            post.releaseConnection();
+            HttpClientUtils.closeQuietly(client);
         }
-        else
-          LOGGER.warn("Slack token and Slack Webhook are empty. Do nothing.");
+    }
+    
+    private HttpEntity createJsonEntity(Check check, Subscription subscription, List<Alert> alerts) throws JsonProcessingException {
+        Map<String,String> payload = new HashMap<String, String>();
+        payload.put("channel", subscription.getTarget());
+        payload.put("username", seyrenConfig.getSlackUsername());
+        payload.put("text", formatForWebhook(check, subscription, alerts));
+        payload.put("icon_url", seyrenConfig.getSlackIconUrl());
+
+        String message = new ObjectMapper().writeValueAsString(payload);
+        
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.info("> message: {}", message);
+        }
+        
+        return new StringEntity(message, ContentType.APPLICATION_JSON);
     }
 
-    //
-    // API Test Token. You should really switch to Webhook.
-    // Just copied previous code.
-    //
-
-    private void notifyUsingApiToken(Check check, Subscription subscription, List<Alert> alerts) {
-      String token = seyrenConfig.getSlackToken();
-      String channel = subscription.getTarget();
-      String username = seyrenConfig.getSlackUsername();
-      String iconUrl = seyrenConfig.getSlackIconUrl();
-
-      List<String> emojis = extractEmojis();
-
-      String url = String.format("%s/api/chat.postMessage", baseUrl);
-      HttpClient client = HttpClientBuilder.create().useSystemProperties().build();
-      HttpPost post = new HttpPost(url);
-      post.addHeader("accept", "application/json");
-
-      List<BasicNameValuePair> parameters = new ArrayList<BasicNameValuePair>();
-      parameters.add(new BasicNameValuePair("token", token));
-      parameters.add(new BasicNameValuePair("channel", StringUtils.removeEnd(channel, "!")));
-      parameters.add(new BasicNameValuePair("text", formatContent(emojis, check, subscription, alerts)));
-      parameters.add(new BasicNameValuePair("username", username));
-      parameters.add(new BasicNameValuePair("icon_url", iconUrl));
-
-      try {
-          post.setEntity(new UrlEncodedFormEntity(parameters));
-          if (LOGGER.isDebugEnabled()) {
-              LOGGER.info("> parameters: {}", parameters);
-          }
-          HttpResponse response = client.execute(post);
-          if (LOGGER.isDebugEnabled()) {
-              LOGGER.info("> parameters: {}", parameters);
-              LOGGER.debug("Status: {}, Body: {}", response.getStatusLine(), new BasicResponseHandler().handleResponse(response));
-          }
-      } catch (Exception e) {
-          LOGGER.warn("Error posting to Slack", e);
-      } finally {
-          post.releaseConnection();
-          HttpClientUtils.closeQuietly(client);
-      }
+    private HttpEntity createFormEntity(Check check, Subscription subscription, List<Alert> alerts) throws UnsupportedEncodingException {
+    	List<BasicNameValuePair> parameters = new ArrayList<BasicNameValuePair>();
+        parameters.add(new BasicNameValuePair("token", seyrenConfig.getSlackToken()));
+        parameters.add(new BasicNameValuePair("channel", StringUtils.removeEnd(subscription.getTarget(), "!")));
+        parameters.add(new BasicNameValuePair("text", formatForWebApi(check, subscription, alerts)));
+        parameters.add(new BasicNameValuePair("username", seyrenConfig.getSlackUsername()));
+        parameters.add(new BasicNameValuePair("icon_url", seyrenConfig.getSlackIconUrl()));
+        
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.info("> parameters: {}", parameters);
+        }
+        
+        return new UrlEncodedFormEntity(parameters);
     }
-
-    private String formatContent(List<String> emojis, Check check, Subscription subscription, List<Alert> alerts) {
+    
+    private String formatForWebApi(Check check, Subscription subscription, List<Alert> alerts) {
         String url = formatCheckUrl(check);
         String alertsString = formatAlert(alerts);
 
@@ -143,7 +166,7 @@ public class SlackNotificationService implements NotificationService {
         final String state = check.getState().toString();
 
         return String.format("%s*%s* %s [%s]%s\n```\n%s\n```\n#%s %s",
-                Iterables.get(emojis, check.getState().ordinal(), ""),
+                Iterables.get(extractEmojis(), check.getState().ordinal(), ""),
                 state,
                 check.getName(),
                 url,
@@ -151,6 +174,24 @@ public class SlackNotificationService implements NotificationService {
                 alertsString,
                 state.toLowerCase(Locale.getDefault()),
                 channel
+        );
+    }
+    
+    private String formatForWebhook(Check check, Subscription subscription, List<Alert> alerts) {
+        String url = formatCheckUrl(check);
+        String alertsString = formatAlert(alerts);
+
+        String description = formatDescription(check);
+
+        final String state = check.getState().toString();
+
+        return String.format("%s *%s* %s (<%s|Open>)%s\n```\n%s\n```",
+                Iterables.get(extractEmojis(), check.getState().ordinal(), ""),
+                state,
+                check.getName(),
+                url,
+                description,
+                alertsString
         );
     }
 
@@ -184,66 +225,5 @@ public class SlackNotificationService implements NotificationService {
           description = "";
       }
       return description;
-    }
-
-    //
-    // Webhook
-    //
-
-    private void notifyUsingWebhook(Check check, Subscription subscription, List<Alert> alerts) throws NotificationFailedException {
-        String webhookUrl = seyrenConfig.getSlackWebhook();
-
-        List<String> emojis = extractEmojis();
-
-        HttpClient client = HttpClientBuilder.create().useSystemProperties().build();
-        HttpPost post = new HttpPost(webhookUrl);
-        post.addHeader("accept", "application/json");
-
-        try {
-            String message = generateMessage(emojis, check, subscription, alerts);
-            post.setEntity(new StringEntity(message, ContentType.APPLICATION_JSON));
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.info("> message: {}", message);
-            }
-            HttpResponse response = client.execute(post);
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.info("> message: {}", message);
-                LOGGER.debug("Status: {}, Body: {}", response.getStatusLine(), new BasicResponseHandler().handleResponse(response));
-            }
-        } catch (Exception e) {
-            LOGGER.warn("Error posting to Slack", e);
-        } finally {
-            post.releaseConnection();
-            HttpClientUtils.closeQuietly(client);
-        }
-    }
-
-    private String generateMessage(List<String> emojis, Check check, Subscription subscription, List<Alert> alerts) throws JsonProcessingException {
-        Map<String,String> payload = new HashMap<String, String>();
-        payload.put("channel", subscription.getTarget());
-        payload.put("username", seyrenConfig.getSlackUsername());
-        payload.put("text", formatText(emojis, check, subscription, alerts));
-        payload.put("icon_url", seyrenConfig.getSlackIconUrl());
-
-        String message = new ObjectMapper().writeValueAsString(payload);
-        return message;
-    }
-
-    private String formatText(List<String> emojis, Check check, Subscription subscription, List<Alert> alerts) {
-        String url = formatCheckUrl(check);
-        String alertsString = formatAlert(alerts);
-
-        String description = formatDescription(check);
-
-        final String state = check.getState().toString();
-
-        return String.format("%s *%s* %s (<%s|Open>)%s\n```\n%s\n```",
-                Iterables.get(emojis, check.getState().ordinal(), ""),
-                state,
-                check.getName(),
-                url,
-                description,
-                alertsString
-        );
     }
 }

@@ -21,10 +21,7 @@ import static org.hamcrest.Matchers.isEmptyString;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
@@ -101,6 +98,7 @@ public class SlackNotificationServiceTest {
     public void useSlackApiTokenTest() {
         // Given
         when(mockSeyrenConfig.getSlackToken()).thenReturn(SLACK_TOKEN);
+        when(mockSeyrenConfig.getSlackWebhook()).thenReturn("");
 
         Check check = givenCheck();
         Subscription subscription = givenSlackSubscriptionWithTarget("target");
@@ -127,19 +125,13 @@ public class SlackNotificationServiceTest {
         assertContent(content, check, subscription);
         assertThat(content, containsString("&channel=" + subscription.getTarget()));
         assertThat(content, not(containsString(encode("<!channel>"))));
-
-        verify(mockSeyrenConfig).getSlackEmojis();
-        verify(mockSeyrenConfig).getSlackIconUrl();
-        verify(mockSeyrenConfig, atLeast(2)).getSlackToken();
-        verify(mockSeyrenConfig, times(0)).getSlackWebhook();
-        verify(mockSeyrenConfig).getSlackUsername();
-        verify(mockSeyrenConfig).getBaseUrl();
     }
 
     @Test
     public void mentionChannelWhenTargetContainsExclamationTest() {
         //Given
         when(mockSeyrenConfig.getSlackToken()).thenReturn(SLACK_TOKEN);
+        when(mockSeyrenConfig.getSlackWebhook()).thenReturn("");
 
         Check check = givenCheck();
         Subscription subscription = givenSlackSubscriptionWithTarget("target!");
@@ -166,13 +158,6 @@ public class SlackNotificationServiceTest {
         assertContent(content, check, subscription);
         assertThat(content, containsString("&channel=" + StringUtils.removeEnd(subscription.getTarget(), "!")));
         assertThat(content, containsString(encode("<!channel>")));
-
-        verify(mockSeyrenConfig).getSlackEmojis();
-        verify(mockSeyrenConfig).getSlackIconUrl();
-        verify(mockSeyrenConfig, atLeast(2)).getSlackToken();
-        verify(mockSeyrenConfig, times(0)).getSlackWebhook();
-        verify(mockSeyrenConfig).getSlackUsername();
-        verify(mockSeyrenConfig).getBaseUrl();
     }
 
     @Test
@@ -215,13 +200,6 @@ public class SlackNotificationServiceTest {
         assertThat(map.get("text"), containsString(check.getName()));
         assertThat(map.get("username"), is(SLACK_USERNAME));
         assertThat(map.get("icon_url"), isEmptyString());
-
-        verify(mockSeyrenConfig, atLeast(2)).getSlackWebhook();
-        verify(mockSeyrenConfig, times(1)).getSlackToken();
-        verify(mockSeyrenConfig).getSlackEmojis();
-        verify(mockSeyrenConfig).getSlackIconUrl();
-        verify(mockSeyrenConfig).getSlackUsername();
-        verify(mockSeyrenConfig).getBaseUrl();
     }
 
     Check givenCheck() {
