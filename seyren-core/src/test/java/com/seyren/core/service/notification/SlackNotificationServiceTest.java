@@ -70,219 +70,198 @@ public class SlackNotificationServiceTest {
 
     @Before
     public void before() {
-        mockSeyrenConfig = mock(SeyrenConfig.class);
-        when(mockSeyrenConfig.getBaseUrl()).thenReturn(clientDriver.getBaseUrl() + "/slack");
-        when(mockSeyrenConfig.getSlackEmojis()).thenReturn("");
-        when(mockSeyrenConfig.getSlackIconUrl()).thenReturn("");
-        when(mockSeyrenConfig.getSlackUsername()).thenReturn(SLACK_USERNAME);
-        notificationService = new SlackNotificationService(mockSeyrenConfig, clientDriver.getBaseUrl());
+	mockSeyrenConfig = mock(SeyrenConfig.class);
+	when(mockSeyrenConfig.getBaseUrl()).thenReturn(clientDriver.getBaseUrl() + "/slack");
+	when(mockSeyrenConfig.getSlackEmojis()).thenReturn("");
+	when(mockSeyrenConfig.getSlackIconUrl()).thenReturn("");
+	when(mockSeyrenConfig.getSlackUsername()).thenReturn(SLACK_USERNAME);
+	notificationService = new SlackNotificationService(mockSeyrenConfig, clientDriver.getBaseUrl());
     }
 
     @After
     public void after() {
-        System.setProperty("SLACK_USERNAME", "");
+	System.setProperty("SLACK_USERNAME", "");
     }
 
     @Test
     public void notificationServiceCanOnlyHandleSlackSubscription() {
-        assertThat(notificationService.canHandle(SubscriptionType.SLACK), is(true));
-        for (SubscriptionType type : SubscriptionType.values()) {
-            if (type == SubscriptionType.SLACK) {
-                continue;
-            }
-            assertThat(notificationService.canHandle(type), is(false));
-        }
+	assertThat(notificationService.canHandle(SubscriptionType.SLACK), is(true));
+	for (SubscriptionType type : SubscriptionType.values()) {
+	    if (type == SubscriptionType.SLACK) {
+		continue;
+	    }
+	    assertThat(notificationService.canHandle(type), is(false));
+	}
     }
 
     @Test
     public void useSlackApiTokenTest() {
-        // Given
-        when(mockSeyrenConfig.getSlackToken()).thenReturn(SLACK_TOKEN);
-        when(mockSeyrenConfig.getSlackWebhook()).thenReturn("");
+	// Given
+	when(mockSeyrenConfig.getSlackToken()).thenReturn(SLACK_TOKEN);
+	when(mockSeyrenConfig.getSlackWebhook()).thenReturn("");
 
-        Check check = givenCheck();
-        Subscription subscription = givenSlackSubscriptionWithTarget("target");
-        Alert alert = givenAlert();
+	Check check = givenCheck();
+	Subscription subscription = givenSlackSubscriptionWithTarget("target");
+	Alert alert = givenAlert();
 
-        List<Alert> alerts = Arrays.asList(alert);
+	List<Alert> alerts = Arrays.asList(alert);
 
-        StringBodyCapture bodyCapture = new StringBodyCapture();
+	StringBodyCapture bodyCapture = new StringBodyCapture();
 
-        clientDriver.addExpectation(
-                onRequestTo("/api/chat.postMessage")
-                        .withMethod(ClientDriverRequest.Method.POST)
-                        .capturingBodyIn(bodyCapture)
-                        .withHeader("accept", "application/json"),
-                giveEmptyResponse());
+	clientDriver.addExpectation(onRequestTo("/api/chat.postMessage").withMethod(ClientDriverRequest.Method.POST)
+		.capturingBodyIn(bodyCapture).withHeader("accept", "application/json"), giveEmptyResponse());
 
-        // When
-        notificationService.sendNotification(check, subscription, alerts);
+	// When
+	notificationService.sendNotification(check, subscription, alerts);
 
-        // Then
-        String content = bodyCapture.getContent();
-        //System.out.println(decode(content));
+	// Then
+	String content = bodyCapture.getContent();
+	// System.out.println(decode(content));
 
-        assertContent(content, check, subscription);
-        assertThat(content, containsString("&channel=" + subscription.getTarget()));
-        assertThat(content, not(containsString(encode("<!channel>"))));
+	assertContent(content, check, subscription);
+	assertThat(content, containsString("&channel=" + subscription.getTarget()));
+	assertThat(content, not(containsString(encode("<!channel>"))));
     }
 
     @Test
     public void mentionChannelWhenTargetContainsExclamationTest() {
-        //Given
-        when(mockSeyrenConfig.getSlackToken()).thenReturn(SLACK_TOKEN);
-        when(mockSeyrenConfig.getSlackWebhook()).thenReturn("");
+	// Given
+	when(mockSeyrenConfig.getSlackToken()).thenReturn(SLACK_TOKEN);
+	when(mockSeyrenConfig.getSlackWebhook()).thenReturn("");
 
-        Check check = givenCheck();
-        Subscription subscription = givenSlackSubscriptionWithTarget("target!");
-        Alert alert = givenAlert();
+	Check check = givenCheck();
+	Subscription subscription = givenSlackSubscriptionWithTarget("target!");
+	Alert alert = givenAlert();
 
-        List<Alert> alerts = Arrays.asList(alert);
+	List<Alert> alerts = Arrays.asList(alert);
 
-        StringBodyCapture bodyCapture = new StringBodyCapture();
+	StringBodyCapture bodyCapture = new StringBodyCapture();
 
-        clientDriver.addExpectation(
-                onRequestTo("/api/chat.postMessage")
-                        .withMethod(ClientDriverRequest.Method.POST)
-                        .capturingBodyIn(bodyCapture)
-                        .withHeader("accept", "application/json"),
-                giveEmptyResponse());
+	clientDriver.addExpectation(onRequestTo("/api/chat.postMessage").withMethod(ClientDriverRequest.Method.POST)
+		.capturingBodyIn(bodyCapture).withHeader("accept", "application/json"), giveEmptyResponse());
 
-        // When
-        notificationService.sendNotification(check, subscription, alerts);
+	// When
+	notificationService.sendNotification(check, subscription, alerts);
 
-        // Then
-        String content = bodyCapture.getContent();
-        //System.out.println(decode(content));
+	// Then
+	String content = bodyCapture.getContent();
+	// System.out.println(decode(content));
 
-        assertContent(content, check, subscription);
-        assertThat(content, containsString("&channel=" + StringUtils.removeEnd(subscription.getTarget(), "!")));
-        assertThat(content, containsString(encode("<!channel>")));
+	assertContent(content, check, subscription);
+	assertThat(content, containsString("&channel=" + StringUtils.removeEnd(subscription.getTarget(), "!")));
+	assertThat(content, containsString(encode("<!channel>")));
     }
 
     @Test
     public void useSlackWebHookTest() throws JsonParseException, JsonMappingException, IOException {
-        // Given
-        when(mockSeyrenConfig.getSlackToken()).thenReturn("");
-        when(mockSeyrenConfig.getSlackWebhook()).thenReturn(clientDriver.getBaseUrl() + SLACK_WEBHOOK_URI_TO_POST);
-        when(mockSeyrenConfig.getSlackDangerColor()).thenReturn("danger");
-        
-        Check check = givenCheck();
+	// Given
+	when(mockSeyrenConfig.getSlackToken()).thenReturn("");
+	when(mockSeyrenConfig.getSlackWebhook()).thenReturn(clientDriver.getBaseUrl() + SLACK_WEBHOOK_URI_TO_POST);
+	when(mockSeyrenConfig.getSlackDangerColor()).thenReturn("danger");
 
-        Subscription subscription = givenSlackSubscriptionWithTarget("target");
+	Check check = givenCheck();
 
-        Alert alert = givenAlert();
-        List<Alert> alerts = Arrays.asList(alert);
+	Subscription subscription = givenSlackSubscriptionWithTarget("target");
 
-        StringBodyCapture bodyCapture = new StringBodyCapture();
+	Alert alert = givenAlert();
+	List<Alert> alerts = Arrays.asList(alert);
 
-        clientDriver.addExpectation(
-                onRequestTo(SLACK_WEBHOOK_URI_TO_POST)
-                        .withMethod(ClientDriverRequest.Method.POST)
-                        .capturingBodyIn(bodyCapture)
-                        .withHeader("accept", "application/json"),
-                giveEmptyResponse());
+	StringBodyCapture bodyCapture = new StringBodyCapture();
 
-        // When
-        notificationService.sendNotification(check, subscription, alerts);
+	clientDriver.addExpectation(onRequestTo(SLACK_WEBHOOK_URI_TO_POST).withMethod(ClientDriverRequest.Method.POST)
+		.capturingBodyIn(bodyCapture).withHeader("accept", "application/json"), giveEmptyResponse());
 
-        // Then
-        String content = bodyCapture.getContent();
-        assertThat(content, is(notNullValue()));
+	// When
+	notificationService.sendNotification(check, subscription, alerts);
 
-        Map<String,Object> map = new HashMap<String,Object>();
-        ObjectMapper mapper = new ObjectMapper();
-        TypeReference<HashMap<String,Object>> typeRef = new TypeReference<HashMap<String,Object>>() {};
-        map = mapper.readValue(content, typeRef);
+	// Then
+	String content = bodyCapture.getContent();
+	assertThat(content, is(notNullValue()));
 
-        assertThat((String) map.get("channel"), is(subscription.getTarget()));
-        assertThat((String) map.get("username"), is(SLACK_USERNAME));
-        assertThat((String) map.get("icon_url"), isEmptyString());
+	Map<String, Object> map = new HashMap<String, Object>();
+	ObjectMapper mapper = new ObjectMapper();
+	TypeReference<HashMap<String, Object>> typeRef = new TypeReference<HashMap<String, Object>>() {
+	};
+	map = mapper.readValue(content, typeRef);
 
-        @SuppressWarnings("unchecked")
-		List<Map<String,Object>> attachments = (List<Map<String,Object>>) map.get("attachments");
-		Map<String,Object> attachment = (Map<String, Object>) attachments.get(0);
-        
-        assertThat((String)attachment.get("fallback"), containsString(check.getName()));
-        assertThat((String)attachment.get("title"), is(check.getName()));
-        assertThat((String)attachment.get("color"), is("danger")); // AlertType.ERROR
-        assertThat((String)attachment.get("title_link"), containsString("/#/checks/" + check.getId()));
-        
-        @SuppressWarnings("unchecked")
-		List<Map<String,Object>> fields = (List<Map<String, Object>>) attachment.get("fields");
-        
-        // There should be four fields: description, trigger, from, and to
-        assertThat(fields.size(), is(4));
-        
-        for(Map<String,Object> field: fields) {
-        	if ("Description".equals(field.get("title"))) { 
-        		assertThat((String)field.get("value"), is("A description"));
-        		assertThat((Boolean)field.get("short"), is(false));
-        	} else if ("Trigger".equals(field.get("title"))) {
-        		assertThat((String)field.get("value"), is("`some.graphite.target = 1.0`"));
-        		assertThat((Boolean)field.get("short"), is(false));
-        	} else if ("From".equals(field.get("title"))) {
-        		assertThat((String)field.get("value"), is("OK"));
-        		assertThat((Boolean)field.get("short"), is(true));
-        	} else if ("To".equals(field.get("title"))) {
-        		assertThat((String)field.get("value"), is("ERROR"));
-        		assertThat((Boolean)field.get("short"), is(true));
-        	} else {
-        		fail("Unexpected field " + field.get("title"));
-        	}
-        }
+	assertThat((String) map.get("channel"), is(subscription.getTarget()));
+	assertThat((String) map.get("username"), is(SLACK_USERNAME));
+	assertThat((String) map.get("icon_url"), isEmptyString());
+
+	@SuppressWarnings("unchecked")
+	List<Map<String, Object>> attachments = (List<Map<String, Object>>) map.get("attachments");
+	Map<String, Object> attachment = (Map<String, Object>) attachments.get(0);
+
+	assertThat((String) attachment.get("fallback"), containsString(check.getName()));
+	assertThat((String) attachment.get("title"), is(check.getName()));
+	assertThat((String) attachment.get("color"), is("danger")); // AlertType.ERROR
+	assertThat((String) attachment.get("title_link"), containsString("/#/checks/" + check.getId()));
+
+	@SuppressWarnings("unchecked")
+	List<Map<String, Object>> fields = (List<Map<String, Object>>) attachment.get("fields");
+
+	// There should be four fields: description, trigger, from, and to
+	assertThat(fields.size(), is(4));
+
+	for (Map<String, Object> field : fields) {
+	    if ("Description".equals(field.get("title"))) {
+		assertThat((String) field.get("value"), is("A description"));
+		assertThat((Boolean) field.get("short"), is(false));
+	    } else if ("Trigger".equals(field.get("title"))) {
+		assertThat((String) field.get("value"), is("`some.graphite.target = 1.0`"));
+		assertThat((Boolean) field.get("short"), is(false));
+	    } else if ("From".equals(field.get("title"))) {
+		assertThat((String) field.get("value"), is("OK"));
+		assertThat((Boolean) field.get("short"), is(true));
+	    } else if ("To".equals(field.get("title"))) {
+		assertThat((String) field.get("value"), is("ERROR"));
+		assertThat((Boolean) field.get("short"), is(true));
+	    } else {
+		fail("Unexpected field " + field.get("title"));
+	    }
+	}
     }
 
     Check givenCheck() {
-        Check check = new Check()
-                .withId("123")
-                .withEnabled(true)
-                .withName("test-check")
-                .withDescription("A description")
-                .withState(AlertType.ERROR);
-        return check;
+	Check check = new Check().withId("123").withEnabled(true).withName("test-check")
+		.withDescription("A description").withState(AlertType.ERROR);
+	return check;
     }
 
     Subscription givenSlackSubscriptionWithTarget(String target) {
-	Subscription subscription = new Subscription()
-                .withEnabled(true)
-                .withType(SubscriptionType.SLACK)
-                .withTarget(target);
-        return subscription;
+	Subscription subscription = new Subscription().withEnabled(true).withType(SubscriptionType.SLACK)
+		.withTarget(target);
+	return subscription;
     }
 
     Alert givenAlert() {
-        Alert alert = new Alert()
-        		.withTarget("some.graphite.target")
-                .withValue(new BigDecimal("1.0"))
-                .withTimestamp(new DateTime())
-                .withFromType(AlertType.OK)
-                .withToType(AlertType.ERROR);
-        return alert;
+	Alert alert = new Alert().withTarget("some.graphite.target").withValue(new BigDecimal("1.0"))
+		.withTimestamp(new DateTime()).withFromType(AlertType.OK).withToType(AlertType.ERROR);
+	return alert;
     }
 
     private void assertContent(String content, Check check, Subscription subscription) {
-      assertThat(content, containsString("token=" + SLACK_TOKEN));
-      assertThat(content, containsString(encode("*" + check.getState().name() + "* " + check.getName())));
-      assertThat(content, containsString(encode("/#/checks/" + check.getId())));
-      assertThat(content, containsString("&username=" + SLACK_USERNAME));
-      assertThat(content, containsString("&icon_url="));
+	assertThat(content, containsString("token=" + SLACK_TOKEN));
+	assertThat(content, containsString(encode("*" + check.getState().name() + "* " + check.getName())));
+	assertThat(content, containsString(encode("/#/checks/" + check.getId())));
+	assertThat(content, containsString("&username=" + SLACK_USERNAME));
+	assertThat(content, containsString("&icon_url="));
     }
 
     String encode(String data) {
-        try {
-            return URLEncoder.encode(data, CONTENT_ENCODING);
-        } catch (UnsupportedEncodingException e) {
-            return null;
-        }
+	try {
+	    return URLEncoder.encode(data, CONTENT_ENCODING);
+	} catch (UnsupportedEncodingException e) {
+	    return null;
+	}
     }
 
     String decode(String data) {
-        try {
-            return URLDecoder.decode(data, CONTENT_ENCODING);
-        } catch (UnsupportedEncodingException e) {
-            return null;
-        }
+	try {
+	    return URLDecoder.decode(data, CONTENT_ENCODING);
+	} catch (UnsupportedEncodingException e) {
+	    return null;
+	}
     }
 
 }
