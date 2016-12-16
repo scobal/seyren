@@ -20,7 +20,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.isEmptyString;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -165,7 +165,8 @@ public class SlackNotificationServiceTest {
         // Given
         when(mockSeyrenConfig.getSlackToken()).thenReturn("");
         when(mockSeyrenConfig.getSlackWebhook()).thenReturn(clientDriver.getBaseUrl() + SLACK_WEBHOOK_URI_TO_POST);
-
+        when(mockSeyrenConfig.getSlackDangerColor()).thenReturn("danger");
+        
         Check check = givenCheck();
 
         Subscription subscription = givenSlackSubscriptionWithTarget("target");
@@ -189,17 +190,47 @@ public class SlackNotificationServiceTest {
         String content = bodyCapture.getContent();
         assertThat(content, is(notNullValue()));
 
-        Map<String,String> map = new HashMap<String,String>();
+        Map<String,Object> map = new HashMap<String,Object>();
         ObjectMapper mapper = new ObjectMapper();
         TypeReference<HashMap<String,Object>> typeRef = new TypeReference<HashMap<String,Object>>() {};
         map = mapper.readValue(content, typeRef);
 
-        assertThat(map.get("channel"), is(subscription.getTarget()));
-        assertThat(map.get("text"), containsString("*" + check.getState().name() + "* "));
-        assertThat(map.get("text"), containsString("/#/checks/" + check.getId()));
-        assertThat(map.get("text"), containsString(check.getName()));
-        assertThat(map.get("username"), is(SLACK_USERNAME));
-        assertThat(map.get("icon_url"), isEmptyString());
+        assertThat((String) map.get("channel"), is(subscription.getTarget()));
+        assertThat((String) map.get("username"), is(SLACK_USERNAME));
+        assertThat((String) map.get("icon_url"), isEmptyString());
+
+        @SuppressWarnings("unchecked")
+		List<Map<String,Object>> attachments = (List<Map<String,Object>>) map.get("attachments");
+		Map<String,Object> attachment = (Map<String, Object>) attachments.get(0);
+        
+        assertThat((String)attachment.get("fallback"), containsString(check.getName()));
+        assertThat((String)attachment.get("title"), is(check.getName()));
+        assertThat((String)attachment.get("color"), is("danger")); // AlertType.ERROR
+        assertThat((String)attachment.get("title_link"), containsString("/#/checks/" + check.getId()));
+        
+        @SuppressWarnings("unchecked")
+		List<Map<String,Object>> fields = (List<Map<String, Object>>) attachment.get("fields");
+        
+        // There should be four fields: description, trigger, from, and to
+        assertThat(fields.size(), is(4));
+        
+        for(Map<String,Object> field: fields) {
+        	if ("Description".equals(field.get("title"))) { 
+        		assertThat((String)field.get("value"), is("A description"));
+        		assertThat((Boolean)field.get("short"), is(false));
+        	} else if ("Trigger".equals(field.get("title"))) {
+        		assertThat((String)field.get("value"), is("`some.graphite.target = 1.0`"));
+        		assertThat((Boolean)field.get("short"), is(false));
+        	} else if ("From".equals(field.get("title"))) {
+        		assertThat((String)field.get("value"), is("OK"));
+        		assertThat((Boolean)field.get("short"), is(true));
+        	} else if ("To".equals(field.get("title"))) {
+        		assertThat((String)field.get("value"), is("ERROR"));
+        		assertThat((Boolean)field.get("short"), is(true));
+        	} else {
+        		fail("Unexpected field " + field.get("title"));
+        	}
+        }
     }
 
     Check givenCheck() {
@@ -207,6 +238,7 @@ public class SlackNotificationServiceTest {
                 .withId("123")
                 .withEnabled(true)
                 .withName("test-check")
+                .withDescription("A description")
                 .withState(AlertType.ERROR);
         return check;
     }
@@ -221,6 +253,7 @@ public class SlackNotificationServiceTest {
 
     Alert givenAlert() {
         Alert alert = new Alert()
+        		.withTarget("some.graphite.target")
                 .withValue(new BigDecimal("1.0"))
                 .withTimestamp(new DateTime())
                 .withFromType(AlertType.OK)

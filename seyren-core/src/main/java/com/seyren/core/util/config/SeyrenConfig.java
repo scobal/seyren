@@ -75,6 +75,11 @@ public class SeyrenConfig {
     private final String slackUsername;
     private final String slackIconUrl;
     private final String slackEmojis;
+    private final String slackGoodColor;
+    private final String slackWarningColor;
+    private final String slackDangerColor;
+    private final String slackExceptionColor;
+    private final String slackUnknownColor;
     private final String pushoverAppApiToken;
     private final String snmpHost;
     private final Integer snmpPort;
@@ -153,6 +158,11 @@ public class SeyrenConfig {
         this.slackUsername = configOrDefault("SLACK_USERNAME", "Seyren");
         this.slackIconUrl = configOrDefault("SLACK_ICON_URL", "");
         this.slackEmojis = configOrDefault("SLACK_EMOJIS", "");
+        this.slackGoodColor = configOrDefault("SLACK_ATTACHMENT_GOOD_COLOR", "good");
+        this.slackWarningColor = configOrDefault("SLACK_ATTACHMENT_WARN_COLOR", "warning");
+        this.slackDangerColor = configOrDefault("SLACK_ATTACHMENT_DANGER_COLOR", "danger");
+        this.slackExceptionColor = configOrDefault("SLACK_ATTACHMENT_EXCEPTION_COLOR", "danger");
+        this.slackUnknownColor = configOrDefault("SLACK_ATTACHMENT_UNKNOWN_COLOR", "");
 
         // PushOver
         this.pushoverAppApiToken = configOrDefault("PUSHOVER_APP_API_TOKEN", "");
@@ -423,7 +433,32 @@ public class SeyrenConfig {
     public String getSlackEmojis() {
       return slackEmojis;
     }
-
+    
+    @JsonIgnore
+    public String getSlackDangerColor() {
+    	return slackDangerColor;
+    }
+    
+    @JsonIgnore
+    public String getSlackWarningColor() {
+    	return slackWarningColor;
+    }
+    
+    @JsonIgnore
+    public String getSlackGoodColor() {
+    	return slackGoodColor;
+    }
+    
+    @JsonIgnore
+    public String getSlackExceptionColor() {
+    	return slackExceptionColor;
+    }
+    
+    @JsonIgnore
+    public String getSlackUnknownColor() {
+    	return slackUnknownColor;
+    }
+    
     @JsonIgnore
     public String getBigPandaNotificationUrl() {
         return bigPandaNotificationUrl;
@@ -433,7 +468,7 @@ public class SeyrenConfig {
     public String getBigPandaAuthBearer() {
         return bigPandaAuthBearer;
     }
-
+    
     @JsonIgnore
     public int getNoOfThreads() {
         return noOfThreads;

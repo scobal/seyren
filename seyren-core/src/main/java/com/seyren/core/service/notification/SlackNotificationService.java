@@ -17,7 +17,9 @@ import static com.google.common.collect.Iterables.transform;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -125,12 +127,11 @@ public class SlackNotificationService implements NotificationService {
     }
     
     private HttpEntity createJsonEntity(Check check, Subscription subscription, List<Alert> alerts) throws JsonProcessingException {
-        Map<String,String> payload = new HashMap<String, String>();
+        Map<String,Object> payload = new HashMap<String, Object>();
         payload.put("channel", subscription.getTarget());
         payload.put("username", seyrenConfig.getSlackUsername());
-        payload.put("text", formatForWebhook(check, subscription, alerts));
         payload.put("icon_url", seyrenConfig.getSlackIconUrl());
-
+        payload.put("attachments", formatForWebhook(check, subscription, alerts));
         String message = new ObjectMapper().writeValueAsString(payload);
         
         if (LOGGER.isDebugEnabled()) {
@@ -157,12 +158,9 @@ public class SlackNotificationService implements NotificationService {
     
     private String formatForWebApi(Check check, Subscription subscription, List<Alert> alerts) {
         String url = formatCheckUrl(check);
-        String alertsString = formatAlert(alerts);
-
+        String alertsString = formatAlertsForText(alerts);
         String channel = subscription.getTarget().contains("!") ? "<!channel>" : "";
-
         String description = formatDescription(check);
-
         final String state = check.getState().toString();
 
         return String.format("%s*%s* %s [%s]%s\n```\n%s\n```\n#%s %s",
@@ -177,53 +175,96 @@ public class SlackNotificationService implements NotificationService {
         );
     }
     
-    private String formatForWebhook(Check check, Subscription subscription, List<Alert> alerts) {
-        String url = formatCheckUrl(check);
-        String alertsString = formatAlert(alerts);
-
-        String description = formatDescription(check);
-
-        final String state = check.getState().toString();
-
-        return String.format("%s *%s* %s (<%s|Open>)%s\n```\n%s\n```",
-                Iterables.get(extractEmojis(), check.getState().ordinal(), ""),
-                state,
-                check.getName(),
-                url,
-                description,
-                alertsString
-        );
+    private List<Map<String,Object>> formatForWebhook(Check check, Subscription subscription, List<Alert> alerts) {
+    	List<Map<String,Object>> attachments = new ArrayList<Map<String,Object>>();
+    	for (Alert alert: alerts) { 
+    		Map<String,Object> attachment = new HashMap<String,Object>();
+    		attachment.put("mrkdwn_in", Arrays.asList("fields", "text", "pretext"));
+    		attachment.put("fallback", String.format("An alert has been triggered for '%s'",check.getName()));
+    		attachment.put("color", formatColor(check));
+    		attachment.put("title", check.getName());
+    		attachment.put("title_link", formatCheckUrl(check));
+    		attachment.put("fields", formatAlertForWebhook(check, alert));
+    		attachments.add(attachment);
+    	}
+    	return attachments;
     }
 
-    private List<String> extractEmojis() {
-      List<String> emojis = Lists.newArrayList(
-              Splitter.on(',').omitEmptyStrings().trimResults().split(seyrenConfig.getSlackEmojis())
-      );
-      return emojis;
+    private String formatAlertsForText(List<Alert> alerts) {
+    	return Joiner.on("\n").join(transform(alerts, new Function<Alert, String>() {
+			@Override
+			public String apply(Alert input) {     
+				return String.format("%s = %s (%s to %s)", input.getTarget(), input.getValue().toString(), input.getFromType(), input.getToType());
+			}
+    	}));
     }
-
-    private String formatCheckUrl(Check check) {
-      String url = String.format("%s/#/checks/%s", seyrenConfig.getBaseUrl(), check.getId());
-      return url;
-    }
-
-    private String formatAlert(List<Alert> alerts) {
-      String alertsString = Joiner.on("\n").join(transform(alerts, new Function<Alert, String>() {
-          @Override
-          public String apply(Alert input) {
-              return String.format("%s = %s (%s to %s)", input.getTarget(), input.getValue().toString(), input.getFromType(), input.getToType());
-          }
-      }));
-      return alertsString;
-    }
+    
+    private List<Map<String,Object>> formatAlertForWebhook(Check check, Alert alert) {
+		List<Map<String,Object>> fields = new ArrayList<Map<String,Object>>();
+		
+		if (check.getDescription() != null && !check.getDescription().isEmpty()) {
+			Map<String,Object> description = new HashMap<String,Object>();
+			description.put("title", "Description");
+			description.put("value", check.getDescription());
+			description.put("short", false);
+			fields.add(description);
+		}
+		
+		Map<String,Object> trigger = new HashMap<String,Object>();
+		trigger.put("title", "Trigger");
+		trigger.put("value", String.format("`%s = %s`", alert.getTarget(), alert.getValue().toString()));
+		trigger.put("short", false);
+		fields.add(trigger);
+		
+		Map<String,Object> from = new HashMap<String,Object>();
+		from.put("title", "From");
+		from.put("value", alert.getFromType().toString());
+		from.put("short", true);
+		fields.add(from);
+		
+		Map<String,Object> to = new HashMap<String,Object>();
+		to.put("title", "To");
+		to.put("value",  alert.getToType().toString());
+		to.put("short",  true);
+		fields.add(to);
+		
+		return fields;
+	}
 
     private String formatDescription(Check check) {
-      String description;
-      if (StringUtils.isNotBlank(check.getDescription())) {
-          description = String.format("\n> %s", check.getDescription());
-      } else {
-          description = "";
-      }
-      return description;
+    	String description;
+    	if (StringUtils.isNotBlank(check.getDescription())) {
+    		description = String.format("\n> %s", check.getDescription());
+    	} else {
+    		description = "";
+    	}
+    	return description;
+    }
+    
+    private List<String> extractEmojis() {
+	    return Lists.newArrayList(
+	            Splitter.on(',').omitEmptyStrings().trimResults().split(seyrenConfig.getSlackEmojis())
+	    );
+	}
+	
+    private String formatCheckUrl(Check check) {
+    	return String.format("%s/#/checks/%s", seyrenConfig.getBaseUrl(), check.getId());
+    }
+      
+    private String formatColor(Check check) {
+    	switch(check.getState()) {
+		case ERROR:
+			return seyrenConfig.getSlackDangerColor();
+		case EXCEPTION:
+			return seyrenConfig.getSlackExceptionColor();
+		case OK:
+			return seyrenConfig.getSlackGoodColor();
+		case UNKNOWN:
+			return seyrenConfig.getSlackUnknownColor();
+		case WARN:
+			return seyrenConfig.getSlackWarningColor();
+		default:
+			return seyrenConfig.getSlackUnknownColor();
+    	}
     }
 }
