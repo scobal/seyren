@@ -116,15 +116,20 @@ To generate a "Service API Key", see [PagerDuty Support: Adding Services](https:
 
 ##### [Slack](https://www.slack.com)
 
-If you set `SLACK_TOKEN`, the target for a Slack subscription will be the channel name (including the `#`, for example `#channel`). You can optionally suffix the channel name with `!` and that will cause the alerts to include a `@channel` mention (for example `#channel!`). If you set `SLACK_WEBHOOK_URL`, you don't need to suffix the channel, you can simply use `#channel` or `@channel`.
+Slack notifications can be sent via [Incoming Webhooks](https://api.slack.com/incoming-webhooks) (preferred) or the [Slack Web API](https://api.slack.com/web). Setting `SLACK_TOKEN` will utilize the Slack Web API. Setting `SLACK_WEBHOOK_URL` will utilize Slack Webhooks. 
 
-Slack notifications can be sent via [Incoming Webhooks](https://api.slack.com/incoming-webhooks) (preferred) or the [Slack Web API](https://api.slack.com/web).
+The target for a Slack subscription will be the channel name (including the `#`, for example `#channel`). If you are using the Slack Web API, you can optionally suffix the channel name with `!` and that will cause the alerts to include a `@channel` mention (for example `#channel!`). 
  
 * `SLACK_TOKEN` - The Slack web api auth token. Default: ``
 * `SLACK_WEBHOOK_URL` - The Slack webhook URL. If specified, `SLACK_TOKEN` will be ignored. Default: ``
 * `SLACK_USERNAME` - The username that messages will be sent to slack. Default: `Seyren`
 * `SLACK_ICON_URL` - The user icon URL. Default: ``
 * `SLACK_EMOJIS` - Mapping between state and emojis unicode. Default: ``
+* `SLACK_ATTACHMENT_GOOD_COLOR` (Webhook only) - The color to associate with the Slack attachment when the check is in an OK state. Default: `good`
+* `SLACK_ATTACHMENT_WARNING_COLOR` (Webhook only) - The color to associate with the Slack attachment when the check is in an OK state. Default: `warning`
+* `SLACK_ATTACHMENT_ERROR_COLOR` (Webhook only) - The color to associate with the Slack attachment when the check is in an OK state. Default: `danger`
+* `SLACK_ATTACHMENT_EXCEPTION_COLOR` (Webhook only) - The color to associate with the Slack attachment when the check is in an EXCEPTION state. Default: `danger`
+* `SLACK_ATTACHMENT_UNKNOWN_COLOR` (Webhook only) - The color to associate with the Slack attachment when the check is in an UNKNOWN state. Default: ``
 
 ##### [SNMP](http://en.wikipedia.org/wiki/Simple_Network_Management_Protocol)
 * `SNMP_HOST` - The SNMP host. Default: `localhost`
