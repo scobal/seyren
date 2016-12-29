@@ -49,5 +49,6 @@ public interface ChecksStore {
     Check saveCheck(Check check);
 
     Check updateStateAndLastCheck(String checkId, AlertType state, DateTime lastCheck);
-    
+
+    Check updateConsecutiveChecksTriggered(String checkId, Boolean consecutiveChecksTriggered);
 }

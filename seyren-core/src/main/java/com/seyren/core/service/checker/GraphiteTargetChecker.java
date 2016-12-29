@@ -51,14 +51,14 @@ public class GraphiteTargetChecker implements TargetChecker {
             boolean hasDataAndHasErrors = false;
             for (JsonNode metric : node) {
                 String target = metric.path("target").asText();
-                LOGGER.info("    Message='Checking graphite for value of target#{} using check ID #{}'", target, check.getId());
+                LOGGER.info("    Message='Checking graphite for value of target={} using check ID Check={}'", target, check.getId());
                 try {
                     BigDecimal value = getLatestValue(metric);
                     targetValues.put(target, Optional.of(value));
-                    LOGGER.info("       Message='Value found - target#{} using check ID #{}: {}, where WARN is '{}' and ERROR is '{}''", target, check.getId() ,value, check.getWarn(), check.getError());
+                    LOGGER.info("       Message='Value found - target={} using Check={}: {}, where WARN is '{}' and ERROR is '{}''", target, check.getId() ,value, check.getWarn(), check.getError());
                 } catch (InvalidGraphiteValueException e) {
                     // Silence these - we don't know what's causing Graphite to return null values
-                    LOGGER.warn("       Message=Warning - target#{} using check ID #{}: {} failed to read valid value from Graphite", check.getName(), e);
+                    LOGGER.warn("       Message=Warning - target={} using Check={}: {} Message=failed to read valid value from Graphite", check.getName(), e);
                     targetValues.put(target, Optional.<BigDecimal> absent());
                     hasDataAndHasErrors = true;
                 }
@@ -68,7 +68,7 @@ public class GraphiteTargetChecker implements TargetChecker {
             }
         } catch (GraphiteReadException e) {
         	check.setRemoteServerErrorOccurred(true);
-        	LOGGER.warn("       Message='Warning - Check ID #{}: {}, Graphite read error'", check.getId());
+        	LOGGER.warn("       Message='Warning - Check={}:  Message=Graphite read error'", check.getId());
             LOGGER.warn("Check=" + check.getName() + " Message=failed to read from Graphite", e);
         }
         return targetValues;

@@ -52,6 +52,7 @@ public class MongoMapper {
         Boolean enableConsecutiveChecks = getBooleanValue(dbo, "enableConsecutiveChecks");
         Integer consecutiveChecks = getInteger(dbo, "consecutiveChecks");
         Integer consecutiveChecksTolerance = getInteger(dbo, "consecutiveChecksTolerance");
+        Boolean consecutiveChecksTriggered = getBooleanValue(dbo, "consecutiveChecksTriggered");
         
         return new Check().withId(id)
                 .withName(name)
@@ -71,7 +72,8 @@ public class MongoMapper {
                 .withSubscriptions(subscriptions)
                 .withEnableConsecutiveChecks(enableConsecutiveChecks)
                 .withConsecutiveChecks(consecutiveChecks)
-                .withConsecutiveChecksTolerance(consecutiveChecksTolerance);
+                .withConsecutiveChecksTolerance(consecutiveChecksTolerance)
+                .withConsecutiveChecksTriggered(consecutiveChecksTriggered);
     }
     
     public Subscription subscriptionFrom(DBObject dbo) {
@@ -215,7 +217,7 @@ public class MongoMapper {
         map.put("enableConsecutiveChecks",check.isEnableConsecutiveChecks());
         map.put("consecutiveChecks",check.getConsecutiveChecks());
         map.put("consecutiveChecksTolerance", check.getConsecutiveChecksTolerance());
-
+        map.put("consecutiveChecksTriggered", check.isConsecutiveChecksTriggered());
         return map;
     }
     

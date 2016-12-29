@@ -112,7 +112,11 @@ public class CheckRunner implements Runnable {
                 }
                 // Get the value of the entry
                 BigDecimal currentValue = value.get();
-                LOGGER.info("        Check={}, Target={} :: Message='Value found.''", check.getId(), target);
+
+                // Based on the check value retrieved, turn it into an Alert state
+                AlertType currentState = valueChecker.checkValue(currentValue, warn, error);
+
+                LOGGER.info("        Check={}, Target={}  Current State is {} :: Message='Value found.''", check.getId(), target, currentState);
                 // Get the last alert stored for this check
                 Alert lastAlert = getLastAlertForTarget(target);
 
@@ -124,12 +128,13 @@ public class CheckRunner implements Runnable {
                 } else {
                     lastState = lastAlert.getToType();
                     LOGGER.info("        Check={}, Target={} :: Message='Last alert found, state was '{}''", check.getId(), target, lastState );
+                    worstState = lastState;
                 }
-                // Based on the check value retrieved, turn it into an Alert state
-                AlertType currentState = valueChecker.checkValue(currentValue, warn, error);
+
+
                 // If the Alert state is worse than the last state, set it as the worst state yet
                 // encountered
-                if (currentState.isWorseThan(worstState)) {
+                if (currentState.isWorseThan(lastState)) {
                     worstState = currentState;
                     LOGGER.info("        Check={}, Target={} :: Message='Current alert worse than last alert'", check.getId(), target );
                 }
@@ -147,14 +152,18 @@ public class CheckRunner implements Runnable {
 
 
                 if(null != check.isEnableConsecutiveChecks() && check.isEnableConsecutiveChecks() && null != check.getConsecutiveChecks() && null != check.getConsecutiveChecksTolerance()){
-
-                    if(isNowOk(lastState, currentState)){
+                    LOGGER.info("        isNowOk?{} , Consecutive Check Triggered {}", lastState.isWorseThan(currentState)  ,check.isConsecutiveChecksTriggered());
+                    if(lastState.isWorseThan(currentState) && check.isConsecutiveChecksTriggered()){
                         LOGGER.info("        Check={}, Target={} :: Message='This consecutive alert is now in an ok state'", check.getId(), target );
                         LOGGER.info("        Check={}, Target={} :: Message='Adding current alert as an 'Interesting Alert''", check.getId(), target );
                         interestingAlerts.add(alert);
-                        continue;
+                        checksStore.updateConsecutiveChecksTriggered(check.getId(), false);
+
                     }
                     if (analysePastAlertsAndRaiseAlarm(warn, error, interestingAlerts, alert, target, now)){
+                        checksStore.updateConsecutiveChecksTriggered(check.getId(), true);
+                    }
+                    else{
                         continue;
                     }
                 }
@@ -185,7 +194,7 @@ public class CheckRunner implements Runnable {
             for (Subscription subscription : updatedCheck.getSubscriptions()) {
             	// If no notification should be sent for this alert state (ERROR, WARN, etc.),
             	// move on
-            	LOGGER.info("        Check={} :: Message='Subscription #{} of type '{}' being evaluated.'", check.getId(), subscription.getId(), subscription.getType() );
+            	LOGGER.info("        Check={} Subscription={} SubscriptionType={} :: Message= 'Subscription being evaluated.'", check.getId(), subscription.getId(), subscription.getType() );
                 if (!subscription.shouldNotify(now, worstState)) {
                 	LOGGER.info("        Check={} :: Message='Subscription #{} should not fire away.'", check.getId(), subscription.getId() );
                     continue;
@@ -218,7 +227,8 @@ public class CheckRunner implements Runnable {
         if(null != previousResponse) {
             List<Alert> previousAlerts = previousResponse.getValues();
             if(previousAlerts.size() < check.getConsecutiveChecks()){
-                return true;
+                LOGGER.info("       Check={}, Message='Not enough checks for previous consecutive alerts number of checks needed {}, current number of checks {}'", check.getId(), check.getConsecutiveChecks(), previousAlerts.size());
+                return false;
             }
             else{
                 Integer errorCount = 0;
@@ -229,15 +239,15 @@ public class CheckRunner implements Runnable {
                     }
                 }
                 if(errorCount > (check.getConsecutiveChecks() * check.getConsecutiveChecksTolerance()) / 100){
-                    LOGGER.info("        Check={}, Target={}, Errors Count #{}, Tolerance #{} :: Message='Adding current alert as an 'Interesting Alert''", check.getId(), target, check.getConsecutiveChecks(), check.getConsecutiveChecksTolerance() );
+                    LOGGER.info("        Check={}, Target={}, Errors Count #{}, Tolerance #{} :: Message='Adding current alert as an 'Interesting Alert''", check.getId(), target, check.getConsecutiveChecks(), check.getConsecutiveChecksTolerance());
                     interestingAlerts.add(alert);
                 }
                 else{
-                    return true;
+                    return false;
                 }
             }
         }
-        return false;
+        return true;
     }
 
     public static void flushLastAlerts() {
@@ -271,10 +281,6 @@ public class CheckRunner implements Runnable {
 
     private boolean isStillOk(AlertType last, AlertType current) {
         return last == AlertType.OK && current == AlertType.OK;
-    }
-
-    private boolean isNowOk(AlertType last, AlertType current) {
-        return last != AlertType.OK && current == AlertType.OK;
     }
 
     private boolean stateIsTheSame(AlertType last, AlertType current) {
