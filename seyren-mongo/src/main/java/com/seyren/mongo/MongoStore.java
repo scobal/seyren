@@ -80,7 +80,7 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore,
             throw new RuntimeException(e);
         }
     }
-    
+
     /**
      * Constructor used for TDD
      * @param mongo The mocked Mongo DB
@@ -288,7 +288,6 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore,
                 .with("enableConsecutiveChecks", check.isEnableConsecutiveChecks())
                 .with("consecutiveChecks", check.getConsecutiveChecks())
                 .with("consecutiveChecksTolerance", check.getConsecutiveChecksTolerance());
-
         DBObject setObject = object("$set", partialObject);
 
         getChecksCollection().update(findObject, setObject);
@@ -452,6 +451,20 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore,
         }
         return mapper.userFrom(dbo);
     }
+
+    @Override
+    public Check updateConsecutiveChecksTriggered(String checkId, Boolean consecutiveChecksTriggered) {
+        DBObject findObject = forId(checkId);
+
+        DBObject partialObject = object("consecutiveChecksTriggered", consecutiveChecksTriggered);
+
+        DBObject setObject = object("$set", partialObject);
+
+        getChecksCollection().update(findObject, setObject);
+
+        return getCheck(checkId);
+    }
+
 
     /**
      * Set the configuartion - mainly for purposes of TDD
