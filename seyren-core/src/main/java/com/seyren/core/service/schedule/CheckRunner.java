@@ -128,13 +128,12 @@ public class CheckRunner implements Runnable {
                 } else {
                     lastState = lastAlert.getToType();
                     LOGGER.info("        Check={}, Target={} :: Message='Last alert found, state was '{}''", check.getId(), target, lastState );
-                    worstState = lastState;
                 }
 
 
                 // If the Alert state is worse than the last state, set it as the worst state yet
                 // encountered
-                if (currentState.isWorseThan(lastState)) {
+                if (currentState.isWorseThan(worstState)) {
                     worstState = currentState;
                     LOGGER.info("        Check={}, Target={} :: Message='Current alert worse than last alert'", check.getId(), target );
                 }
@@ -143,7 +142,7 @@ public class CheckRunner implements Runnable {
                 	LOGGER.info("        Check={}, Target={} :: Message='Current alert comparison yields 'Is Still OK''", check.getId(), target );
                     continue;
                 }
-                // If the state is not OK, create an alert
+
                 Alert alert = createAlert(target, currentValue, warn, error, lastState, currentState, now);
                 saveAlert(alert);
 
@@ -155,7 +154,7 @@ public class CheckRunner implements Runnable {
                     LOGGER.info("        isNowOk?{} , Consecutive Check Triggered {}", lastState.isWorseThan(currentState)  ,check.isConsecutiveChecksTriggered());
                     if(lastState.isWorseThan(currentState) && check.isConsecutiveChecksTriggered()){
                         LOGGER.info("        Check={}, Target={} :: Message='This consecutive alert is now in an ok state'", check.getId(), target );
-                        LOGGER.info("        Check={}, Target={} :: Message='Adding current alert as an 'Interesting Alert''", check.getId(), target );
+                        LOGGER.info("        Check={}, Target={}, From={}, To={} :: Message='Adding current alert as an 'Interesting Alert''", check.getId(), target, lastState, currentState );
                         interestingAlerts.add(alert);
                         checksStore.updateConsecutiveChecksTriggered(check.getId(), false);
 
@@ -173,7 +172,7 @@ public class CheckRunner implements Runnable {
                         continue;
                     }
                     // If the state has changed, add the alert to the interesting alerts collection
-                    LOGGER.info("        Check={}, Target={} :: Message='Adding current alert as an 'Interesting Alert''", check.getId(), target );
+                    LOGGER.info("        Check={}, Target={}, From={}, To={} :: Message='Adding current alert as an 'Interesting Alert''", check.getId(), target, lastState, currentState );
 
                     interestingAlerts.add(alert);
                 }

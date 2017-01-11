@@ -87,7 +87,7 @@ public class HipChatNotificationService implements NotificationService {
 
     private void sendMessage(String message, MessageColor color, String[] roomIds, String from, String authToken, boolean notify) {
         for (String roomId : roomIds) {
-            LOGGER.info("Posting: {} to {}: {} {}", from, roomId, message, color);
+            LOGGER.info("Posting: {} to {}: Message='{}' {}", from, roomId, message, color);
             HttpClient client = HttpClientBuilder.create().useSystemProperties().build();
             HttpPost post = new HttpPost();
 
@@ -104,7 +104,7 @@ public class HipChatNotificationService implements NotificationService {
                 post.setEntity(new UrlEncodedFormEntity(parameters));
                 client.execute(post);
             } catch (Exception e) {
-                LOGGER.warn("Error posting to HipChat", e);
+                LOGGER.warn("Message=Error posting to HipChat", e);
             } finally {
                 post.releaseConnection();
                 HttpClientUtils.closeQuietly(client);
