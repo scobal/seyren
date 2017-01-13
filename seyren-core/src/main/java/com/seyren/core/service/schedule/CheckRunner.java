@@ -196,17 +196,17 @@ public class CheckRunner implements Runnable {
             	// move on
             	LOGGER.info("        Check={} Subscription={} SubscriptionType={} :: Message= 'Subscription being evaluated.'", check.getId(), subscription.getId(), subscription.getType() );
                 if (!subscription.shouldNotify(now, worstState)) {
-                	LOGGER.info("        Check={} :: Message='Subscription should not fire away.' Subscription", check.getId(), subscription.getId() );
+                	LOGGER.info("        Check={} :: Message='Subscription should not fire away.' Subscription={}", check.getId(), subscription.getId() );
                     continue;
                 }
                 // If a notification should be sent out, poll the notification services and
                 // send a notification for each registered service
                 for (NotificationService notificationService : notificationServices) {
                     if (notificationService.canHandle(subscription.getType())) {
-                    	LOGGER.info("        Check={} :: Message='Subscription firing away.' Subscription", check.getId(), subscription.getId() );
+                    	LOGGER.info("        Check={} :: Message='Subscription firing away.' Subscription={}", check.getId(), subscription.getId() );
                         try {
                             notificationService.sendNotification(updatedCheck, subscription, interestingAlerts);
-                            LOGGER.info("        Check={} :: Message='Subscription sent.' Subscription", check.getId(), subscription.getId() );
+                            LOGGER.info("        Check={} :: Message='Subscription sent.' Subscription={}", check.getId(), subscription.getId() );
                         } catch (Exception e) {
                             LOGGER.warn("Message='Notifying {} by {} failed.'", subscription.getTarget(), subscription.getType(), e);
                         }
