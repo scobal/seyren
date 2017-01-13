@@ -77,7 +77,7 @@ public class CheckRunner implements Runnable {
             if (check.hasRemoteServerErrorOccurred()){
             	// TODO Will we always be calling a Graphite server?  Change if you are using another service
             	LOGGER.warn("  *** Check={} :: Message='Will not initiate check, remote server read error occurred when calling' "
-            			+ "server located at: ", check.getId(), check.getGraphiteBaseUrl());
+            			+ "server located at: {}", check.getId(), check.getGraphiteBaseUrl());
             	return;
             }
             // Get the current time - to be used for notification and alert time stamps
@@ -151,10 +151,10 @@ public class CheckRunner implements Runnable {
 
 
                 if(null != check.isEnableConsecutiveChecks() && check.isEnableConsecutiveChecks() && null != check.getConsecutiveChecks() && null != check.getConsecutiveChecksTolerance()){
-                    LOGGER.info("        isNowOk?{} , Consecutive Check Triggered {}", lastState.isWorseThan(currentState)  ,check.isConsecutiveChecksTriggered());
+                    LOGGER.info("        Check={} ccIsNowOK={} , ccIsTriggered={}", check.getId(), lastState.isWorseThan(currentState)  ,check.isConsecutiveChecksTriggered());
                     if(lastState.isWorseThan(currentState) && check.isConsecutiveChecksTriggered()){
                         LOGGER.info("        Check={}, Target={} :: Message='This consecutive alert is now in an ok state'", check.getId(), target );
-                        LOGGER.info("        Check={}, Target={}, From={}, To={} :: Message='Adding current alert as an 'Interesting Alert''", check.getId(), target, lastState, currentState );
+                        LOGGER.info("        Check={}, Target={}, From={}, To={} :: Message='Adding current alert as an Interesting Alert'", check.getId(), target, lastState, currentState );
                         interestingAlerts.add(alert);
                         checksStore.updateConsecutiveChecksTriggered(check.getId(), false);
 
@@ -172,7 +172,7 @@ public class CheckRunner implements Runnable {
                         continue;
                     }
                     // If the state has changed, add the alert to the interesting alerts collection
-                    LOGGER.info("        Check={}, Target={}, From={}, To={} :: Message='Adding current alert as an 'Interesting Alert''", check.getId(), target, lastState, currentState );
+                    LOGGER.info("        Check={}, Target={}, From={}, To={} :: Message='Adding current alert as an Interesting Alert'", check.getId(), target, lastState, currentState );
 
                     interestingAlerts.add(alert);
                 }
@@ -182,6 +182,7 @@ public class CheckRunner implements Runnable {
             LOGGER.info("        Check={} :: Message='Check is now complete'", check.getId() );
             // Update the the check with the worst state encountered in this polling
             Check updatedCheck = checksStore.updateStateAndLastCheck(check.getId(), worstState, DateTime.now());
+            LOGGER.info("       Check={} :: Message= 'Updating state to worst state {}'", check.getId(), worstState);
             // If there are no interesting alerts, simply return
             if (interestingAlerts.isEmpty()) {
             	LOGGER.info("        Check={} :: Message='No interesting alerts found.'", check.getId() );
@@ -195,17 +196,17 @@ public class CheckRunner implements Runnable {
             	// move on
             	LOGGER.info("        Check={} Subscription={} SubscriptionType={} :: Message= 'Subscription being evaluated.'", check.getId(), subscription.getId(), subscription.getType() );
                 if (!subscription.shouldNotify(now, worstState)) {
-                	LOGGER.info("        Check={} :: Message='Subscription #{} should not fire away.'", check.getId(), subscription.getId() );
+                	LOGGER.info("        Check={} :: Message='Subscription should not fire away.' Subscription", check.getId(), subscription.getId() );
                     continue;
                 }
                 // If a notification should be sent out, poll the notification services and
                 // send a notification for each registered service
                 for (NotificationService notificationService : notificationServices) {
                     if (notificationService.canHandle(subscription.getType())) {
-                    	LOGGER.info("        Check={} :: Message='Subscription #{} firing away.'", check.getId(), subscription.getId() );
+                    	LOGGER.info("        Check={} :: Message='Subscription firing away.' Subscription", check.getId(), subscription.getId() );
                         try {
                             notificationService.sendNotification(updatedCheck, subscription, interestingAlerts);
-                            LOGGER.info("        Check={} :: Message='Subscription #{} sent.'", check.getId(), subscription.getId() );
+                            LOGGER.info("        Check={} :: Message='Subscription sent.' Subscription", check.getId(), subscription.getId() );
                         } catch (Exception e) {
                             LOGGER.warn("Message='Notifying {} by {} failed.'", subscription.getTarget(), subscription.getType(), e);
                         }
