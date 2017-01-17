@@ -77,7 +77,7 @@ public class CheckRunner implements Runnable {
             if (check.hasRemoteServerErrorOccurred()){
             	// TODO Will we always be calling a Graphite server?  Change if you are using another service
             	LOGGER.warn("  *** Check={} :: Message='Will not initiate check, remote server read error occurred when calling' "
-            			+ "server located at: {}", check.getId(), check.getGraphiteBaseUrl());
+            			+ "server located at: GraphiteServer={}", check.getId(), check.getGraphiteBaseUrl());
             	return;
             }
             // Get the current time - to be used for notification and alert time stamps
@@ -86,6 +86,7 @@ public class CheckRunner implements Runnable {
             BigDecimal warn = check.getWarn();
             BigDecimal error = check.getError();
             AlertType worstState;
+
             // If the check is allowed data, initialized the state as OK, otherwise,
             // it is unknown
             if (check.isAllowNoData()) {
@@ -155,6 +156,8 @@ public class CheckRunner implements Runnable {
                     if(lastState.isWorseThan(currentState) && check.isConsecutiveChecksTriggered()){
                         LOGGER.info("        Check={}, Target={} :: Message='This consecutive alert is now in an ok state'", check.getId(), target );
                         LOGGER.info("        Check={}, Target={}, From={}, To={} :: Message='Adding current alert as an Interesting Alert'", check.getId(), target, lastState, currentState );
+
+                        worstState = currentState;
                         interestingAlerts.add(alert);
                         checksStore.updateConsecutiveChecksTriggered(check.getId(), false);
 
@@ -180,6 +183,7 @@ public class CheckRunner implements Runnable {
             }
             // Notify the Check Governor that the check has been completed
             LOGGER.info("        Check={} :: Message='Check is now complete'", check.getId() );
+            
             // Update the the check with the worst state encountered in this polling
             Check updatedCheck = checksStore.updateStateAndLastCheck(check.getId(), worstState, DateTime.now());
             LOGGER.info("       Check={} :: Message= 'Updating state to worst state {}'", check.getId(), worstState);
