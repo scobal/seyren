@@ -136,7 +136,7 @@ public class CheckRunner implements Runnable {
                 // encountered
                 if (currentState.isWorseThan(worstState)) {
                     worstState = currentState;
-                    LOGGER.info("        Check={}, Target={} :: Message='Current alert worse than last alert'", check.getId(), target );
+                    LOGGER.info("        Check={}, Target={} :: Message='Current state worse than worse state CurrentState:{}, WorstState:{}'", check.getId(), target, currentState, worstState);
                 }
                 // If the last state and the current state are both OK, move to the next entry
                 if (isStillOk(lastState, currentState)) {
@@ -152,7 +152,7 @@ public class CheckRunner implements Runnable {
 
 
                 if(null != check.isEnableConsecutiveChecks() && check.isEnableConsecutiveChecks() && null != check.getConsecutiveChecks() && null != check.getConsecutiveChecksTolerance()){
-                    LOGGER.info("        Check={} ccIsNowOK={} , ccIsTriggered={}", check.getId(), lastState.isWorseThan(currentState)  ,check.isConsecutiveChecksTriggered());
+                    LOGGER.info("        Check={} ccIsNowBetter={} , ccIsTriggered={}", check.getId(), lastState.isWorseThan(currentState)  ,check.isConsecutiveChecksTriggered());
                     if(lastState.isWorseThan(currentState) && check.isConsecutiveChecksTriggered()){
                         LOGGER.info("        Check={}, Target={} :: Message='This consecutive alert is now in an ok state'", check.getId(), target );
                         LOGGER.info("        Check={}, Target={}, From={}, To={} :: Message='Adding current alert as an Interesting Alert'", check.getId(), target, lastState, currentState );
@@ -183,7 +183,7 @@ public class CheckRunner implements Runnable {
             }
             // Notify the Check Governor that the check has been completed
             LOGGER.info("        Check={} :: Message='Check is now complete'", check.getId() );
-            
+
             // Update the the check with the worst state encountered in this polling
             Check updatedCheck = checksStore.updateStateAndLastCheck(check.getId(), worstState, DateTime.now());
             LOGGER.info("       Check={} :: Message= 'Updating state to worst state {}'", check.getId(), worstState);
@@ -247,6 +247,7 @@ public class CheckRunner implements Runnable {
                     interestingAlerts.add(alert);
                 }
                 else{
+                    LOGGER.info("       Check={}, Message='Error count is not more than Consecutive Check tolerance' ccErrorCount={}, ccTolerance={}", check.getId(), errorCount, check.getConsecutiveChecksTolerance());
                     return false;
                 }
             }
