@@ -247,7 +247,7 @@ public class CheckRunner implements Runnable {
                     interestingAlerts.add(alert);
                 }
                 else{
-                    LOGGER.info("       Check={}, Message='Error count is not more than Consecutive Check tolerance' ccErrorCount={}, ccTolerance={}", check.getId(), errorCount, check.getConsecutiveChecksTolerance());
+                    LOGGER.info("       Check={}, Message='Error count is not more than Consecutive Check tolerance' ccErrorCount={}, ccTolerance={}", check.getId(), errorCount, (check.getConsecutiveChecks() * check.getConsecutiveChecksTolerance()) / 100);
                     return false;
                 }
             }
