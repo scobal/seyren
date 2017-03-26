@@ -167,6 +167,10 @@ docker-compose up
 and open [http://localhost:8080/seyren](http://localhost:8080/seyren).
 Graphite is available on [http://localhost:8081/](http://localhost:8081/) with Basic Auth guest/guest.
 
+If you prefer to run only Seyren's dependencies within Docker, for example so that you can run Seyren from an IDE, use:
+
+    docker-compose -f docker-compose.yml up
+
 ## Init script
 
 [Seyren-Init](https://github.com/wingZero21/Seyren-Init) is an init.d script which allows you to start the service.
