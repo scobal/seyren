@@ -55,3 +55,6 @@ body {
 }
 
 .panel-body input[type=checkbox]:checked + label { text-decoration: line-through;color: rgb(128, 144, 160); }
+.glyphicon-blue {
+    color: #0000bf;
+}

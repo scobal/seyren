@@ -24,9 +24,22 @@
 
         $('#editCheckModal').on('shown.bs.modal', function () {
             $('#check\\.name').focus();
+            $('#check\\.target\\.hint').tooltip({
+                placement: 'right',
+                title: 'The target parameter specifies a path identifying one or several metrics, optionally with functions acting on those metrics.'
+            });
             $('#check\\.warn\\.hint').tooltip({
                 placement: 'right',
                 title: 'Setting your warn level higher than your error level will result in Seyren generating alerts when the target value goes below the threshold.'
+            });
+            $('#check\\.from\\.hint').tooltip({
+                placement: 'right',
+                html: true,
+                title: '"From" and "To" are optional parameters that specify the relative or absolute time period to' +
+                ' retrieve from the server. See ' +
+                '<a href="http://graphite.readthedocs.io/en/latest/render_api.html#from-until">the Graphite' +
+                ' documentation</a>. Only the most recent value of each series returned will be used.',
+                trigger: 'click'
             });
         });
 

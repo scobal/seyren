@@ -194,6 +194,7 @@
                                 </goals>
                                 <configuration>
                                     <configFile>${basedir}/src/test/resources/karma-e2e.conf.js</configFile>
+                                    <karmaExecutable>${basedir}/../node_modules/.bin/karma</karmaExecutable>
                                 </configuration>
                             </execution>
                         </executions>
