@@ -10,6 +10,9 @@
         $scope.alertStartIndex = 0;
         $scope.alertItemsPerPage = 10;
 
+        // Assume that it exists, for now.
+        $scope.checkExists = true;
+
         configResults.$promise.then(function(data) {
             $scope.config = data;
 
@@ -49,8 +52,12 @@
                 $scope.check = data;
                 $scope.check.descriptionHtml = $sce.trustAsHtml(linkify.normal($scope.check.description));
                 $scope.check.lastLoadTime = new Date().getTime();
-            }, function (err) {
-                console.log('Loading check failed');
+                $scope.checkExists = true;
+            }, function (httpResponse) {
+                console.log('Loading check failed. Status: ' + httpResponse.status);
+                if (httpResponse.status === 404) {
+                    $scope.checkExists = false;
+                }
             });
         };
 

@@ -2,10 +2,15 @@
 (function () {
     'use strict';
 
+    var outstandingRequests = 0;
+
     angular.module('seyrenApp.services', ['ngResource']).
         config(function ($httpProvider) {
+            outstandingRequests = 0;
+
             $httpProvider.responseInterceptors.push('spinnerHttpInterceptor');
             var spinnerFunction = function (data, headersGetter) {
+                outstandingRequests += 1;
                 $('#spinnerG').show();
                 $('#banner').hide();
                 return data;
@@ -15,12 +20,18 @@
         factory('spinnerHttpInterceptor', function ($q, $window, $rootScope) {
             return function (promise) {
                 return promise.then(function (response) {
-                    $('#spinnerG').hide();
+                    outstandingRequests -= 1;
+                    if (outstandingRequests <= 0) {
+                        $('#spinnerG').hide();
+                    }
                     $('#banner').hide();
                     return response;
 
                 }, function (response) {
-                    $('#spinnerG').hide();
+                    outstandingRequests -= 1;
+                    if (outstandingRequests <= 0) {
+                        $('#spinnerG').hide();
+                    }
                     if(response.status === 0) {
                         $('#banner').show();
                     }

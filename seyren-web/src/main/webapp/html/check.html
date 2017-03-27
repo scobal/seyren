@@ -1,4 +1,10 @@
-<div class="row" ng-show="graphsEnabled()">
+<div class="row" ng-show="!checkExists">
+    <div class="col-lg-12">
+        <h1>Not Found</h1>
+        <p>Check was not found. Maybe it has been deleted?</p>
+    </div>
+</div>
+<div class="row" ng-show="checkExists && graphsEnabled()">
     <div class="col-lg-12">
         <div class="col-lg-3 graph" ng-repeat="graph in graphs">
             <div class="thumbnail">
@@ -10,10 +16,10 @@
         </div>
     </div>
 </div>
-<div class="row">
+<div class="row" ng-show="checkExists && check != null">
     <div class="col-lg-6">
         <div class="row">
-            <div class="col-lg-7">
+            <div class="col-lg-12">
                 <h2><strong>Details</strong> <small>[<a class="" data-keyboard="true" data-toggle="modal" data-show="true" href="" ng-click="editCheck(check)">edit</a>]</small></h2>
             </div>
         </div>
@@ -127,7 +133,7 @@
             <div class="col-lg-8">
                 <h2><strong>Subscriptions</strong></h2>
             </div>
-            <div class="col-lg-2">
+            <div class="col-lg-4">
                 <p></p><p><button id="editSubscaddriptionButton" class="btn btn-success" data-keyboard="true" data-toggle="modal" data-show="true" href="#editSubscriptionModal" ng-click="editSubscription(check, 'new')"><i class="glyphicon glyphicon-volume-up glyphicon-white"></i>&nbsp;Add subscription</button></p>
             </div>
         </div>
@@ -136,57 +142,57 @@
                 <div ng-hide="check.subscriptions">This check has no subscriptions</div>
                 <table class="table table-bordered table-striped table-hover" ng-show="check.subscriptions" style="cursor: pointer;">
                     <thead>
-                    <tr>
-                        <th>Target</th>
-                        <th>Type</th>
-                        <th>Notify on</th>
-                        <th>Days</th>
-                        <th>Time</th>
-                        <th>On?</th>
-                        <th>&nbsp;</th>
-                        <th>&nbsp;</th>
-                        <th>&nbsp;</th>
-                    </tr>
+                        <tr>
+                            <th>Target</th>
+                            <th>Type</th>
+                            <th>Notify on</th>
+                            <th>Days</th>
+                            <th>Time</th>
+                            <th>On?</th>
+                            <th>&nbsp;</th>
+                            <th>&nbsp;</th>
+                            <th>&nbsp;</th>
+                        </tr>
                     </thead>
                     <tbody>
-                    <tr ng-repeat="subscription in check.subscriptions">
-                        <td>{{ subscription.target | truncate:10 }}</td>
-                        <td>{{ subscription.type }}</td>
-                        <td>
-                            <span class="label label-warning" ng-hide="subscription.ignoreWarn">Warn</span>
-                            <span class="label label-danger" ng-hide="subscription.ignoreError">Error</span>
-                            <span class="label label-success" ng-hide="subscription.ignoreOk">OK</span>
-                        </td>
-                        <td>
-                            <span class="label label-info" ng-show="subscription.su">Su</span>
-                            <span class="label label-info" ng-show="subscription.mo">Mo</span>
-                            <span class="label label-info" ng-show="subscription.tu">Tu</span>
-                            <span class="label label-info" ng-show="subscription.we">We</span>
-                            <span class="label label-info" ng-show="subscription.th">Th</span>
-                            <span class="label label-info" ng-show="subscription.fr">Fr</span>
-                            <span class="label label-info" ng-show="subscription.sa">Sa</span>
-                        </td>
-                        <td>{{ subscription.fromTime }} to {{ subscription.toTime }}</td>
-                        <td>
-                            <input type="checkbox" ng-checked="subscription.enabled" ng-click="swapSubscriptionEnabled(check, subscription)" />
-                        </td>
-                        <td>
-                            <button type="submit" class="btn btn-danger btn-xs" ng-click="deleteSubscription(check, subscription)">Delete</button>
-                        </td>
-                        <td>
-                            <button class="btn btn-primary btn-xs" data-keyboard="true" data-toggle="modal" data-show="true" href="#editSubscriptionModal" ng-click="editSubscription(check, subscription)">Edit</button>
-                        </td>
-                        <td>
-                            <button type="submit" class="btn btn-success  btn-xs" ng-click="testSubscription(check, subscription)">Test</button>
-                        </td>
-                    </tr>
+                        <tr ng-repeat="subscription in check.subscriptions">
+                            <td>{{ subscription.target | truncate:10 }}</td>
+                            <td>{{ subscription.type }}</td>
+                            <td>
+                                <span class="label label-warning" ng-hide="subscription.ignoreWarn">Warn</span>
+                                <span class="label label-danger" ng-hide="subscription.ignoreError">Error</span>
+                                <span class="label label-success" ng-hide="subscription.ignoreOk">OK</span>
+                            </td>
+                            <td>
+                                <span class="label label-info" ng-show="subscription.su">Su</span>
+                                <span class="label label-info" ng-show="subscription.mo">Mo</span>
+                                <span class="label label-info" ng-show="subscription.tu">Tu</span>
+                                <span class="label label-info" ng-show="subscription.we">We</span>
+                                <span class="label label-info" ng-show="subscription.th">Th</span>
+                                <span class="label label-info" ng-show="subscription.fr">Fr</span>
+                                <span class="label label-info" ng-show="subscription.sa">Sa</span>
+                            </td>
+                            <td>{{ subscription.fromTime }} to {{ subscription.toTime }}</td>
+                            <td>
+                                <input type="checkbox" ng-checked="subscription.enabled" ng-click="swapSubscriptionEnabled(check, subscription)" />
+                            </td>
+                            <td>
+                                <button type="submit" class="btn btn-danger btn-xs" ng-click="deleteSubscription(check, subscription)">Delete</button>
+                            </td>
+                            <td>
+                                <button class="btn btn-primary btn-xs" data-keyboard="true" data-toggle="modal" data-show="true" href="#editSubscriptionModal" ng-click="editSubscription(check, subscription)">Edit</button>
+                            </td>
+                            <td>
+                                <button type="submit" class="btn btn-success  btn-xs" ng-click="testSubscription(check, subscription)">Test</button>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
 </div>
-<div class="row">
+<div class="row" ng-show="checkExists && check != null">
     <div class="col-lg-12">
         <h2>
             <strong>Alerts</strong> <small>( {{alerts.start}} of {{alerts.total}} )</small>
@@ -248,7 +254,7 @@
         </table>
     </div>
 </div>
-<div class="row">
+<div class="row" ng-show="checkExists && check != null">
     <div class="col-lg-12">
         <div class="pull-right">
             <button class="btn btn-danger btn-sm" data-keyboard="true" data-toggle="modal" data-show="true" id="deleteCheckButton" href="#confirmCheckDeleteModal">Delete check</button>
