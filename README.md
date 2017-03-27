@@ -184,13 +184,13 @@ To run the acceptance tests with Maven:
 ```
 mvn clean verify
 ```
-To run the integration tests with Maven:
+To run the integration tests with Maven, install the necessary Node modules (Karma, etc.), then run tests with the 
+"karma" profile:
 
-```
-mvn clean verify -Pkarma
-```
+    npm install
+    mvn clean verify -Pkarma
 
-To fire-up the app using Maven and wait (meaning you can run the tests separately from your IDE):
+To fire up the app using Maven and wait (meaning you can run the tests separately from your IDE):
 
 ```
 mvn clean verify -Dwait

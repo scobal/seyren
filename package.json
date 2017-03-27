@@ -1,0 +1,15 @@
+{
+  "name": "seyren",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {},
+  "devDependencies": {
+    "jasmine-core": "^2.5.2",
+    "karma": "^1.5.0",
+    "karma-jasmine": "^1.1.0",
+    "karma-ng-scenario": "^1.0.0",
+    "karma-phantomjs-launcher": "^1.0.4"
+  },
+  "scripts": {},
+  "license": "Apache-2.0"
+}

@@ -67,15 +67,15 @@
                 </div>
             </div>
             <div class="form-group detail-form">
-                <label class="col-lg-2 control-label">Warn:</label>
+                <label class="col-lg-2 control-label">Warn level:</label>
                 <div class="col-lg-10">
-                    <p class="form-control-static">{{check.warn}}</p>
+                    <p class="form-control-static">{{check.warn | number}}</p>
                 </div>
             </div>
             <div class="form-group detail-form">
-                <label class="col-lg-2 control-label">Error:</label>
+                <label class="col-lg-2 control-label">Error level:</label>
                 <div class="col-lg-10">
-                    <p class="form-control-static">{{check.error}}</p>
+                    <p class="form-control-static">{{check.error | number}}</p>
                 </div>
             </div>
             <div class="form-group detail-form">
@@ -99,7 +99,7 @@
             <div class="form-group detail-form">
                 <label class="col-lg-2 control-label">Last check:</label>
                 <div class="col-lg-10">
-                    <p class="form-control-static">{{check.lastCheck | date: 'yyyy-MM-dd HH:mm:ss'}}</p>
+                    <p class="form-control-static">{{check.lastCheck | date: 'yyyy-MM-dd HH:mm:ssZ'}}</p>
                 </div>
             </div>
             </form>
@@ -114,7 +114,7 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-lg-12">
+                <div class="col-lg-12" id="subscriptionsContent">
                     <div ng-hide="check.subscriptions">This check has no subscriptions</div>
                     <table class="table table-bordered table-striped table-hover" ng-show="check.subscriptions">
                         <thead>
@@ -205,12 +205,12 @@
             </thead>
             <tbody>
                 <tr ng-repeat="alert in alerts.values">
-                    <td>{{ alert.timestamp | date: 'yyyy-MM-dd HH:mm:ss' }}</td>
+                    <td>{{ alert.timestamp | date: 'yyyy-MM-dd HH:mm:ssZ' }}</td>
                     <td><span am-time-ago="alert.timestamp"></span></td>
                     <td>{{ alert.target }}</td>
-                    <td>{{ alert.value }}</td>
-                    <td>{{ alert.warn }}</td>
-                    <td>{{ alert.error }}</td>
+                    <td>{{ alert.value | number }}</td>
+                    <td>{{ alert.warn | number }}</td>
+                    <td>{{ alert.error | number }}</td>
                     <td>
                         <span ng-show="alert.fromType == 'UNKNOWN'" class="label label-default">{{ alert.fromType }}</span>
                         <span ng-show="alert.fromType == 'OK'" class="label label-success">{{ alert.fromType }}</span>
@@ -233,7 +233,7 @@
     <div class="row" ng-show="checkExists && check != null">
         <div class="col-lg-12">
             <div class="pull-right">
-                <button class="btn btn-danger btn-sm" data-keyboard="true" data-toggle="modal" data-show="true" id="deleteCheckButton" href="#confirmCheckDeleteModal">Delete check</button>
+                <button class="btn btn-danger" data-keyboard="true" data-toggle="modal" data-show="true" id="deleteCheckButton" href="#confirmCheckDeleteModal">Delete check</button>
             </div>
         </div>
     </div>

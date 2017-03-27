@@ -21,8 +21,8 @@
                 <tr>
                     <th><a href="" ng-click="predicate='name';reverse=!reverse">Name</a></th>
                     <th><a href="" ng-click="predicate=sortByState;reverse=!reverse">State</a></th>
-                    <th><a href="" ng-click="predicate='warn';reverse=!reverse">Warn</a></th>
-                    <th><a href="" ng-click="predicate='error';reverse=!reverse">Error</a></th>
+                    <th><a href="" ng-click="predicate='warn';reverse=!reverse">Warn level</a></th>
+                    <th><a href="" ng-click="predicate='error';reverse=!reverse">Error level</a></th>
                     <th><a href="" ng-click="predicate='enabled';reverse=!reverse">Enabled</a></th>
                 </tr>
             </thead>
@@ -38,8 +38,8 @@
                         <span ng-show="check.state == 'ERROR'" class="label label-danger">{{ check.state }}</span>
                         <span ng-show="check.state == 'EXCEPTION'" class="label label-inverse">{{ check.state }}</span>
                     </td>
-                    <td>{{ check.warn }}</td>
-                    <td>{{ check.error }}</td>
+                    <td>{{ check.warn | number }}</td>
+                    <td>{{ check.error | number }}</td>
                     <td><input type="checkbox" ng-checked="check.enabled" ng-click="swapCheckEnabled(check); $event.stopPropagation();" /></td>
                 </tr>
             </tbody>
