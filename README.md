@@ -171,7 +171,7 @@ Graphite is available on [http://localhost:8081/](http://localhost:8081/) with B
 
 [Seyren-Init](https://github.com/wingZero21/Seyren-Init) is an init.d script which allows you to start the service.
 
-##Development
+## Development
 
 [![Build Status](https://secure.travis-ci.org/scobal/seyren.png?branch=master)](http://travis-ci.org/scobal/seyren)
 
