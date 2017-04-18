@@ -201,3 +201,7 @@ mvn package -DskipTests
 # Set environment variables as needed.
 java -jar seyren-web/target/seyren-web-*-war-exec.jar
 ```
+
+## Related projects
+
+* [Cerebro](https://github.com/voyages-sncf-technologies/cerebro) - Open alerting platform over Graphite (timeseries) and Seyren (scheduling)
