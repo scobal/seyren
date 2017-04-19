@@ -12,6 +12,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-sns</artifactId>
+            <version>1.11.46</version>
+        </dependency>
+        <dependency>
             <groupId>com.squareup.pagerduty</groupId>
             <artifactId>pagerduty-incidents</artifactId>
         </dependency>

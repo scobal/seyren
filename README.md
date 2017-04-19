@@ -13,8 +13,8 @@ Seyren ([/ˈsaɪ.rʌn/](http://en.wikipedia.org/wiki/Wikipedia:IPA_for_English#K
 [SLF4J](http://www.slf4j.org),
 [Slack](https://www.slack.com),
 [SNMP](http://en.wikipedia.org/wiki/Simple_Network_Management_Protocol),
-[Twilio](https://www.twilio.com/)
-
+[Twilio](https://www.twilio.com/),
+[SNS](https://aws.amazon.com/sns/)
 
 #[<img src="http://i.imgur.com/13nR3YA.png" height="200" width="280" />](http://i.imgur.com/ahu3aM6.png)
 
@@ -141,6 +141,11 @@ The target for a Slack subscription will be the channel name (including the `#`,
 
 ##### [Victorops](https://www.victorops.com/)
 * `VICTOROPS_REST_ENDPOINT` - The REST Endpoint given by Victorops. See [REST Integration]( http://victorops.force.com/knowledgebase/articles/Integration/Alert-Ingestion-API-Documentation/) Default ``
+
+##### [SNS](https://aws.amazon.com/sns/)
+* `SNS_REGION` - The region of the SNS ARN. Default `eu-west-1`. Must match the [region from the list](http://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/regions/Regions.html#valueOf-java.lang.String-).
+* AWS SNS Client uses [default AWS credentials provider chain.](http://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/auth/DefaultAWSCredentialsProviderChain.html)
+* Target is an ARN of the SNS Topic.
 
 ##### [Proxy](http://hc.apache.org/httpcomponents-client-ga/httpclient/apidocs/org/apache/http/impl/client/HttpClientBuilder.html#useSystemProperties())
 The Proxy settings are changed by using JAVA_OPTS. It important that you exclude your graphite server or you will proxy these requests also.
