@@ -8,7 +8,7 @@ var seyrenApp;
 
     seyrenApp.config(['$routeProvider', function ($routeProvider) {
         $routeProvider.
-            when('/checks', {templateUrl: 'html/checks.html',   controller: 'ChecksController'}).
+            when('/checks', {templateUrl: 'html/checks.html',   controller: 'ChecksController', reloadOnSearch: false}).
             when('/checks/:id', {templateUrl: 'html/check.html', controller: 'CheckController',
                 resolve: {
                     configResults: ['Config', function (Config) {

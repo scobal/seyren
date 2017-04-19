@@ -1,0 +1,30 @@
+<div class="modal-dialog" ng-controller="AddFilterModalController">
+<div class="modal-content">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h3 class="modal-title"><strong>Create filter</strong></h3>
+    </div>
+    <div class="modal-body">
+        <form name="filterForm" class="form-horizontal" role="form" novalidate>
+            <fieldset>
+              <div ng-class="{ 'form-group': true, 'has-error': filterForm['filterToAdd.filter'].$invalid }">
+                  <label class="col-sm-3 control-label" for="filterToAdd.filter">Keyword</label>
+                  <div class="col-sm-7">
+                      <input id="filterToAdd.filter" class="form-control" name="filterToAdd.filter" ng-model="filterToAdd.filter" type="text" required />
+                  </div>
+              </div>
+              <div ng-class="{ 'form-group': true, 'has-error': filterForm['filterToAdd.name'].$invalid }">
+                  <label class="col-sm-3 control-label" for="filterToAdd.name">Name</label>
+                  <div class="col-sm-7">
+                      <input id="filterToAdd.name" class="form-control" name="filterToAdd.name" ng-model="filterToAdd.name" type="text" required />
+                  </div>
+              </div>
+            </fieldset>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn pull-left" data-dismiss="modal" id="cancelFilterButton" ng-click="reset()"><i class="glyphicon glyphicon-remove"></i>&nbsp;&nbsp;Cancel</button>
+        <button type="submit" class="btn btn-primary" id="createFilterButton" ng-click="create()" ng-disabled="filterForm.$invalid"><i class="glyphicon glyphicon-ok glyphicon-white"></i>&nbsp;&nbsp;Create filter</button>
+    </div>
+</div>
+</div>
