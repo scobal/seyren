@@ -79,6 +79,7 @@ public class SeyrenConfig {
     private final Integer snmpPort;
     private final String snmpCommunity;
     private final String snmpOID;
+    private final String snmpSource;
     private final String victorOpsRestAPIEndpoint;
     private final String emailTemplateFileName;
     private final String emailSubjectTemplateFileName;
@@ -160,6 +161,7 @@ public class SeyrenConfig {
         this.snmpPort = Integer.parseInt(configOrDefault("SNMP_PORT", "162"));
         this.snmpCommunity = configOrDefault("SNMP_COMMUNITY", "public");
         this.snmpOID = configOrDefault("SNMP_OID", "1.3.6.1.4.1.32473.1");
+        this.snmpSource = configOrDefault("SNMP_SOURCE", "localhost");
 
         //VictorOps
         this.victorOpsRestAPIEndpoint = configOrDefault("VICTOROPS_REST_ENDPOINT", "");
@@ -321,7 +323,12 @@ public class SeyrenConfig {
     public String getSnmpOID() {
         return snmpOID;
     }
-    
+
+    @JsonIgnore
+    public String getSnmpSource() {
+        return snmpSource;
+    }
+
     @JsonIgnore
     public String getGraphiteUrl() {
         return graphiteUrl;

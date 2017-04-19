@@ -92,6 +92,10 @@
                 if (chart.uniq) {
                     result += '&uniq=' + chart.uniq;
                 }
+                if (chart.graphiteSourceUrl) {
+                    result += '&graphiteSourceUrl=' + chart.graphiteSourceUrl;
+                }
+                
                 return result;
             };
             return {
@@ -103,7 +107,8 @@
                             height: 70,
                             warn: check.warn,
                             error: check.error,
-                            hideLegend: true
+                            hideLegend: true,
+                            graphiteSourceUrl: check.graphiteSourceUrl
                         });
                     }
                 },

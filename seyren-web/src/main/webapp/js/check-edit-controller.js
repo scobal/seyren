@@ -13,7 +13,8 @@
             enabled: true,
             live: false,
             allowNoData: false,
-            totalMetric: '-'
+            totalMetric: '-',
+            graphiteSourceUrl: null
         };
 
         $('#editCheckModal').on('shown.bs.modal', function () {
@@ -22,6 +23,10 @@
                 placement: 'right',
                 title: 'Setting your warn level higher than your error level will result in Seyren generating alerts when the target value goes below the threshold.'
             });
+            $('#check\\.graphiteSourceUrl\\.hint').tooltip({
+                placement: 'right',
+                title: 'In this field you can define a different graphite source than the default.'
+            });            
         });
 
         $scope.create = function () {
@@ -70,7 +75,6 @@
             }
         });
 
-
         $scope.$watch('check.target', function(value) {
             if (value) {
                 Metrics.totalMetric({target: value}, function (data) {
@@ -81,7 +85,5 @@
                 });
             }
         });
-
     });
-
 }());
