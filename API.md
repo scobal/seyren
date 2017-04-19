@@ -463,7 +463,7 @@ None
 | live | false      | Live value (pickle protocol) | boolean |
 | from | false      | Specifies the beginning  | String |
 | until | false      | Specifies the end | String |
-| state| false | Specifies the state | String |
+| state| true | Specifies the state | String |
 
 * **Response**
 
