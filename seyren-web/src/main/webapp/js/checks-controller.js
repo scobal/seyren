@@ -1,12 +1,47 @@
 /*global seyrenApp,console,$ */
 (function () {
     'use strict';
-    seyrenApp.controller('ChecksController', function ChecksController($scope, $location, Checks, Seyren) {
+    seyrenApp.controller('ChecksController', function ChecksController($scope, $location, Checks, Filters, Seyren) {
         $scope.pollChecksInSeconds = 30;
 
         if ($location.search().filter) {
             $scope.filter = $location.search().filter;
         }
+
+        $scope.deleteFilter = function (filter) {
+          Filters.remove({filterId: filter.id}, filter, function () {
+              $scope.loadFilters();
+          }, function (err) {
+              console.log('Deleting filter failed');
+          });
+        };
+
+        $scope.searchByFilter = function (filter) {
+          $scope.toggleFiltersPanel();
+          $scope.filter = filter;
+          $scope.filterToUrl();
+        };
+
+        $scope.addFilter = function () {
+          $("#addFilterModal").modal();
+        };
+
+        $scope.loadFilters = function () {
+            Filters.get(function (data) {
+                $scope.savedFilters = data;
+            }, function (err) {
+                console.log('Loading filters failed');
+            });
+        };
+
+        $scope.toggleFiltersPanel = function () {
+          var elem = $("#filter-panel");
+          if (elem.is(":visible")) {
+            elem.hide();
+          } else {
+            elem.show();
+          }
+        };
 
         $scope.loadChecks = function () {
             Checks.query(function (data) {
@@ -14,6 +49,10 @@
             }, function (err) {
                 console.log('Loading checks failed');
             });
+        };
+
+        $scope.filterToUrl = function () {
+            $location.search('filter', $scope.filter);
         };
 
         $scope.countdownToRefresh = function () {
@@ -30,7 +69,8 @@
             clearInterval($scope.timerId);
         });
 
-        $scope.selectCheck = function (id) {
+        $scope.selectCheck = function (id, $event) {
+            $location.search('filter', null);
             $location.path('/checks/' + id);
         };
 
@@ -41,6 +81,11 @@
         $scope.$on('check:created', function () {
             $scope.loadChecks();
         });
+
+        $scope.$on('filter:created', function () {
+            $scope.loadFilters();
+        });
+        $scope.loadFilters();
 
         $scope.editSubscription = function (check) {
             Seyren.editSubscription(check);

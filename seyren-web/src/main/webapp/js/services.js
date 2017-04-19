@@ -31,6 +31,13 @@
                 'query':    {method: 'GET', isArray: false}
             });
         }).
+        factory('Filters', function ($resource) {
+            return $resource('api/checks/filters/:filterId', {filterId: "@filterId"}, {
+                'get':          {method: 'GET'},
+                'create':       {method: 'POST'},
+                'remove':       {method: 'DELETE'}
+            });
+        }).
         factory('Checks', function ($resource) {
             return $resource('api/checks/:checkId/:action', {checkId: "@checkId"}, {
                 'query':        {method: 'GET', isArray: false},

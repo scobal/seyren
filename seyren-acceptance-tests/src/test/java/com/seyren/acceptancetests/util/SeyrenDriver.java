@@ -41,7 +41,11 @@ public final class SeyrenDriver {
     public static Url alerts(String checkId) {
         return check(checkId).withPath("/alerts");
     }
-    
+
+    public static Url filters() {
+        return baseUri().withPath("checks/filters");
+    }
+
     public static Url subscriptions(String checkId) {
         return check(checkId).withPath("/subscriptions");
     }

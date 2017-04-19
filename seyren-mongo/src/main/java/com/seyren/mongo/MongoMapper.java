@@ -13,26 +13,17 @@
  */
 package com.seyren.mongo;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.google.common.base.Strings;
+import com.mongodb.BasicDBList;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
+import com.seyren.core.domain.*;
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
 
-import com.mongodb.BasicDBList;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
-import com.seyren.core.domain.Alert;
-import com.seyren.core.domain.AlertType;
-import com.seyren.core.domain.Check;
-import com.seyren.core.domain.Subscription;
-import com.seyren.core.domain.SubscriptionType;
+import java.math.BigDecimal;
+import java.util.*;
 
 public class MongoMapper {
     
@@ -131,7 +122,18 @@ public class MongoMapper {
                 .withToType(toType)
                 .withTimestamp(timestamp);
     }
-    
+
+    public Filter filterFrom(DBObject dbo) {
+        String id = dbo.get("_id").toString();
+        String name = getString(dbo, "name");
+        String filter = getString(dbo, "filter");
+
+        return new Filter().withId(id)
+                .withName(name)
+                .withFilter(filter);
+    }
+
+
     public DBObject checkToDBObject(Check check) {
         return new BasicDBObject(propertiesToMap(check));
     }
@@ -142,6 +144,10 @@ public class MongoMapper {
     
     public DBObject alertToDBObject(Alert alert) {
         return new BasicDBObject(propertiesToMap(alert));
+    }
+
+    public DBObject filterToDBObject(Filter filter) {
+        return new BasicDBObject(propertiesToMap(filter));
     }
     
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -230,6 +236,15 @@ public class MongoMapper {
         map.put("fromType", alert.getFromType().toString());
         map.put("toType", alert.getToType().toString());
         map.put("timestamp", new Date(alert.getTimestamp().getMillis()));
+        return map;
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private Map propertiesToMap(Filter filter) {
+        Map map = new HashMap();
+        map.put("_id", filter.getId());
+        map.put("name", filter.getName());
+        map.put("filter", filter.getFilter());
         return map;
     }
     

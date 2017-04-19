@@ -8,10 +8,24 @@
 </div>
 <div class="row">
     <br/>
-    <div class="col-lg-2">
-        <div class="form-group">
-            <input name="filter" ng-model="filter" type="text" placeholder="Filter..." class="form-control input-sm" />
-        </div>
+    <div class="col-lg-6">
+        <form class="form-inline" id="filter-form">
+            <div class="form-group">
+                    <input name="filter" ng-model="filter" type="text" placeholder="Filter..." ng-blur="filterToUrl()" class="form-control input-sm" />
+            </div>
+            <div class="form-group">
+                <button ng-click="addFilter()" class="btn btn-sm btn-default saved-filters-toggle" type="button" id="saveFiltersButton">
+                    Save filters
+                </button>
+            </div>
+            <div class="form-group">
+                <button ng-click="toggleFiltersPanel()" class="btn btn-sm btn-warning" type="button" id="savedFiltersButton">
+                    Saved filters
+                    <span class="caret"></span>
+                </button>
+                <div class="panel panel-default" ng-include="'./html/filter-panel-partial.html'" id="filter-panel"></div>
+            </div>
+        </form>
     </div>
 </div>
 <div class="row">
@@ -27,7 +41,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="check in checks.values  | filter:filter | orderBy:[predicate,'-name']:reverse" ng-click="selectCheck(check.id)" style="cursor: pointer;">
+                <tr ng-repeat="check in checks.values  | filter:filter | orderBy:[predicate,'-name']:reverse" ng-click="selectCheck(check.id, $event)" style="cursor: pointer;">
                     <td title="{{ check.target }}">
                         <a href='#/checks/{{ check.id }}'>{{ check.name }}</a>
                     </td>
@@ -49,5 +63,5 @@
 
 </div>
 
-<div class="absolute modal" tabindex="-1" role="dialog" ng-include="'./html/modal-partial-check.html'" id="editCheckModal">
-</div>
+<div class="absolute modal" tabindex="-1" role="dialog" ng-include="'./html/modal-partial-check.html'" id="editCheckModal"></div>
+<div class="absolute modal" tabindex="-1" role="dialog" ng-include="'./html/modal-partial-add-filter.html'" id="addFilterModal"></div>
