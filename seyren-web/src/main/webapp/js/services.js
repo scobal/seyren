@@ -12,7 +12,7 @@
             };
             $httpProvider.defaults.transformRequest.push(spinnerFunction);
         }).
-        factory('spinnerHttpInterceptor', function ($q, $window) {
+        factory('spinnerHttpInterceptor', function ($q, $window, $rootScope) {
             return function (promise) {
                 return promise.then(function (response) {
                     $('#spinnerG').hide();
@@ -21,7 +21,9 @@
 
                 }, function (response) {
                     $('#spinnerG').hide();
-                    $('#banner').show();
+                    if(response.status === 0) {
+                        $('#banner').show();
+                    }
                     return $q.reject(response);
                 });
             };
@@ -60,6 +62,32 @@
                 'totalMetric':      {method: 'GET', params: {action: 'total'}}
             });
         }).
+        factory('Admin', function($resource) {
+            return $resource('api/admin/permissions/:type/users/:name', {name: "@name", type: "@type"}, {
+                'get':      {method: 'GET'},
+                'create':   {method: 'POST'}
+            });
+        }).
+        factory('User', ['$resource',
+            function($resource) {
+                return $resource('api/user/:action', {}, {
+                    add: {
+                        method: 'POST',
+                        isArray: false,
+                        params: {
+                            action: ''
+                        }
+                    },
+                    authenticate: {
+                        method: 'POST',
+                        isArray: false,
+                        params: {
+                            action: 'authenticate'
+                        }
+                    }
+                });
+            }
+        ]).
         factory('Graph', function ($resource) {
             var chart = function (baseurl, chart) {
                 var result = baseurl + '/?';
@@ -92,6 +120,9 @@
                 if (chart.uniq) {
                     result += '&uniq=' + chart.uniq;
                 }
+                if (chart.graphiteBaseUrl) {
+                    result += '&graphiteBaseUrl=' + chart.graphiteBaseUrl;
+                }
                 return result;
             };
             return {
@@ -99,6 +130,7 @@
                     if (check && check.target) {
                         return chart('./api/chart/' + check.target, {
                             target: check.target,
+                            graphiteBaseUrl: check.graphiteBaseUrl,
                             width: 365,
                             height: 70,
                             warn: check.warn,
@@ -168,6 +200,18 @@
                         console.log('Saving check failed');
                     });
                 },
+                swapConsecutiveChecksEnabled: function (check) {
+                    check.enableConsecutiveChecks = !check.enableConsecutiveChecks;
+                    if(! check.enableConsecutiveChecks){
+                        check.consecutiveChecksTolerance ="";
+                        check.consecutiveChecks = "";
+                    }
+                    Checks.update({ checkId:  check.id}, check, function (data) {
+                        $rootScope.$broadcast('check:swapEnableConsecutiveCheckEnabled');
+                    }, function (err) {
+                        console.log('Saving check failed');
+                    });
+                },
                 swapSubscriptionEnabled: function (check, subscription) {
                     subscription.enabled = !subscription.enabled;
                     Subscriptions.update({ checkId:  check.id, subscriptionId:  subscription.id}, subscription, function (data) {
@@ -194,5 +238,4 @@
                 }
             };
         });
-
 }());

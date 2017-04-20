@@ -31,12 +31,16 @@ import com.seyren.core.util.velocity.Slf4jLogChute;
 
 @Named
 public class SeyrenConfig {
-    
+
     private static final String DEFAULT_BASE_URL = "http://localhost:8080/seyren";
 
     private final String baseUrl;
     private final String mongoUrl;
     private final String graphsEnable;
+    private final int noOfThreads;
+    private final int checkExecutorInstanceIndex;
+    private final int checkExecutorTotalInstances;
+    private final int maxCheckExecutionTimeInSeconds;
     private final String graphiteUrl;
     private final String graphiteUsername;
     private final String graphitePassword;
@@ -63,8 +67,11 @@ public class SeyrenConfig {
     private final String smtpHost;
     private final String smtpProtocol;
     private final Integer smtpPort;
+    private final Integer smtpConnectionTimeout;
+    private final Integer smtpSocketTimeout;
     private final String flowdockExternalUsername;
     private final String flowdockTags;
+    private final String graphiteScheme;
     // Icon mapped check sate (AlertType) see http://apps.timwhitlock.info/emoji/tables/unicode
     // question, sunny, cloud, voltage exclamation should be: \u2753,\u2600,\u2601,\u26A1,\u2757
     private final String flowdockEmojis;
@@ -84,15 +91,23 @@ public class SeyrenConfig {
     private final String emailSubjectTemplateFileName;
     private final String bigPandaNotificationUrl;
     private final String bigPandaAuthBearer;
-    private final int noOfThreads;
     private final String httpNotificationUrl;
+    private final boolean securityEnabled;
+    private final String scriptPath;
+    private final String scriptType;
+    private final String scriptResourceUrls;
+    private final String graphiteRefreshRate;
     public SeyrenConfig() {
-        
+
         // Base
         this.baseUrl = stripEnd(configOrDefault("SEYREN_URL", DEFAULT_BASE_URL), "/");
         this.mongoUrl = configOrDefault("MONGO_URL", "mongodb://localhost:27017/seyren");
         this.graphsEnable = configOrDefault("GRAPHS_ENABLE", "true");
         this.noOfThreads = Integer.parseInt(configOrDefault("SEYREN_THREADS", "8"));
+        this.checkExecutorInstanceIndex = Integer.parseInt(configOrDefault("SEYREN_WORKER_INDEX", "1"));
+        this.checkExecutorTotalInstances = Integer.parseInt(configOrDefault("SEYREN_WORKER_COUNT", "1"));
+        this.maxCheckExecutionTimeInSeconds = Integer.parseInt(configOrDefault("CHECK_EXECUTION_TIMEOUT_SECONDS", "1500"));
+
         // Graphite
         this.graphiteUrl = stripEnd(configOrDefault("GRAPHITE_URL", "http://localhost:80"), "/");
         this.graphiteUsername = configOrDefault("GRAPHITE_USERNAME", "");
@@ -105,6 +120,8 @@ public class SeyrenConfig {
         this.graphiteConnectionRequestTimeout = Integer.parseInt(configOrDefault("GRAPHITE_CONNECTION_REQUEST_TIMEOUT", "0"));
         this.graphiteConnectTimeout = Integer.parseInt(configOrDefault("GRAPHITE_CONNECT_TIMEOUT", "0"));
         this.graphiteSocketTimeout = Integer.parseInt(configOrDefault("GRAPHITE_SOCKET_TIMEOUT", "0"));
+        this.graphiteScheme = configOrDefault("GRAPHITE_SCHEME", "http");
+        this.graphiteRefreshRate = configOrDefault("GRAPHITE_REFRESH", "60000");
 
         // HTTP
 
@@ -117,12 +134,14 @@ public class SeyrenConfig {
         this.smtpHost = configOrDefault("SMTP_HOST", "localhost");
         this.smtpProtocol = configOrDefault("SMTP_PROTOCOL", "smtp");
         this.smtpPort = Integer.parseInt(configOrDefault("SMTP_PORT", "25"));
-        
+        this.smtpConnectionTimeout = Integer.parseInt(configOrDefault("SMTP_CONNECTION_TIMEOUT", "45000"));
+        this.smtpSocketTimeout = Integer.parseInt(configOrDefault("SMTP_SOCKET_TIMEOUT", "120000"));
+
         // HipChat
         this.hipChatBaseUrl = configOrDefault(list("HIPCHAT_BASEURL", "HIPCHAT_BASE_URL"), "https://api.hipchat.com");
         this.hipChatAuthToken = configOrDefault(list("HIPCHAT_AUTHTOKEN", "HIPCHAT_AUTH_TOKEN"), "");
         this.hipChatUsername = configOrDefault(list("HIPCHAT_USERNAME", "HIPCHAT_USER_NAME"), "Seyren Alert");
-        
+
         // PagerDuty
 
         // Twilio
@@ -130,13 +149,13 @@ public class SeyrenConfig {
         this.twilioAccountSid = configOrDefault("TWILIO_ACCOUNT_SID", "");
         this.twilioAuthToken = configOrDefault("TWILIO_AUTH_TOKEN", "");
         this.twilioPhoneNumber = configOrDefault("TWILIO_PHONE_NUMBER", "");
-        
+
         // OpsGenie
         this.opsGenieTeams = Arrays.asList(configOrDefault("OPSGENIE_TEAMS", "ops").split(","));
-        
+
         // Hubot
         this.hubotUrl = configOrDefault(list("HUBOT_URL", "SEYREN_HUBOT_URL"), "");
-        
+
         // Flowdock
         this.flowdockExternalUsername = configOrDefault("FLOWDOCK_EXTERNAL_USERNAME", "Seyren");
         this.flowdockTags = configOrDefault("FLOWDOCK_TAGS", "");
@@ -171,14 +190,22 @@ public class SeyrenConfig {
         // Template
         this.emailTemplateFileName = configOrDefault("TEMPLATE_EMAIL_FILE_PATH","com/seyren/core/service/notification/email-template.vm");
         this.emailSubjectTemplateFileName = configOrDefault("TEMPLATE_EMAIL_SUBJECT_FILE_PATH","com/seyren/core/service/notification/email-subject-template.vm");
+
+        // spring security
+        this.securityEnabled = Boolean.parseBoolean(configOrDefault("SECURITY_ENABLED", "false"));
+
+        // script
+        this.scriptPath = configOrDefault("SCRIPT_FILE_PATH", "/tmp");
+        this.scriptType = configOrDefault("SCRIPT_TYPE", "python");
+        this.scriptResourceUrls = configOrDefault("SCRIPT_RESOURCE_URLS", "ERROR: None Defined");
     }
-    
+
     @PostConstruct
     public void init() {
         Velocity.setProperty(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM, new Slf4jLogChute());
         Velocity.init();
     }
-    
+
     public String getBaseUrl() {
         return baseUrl;
     }
@@ -187,7 +214,7 @@ public class SeyrenConfig {
     public boolean isBaseUrlSetToDefault() {
         return getBaseUrl().equals(DEFAULT_BASE_URL);
     }
-    
+
     @JsonIgnore
     public String getMongoUrl() {
         return mongoUrl;
@@ -196,7 +223,27 @@ public class SeyrenConfig {
     public boolean isGraphsEnabled() {
         return Boolean.valueOf(graphsEnable);
     }
-    
+
+    @JsonIgnore
+    public int getNoOfThreads() {
+        return noOfThreads;
+    }
+
+    @JsonIgnore
+    public int getCheckExecutorInstanceIndex() {
+        return checkExecutorInstanceIndex;
+    }
+
+    @JsonIgnore
+    public int getCheckExecutorTotalInstances() {
+        return checkExecutorTotalInstances;
+    }
+
+    @JsonIgnore
+    public int getMaxCheckExecutionTimeInSeconds() {
+        return maxCheckExecutionTimeInSeconds;
+    }
+
     @JsonIgnore
     public String getTwilioUrl() {
         return twilioUrl;
@@ -211,12 +258,12 @@ public class SeyrenConfig {
     public String getTwilioAuthToken() {
         return twilioAuthToken;
     }
-    
+
     @JsonIgnore
     public List<String> getOpsGenieTeams() {
         return opsGenieTeams;
     }
-    
+
     @JsonIgnore
     public String getTwilioPhoneNumber() {
         return twilioPhoneNumber;
@@ -231,27 +278,27 @@ public class SeyrenConfig {
     public String getHipChatAuthToken() {
         return hipChatAuthToken;
     }
-    
+
     @JsonIgnore
     public String getHipChatUsername() {
         return hipChatUsername;
     }
-    
+
     @JsonIgnore
     public String getHubotUrl() {
         return hubotUrl;
     }
-    
+
     @JsonIgnore
     public String getFlowdockExternalUsername() {
         return flowdockExternalUsername;
     }
-    
+
     @JsonIgnore
     public String getFlowdockTags() {
         return flowdockTags;
     }
-    
+
     @JsonIgnore
     public String getFlowdockEmojis() {
         return flowdockEmojis;
@@ -276,92 +323,102 @@ public class SeyrenConfig {
     public String getSmtpFrom() {
         return smtpFrom;
     }
-    
+
     @JsonIgnore
     public String getSmtpUsername() {
         return smtpUsername;
     }
-    
+
     @JsonIgnore
     public String getSmtpPassword() {
         return smtpPassword;
     }
-    
+
     @JsonIgnore
     public String getSmtpHost() {
         return smtpHost;
     }
-    
+
     @JsonIgnore
     public String getSmtpProtocol() {
         return smtpProtocol;
     }
-    
+
     @JsonIgnore
     public Integer getSmtpPort() {
         return smtpPort;
     }
 
     @JsonIgnore
+    public Integer getSmtpConnectionTimeout() {
+        return smtpConnectionTimeout;
+    }
+
+    @JsonIgnore
+    public Integer getSmtpSocketTimeout() {
+        return smtpSocketTimeout;
+    }
+
+    @JsonIgnore
     public String getSnmpHost() {
         return snmpHost;
     }
-    
+
     @JsonIgnore
     public Integer getSnmpPort() {
         return snmpPort;
     }
-    
+
     @JsonIgnore
     public String getSnmpCommunity() {
         return snmpCommunity;
     }
-    
+
     @JsonIgnore
     public String getSnmpOID() {
         return snmpOID;
     }
-    
-    @JsonIgnore
+
+    @JsonProperty("graphiteUrl")
     public String getGraphiteUrl() {
         return graphiteUrl;
     }
-    
+
     @JsonIgnore
     public String getGraphiteUsername() {
         return graphiteUsername;
     }
-    
+
     @JsonIgnore
     public String getGraphitePassword() {
         return graphitePassword;
     }
-    
+
     @JsonIgnore
     public String getGraphiteScheme() {
-        return splitBaseUrl(graphiteUrl)[0];
+        return this.graphiteScheme == null ? splitBaseUrl(graphiteUrl)[0] : graphiteScheme;
     }
-    
+
     @JsonIgnore
     public int getGraphiteSSLPort() {
         return Integer.valueOf(splitBaseUrl(graphiteUrl)[1]);
     }
-    
+
     @JsonIgnore
     public String getGraphiteHost() {
         return splitBaseUrl(graphiteUrl)[2];
     }
-    
+
     @JsonIgnore
     public String getGraphitePath() {
         return splitBaseUrl(graphiteUrl)[3];
     }
-    
+
     @JsonIgnore
     public String getGraphiteKeyStore() {
         return graphiteKeyStore;
     }
-    
+
     @JsonIgnore
     public String getGraphiteKeyStorePassword() {
         return graphiteKeyStorePassword;
@@ -381,17 +438,17 @@ public class SeyrenConfig {
     public boolean getGraphiteCarbonPickleEnable() {
         return Boolean.valueOf(graphiteCarbonPickleEnable);
     }
-    
+
     @JsonIgnore
     public int getGraphiteConnectionRequestTimeout() {
         return graphiteConnectionRequestTimeout;
     }
-    
+
     @JsonIgnore
     public int getGraphiteConnectTimeout() {
         return graphiteConnectTimeout;
     }
-    
+
     @JsonIgnore
     public int getGraphiteSocketTimeout() {
         return graphiteSocketTimeout;
@@ -428,11 +485,6 @@ public class SeyrenConfig {
     }
 
     @JsonIgnore
-    public int getNoOfThreads() {
-        return noOfThreads;
-    }
-
-    @JsonIgnore
     public String getHttpNotificationUrl() {
         return httpNotificationUrl;
     }
@@ -448,49 +500,73 @@ public class SeyrenConfig {
         return victorOpsRestAPIEndpoint;
     }
 
+    @JsonIgnore
+      public boolean isSecurityEnabled() {
+        return securityEnabled;
+    }
 
-  private static String configOrDefault(String propertyName, String defaultValue) {
+    @JsonProperty("scriptPath")
+    public String getScriptPath() {
+        return scriptPath;
+    }
+
+    @JsonIgnore
+    public String getScriptType() {
+        return scriptType;
+    }
+
+    @JsonProperty("scriptResourceUrls")
+    public String getScriptResourceUrls() {
+        return scriptResourceUrls;
+    }
+
+    @JsonIgnore
+    public String getGraphiteRefreshRate() {
+        return graphiteRefreshRate;
+    }
+
+    private static String configOrDefault(String propertyName, String defaultValue) {
         return configOrDefault(list(propertyName), defaultValue);
     }
-    
+
     private static String configOrDefault(List<String> propertyNames, String defaultValue) {
-        
+
         for (String propertyName : propertyNames) {
-            
+
             String value = System.getProperty(propertyName);
             if (isNotEmpty(value)) {
                 return value;
             }
-            
+
             value = System.getenv(propertyName);
             if (isNotEmpty(value)) {
                 return value;
             }
         }
-        
+
         return defaultValue;
     }
-    
+
     private static List<String> list(String... propertyNames) {
         return Arrays.asList(propertyNames);
     }
-    
+
     private static String[] splitBaseUrl(String baseUrl) {
         String[] baseParts = new String[4];
-        
+
         if (baseUrl.contains("://")) {
             baseParts[0] = baseUrl.split("://")[0];
             baseUrl = baseUrl.split("://")[1];
         } else {
             baseParts[0] = "http";
         }
-        
+
         if (baseUrl.contains(":")) {
             baseParts[1] = baseUrl.split(":")[1];
         } else {
             baseParts[1] = "443";
         }
-        
+
         if (baseUrl.contains("/")) {
             baseParts[2] = baseUrl.split("/")[0];
             baseParts[3] = "/" + baseUrl.split("/", 2)[1];
@@ -498,7 +574,8 @@ public class SeyrenConfig {
             baseParts[2] = baseUrl;
             baseParts[3] = "";
         }
-        
+
         return baseParts;
     }
+
 }

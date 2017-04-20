@@ -38,6 +38,8 @@ public class SeyrenMailSender extends JavaMailSenderImpl {
         String username = seyrenConfig.getSmtpUsername();
         String password = seyrenConfig.getSmtpPassword();
         String protocol = seyrenConfig.getSmtpProtocol();
+        Integer connectionTimeout = seyrenConfig.getSmtpConnectionTimeout();
+        Integer socketTimeout = seyrenConfig.getSmtpSocketTimeout();
         
         setPort(port);
         setHost(host);
@@ -51,6 +53,14 @@ public class SeyrenMailSender extends JavaMailSenderImpl {
         
         if (getPort() == 587) {
             props.put("mail.smtp.starttls.enable", "true");
+        }
+        
+        if (connectionTimeout > 0) {
+        	props.put("mail.smtp.connectiontimeout", connectionTimeout);
+        }
+        
+        if (socketTimeout > 0) {
+        	props.put("mail.smtp.timeout", socketTimeout);
         }
         
         if (props.size() > 0) {

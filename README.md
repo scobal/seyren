@@ -142,9 +142,24 @@ The target for a Slack subscription will be the channel name (including the `#`,
 ##### [Victorops](https://www.victorops.com/)
 * `VICTOROPS_REST_ENDPOINT` - The REST Endpoint given by Victorops. See [REST Integration]( http://victorops.force.com/knowledgebase/articles/Integration/Alert-Ingestion-API-Documentation/) Default ``
 
+<<<<<<< HEAD
+##### [Script]
+* `SCRIPT_FILE_PATH` - The Script file path on the file system. Default ``
+* `SCRIPT_TYPE` - The Script type. Default `python`
+
+##### [Spring Security](http://projects.spring.io/spring-security/)
+* `SECURITY_ENABLED` - Enabled Authentication for both client and server side code. Default: `false`
+###### security.properties configuration
+* admin.username  - Admin username. [string]
+* admin.password - Admin password. [string]
+* password.encoder - Password used to encode when stored in the DB. [string]
+* authentication.service - Authentication provider for spring. Options: [ldap, mongo]
+* ldap.url - Ldap url . [string, optional if you are using mongodb provider]
+=======
 ##### [Proxy](http://hc.apache.org/httpcomponents-client-ga/httpclient/apidocs/org/apache/http/impl/client/HttpClientBuilder.html#useSystemProperties())
 The Proxy settings are changed by using JAVA_OPTS. It important that you exclude your graphite server or you will proxy these requests also.
 * `JAVA_OPTS Example` JAVA_OPTS="-server -Dhttps.proxyHost=`PROXYSERVER` -Dhttps.proxyPort=`PROXYPORT` -Dhttp.proxyHost=`PROXYSERVER` -Dhttp.proxyPort=`PROXYPORT` -Dhttp.nonProxyHosts=`GRAPHITESERVER|*YOURDOMAIN.COM|INTERNALHIPCHAT`"
+>>>>>>> 1.5.0
 
 ## Seyren API
 

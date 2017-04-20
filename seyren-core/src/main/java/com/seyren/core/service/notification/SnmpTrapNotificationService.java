@@ -31,6 +31,8 @@ import org.snmp4j.transport.DefaultUdpTransportMapping;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.List;
 
 @Named
@@ -40,9 +42,15 @@ public class SnmpTrapNotificationService implements NotificationService {
 
     private final SeyrenConfig seyrenConfig;
 
+    private String oidPrefix;
+    private String trapOID;
+    
     @Inject
     public SnmpTrapNotificationService(SeyrenConfig seyrenConfig) {
         this.seyrenConfig = seyrenConfig;
+        
+        trapOID = seyrenConfig.getSnmpOID();
+        oidPrefix = trapOID.substring(0,trapOID.lastIndexOf('.')+1)+"1";
     }
 
     @Override
@@ -63,6 +71,20 @@ public class SnmpTrapNotificationService implements NotificationService {
         target.setCommunity(octetString(seyrenConfig.getSnmpCommunity()));
         target.setVersion(SnmpConstants.version2c);
         target.setAddress(targetaddress);
+        
+        String hostname = "Seyren";
+
+        try
+        {
+            InetAddress addr;
+            addr = InetAddress.getLocalHost();
+            LOGGER.info(addr.toString());
+            hostname = addr.getHostName()+":SEYREN";
+        }
+        catch (UnknownHostException ex)
+        {
+            LOGGER.error("Hostname can not be resolved");
+        }
 
 
         for (Alert alert : alerts) {
@@ -71,29 +93,22 @@ public class SnmpTrapNotificationService implements NotificationService {
             PDU trap = new PDU();
             trap.setType(PDU.TRAP);
 
-            OID oid = new OID(seyrenConfig.getSnmpOID());
-            OID name = new OID(seyrenConfig.getSnmpOID()+".1");
-            OID metric = new OID(seyrenConfig.getSnmpOID()+".2");
-            OID state = new OID(seyrenConfig.getSnmpOID()+".3");
-            OID value = new OID(seyrenConfig.getSnmpOID()+".4");
-            OID error = new OID(seyrenConfig.getSnmpOID()+".5");
-            OID warn = new OID(seyrenConfig.getSnmpOID()+".6");
-            OID id = new OID(seyrenConfig.getSnmpOID()+".7");
-	    OID checkUrl = new OID(seyrenConfig.getSnmpOID()+".8");
-
             trap.add(new VariableBinding(SnmpConstants.sysUpTime, new TimeTicks(5000)));
-            trap.add(new VariableBinding(SnmpConstants.snmpTrapOID, oid));
+            trap.add(new VariableBinding(SnmpConstants.snmpTrapOID, new OID(trapOID)));
 
             //Add Payload
-            trap.add(variableBinding(name, check.getName()));
-            trap.add(variableBinding(metric, alert.getTarget()));
-            trap.add(variableBinding(state, check.getState().name()));
-            trap.add(variableBinding(value, alert.getValue().toString()));
-            trap.add(variableBinding(warn, check.getWarn().toString()));
-            trap.add(variableBinding(error, check.getError().toString()));
-            trap.add(variableBinding(id, check.getId()));
-	    trap.add(variableBinding(checkUrl, String.format("%s/#/checks/%s", seyrenConfig.getBaseUrl(), check.getId())));
-
+            trap.add(new VariableBinding(new OID(oidPrefix+".1"), new OctetString(alert.getTimestamp().toString())));
+            trap.add(new VariableBinding(new OID(oidPrefix+".2"), new OctetString(hostname.toString())));
+            trap.add(new VariableBinding(new OID(oidPrefix+".3"), new OctetString(check.getName())));
+            trap.add(new VariableBinding(new OID(oidPrefix+".4"), new OctetString(alert.getTarget())));
+            trap.add(new VariableBinding(new OID(oidPrefix+".5"), new OctetString(alert.getValue().toString())));
+            trap.add(new VariableBinding(new OID(oidPrefix+".6"), new OctetString(alert.getWarn().toString())));
+            trap.add(new VariableBinding(new OID(oidPrefix+".7"), new OctetString(alert.getError().toString())));
+            trap.add(new VariableBinding(new OID(oidPrefix+".8"), new OctetString(alert.getToType().toString())));
+            trap.add(new VariableBinding(new OID(oidPrefix+".9"), new OctetString(alert.getFromType().toString())));
+            trap.add(new VariableBinding(new OID(oidPrefix+".10"), new OctetString(seyrenConfig.getBaseUrl() + "/#/checks/" + check.getId())));
+            trap.add(new VariableBinding(new OID(oidPrefix+".11"), new OctetString(check.getDescription() == null ? "" : check.getDescription())));
+            
             // Send
             sendAlert(check, snmp, target, trap);
         }

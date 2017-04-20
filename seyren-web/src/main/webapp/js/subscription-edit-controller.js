@@ -2,10 +2,11 @@
 (function () {
     'use strict';
 
-    seyrenApp.controller('SubscriptionEditModalController', function SubscriptionEditModalController($scope, $rootScope, Subscriptions, Seyren) {
+    seyrenApp.controller('SubscriptionEditModalController', function SubscriptionEditModalController($scope, $rootScope, Subscriptions, Seyren, Config) {
         $scope.master = {
             target: null,
             type: "EMAIL",
+            position: null,
             ignoreWarn: false,
             ignoreError: false,
             ignoreOk: false,
@@ -23,6 +24,14 @@
             sa: true,
             enabled: true
         };
+
+        Config.query({}, function(config) {
+            var resourceUrlsConcatenated, scriptPathsConcatenated;
+            resourceUrlsConcatenated = config.scriptResourceUrls === undefined ? "" : config.scriptResourceUrls;
+            $scope.resourceUrls = resourceUrlsConcatenated.split( /[,;]/ );
+            // scriptPathsConcatenated = config.scriptPath === undefined ? "" : config.scriptPath;
+            // $scope.scriptPaths = scriptPathsConcatenated.split( /[,;]/ );
+        });
 
         $('#editSubscriptionModal').on('shown', function () {
             $('#subscription\\.target').focus();
@@ -46,9 +55,12 @@
                 $("#createSubscriptionButton").removeClass("disabled");
                 $("#editSubscriptionModal").modal("hide");
                 $scope.$emit('subscription:created');
-            }, function () {
+            }, function (response) {
                 $("#createSubscriptionButton").removeClass("disabled");
                 console.log('Create subscription failed');
+                if(response.status === 403) {
+                    $scope.error = "You're not authorized to create this subscription.";
+                }
             });
         };
 
@@ -58,8 +70,12 @@
                 $("#updateSubscriptionButton").removeClass("disabled");
                 $("#editSubscriptionModal").modal("hide");
                 $scope.$emit('subscription:updated');
-            }, function () {
+            }, function (response) {
+                $("#updateSubscriptionButton").removeClass("disabled");
                 console.log('Saving subscription failed');
+                if(response.status === 403) {
+                    $scope.error = "You're not authorized to edit this subscription.";
+                }
             });
         };
 
@@ -70,12 +86,14 @@
         $rootScope.$on('subscription:edit', function () {
             var editSubscription = Seyren.subscriptionBeingEdited();
             if (editSubscription) {
+                $scope.error = null;
                 $scope.newSubscription = false;
                 $scope.subscription = editSubscription;
                 $scope.subscription.notifyOnWarn = !$scope.subscription.ignoreWarn;
                 $scope.subscription.notifyOnError = !$scope.subscription.ignoreError;
                 $scope.subscription.notifyOnOk = !$scope.subscription.ignoreOk;
             } else {
+                $scope.error = null;
                 $scope.newSubscription = true;
                 $scope.subscription = {};
                 $scope.reset();
