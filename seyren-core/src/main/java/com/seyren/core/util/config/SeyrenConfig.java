@@ -79,6 +79,7 @@ public class SeyrenConfig {
     private final Integer snmpPort;
     private final String snmpCommunity;
     private final String snmpOID;
+    private final String snmpSource;
     private final String victorOpsRestAPIEndpoint;
     private final String emailTemplateFileName;
     private final String emailSubjectTemplateFileName;
@@ -86,6 +87,9 @@ public class SeyrenConfig {
     private final String bigPandaAuthBearer;
     private final int noOfThreads;
     private final String httpNotificationUrl;
+    private final int alertNotificationDelayInSeconds;
+    private final int alertNotificationIntervalInSeconds;
+    
     public SeyrenConfig() {
         
         // Base
@@ -93,6 +97,9 @@ public class SeyrenConfig {
         this.mongoUrl = configOrDefault("MONGO_URL", "mongodb://localhost:27017/seyren");
         this.graphsEnable = configOrDefault("GRAPHS_ENABLE", "true");
         this.noOfThreads = Integer.parseInt(configOrDefault("SEYREN_THREADS", "8"));
+        this.alertNotificationDelayInSeconds = Integer.parseInt(configOrDefault("SEYREN_NOTIFICATION_DELAY","0"));
+        this.alertNotificationIntervalInSeconds = Integer.parseInt(configOrDefault("SEYREN_NOTIFICATION_INTERVAL", "20"));
+        
         // Graphite
         this.graphiteUrl = stripEnd(configOrDefault("GRAPHITE_URL", "http://localhost:80"), "/");
         this.graphiteUsername = configOrDefault("GRAPHITE_USERNAME", "");
@@ -160,6 +167,7 @@ public class SeyrenConfig {
         this.snmpPort = Integer.parseInt(configOrDefault("SNMP_PORT", "162"));
         this.snmpCommunity = configOrDefault("SNMP_COMMUNITY", "public");
         this.snmpOID = configOrDefault("SNMP_OID", "1.3.6.1.4.1.32473.1");
+        this.snmpSource = configOrDefault("SNMP_SOURCE", "localhost");
 
         //VictorOps
         this.victorOpsRestAPIEndpoint = configOrDefault("VICTOROPS_REST_ENDPOINT", "");
@@ -321,7 +329,12 @@ public class SeyrenConfig {
     public String getSnmpOID() {
         return snmpOID;
     }
-    
+
+    @JsonIgnore
+    public String getSnmpSource() {
+        return snmpSource;
+    }
+
     @JsonIgnore
     public String getGraphiteUrl() {
         return graphiteUrl;
@@ -396,6 +409,11 @@ public class SeyrenConfig {
     public int getGraphiteSocketTimeout() {
         return graphiteSocketTimeout;
     }
+    
+    @JsonIgnore
+    public int getAlertNotificationIntervalInSeconds () {
+        return alertNotificationIntervalInSeconds;
+    }
 
     @JsonIgnore
     public String getSlackToken() {
@@ -430,6 +448,11 @@ public class SeyrenConfig {
     @JsonIgnore
     public int getNoOfThreads() {
         return noOfThreads;
+    }
+    
+    @JsonIgnore
+    public int getAlertNotificationDelayInSeconds() {
+        return alertNotificationDelayInSeconds;
     }
 
     @JsonIgnore

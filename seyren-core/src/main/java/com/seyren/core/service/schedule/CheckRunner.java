@@ -33,6 +33,8 @@ import com.seyren.core.service.checker.ValueChecker;
 import com.seyren.core.service.notification.NotificationService;
 import com.seyren.core.store.AlertsStore;
 import com.seyren.core.store.ChecksStore;
+import com.seyren.core.util.config.SeyrenConfig;
+import java.util.Date;
 
 public class CheckRunner implements Runnable {
     
@@ -44,15 +46,17 @@ public class CheckRunner implements Runnable {
     private final TargetChecker targetChecker;
     private final ValueChecker valueChecker;
     private final Iterable<NotificationService> notificationServices;
+    private final SeyrenConfig seyrenConfig;
     
     public CheckRunner(Check check, AlertsStore alertsStore, ChecksStore checksStore, TargetChecker targetChecker, ValueChecker valueChecker,
-            Iterable<NotificationService> notificationServices) {
+            Iterable<NotificationService> notificationServices, SeyrenConfig seyrenConfig) {
         this.check = check;
         this.alertsStore = alertsStore;
         this.checksStore = checksStore;
         this.targetChecker = targetChecker;
         this.valueChecker = valueChecker;
         this.notificationServices = notificationServices;
+        this.seyrenConfig = seyrenConfig;
     }
     
     @Override
@@ -62,6 +66,7 @@ public class CheckRunner implements Runnable {
         }
         
         try {
+            System.out.println("CheckRunner");
             Map<String, Optional<BigDecimal>> targetValues = targetChecker.check(check);
             
             DateTime now = new DateTime();
@@ -79,7 +84,6 @@ public class CheckRunner implements Runnable {
             List<Alert> interestingAlerts = new ArrayList<Alert>();
             
             for (Entry<String, Optional<BigDecimal>> entry : targetValues.entrySet()) {
-                
                 String target = entry.getKey();
                 Optional<BigDecimal> value = entry.getValue();
 
@@ -116,15 +120,20 @@ public class CheckRunner implements Runnable {
                 
                 alertsStore.createAlert(check.getId(), alert);
                 
-                // Only notify if the alert has changed state
-                if (stateIsTheSame(lastState, currentState)) {
-                    continue;
+                Boolean sendNotification = false;
+                
+                Integer nofiticationDelayInSeconds = seyrenConfig.getAlertNotificationDelayInSeconds();
+                if (nofiticationDelayInSeconds != 0) {
+                    sendNotification = newAlertNotificationShouldBeSent(lastState,currentState,now, nofiticationDelayInSeconds);
+                } else if (!stateIsTheSame(lastState, currentState)){
+                    sendNotification = true;
                 }
                 
-                interestingAlerts.add(alert);
-                
+                if (sendNotification) {
+                    interestingAlerts.add(alert);
+                }
             }
-
+            
             Check updatedCheck = checksStore.updateStateAndLastCheck(check.getId(), worstState, DateTime.now());
 
             if (interestingAlerts.isEmpty()) {
@@ -171,4 +180,42 @@ public class CheckRunner implements Runnable {
                 .withTimestamp(now);
     }
     
+    private boolean newAlertNotificationShouldBeSent(AlertType lastState, AlertType currentState, DateTime now, Integer delayInSeconds) {
+        Boolean notificationShouldBeSent = false;
+        
+        // Check if state changed into ERROR save timestamp
+        if (!stateIsTheSame(lastState, currentState) && currentState == AlertType.ERROR) {
+            check.setTimeFirstErrorOccured(now);
+            checksStore.updateTimeFirstErrorOccured(check.getId(), now);
+        }
+        
+        long timeElapsedSinceFirstErrorOccured = (now.getMillis() - check.getTimeFirstErrorOccured().getMillis()) / 1000;
+        long seyrenNotificationIntervalInSeconds = seyrenConfig.getAlertNotificationIntervalInSeconds();        
+        
+        // State is still error and must exist longer than delayInSeconds
+        if (stateIsTheSame(lastState, currentState) && currentState == AlertType.ERROR && timeElapsedSinceFirstErrorOccured > delayInSeconds) {    
+            long timeSinceLastNotificationInSeconds = check.getTimeLastNotificationSent() == null ? seyrenNotificationIntervalInSeconds : (now.getMillis() - check.getTimeLastNotificationSent().getMillis()) / 1000;
+            
+            // Time since the first error is not longer ago than the interval and no notification has been sent
+            if (timeElapsedSinceFirstErrorOccured < seyrenNotificationIntervalInSeconds && check.getTimeLastNotificationSent() == null) {
+                check.setTimeLastNotificationSent(now);
+                checksStore.updateTimeLastNotification(check.getId(), now);
+                notificationShouldBeSent = true;                
+            } 
+            
+            // Last notification is also greater than interval and first notification has been sent
+            if (timeSinceLastNotificationInSeconds > seyrenNotificationIntervalInSeconds) {
+                check.setTimeLastNotificationSent(now);
+                checksStore.updateTimeLastNotification(check.getId(), now);
+                notificationShouldBeSent = true;                
+            }
+        }
+
+        // Also send notification if the state changes from ERROR to OK
+        if (currentState == AlertType.OK && lastState == AlertType.ERROR) {
+            notificationShouldBeSent = true;
+        }
+        
+        return notificationShouldBeSent;
+    }
 }

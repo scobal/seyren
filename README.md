@@ -128,6 +128,7 @@ The target for a Slack subscription will be the channel name (including the `#`,
 * `SNMP_PORT` - The SNMP port. Default: `162`
 * `SNMP_COMMUNITY` - The SNMP  community. Default: `public`
 * `SNMP_OID` - The SNMP OID. Default: `1.3.6.1.4.1.32473.1`
+* `SNMP_SOURCE` - This is the ip from which trap is sent. Default: `localhost`
 
 ##### [TEMPLATE](http://en.wikipedia.org/wiki/Apache_Velocity)
 * `TEMPLATE_EMAIL_FILE_PATH` - The path to the velocity template used when emailing an alert. Seyren will first attempt to load from the class path, but will fall back to loading from the filesystem.  Default: `com/seyren/core/service/notification/email-template.vm"`

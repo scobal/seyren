@@ -234,6 +234,7 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
         DBObject findObject = forId(check.getId());
         
         DateTime lastCheck = check.getLastCheck();
+        DateTime timeFirstErrorOccured = check.getTimeFirstErrorOccured();
         
         DBObject partialObject = object("name", check.getName())
                 .with("description", check.getDescription())
@@ -246,7 +247,8 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
                 .with("live", check.isLive())
                 .with("allowNoData", check.isAllowNoData())
                 .with("lastCheck", lastCheck == null ? null : new Date(lastCheck.getMillis()))
-                .with("state", check.getState().toString());
+                .with("state", check.getState().toString())
+                .with("timeFirstErrorOccured", timeFirstErrorOccured == null ? null : new Date(timeFirstErrorOccured.getMillis()));
         
         DBObject setObject = object("$set", partialObject);
         
@@ -268,6 +270,32 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
 
         return getCheck(checkId);
     }
+
+    @Override
+    public Check updateTimeFirstErrorOccured(String checkId, DateTime timeFirstErrorOccured) {
+        DBObject findObject = forId(checkId);
+        
+        DBObject partialObject = object("timeFirstErrorOccured", new Date(timeFirstErrorOccured.getMillis()));
+        
+        DBObject setObject = object("$set", partialObject);
+        
+        getChecksCollection().update(findObject, setObject);
+
+        return getCheck(checkId);
+    }
+    
+    @Override
+    public Check updateTimeLastNotification(String checkId, DateTime timeLastNotificationSent) {
+        DBObject findObject = forId(checkId);
+        
+        DBObject partialObject = object("timeLastNotificationSent", new Date(timeLastNotificationSent.getMillis()));
+        
+        DBObject setObject = object("$set", partialObject);
+        
+        getChecksCollection().update(findObject, setObject);
+
+        return getCheck(checkId);
+    }    
     
     @Override
     public Alert createAlert(String checkId, Alert alert) {

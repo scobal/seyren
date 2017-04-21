@@ -50,4 +50,7 @@ public interface ChecksStore {
 
     Check updateStateAndLastCheck(String checkId, AlertType state, DateTime lastCheck);
     
+    Check updateTimeFirstErrorOccured(String checkId, DateTime firstError);
+    
+    Check updateTimeLastNotification(String checkId, DateTime lastNotification);
 }
