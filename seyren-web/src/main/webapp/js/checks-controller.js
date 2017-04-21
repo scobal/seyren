@@ -1,7 +1,7 @@
 /*global seyrenApp,console,$ */
 (function () {
     'use strict';
-    seyrenApp.controller('ChecksController', function ChecksController($scope, $location, Checks, Seyren) {
+    seyrenApp.controller('ChecksController', function ChecksController($rootScope, $scope, $location, Checks, Seyren) {
         $scope.pollChecksInSeconds = 30;
 
         if ($location.search().filter) {
@@ -10,7 +10,8 @@
 
         $scope.loadChecks = function () {
             Checks.query(function (data) {
-                $scope.checks = data;
+                $scope.checks = $rootScope.checks = data;
+                $scope.display_tags_filtered = 'false';
             }, function (err) {
                 console.log('Loading checks failed');
             });
@@ -72,5 +73,19 @@
             }
         };
 
+
+        // TODO:
+        // So when we have multiple tags.
+        // You search for the one you click onnn...
+        // BUT, clicking on another one afterwards must REFINE that search by filtering out everything that has BOTH
+        $scope.getChecksByTag = function (tag) {
+            Checks.query({tag: [tag], enabled: true},function (data) {
+                $scope.checks = data;
+                $scope.display_tags_filtered = 'true';
+            }, function (err) {
+                console.log('Loading checks failed');
+            });
+            
+        };
     });
 }());

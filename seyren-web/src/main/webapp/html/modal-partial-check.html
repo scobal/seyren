@@ -5,6 +5,7 @@
         <h3 class="modal-title" ng-show="newCheck"><strong>Create check</strong></h3>
         <h3 class="modal-title" ng-hide="newCheck"><strong>Edit check</strong></h3>
     </div>
+    
     <div class="modal-body">
         <form name="checkForm" class="form-horizontal" role="form" novalidate>
             <fieldset>
@@ -20,6 +21,15 @@
                         <input id="check.description" class="form-control" name="check.description" ng-model="check.description" type="text" />
                     </div>
                 </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label" for="check.graphiteSourceUrl">Graphite source</label>
+                    <div class="col-sm-7">
+                        <input id="check.graphiteSourceUrl" class="form-control"  name="check.graphiteSourceUrl" ng-model="check.graphiteSourceUrl" type="text"/>
+                    </div>
+                    <div class="col-sm-2">
+                        <span id="check.graphiteSourceUrl.hint" class="glyphicon glyphicon-question-sign"></span>
+                    </div>
+                </div>                
                 <div ng-class="{ 'form-group': true, 'has-error': checkForm['check.target'].$invalid }">
                     <label class="col-sm-3 control-label" for="check.target">Target</label>
                     <div class="col-sm-7">
@@ -38,6 +48,12 @@
                         <input id="check.until" class="form-control" name="check.until" ng-model="check.until" type="text" />
                     </div>
                 </div>
+                <div class="form-group">
+                    <div class="col-sm-7 col-sm-offset-3">
+                        <img ng-src="{{ check.previewImage }}" src="./img/preview-nodata.png" width="300" height="70" />
+                        Metrics found: {{ check.totalMetric }}
+                    </div>
+                </div>                
                 <div ng-class="{ 'form-group': true, 'has-error': checkForm['check.warn'].$invalid }">
                     <label class="col-sm-3 control-label" for="check.warn">Warn level</label>
                     <div class="col-sm-3">
@@ -77,10 +93,22 @@
                         </label>
                     </div>
                 </div>
+                <div ng-class="{ 'form-group': true, 'has-error': checkForm['check.notificationDelay'].$invalid }">
+                    <label class="col-sm-3 control-label" for="check.notificationDelay">Notification delay</label>
+                    <div class="col-sm-7">
+                        <input id="check.notificationDelay" class="form-control" name="check.notificationDelay" ng-model="check.notificationDelay" type="text" />
+                    </div>
+                </div>
+<!--                <div ng-class="{ 'form-group': true, 'has-error': checkForm['check.tag'].$invalid }">
+                    <label class="col-sm-3 control-label" for="check.tag">Tag</label>
+                    <div class="col-sm-7">
+                        <input id="check.tag" class="form-control" name="check.tag" ng-model="check.tag" type="text" ng-pattern="/^[a-zA-Z,0-9]*$/" />
+                    </div>
+                </div>-->
                 <div class="form-group">
-                    <div class="col-sm-7 col-sm-offset-3">
-                        <img ng-src="{{ check.previewImage }}" src="./img/preview-nodata.png" width="300" height="70" />
-                        Metrics found: {{ check.totalMetric }}
+                    <label class="col-sm-3 control-label" for="check.tag">Tag</label>
+                    <div class="col-sm-7 container-fluid">
+                        <input type="text" ng-model="check.tag" typeahead="tag for tag in tags | filter:$viewValue | limitTo:8" class="form-control">
                     </div>
                 </div>
             </fieldset>

@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.snmp4j.CommunityTarget;
 import org.snmp4j.PDU;
+import org.snmp4j.PDUv1;
 import org.snmp4j.Snmp;
 import org.snmp4j.mp.SnmpConstants;
 import org.snmp4j.smi.*;
@@ -61,38 +62,42 @@ public class SnmpTrapNotificationService implements NotificationService {
         Address targetaddress = new UdpAddress(seyrenConfig.getSnmpHost() + "/" + seyrenConfig.getSnmpPort());
         CommunityTarget target = new CommunityTarget();
         target.setCommunity(octetString(seyrenConfig.getSnmpCommunity()));
-        target.setVersion(SnmpConstants.version2c);
+        target.setVersion(SnmpConstants.version1);
         target.setAddress(targetaddress);
 
 
         for (Alert alert : alerts) {
 
             // Create PDU           
-            PDU trap = new PDU();
-            trap.setType(PDU.TRAP);
+            PDUv1 trap = new PDUv1();
+            trap.setType(PDUv1.V1TRAP);
 
-            OID oid = new OID(seyrenConfig.getSnmpOID());
-            OID name = new OID(seyrenConfig.getSnmpOID()+".1");
-            OID metric = new OID(seyrenConfig.getSnmpOID()+".2");
-            OID state = new OID(seyrenConfig.getSnmpOID()+".3");
-            OID value = new OID(seyrenConfig.getSnmpOID()+".4");
-            OID error = new OID(seyrenConfig.getSnmpOID()+".5");
-            OID warn = new OID(seyrenConfig.getSnmpOID()+".6");
-            OID id = new OID(seyrenConfig.getSnmpOID()+".7");
-	    OID checkUrl = new OID(seyrenConfig.getSnmpOID()+".8");
+            trap.setEnterprise(new OID(seyrenConfig.getSnmpOID()) );
 
-            trap.add(new VariableBinding(SnmpConstants.sysUpTime, new TimeTicks(5000)));
-            trap.add(new VariableBinding(SnmpConstants.snmpTrapOID, oid));
+            trap.setAgentAddress(new IpAddress(seyrenConfig.getSnmpSource()));
+            trap.setSpecificTrap(1);
+
+            OID name = new OID(subscription.getTarget()+".1");
+            OID metric = new OID(subscription.getTarget()+".2");
+            OID state = new OID(subscription.getTarget()+".3");
+            OID value = new OID(subscription.getTarget()+".4");
+            OID error = new OID(subscription.getTarget()+".5");
+            OID warn = new OID(subscription.getTarget()+".6");
+            OID id = new OID(subscription.getTarget()+".7");
+            OID checkUrl = new OID(subscription.getTarget()+".8");
+            OID description = new OID(subscription.getTarget()+".9");
 
             //Add Payload
             trap.add(variableBinding(name, check.getName()));
             trap.add(variableBinding(metric, alert.getTarget()));
             trap.add(variableBinding(state, check.getState().name()));
+//            trap.add(variableBinding(state, alarmState));
             trap.add(variableBinding(value, alert.getValue().toString()));
             trap.add(variableBinding(warn, check.getWarn().toString()));
             trap.add(variableBinding(error, check.getError().toString()));
             trap.add(variableBinding(id, check.getId()));
-	    trap.add(variableBinding(checkUrl, String.format("%s/#/checks/%s", seyrenConfig.getBaseUrl(), check.getId())));
+            trap.add(variableBinding(checkUrl, String.format("%s/#/checks/%s", seyrenConfig.getBaseUrl(), check.getId())));
+            trap.add(variableBinding(description, check.getDescription()));
 
             // Send
             sendAlert(check, snmp, target, trap);

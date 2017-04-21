@@ -48,21 +48,20 @@ public class ChartsBean implements ChartsResource {
         if (check == null) {
             return Response.status(Status.NOT_FOUND).build();
         }
-        
+
         String target = check.getTarget();
         
         if (hideThresholds) {
-            return getChart(target, width, height, from, to, null, null, hideLegend, hideAxes);
+            return getChart(check.getGraphiteSourceUrl(), target, width, height, from, to, null, null, hideLegend, hideAxes);
         } else {
-            return getChart(target, width, height, from, to, check.getWarn(), check.getError(), hideLegend, hideAxes);
+            return getChart(check.getGraphiteSourceUrl(), target, width, height, from, to, check.getWarn(), check.getError(), hideLegend, hideAxes);
         }
-        
     }
     
     @Override
-    public Response getCustomChart(String target, int width, int height, String from, String to, String warnThreshold, String errorThreshold, boolean hideLegend,
+    public Response getCustomChart(String target, String graphiteSourceUrl, int width, int height, String from, String to, String warnThreshold, String errorThreshold, boolean hideLegend,
             boolean hideAxes) {
-        
+
         BigDecimal warn;
         if (StringUtils.isEmpty(warnThreshold)) {
             warn = null;
@@ -77,11 +76,10 @@ public class ChartsBean implements ChartsResource {
             error = new BigDecimal(errorThreshold);
         }
         
-        return getChart(target, width, height, from, to, warn, error, hideLegend, hideAxes);
-        
+        return getChart(graphiteSourceUrl, target, width, height, from, to, warn, error, hideLegend, hideAxes);
     }
     
-    private Response getChart(String target, int width, int height, String from, String to, BigDecimal warnThreshold, BigDecimal errorThreshold, boolean hideLegend,
+    private Response getChart(String graphiteSource, String target, int width, int height, String from, String to, BigDecimal warnThreshold, BigDecimal errorThreshold, boolean hideLegend,
             boolean hideAxes) {
         
         LegendState legendState;
@@ -99,12 +97,10 @@ public class ChartsBean implements ChartsResource {
         }
         
         try {
-            byte[] bytes = graphiteHttpClient.getChart(target, width, height, from, to, legendState, axesState, warnThreshold, errorThreshold);
+            byte[] bytes = graphiteHttpClient.getChart(graphiteSource, target, width, height, from, to, legendState, axesState, warnThreshold, errorThreshold);
             return Response.ok(bytes, "image/png").build();
         } catch (Exception e) {
             return Response.serverError().build();
-        }
-        
+        }   
     }
-    
 }

@@ -31,8 +31,10 @@ import com.seyren.core.domain.Subscription;
 import com.seyren.core.service.checker.TargetChecker;
 import com.seyren.core.service.checker.ValueChecker;
 import com.seyren.core.service.notification.NotificationService;
+import com.seyren.core.service.notification.NotificationServiceSettings;
 import com.seyren.core.store.AlertsStore;
 import com.seyren.core.store.ChecksStore;
+import com.seyren.core.util.config.SeyrenConfig;
 
 public class CheckRunner implements Runnable {
     
@@ -44,15 +46,19 @@ public class CheckRunner implements Runnable {
     private final TargetChecker targetChecker;
     private final ValueChecker valueChecker;
     private final Iterable<NotificationService> notificationServices;
+    private final SeyrenConfig seyrenConfig;
+    private final NotificationServiceSettings notificationServiceSettings;
     
     public CheckRunner(Check check, AlertsStore alertsStore, ChecksStore checksStore, TargetChecker targetChecker, ValueChecker valueChecker,
-            Iterable<NotificationService> notificationServices) {
+            Iterable<NotificationService> notificationServices, SeyrenConfig seyrenConfig, NotificationServiceSettings notificationServiceSettings) {
         this.check = check;
         this.alertsStore = alertsStore;
         this.checksStore = checksStore;
         this.targetChecker = targetChecker;
         this.valueChecker = valueChecker;
         this.notificationServices = notificationServices;
+        this.seyrenConfig = seyrenConfig;
+        this.notificationServiceSettings = notificationServiceSettings;
     }
     
     @Override
@@ -63,10 +69,11 @@ public class CheckRunner implements Runnable {
         
         try {
             Map<String, Optional<BigDecimal>> targetValues = targetChecker.check(check);
-            
             DateTime now = new DateTime();
             BigDecimal warn = check.getWarn();
             BigDecimal error = check.getError();
+            BigDecimal singleCheckNotificationDelayInSeconds = check.getNotificationDelay();
+            Integer globalNofiticationDelayInSeconds = seyrenConfig.getAlertNotificationDelayInSeconds();
             
             AlertType worstState;
             
@@ -79,7 +86,6 @@ public class CheckRunner implements Runnable {
             List<Alert> interestingAlerts = new ArrayList<Alert>();
             
             for (Entry<String, Optional<BigDecimal>> entry : targetValues.entrySet()) {
-                
                 String target = entry.getKey();
                 Optional<BigDecimal> value = entry.getValue();
 
@@ -116,15 +122,21 @@ public class CheckRunner implements Runnable {
                 
                 alertsStore.createAlert(check.getId(), alert);
                 
-                // Only notify if the alert has changed state
-                if (stateIsTheSame(lastState, currentState)) {
-                    continue;
+                Boolean sendNotification = false;
+                
+                if (singleCheckNotificationDelayInSeconds != null) {
+                    sendNotification = notificationServiceSettings.applyNotificationDelayAndIntervalProperties(check, lastState, currentState, now);
+                } else if(globalNofiticationDelayInSeconds != 0) { 
+                   sendNotification = notificationServiceSettings.applyNotificationDelayAndIntervalProperties(check, lastState, currentState, now);
+                } else if(!stateIsTheSame(lastState, currentState)) {
+                    sendNotification = true;
                 }
                 
-                interestingAlerts.add(alert);
-                
+                if (sendNotification) {
+                    interestingAlerts.add(alert);
+                }
             }
-
+            
             Check updatedCheck = checksStore.updateStateAndLastCheck(check.getId(), worstState, DateTime.now());
 
             if (interestingAlerts.isEmpty()) {
@@ -170,5 +182,4 @@ public class CheckRunner implements Runnable {
                 .withToType(to)
                 .withTimestamp(now);
     }
-    
 }

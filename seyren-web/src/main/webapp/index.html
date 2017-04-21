@@ -8,55 +8,57 @@
         <link rel="stylesheet" type="text/css" href="./css/spinner.css" />
     </head>
     <body>
-    <div class="navbar navbar-inverse navbar-fixed-top" role="banner">
-        <div class="col-lg-12">
-            <div class="navbar-header">
-                <a href="#/"><img src="./img/seyren-logo.png" height="30" width="130" /></a>
-            </div>
-            <nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation">
-                <ul class="nav navbar-nav">
-                    <li><a href="#/checks">Checks</a></li>
-                </ul>
-                <div id="spinnerG">
-                    <div id="spinnerG_1" class="spinnerG"></div>
-                    <div id="spinnerG_2" class="spinnerG"></div>
-                    <div id="spinnerG_3" class="spinnerG"></div>
-                    <div id="spinnerG_4" class="spinnerG"></div>
-                    <div id="spinnerG_5" class="spinnerG"></div>
-                    <div id="spinnerG_6" class="spinnerG"></div>
-                    <div id="spinnerG_7" class="spinnerG"></div>
-                    <div id="spinnerG_8" class="spinnerG"></div>
+        <div class="navbar navbar-inverse navbar-fixed-top" role="banner">
+            <div class="col-lg-12">
+                <div class="navbar-header">
+                    <a href="#/"><img src="./img/seyren-logo.png" height="30" width="130" /></a>
                 </div>
-                <div id="banner" class="alert alert-danger navbar-right banner">Sorry, Seyren or Graphite are not available.</div>
-            </nav>
+                <nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation">
+                    <ul class="nav navbar-nav">
+                        <li><a href="#/checks">Checks</a></li>
+                    </ul>
+                    <div id="spinnerG">
+                        <div id="spinnerG_1" class="spinnerG"></div>
+                        <div id="spinnerG_2" class="spinnerG"></div>
+                        <div id="spinnerG_3" class="spinnerG"></div>
+                        <div id="spinnerG_4" class="spinnerG"></div>
+                        <div id="spinnerG_5" class="spinnerG"></div>
+                        <div id="spinnerG_6" class="spinnerG"></div>
+                        <div id="spinnerG_7" class="spinnerG"></div>
+                        <div id="spinnerG_8" class="spinnerG"></div>
+                    </div>
+                    <div id="banner" class="alert alert-danger navbar-right banner">Sorry, Seyren or Graphite are not available.</div>
+                </nav>
+            </div>
         </div>
-    </div>
 
-    <div class="container">
-        <div ng-view></div>
-    </div>
-    <footer class="footer">
-        <div class="col-lg-12">
-            <p><a href="https://github.com/scobal/seyren" target="_blank">Seyren</a>, an alerting dashboard for Graphite</p>
+        <div class="container">
+            <div ng-view></div>
         </div>
-    </footer>
+        <footer class="footer">
+            <div class="col-lg-12">
+                <p><a href="https://github.com/scobal/seyren" target="_blank">Seyren</a>, an alerting dashboard for Graphite</p>
+            </div>
+        </footer>
 
-    <script src="./js/lib/jquery-1.7.2.min.js" type="text/javascript"></script>
-    <script src="./js/lib/angular-1.2.3.min.js" type="text/javascript"></script>
-    <script src="./js/lib/angular-resource-1.2.3.min.js" type="text/javascript" ng-autobind></script>
-    <script src="./js/lib/angular-route-1.2.3.min.js" type="text/javascript" ng-autobind></script>
-    <script src="./js/lib/angular-linkify-1.0.0.min.js" type="text/javascript" ng-autobind></script>
-    <script src="./js/lib/bootstrap-3.2.0.min.js" type="text/javascript"></script>
-    <script src="./js/lib/moment-2.8.2.min.js" type="text/javascript"></script>
-    <script src="./js/lib/angular-moment-0.8.2.min.js" type="text/javascript"></script>
-    <script src="./js/lib/igTruncate-0.1.2.min.js" type="text/javascript"></script>
-    <script src="./js/app.js" type="text/javascript"></script>
-    <script src="./js/home-controller.js" type="text/javascript"></script>
-    <script src="./js/checks-controller.js" type="text/javascript"></script>
-    <script src="./js/check-edit-controller.js" type="text/javascript"></script>
-    <script src="./js/subscription-edit-controller.js" type="text/javascript"></script>
-    <script src="./js/check-controller.js" type="text/javascript"></script>
-    <script src="./js/services.js" type="text/javascript"></script>
+        <script src="./js/lib/jquery-1.7.2.min.js" type="text/javascript"></script>
+        <script src="./js/lib/angular-1.2.3.min.js" type="text/javascript"></script>
+        <script src="./js/lib/angular-resource-1.2.3.min.js" type="text/javascript" ng-autobind></script>
+        <script src="./js/lib/angular-route-1.2.3.min.js" type="text/javascript" ng-autobind></script>
+        <script src="./js/lib/angular-linkify-1.0.0.min.js" type="text/javascript" ng-autobind></script>
+        <script src="./js/lib/bootstrap-3.2.0.min.js" type="text/javascript"></script>
+        <script src="./js/lib/moment-2.8.2.min.js" type="text/javascript"></script>
+        <script src="./js/lib/angular-moment-0.8.2.min.js" type="text/javascript"></script>
+        <script src="./js/lib/igTruncate-0.1.2.min.js" type="text/javascript"></script>
+        <script src="./js/lib/ui-bootstrap-custom-0.12.0.min.js" type="text/javascript"></script>
+        <script src="./js/lib/ui-bootstrap-custom-tpls-0.12.0.min.js" type="text/javascript"></script>
+        <script src="./js/app.js" type="text/javascript"></script>
+        <script src="./js/home-controller.js" type="text/javascript"></script>
+        <script src="./js/checks-controller.js" type="text/javascript"></script>
+        <script src="./js/check-edit-controller.js" type="text/javascript"></script>
+        <script src="./js/subscription-edit-controller.js" type="text/javascript"></script>
+        <script src="./js/check-controller.js" type="text/javascript"></script>
+        <script src="./js/services.js" type="text/javascript"></script>
 
     </body>
 </html>

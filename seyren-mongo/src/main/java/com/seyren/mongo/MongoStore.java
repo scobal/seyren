@@ -186,6 +186,28 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
                 .withValues(checks)
                 .withTotal(dbc.count());
     }
+    
+    @Override
+    public SeyrenResponse<Check> getChecksByTag(Set<String> tag, Boolean enabled) {
+        List<Check> checks = new ArrayList<Check>();
+        
+        DBObject query = new BasicDBObject();
+        query.put("tag", object("$in", tag.toArray()));
+        if (enabled != null) {
+            query.put("enabled", enabled);
+        }
+        
+        DBCursor dbc = getChecksCollection().find(query);
+
+        while (dbc.hasNext()) {
+            checks.add(mapper.checkFrom(dbc.next()));
+        }
+        dbc.close();
+        
+        return new SeyrenResponse<Check>()
+                .withValues(checks)
+                .withTotal(dbc.count());
+    }    
 
     @Override
     public SeyrenResponse getChecksByPattern(List<String> checkFields, List<Pattern> patterns, Boolean enabled) {
@@ -234,7 +256,8 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
         DBObject findObject = forId(check.getId());
         
         DateTime lastCheck = check.getLastCheck();
-        
+        DateTime timeFirstErrorOccured = check.getTimeFirstErrorOccured();
+
         DBObject partialObject = object("name", check.getName())
                 .with("description", check.getDescription())
                 .with("target", check.getTarget())
@@ -246,7 +269,12 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
                 .with("live", check.isLive())
                 .with("allowNoData", check.isAllowNoData())
                 .with("lastCheck", lastCheck == null ? null : new Date(lastCheck.getMillis()))
-                .with("state", check.getState().toString());
+                .with("state", check.getState().toString())
+                .with("timeFirstErrorOccured", timeFirstErrorOccured == null ? null : new Date(timeFirstErrorOccured.getMillis()))
+                .with("notificationDelay", check.getNotificationDelay() == null ? null : check.getNotificationDelay().toPlainString())
+                .with("notificationInterval", check.getNotificationInterval() == null ? null : check.getNotificationInterval().toPlainString())
+                .with("tag", check.getTag())
+                .with("graphiteSourceUrl", check.getGraphiteSourceUrl());
         
         DBObject setObject = object("$set", partialObject);
         
@@ -268,6 +296,32 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
 
         return getCheck(checkId);
     }
+
+    @Override
+    public Check updateTimeFirstErrorOccured(String checkId, DateTime timeFirstErrorOccured) {
+        DBObject findObject = forId(checkId);
+        
+        DBObject partialObject = object("timeFirstErrorOccured", new Date(timeFirstErrorOccured.getMillis()));
+        
+        DBObject setObject = object("$set", partialObject);
+        
+        getChecksCollection().update(findObject, setObject);
+
+        return getCheck(checkId);
+    }
+    
+    @Override
+    public Check updateTimeLastNotification(String checkId, DateTime timeLastNotificationSent) {
+        DBObject findObject = forId(checkId);
+        
+        DBObject partialObject = object("timeLastNotificationSent", new Date(timeLastNotificationSent.getMillis()));
+        
+        DBObject setObject = object("$set", partialObject);
+        
+        getChecksCollection().update(findObject, setObject);
+
+        return getCheck(checkId);
+    }    
     
     @Override
     public Alert createAlert(String checkId, Alert alert) {
@@ -356,5 +410,4 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
         DBObject updateObject = object("$set", object("subscriptions.$", subscriptionObject));
         getChecksCollection().update(checkFindObject, updateObject);
     }
-    
 }

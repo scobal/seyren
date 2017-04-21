@@ -104,6 +104,14 @@
             $scope.loadCheck();
         });
 
+        $scope.loadChecks = function () {
+            Checks.query(function (data) {
+                $scope.checks = data;
+            }, function (err) {
+                console.log('Loading checks failed');
+            });
+        };
+
         $scope.editCheck = function (check) {
             $("#editCheckModal").modal();
             Seyren.editCheck(check);

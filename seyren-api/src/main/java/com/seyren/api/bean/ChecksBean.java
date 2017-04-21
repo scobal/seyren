@@ -43,10 +43,12 @@ public class ChecksBean implements ChecksResource {
     }
     
     @Override
-    public Response getChecks(Set<String> states, Boolean enabled, String name, List<String> fields, List<String> regexes) {
+    public Response getChecks(Set<String> tags, Set<String> states, Boolean enabled, String name, List<String> fields, List<String> regexes) {
         SeyrenResponse<Check> checks;
         if (states != null && !states.isEmpty()) {
-            checks = checksStore.getChecksByState(states, enabled);
+            checks = checksStore.getChecksByState(states,enabled);
+        } else if (tags != null && !tags.isEmpty()) {
+            checks = checksStore.getChecksByTag(tags, enabled);            
         } else if (fields != null && !fields.isEmpty() &&
                 regexes != null && !regexes.isEmpty()) {
             List<Pattern> patterns = Lists.transform(regexes, new Function<String, Pattern>() {

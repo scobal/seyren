@@ -2,7 +2,8 @@
 (function () {
     'use strict';
 
-    seyrenApp.controller('CheckEditModalController', function CheckEditModalController($scope, $rootScope, Checks, Seyren, Graph, Metrics) {
+    seyrenApp.controller('CheckEditModalController', function CheckEditModalController($scope, $rootScope, Checks, Seyren, Graph, Metrics, $window) {
+
         $scope.master = {
             name: null,
             description: null,
@@ -13,7 +14,30 @@
             enabled: true,
             live: false,
             allowNoData: false,
-            totalMetric: '-'
+            totalMetric: '-',
+            notificationDelay: null,
+            notificationInterval: null,
+            lastNotificationSent:null,
+            tag: null,
+            graphiteSourceUrl: null
+        };
+        
+        $scope.getAllTags = function() {
+            var existing_tags = [];
+            angular.forEach($rootScope.checks.values, function (check) {
+                if (check.tag !== null && existing_tags.indexOf(check.tag) === -1) {
+                    existing_tags.push(check.tag);
+                }
+                
+                function insensitive(s1, s2) {
+                    var s1lower = s1.toLowerCase(),
+                    s2lower = s2.toLowerCase();
+                    return s1lower > s2lower? 1 : (s1lower < s2lower? -1 : 0);
+                }
+                
+                existing_tags.sort(insensitive);
+                $scope.tags = existing_tags;
+            });
         };
 
         $('#editCheckModal').on('shown.bs.modal', function () {
@@ -22,6 +46,10 @@
                 placement: 'right',
                 title: 'Setting your warn level higher than your error level will result in Seyren generating alerts when the target value goes below the threshold.'
             });
+            $('#check\\.graphiteSourceUrl\\.hint').tooltip({
+                placement: 'right',
+                title: 'In this field you can define a different graphite source than the default.'
+            });            
         });
 
         $scope.create = function () {
@@ -30,9 +58,13 @@
                 $("#createCheckButton").removeClass("disabled");
                 $("#editCheckModal").modal("hide");
                 $scope.$emit('check:created');
-            }, function () {
+            }, function (err) {
                 $("#createCheckButton").removeClass("disabled");
-                console.log('Creating check failed');
+                if (err.data.indexOf("E11000") > -1) {
+                    $window.alert("This check name already exists in our database.");
+                } else {
+                    $window.alert("Something went wrong when we tried to save the check.");
+                }
             });
         };
 
@@ -53,6 +85,7 @@
 
         $rootScope.$on('check:edit', function () {
             var editCheck = Seyren.checkBeingEdited();
+            $scope.getAllTags();
             if (editCheck) {
                 $scope.newCheck = false;
                 $scope.check = editCheck;
@@ -70,7 +103,6 @@
             }
         });
 
-
         $scope.$watch('check.target', function(value) {
             if (value) {
                 Metrics.totalMetric({target: value}, function (data) {
@@ -81,7 +113,5 @@
                 });
             }
         });
-
     });
-
 }());
