@@ -71,6 +71,7 @@ public class SeyrenConfig {
     private final String ircCatHost;
     private final String ircCatPort;
     private final String slackToken;
+    private final String slackWebhook;
     private final String slackUsername;
     private final String slackIconUrl;
     private final String slackEmojis;
@@ -148,6 +149,7 @@ public class SeyrenConfig {
 
         // Slack
         this.slackToken = configOrDefault("SLACK_TOKEN", "");
+        this.slackWebhook = configOrDefault("SLACK_WEBHOOK_URL", "");
         this.slackUsername = configOrDefault("SLACK_USERNAME", "Seyren");
         this.slackIconUrl = configOrDefault("SLACK_ICON_URL", "");
         this.slackEmojis = configOrDefault("SLACK_EMOJIS", "");
@@ -400,6 +402,11 @@ public class SeyrenConfig {
     @JsonIgnore
     public String getSlackToken() {
       return slackToken;
+    }
+
+    @JsonIgnore
+    public String getSlackWebhook() {
+      return slackWebhook;
     }
 
     @JsonIgnore
