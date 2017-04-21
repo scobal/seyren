@@ -1,0 +1,35 @@
+<div class="modal-dialog" ng-controller="AdminController">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h3 class="modal-title"><strong>Add User</strong></h3>
+        </div>
+        <div class="modal-body">
+            <form name="userAdd" class="form-horizontal" role="form" novalidate>
+                <fieldset>
+                    <div ng-class="{ 'form-group': true, 'has-error': userAdd['user.name'].$invalid }">
+                        <label class="col-sm-3 control-label" for="user.name">Username</label>
+                        <div class="col-sm-7">
+                            <input id="user.name" class="form-control" name="user.name" ng-model="pername" type="text"
+                                   required/>
+                        </div>
+                    </div>
+                    <div ng-class="{ 'form-group': true, 'has-error': userAdd['user.password'].$invalid }">
+                        <label class="col-sm-3 control-label" for="user.name">Password</label>
+                        <div class="col-sm-7">
+                            <input id="user.password" class="form-control" name="user.password" ng-model="password"
+                                   type="password" required/>
+                        </div>
+                    </div>
+                    <div ng-show="addusersuccess" class="alert alert-success">{{addusersuccess}}</div>
+                    <div ng-show="addusererror" class="alert alert-danger">{{addusererror}}</div>
+                </fieldset>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-primary" id="createUserButton" ng-click="createUser()"
+                    ng-disabled="userAdd.$invalid"><i class="glyphicon glyphicon-ok glyphicon-white"></i>&nbsp;&nbsp;Add
+            </button>
+        </div>
+    </div>
+</div>

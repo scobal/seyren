@@ -19,6 +19,8 @@ import java.net.URLEncoder;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import java.net.URLEncoder;
+import java.io.UnsupportedEncodingException;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -38,23 +40,23 @@ import com.seyren.core.util.config.SeyrenConfig;
 
 @Named
 public class HipChatNotificationService implements NotificationService {
-    
+
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(HipChatNotificationService.class);
-    
+
     private final SeyrenConfig seyrenConfig;
     private final String baseUrl;
-    
+
     @Inject
     public HipChatNotificationService(SeyrenConfig seyrenConfig) {
         this.seyrenConfig = seyrenConfig;
         this.baseUrl = seyrenConfig.getHipChatBaseUrl();
     }
-    
+
     protected HipChatNotificationService(SeyrenConfig seyrenConfig, String baseUrl) {
         this.seyrenConfig = seyrenConfig;
         this.baseUrl = baseUrl;
     }
-    
+
     @Override
     public void sendNotification(Check check, Subscription subscription, List<Alert> alerts) throws NotificationFailedException {
         String token = seyrenConfig.getHipChatAuthToken();
@@ -77,15 +79,15 @@ public class HipChatNotificationService implements NotificationService {
             throw new NotificationFailedException("Failed to send notification to HipChat", e);
         }
     }
-    
+
     private String getHipChatMessage(Check check) {
         String message = "Check <a href=" + seyrenConfig.getBaseUrl() + "/#/checks/" + check.getId() + ">" + check.getName() + "</a> has entered its " + check.getState().toString() + " state.";
         return message;
     }
-    
+
     private void sendMessage(String message, MessageColor color, String[] roomIds, String from, String authToken, boolean notify) {
         for (String roomId : roomIds) {
-            LOGGER.info("Posting: {} to {}: {} {}", from, roomId, message, color);
+            LOGGER.info("Posting: {} to {}: Message='{}' {}", from, roomId, message, color);
             HttpClient client = HttpClientBuilder.create().useSystemProperties().build();
             HttpPost post = new HttpPost();
 
@@ -102,19 +104,19 @@ public class HipChatNotificationService implements NotificationService {
                 post.setEntity(new UrlEncodedFormEntity(parameters));
                 client.execute(post);
             } catch (Exception e) {
-                LOGGER.warn("Error posting to HipChat", e);
+                LOGGER.warn("Message=Error posting to HipChat", e);
             } finally {
                 post.releaseConnection();
                 HttpClientUtils.closeQuietly(client);
             }
         }
     }
-    
+
     @Override
     public boolean canHandle(SubscriptionType subscriptionType) {
         return subscriptionType == SubscriptionType.HIPCHAT;
     }
-    
+
     private enum MessageColor {
         YELLOW, RED, GREEN, PURPLE, RANDOM;
     }

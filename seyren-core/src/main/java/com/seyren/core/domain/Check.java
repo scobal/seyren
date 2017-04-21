@@ -28,21 +28,22 @@ import com.seyren.core.util.math.BigDecimalSerializer;
 
 /**
  * This class represents a graphite target that needs to be monitored.
- * 
+ *
  * It stores current subscriptions
- * 
+ *
  * @author mark
- * 
+ *
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Check {
-    
+
     private String id;
     private String name;
     private String description;
     private String target;
     private String from;
     private String until;
+    private String graphiteBaseUrl;
     private BigDecimal warn;
     private BigDecimal error;
     private boolean enabled;
@@ -51,50 +52,57 @@ public class Check {
     private AlertType state;
     private DateTime lastCheck;
     private List<Subscription> subscriptions = new ArrayList<Subscription>();
-    
+    private Integer consecutiveChecks;
+    private Boolean enableConsecutiveChecks;
+    private Integer consecutiveChecksTolerance;
+    private Boolean consecutiveChecksTriggered;
+    /** Flag which signifies that an exception occurred during a Graphite, etc. server read
+     * in performing this specific check */
+    private boolean remoteServerErrorOccurred = false;
+
     public String getId() {
         return id;
     }
-    
+
     public void setId(String id) {
         this.id = id;
     }
-    
+
     public Check withId(String id) {
         setId(id);
         return this;
     }
-    
+
     public String getName() {
         return name;
     }
-    
+
     public void setName(String name) {
         this.name = name;
     }
-    
+
     public Check withName(String name) {
         setName(name);
         return this;
     }
-    
+
     public String getDescription() {
         return description;
     }
-    
+
     public void setDescription(String description) {
         this.description = description;
     }
-    
+
     public Check withDescription(String description) {
         this.description = description;
         return this;
     }
-    
+
     public String getTarget() {
         return target;
     }
-    
+
     public void setTarget(String target) {
         this.target = target;
     }
@@ -134,27 +142,27 @@ public class Check {
     public BigDecimal getWarn() {
         return warn;
     }
-    
+
     @JsonDeserialize(using = BigDecimalDeserializer.class)
     public void setWarn(BigDecimal warn) {
         this.warn = warn;
     }
-    
+
     public Check withWarn(BigDecimal warn) {
         setWarn(warn);
         return this;
     }
-    
+
     @JsonSerialize(using = BigDecimalSerializer.class)
     public BigDecimal getError() {
         return error;
     }
-    
+
     @JsonDeserialize(using = BigDecimalDeserializer.class)
     public void setError(BigDecimal error) {
         this.error = error;
     }
-    
+
     public Check withError(BigDecimal error) {
         setError(error);
         return this;
@@ -173,6 +181,11 @@ public class Check {
         return this;
     }
 
+    public Check withGraphiteBaseUrl(String graphiteBaseUrl) {
+        setGraphiteBaseUrl(graphiteBaseUrl);
+        return this;
+    }
+
     public boolean isLive() {
         return live;
     }
@@ -185,58 +198,123 @@ public class Check {
         setLive(live);
         return this;
     }
-    
+
     public boolean isAllowNoData() {
         return allowNoData;
     }
-    
+
     public void setAllowNoData(boolean allowNoData) {
         this.allowNoData = allowNoData;
     }
-    
+
     public Check withAllowNoData(boolean allowNoData) {
         setAllowNoData(allowNoData);
         return this;
     }
-    
+
     public AlertType getState() {
         return state;
     }
-    
+
     public void setState(AlertType state) {
         this.state = state;
     }
-    
+
     @JsonSerialize(using = DateTimeSerializer.class)
     public DateTime getLastCheck() {
         return lastCheck;
     }
-    
+
     public void setLastCheck(DateTime lastCheck) {
         this.lastCheck = lastCheck;
     }
-    
+
     public Check withLastCheck(DateTime lastCheck) {
         setLastCheck(lastCheck);
         return this;
     }
-    
+
     public Check withState(AlertType state) {
         setState(state);
         return this;
     }
-    
+
     public List<Subscription> getSubscriptions() {
         return subscriptions;
     }
-    
+
     public void setSubscriptions(List<Subscription> subscriptions) {
         this.subscriptions = subscriptions;
     }
-    
+
     public Check withSubscriptions(List<Subscription> subscriptions) {
         setSubscriptions(subscriptions);
         return this;
     }
-    
+
+    public String getGraphiteBaseUrl() {
+        return graphiteBaseUrl;
+    }
+
+    public void setGraphiteBaseUrl(String graphiteBaseUrl) {
+        this.graphiteBaseUrl = graphiteBaseUrl;
+    }
+
+	public boolean hasRemoteServerErrorOccurred() {
+		return remoteServerErrorOccurred;
+	}
+
+	public void setRemoteServerErrorOccurred(boolean remoteServerErrorOccurred) {
+		this.remoteServerErrorOccurred = remoteServerErrorOccurred;
+	}
+
+    public Integer getConsecutiveChecks() {
+        return consecutiveChecks;
+    }
+
+    public void setConsecutiveChecks(Integer consecutiveChecks) {
+        this.consecutiveChecks = consecutiveChecks;
+    }
+
+    public Boolean isEnableConsecutiveChecks() {
+        return enableConsecutiveChecks;
+    }
+
+    public void setEnableConsecutiveChecks(Boolean enableConsecutiveChecks) {
+        this.enableConsecutiveChecks = enableConsecutiveChecks;
+    }
+
+    public Check withEnableConsecutiveChecks(Boolean enableConsecutiveChecks) {
+        setEnableConsecutiveChecks(enableConsecutiveChecks);
+        return this;
+    }
+
+    public Check withConsecutiveChecks(Integer consecutiveChecks) {
+        setConsecutiveChecks(consecutiveChecks);
+        return this;
+    }
+
+    public Integer getConsecutiveChecksTolerance() {
+        return consecutiveChecksTolerance;
+    }
+
+    public void setConsecutiveChecksTolerance(Integer consecutiveChecksTolerance) {
+        this.consecutiveChecksTolerance = consecutiveChecksTolerance;
+    }
+
+    public Check withConsecutiveChecksTolerance(Integer consecutiveChecksTolerance) {
+        setConsecutiveChecksTolerance(consecutiveChecksTolerance);
+        return this;
+    }
+
+    public Boolean isConsecutiveChecksTriggered() {return consecutiveChecksTriggered;}
+
+    public void setConsecutiveChecksTriggered(Boolean consecutiveChecksTriggered) {
+        this.consecutiveChecksTriggered = consecutiveChecksTriggered;
+    }
+
+    public Check withConsecutiveChecksTriggered(Boolean consecutiveChecksTriggered){
+        setConsecutiveChecksTriggered(consecutiveChecksTriggered);
+        return this;
+    }
 }

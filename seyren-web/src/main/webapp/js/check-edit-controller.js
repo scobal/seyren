@@ -2,7 +2,7 @@
 (function () {
     'use strict';
 
-    seyrenApp.controller('CheckEditModalController', function CheckEditModalController($scope, $rootScope, Checks, Seyren, Graph, Metrics) {
+    seyrenApp.controller('CheckEditModalController', function CheckEditModalController($scope, $rootScope, Checks, Seyren, Graph, Metrics, Config) {
         $scope.master = {
             name: null,
             description: null,
@@ -13,8 +13,14 @@
             enabled: true,
             live: false,
             allowNoData: false,
-            totalMetric: '-'
+            totalMetric: '-',
+            graphiteBaseUrl: '',
+            enableConsecutiveChecks: false
         };
+
+        Config.query({}, function(config) {
+            $scope.master.graphiteBaseUrl = config.graphiteUrl;
+        });
 
         $('#editCheckModal').on('shown.bs.modal', function () {
             $('#check\\.name').focus();
