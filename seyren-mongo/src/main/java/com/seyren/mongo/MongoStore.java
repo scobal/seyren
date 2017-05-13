@@ -104,8 +104,9 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
         try {
             getAlertsCollection().dropIndex(new BasicDBObject("checkId", 1).append("target", 1));
         } catch (MongoCommandException e) {
-            if (e.getCode() != 27) {
-                // 27 is the code which appears when the index doesn't exist (which we're happy with, anything else is bad news)
+            if (e.getCode() != 27 && e.getCode() != -1) {
+                // -1 is the code which appears when the index doesn't exist (which we're happy with, anything else is
+                // bad news)
                 throw e;
             }
         }

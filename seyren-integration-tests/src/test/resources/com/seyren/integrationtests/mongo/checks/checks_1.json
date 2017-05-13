@@ -4,7 +4,7 @@
     description: "Load longterm of host host1",
     target: "prod.host1.load.longterm",
     warn: "0.5",
-    error: "2.0",
+    error: "1000",
     enabled: true,
     state: "WARN",
     "lastCheck": { "$date": "2013-07-12T10:10:00.000Z"},

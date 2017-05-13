@@ -18,15 +18,15 @@ describe('home page', function () {
         expect(element('table:eq(0) thead tr').count()).toBe(1);
         expect(element('table:eq(0) thead tr th:eq(0)').text()).toBe('Name');
         expect(element('table:eq(0) thead tr th:eq(1)').text()).toBe('State');
-        expect(element('table:eq(0) thead tr th:eq(2)').text()).toBe('Warn');
-        expect(element('table:eq(0) thead tr th:eq(3)').text()).toBe('Error');
+        expect(element('table:eq(0) thead tr th:eq(2)').text()).toBe('Warn level');
+        expect(element('table:eq(0) thead tr th:eq(3)').text()).toBe('Error level');
         expect(element('table:eq(0) thead tr th:eq(4)').text()).toBe('Enabled');
 
         expect(element('table:eq(0) tbody tr').count()).toBe(1);
         expect(element('table:eq(0) tbody tr td:eq(0) a').text()).toBe('load longterm usage');
         expect(element('table:eq(0) tbody tr td:eq(1) span:visible').text()).toBe('WARN');
         expect(element('table:eq(0) tbody tr td:eq(2)').text()).toBe('0.5');
-        expect(element('table:eq(0) tbody tr td:eq(3)').text()).toBe('2.0');
+        expect(element('table:eq(0) tbody tr td:eq(3)').text()).toBe('1,000');
         expect(element('table:eq(0) tbody tr td:eq(4) input:checked').val()).toBe('on');
     });
 
@@ -40,8 +40,8 @@ describe('home page', function () {
         expect(element('table:eq(1) thead tr th:eq(1)').text()).toBe('Time ago');
         expect(element('table:eq(1) thead tr th:eq(2)').text()).toBe('Name');
         expect(element('table:eq(1) thead tr th:eq(3)').text()).toBe('Value');
-        expect(element('table:eq(1) thead tr th:eq(4)').text()).toBe('Warn');
-        expect(element('table:eq(1) thead tr th:eq(5)').text()).toBe('Error');
+        expect(element('table:eq(1) thead tr th:eq(4)').text()).toBe('Warn level');
+        expect(element('table:eq(1) thead tr th:eq(5)').text()).toBe('Error level');
         expect(element('table:eq(1) thead tr th:eq(6)').text()).toBe('From');
         expect(element('table:eq(1) thead tr th:eq(7)').text()).toBe('To');
 
@@ -51,7 +51,7 @@ describe('home page', function () {
         expect(element('table:eq(1) tbody tr td:eq(2) a').text()).toBe('load longterm usage');
         expect(element('table:eq(1) tbody tr td:eq(3)').text()).toBe('0.8');
         expect(element('table:eq(1) tbody tr td:eq(4)').text()).toBe('0.5');
-        expect(element('table:eq(1) tbody tr td:eq(5)').text()).toBe('2');
+        expect(element('table:eq(1) tbody tr td:eq(5)').text()).toBe('1,000');
         expect(element('table:eq(1) tbody tr td:eq(6) span:visible').text()).toBe('WARN');
         expect(element('table:eq(1) tbody tr td:eq(7) span:visible').text()).toBe('OK');
     });
@@ -94,15 +94,15 @@ describe('checks page', function () {
         expect(element('table thead tr').count()).toBe(1);
         expect(element('table thead tr th:eq(0)').text()).toBe('Name');
         expect(element('table thead tr th:eq(1)').text()).toBe('State');
-        expect(element('table thead tr th:eq(2)').text()).toBe('Warn');
-        expect(element('table thead tr th:eq(3)').text()).toBe('Error');
+        expect(element('table thead tr th:eq(2)').text()).toBe('Warn level');
+        expect(element('table thead tr th:eq(3)').text()).toBe('Error level');
         expect(element('table thead tr th:eq(4)').text()).toBe('Enabled');
 
         expect(element('table tbody tr').count()).toBe(1);
         expect(element('table tbody tr td:eq(0) a').text()).toBe('load longterm usage');
         expect(element('table tbody tr td:eq(1) span:visible').text()).toBe('WARN');
         expect(element('table tbody tr td:eq(2)').text()).toBe('0.5');
-        expect(element('table tbody tr td:eq(3)').text()).toBe('2.0');
+        expect(element('table tbody tr td:eq(3)').text()).toBe('1,000');
         expect(element('table tbody tr td:eq(4) input:checked').val()).toBe('on');
     });
 
@@ -125,7 +125,7 @@ describe('check page', function () {
     it('should have a \'Subscriptions\' section', function () {
         expect(element('h2:eq(1)').count()).toBe(1);
         expect(element('h2:eq(1)').text()).toBe('Subscriptions');
-        expect(element('div.col-lg-12:eq(2) div').text()).toBe('This check has no subscriptions');
+        expect(element('#subscriptionsContent div').text()).toBe('This check has no subscriptions');
     });
 
     it('should have a \'Details\' informations', function () {
@@ -149,11 +149,11 @@ describe('check page', function () {
         expect(element('div.col-lg-6 div.detail-form:eq(5) label').text()).toBe('Until:');
         expect(element('div.col-lg-6 div.detail-form:eq(5) p').text()).toBe('');
 
-        expect(element('div.col-lg-6 div.detail-form:eq(6) label').text()).toBe('Warn:');
+        expect(element('div.col-lg-6 div.detail-form:eq(6) label').text()).toBe('Warn level:');
         expect(element('div.col-lg-6 div.detail-form:eq(6) p').text()).toBe('0.5');
 
-        expect(element('div.col-lg-6 div.detail-form:eq(7) label').text()).toBe('Error:');
-        expect(element('div.col-lg-6 div.detail-form:eq(7) p').text()).toBe('2.0');
+        expect(element('div.col-lg-6 div.detail-form:eq(7) label').text()).toBe('Error level:');
+        expect(element('div.col-lg-6 div.detail-form:eq(7) p').text()).toBe('1,000');
 
         expect(element('div.col-lg-6 div.detail-form:eq(8) label').text()).toBe('Enabled:');
         expect(element('div.col-lg-6 div.detail-form:eq(8) p input:checked').val()).toBe('on');
@@ -207,7 +207,7 @@ describe('check page', function () {
         expect(element('table:eq(1) tbody tr td:eq(2)').text()).toBe('prod.host1.load.longterm');
         expect(element('table:eq(1) tbody tr td:eq(3)').text()).toBe('0.8');
         expect(element('table:eq(1) tbody tr td:eq(4)').text()).toBe('0.5');
-        expect(element('table:eq(1) tbody tr td:eq(5)').text()).toBe('2');
+        expect(element('table:eq(1) tbody tr td:eq(5)').text()).toBe('1,000');
         expect(element('table:eq(1) tbody tr td:eq(6) span:visible').text()).toBe('WARN');
         expect(element('table:eq(1) tbody tr td:eq(7) span:visible').text()).toBe('OK');
     });
@@ -376,10 +376,10 @@ describe('create new check', function () {
         input('check\\.description').enter('Description of karma.metric');
         input('check\\.target').enter('karma.metric');
         input('check\\.warn').enter('2.0');
-        input('check\\.error').enter('4.0');
+        input('check\\.error').enter('1000');
         input('check\\.enabled').check();
 
-        expect(element('div#editCheckModal img').attr('src')).toBe('./api/chart/karma.metric/?&width=365&height=70&from=-1day&warn=2.0&error=4.0&hideLegend=true');
+        expect(element('div#editCheckModal img').attr('src')).toBe('./api/chart/karma.metric/?&width=365&height=70&from=-1day&warn=2.0&error=1000&hideLegend=true');
 
         expect(element('button#createCheckButton:visible:enabled').count()).toEqual(1);
         expect(element('button#cancelCheckButton:visible:enabled').count()).toEqual(1);

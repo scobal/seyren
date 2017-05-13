@@ -91,7 +91,7 @@
                 <plugin>
                     <groupId>com.github.joelittlejohn.embedmongo</groupId>
                     <artifactId>embedmongo-maven-plugin</artifactId>
-                    <version>0.1.12</version>
+                    <version>0.3.4</version>
                 </plugin>
                 <plugin>
                     <groupId>com.kelveden</groupId>
