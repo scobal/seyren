@@ -10,52 +10,55 @@
                 <fieldset>
                     <div ng-class="{ 'form-group': true, 'has-error': checkForm['check.name'].$invalid }">
                         <label class="col-sm-3 control-label" for="check.name">Name</label>
-                        <div class="col-sm-7">
+                        <div class="col-sm-9">
                             <input id="check.name" class="form-control" name="check.name" ng-model="check.name" type="text" required />
                         </div>
                     </div>
                     <div ng-class="{ 'form-group': true, 'has-error': checkForm['check.description'].$invalid }">
                         <label class="col-sm-3 control-label" for="check.description">Description</label>
-                        <div class="col-sm-7">
-                            <input id="check.description" class="form-control" name="check.description" ng-model="check.description" type="text" />
+                        <div class="col-sm-9">
+                            <textarea id="check.description" class="form-control" name="check.description"
+                                      ng-model="check.description"></textarea>
                         </div>
                     </div>
                     <div ng-class="{ 'form-group': true, 'has-error': checkForm['check.graphiteBaseUrl'].$invalid }">
                         <label class="col-sm-3 control-label" for="check.graphiteBaseUrl">Graphite Base Url</label>
-                        <div class="col-sm-7">
+                        <div class="col-sm-9">
                             <input id="check.graphiteBaseUrl" class="form-control" name="check.graphiteBaseUrl" ng-model="check.graphiteBaseUrl" type="text" required />
                         </div>
                     </div>
                     <div ng-class="{ 'form-group': true, 'has-error': checkForm['check.target'].$invalid }">
-                        <label class="col-sm-3 control-label" for="check.target">Target</label>
-                        <div class="col-sm-7">
-                            <input id="check.target" class="form-control"  name="check.target" ng-model="check.target" type="text" required />
+                        <label class="col-sm-3 control-label" for="check.target">Target <sup><span
+                                id="check.target.hint" class="glyphicon glyphicon-question-sign glyphicon-blue"></span></sup></label>
+                        <div class="col-sm-9">
+                        <textarea id="check.target" class="form-control"  name="check.target" ng-model="check.target"
+                                  required></textarea>
                         </div>
                     </div>
                     <div ng-class="{ 'form-group': true, 'has-error': checkForm['check.from'].$invalid }">
-                        <label class="col-sm-3 control-label" for="check.from">From</label>
-                        <div class="col-sm-7">
+                        <label class="col-sm-3 control-label" for="check.from">From <sup><span
+                                id="check.from.hint" class="glyphicon glyphicon-question-sign glyphicon-blue"
+                                style="cursor: pointer;"></span></sup></label>
+                        <div class="col-sm-9">
                             <input id="check.from" class="form-control" name="check.from" ng-model="check.from" type="text" />
                         </div>
                     </div>
                     <div ng-class="{ 'form-group': true, 'has-error': checkForm['check.until'].$invalid }">
                         <label class="col-sm-3 control-label" for="check.until">Until</label>
-                        <div class="col-sm-7">
+                        <div class="col-sm-9">
                             <input id="check.until" class="form-control" name="check.until" ng-model="check.until" type="text" />
                         </div>
                     </div>
                     <div ng-class="{ 'form-group': true, 'has-error': checkForm['check.warn'].$invalid }">
-                        <label class="col-sm-3 control-label" for="check.warn">Warn level</label>
-                        <div class="col-sm-3">
+                        <label class="col-sm-3 control-label" for="check.warn">Warn level <sup><span
+                                id="check.warn.hint" class="glyphicon glyphicon-question-sign glyphicon-blue"></span></sup></label>
+                        <div class="col-sm-9">
                             <input id="check.warn" class="form-control" name="check.warn" ng-model="check.warn" type="text" ng-pattern="/^-?[0-9]+(.[0-9]+)?$/" required />
-                        </div>
-                        <div class="col-sm-4">
-                            <span id="check.warn.hint" class="glyphicon glyphicon-question-sign"></span>
                         </div>
                     </div>
                     <div ng-class="{ 'form-group': true, 'has-error': checkForm['check.error'].$invalid }">
                         <label class="col-sm-3 control-label" for="check.error">Error level</label>
-                        <div class="col-sm-3">
+                        <div class="col-sm-9">
                             <input id="check.error" class="form-control" name="check.error" ng-model="check.error" type="text" ng-pattern="/^-?[0-9]+(.[0-9]+)?$/" required />
                         </div>
                     </div>
@@ -93,18 +96,18 @@
                     </div>
                     <div ng-class="{ 'form-group': true, 'has-error': ! check.consecutiveChecks && check.enableConsecutiveChecks }">
                         <label class="col-sm-3 control-label" for="check.consecutiveChecks">Consecutive Checks:</label>
-                        <div class="col-sm-7">
+                        <div class="col-sm-9">
                             <input id="check.consecutiveChecks" class="form-control" name="check.consecutiveChecks"  ng-model="check.consecutiveChecks" ng-disabled = "! check.enableConsecutiveChecks" type="text" />
                         </div>
                     </div>
                     <div ng-class="{ 'form-group': true, 'has-error': ! check.consecutiveChecksTolerance && check.enableConsecutiveChecks  }">
                         <label class="col-sm-3 control-label" for="check.consecutiveChecksTolerance">Tolerance Level Percentage(1-100):</label>
-                        <div class="col-sm-7">
+                        <div class="col-sm-9">
                             <input id="check.consecutiveChecksTolerance" class="form-control" name="check.consecutiveChecksTolerance" ng-model="check.consecutiveChecksTolerance" ng-disabled = "! check.enableConsecutiveChecks" type="text" />
                         </div>
                     </div>
                     <div class="form-group">
-                        <div class="col-sm-7 col-sm-offset-3">
+                        <div class="col-sm-9 col-sm-offset-3">
                             <img ng-src="{{ check.previewImage }}" src="./img/preview-nodata.png" width="300" height="70" />
                             Metrics found: {{ check.totalMetric }}
                         </div>
