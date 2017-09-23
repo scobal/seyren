@@ -22,15 +22,11 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
+import com.seyren.core.domain.*;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.seyren.core.domain.Alert;
-import com.seyren.core.domain.AlertType;
-import com.seyren.core.domain.Check;
-import com.seyren.core.domain.Subscription;
-import com.seyren.core.domain.SubscriptionType;
 import com.seyren.core.util.config.SeyrenConfig;
 import com.seyren.core.util.email.EmailHelper;
 
@@ -46,13 +42,13 @@ public class VelocityEmailHelperTest {
     @Test
     public void bodyContainsRightSortsOfThings() {
         
-        Check check = new Check()
+        Check check = new ThresholdCheck()
+                .withWarn(new BigDecimal("2.0"))
+                .withError(new BigDecimal("3.0"))
                 .withId("123")
                 .withEnabled(true)
                 .withName("test-check")
                 .withDescription("Some great description")
-                .withWarn(new BigDecimal("2.0"))
-                .withError(new BigDecimal("3.0"))
                 .withState(AlertType.ERROR);
         Subscription subscription = new Subscription()
                 .withEnabled(true)
@@ -80,13 +76,13 @@ public class VelocityEmailHelperTest {
     @Test
     public void descriptionIsNotIncludedIfEmpty() {
         
-        Check check = new Check()
+        Check check = new ThresholdCheck()
+                .withWarn(new BigDecimal("2.0"))
+                .withError(new BigDecimal("3.0"))
                 .withId("123")
                 .withEnabled(true)
                 .withName("test-check")
                 .withDescription("")
-                .withWarn(new BigDecimal("2.0"))
-                .withError(new BigDecimal("3.0"))
                 .withState(AlertType.ERROR);
         Subscription subscription = new Subscription()
                 .withEnabled(true)
@@ -109,12 +105,11 @@ public class VelocityEmailHelperTest {
     @Test
     public void bodyDoesNotContainScientificNotationOfNumber() {
         
-        Check check = new Check()
+        Check check = new ThresholdCheck().withWarn(new BigDecimal("2.0"))
+                .withError(new BigDecimal("3.0"))
                 .withId("123")
                 .withEnabled(true)
                 .withName("test-check")
-                .withWarn(new BigDecimal("2.0"))
-                .withError(new BigDecimal("3.0"))
                 .withState(AlertType.ERROR);
         Subscription subscription = new Subscription()
                 .withEnabled(true)
@@ -147,13 +142,13 @@ public class VelocityEmailHelperTest {
     @Test
     public void bodyContainsItemsFromModel() {
 
-        Check check = new Check()
+        Check check = new ThresholdCheck()
+                .withWarn(new BigDecimal("2.0"))
+                .withError(new BigDecimal("3.0"))
                 .withId("123")
                 .withEnabled(true)
                 .withName("test-check")
                 .withDescription("Some great description")
-                .withWarn(new BigDecimal("2.0"))
-                .withError(new BigDecimal("3.0"))
                 .withState(AlertType.ERROR);
         Subscription subscription = new Subscription()
                 .withEnabled(true)

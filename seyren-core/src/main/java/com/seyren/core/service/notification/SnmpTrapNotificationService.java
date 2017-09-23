@@ -13,10 +13,7 @@
  */
 package com.seyren.core.service.notification;
 
-import com.seyren.core.domain.Alert;
-import com.seyren.core.domain.Check;
-import com.seyren.core.domain.Subscription;
-import com.seyren.core.domain.SubscriptionType;
+import com.seyren.core.domain.*;
 import com.seyren.core.exception.NotificationFailedException;
 import com.seyren.core.util.config.SeyrenConfig;
 import org.slf4j.Logger;
@@ -102,8 +99,20 @@ public class SnmpTrapNotificationService implements NotificationService {
             trap.add(new VariableBinding(new OID(oidPrefix+".3"), new OctetString(check.getName())));
             trap.add(new VariableBinding(new OID(oidPrefix+".4"), new OctetString(alert.getTarget())));
             trap.add(new VariableBinding(new OID(oidPrefix+".5"), new OctetString(alert.getValue().toString())));
-            trap.add(new VariableBinding(new OID(oidPrefix+".6"), new OctetString(alert.getWarn().toString())));
-            trap.add(new VariableBinding(new OID(oidPrefix+".7"), new OctetString(alert.getError().toString())));
+
+            if(alert instanceof ThresholdAlert)
+            {
+                ThresholdAlert thresholdAlert = (ThresholdAlert)alert;
+                trap.add(new VariableBinding(new OID(oidPrefix+".6"), new OctetString(thresholdAlert.getWarn().toString())));
+                trap.add(new VariableBinding(new OID(oidPrefix+".7"), new OctetString(thresholdAlert.getError().toString())));
+            }
+
+            else
+            {
+                OutlierAlert outlierAlert = (OutlierAlert)alert;
+                trap.add(new VariableBinding(new OID(oidPrefix+".6"), new OctetString(outlierAlert.getAbsoluteDiff().toString())));
+                trap.add(new VariableBinding(new OID(oidPrefix+".7"), new OctetString(outlierAlert.getRelativeDiff().toString())));
+            }
             trap.add(new VariableBinding(new OID(oidPrefix+".8"), new OctetString(alert.getToType().toString())));
             trap.add(new VariableBinding(new OID(oidPrefix+".9"), new OctetString(alert.getFromType().toString())));
             trap.add(new VariableBinding(new OID(oidPrefix+".10"), new OctetString(seyrenConfig.getBaseUrl() + "/#/checks/" + check.getId())));

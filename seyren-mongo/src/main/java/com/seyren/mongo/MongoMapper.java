@@ -37,8 +37,6 @@ public class MongoMapper {
         String graphiteUrl = getString(dbo, "graphiteBaseUrl");
         String from = Strings.emptyToNull(getString(dbo, "from"));
         String until = Strings.emptyToNull(getString(dbo, "until"));
-        BigDecimal warn = getBigDecimal(dbo, "warn");
-        BigDecimal error = getBigDecimal(dbo, "error");
         boolean enabled = getBoolean(dbo, "enabled");
         boolean live = getOptionalBoolean(dbo, "live", false);
         boolean allowNoData = getOptionalBoolean(dbo, "allowNoData", false);
@@ -53,27 +51,68 @@ public class MongoMapper {
         Integer consecutiveChecks = getInteger(dbo, "consecutiveChecks");
         Integer consecutiveChecksTolerance = getInteger(dbo, "consecutiveChecksTolerance");
         Boolean consecutiveChecksTriggered = getBooleanValue(dbo, "consecutiveChecksTriggered");
-        
-        return new Check().withId(id)
-                .withName(name)
-                .withDescription(description)
-                .withGraphiteBaseUrl(graphiteBaseUrl)
-                .withTarget(target)
-                .withGraphiteBaseUrl(graphiteUrl)
-                .withFrom(from)
-                .withUntil(until)
-                .withWarn(warn)
-                .withError(error)
-                .withEnabled(enabled)
-                .withLive(live)
-                .withAllowNoData(allowNoData)
-                .withState(state)
-                .withLastCheck(lastCheck)
-                .withSubscriptions(subscriptions)
-                .withEnableConsecutiveChecks(enableConsecutiveChecks)
-                .withConsecutiveChecks(consecutiveChecks)
-                .withConsecutiveChecksTolerance(consecutiveChecksTolerance)
-                .withConsecutiveChecksTriggered(consecutiveChecksTriggered);
+
+
+        String checkType = getString(dbo,"checkType");
+        if(checkType.equalsIgnoreCase("threshold"))
+        {
+            BigDecimal warn = getBigDecimal(dbo, "warn");
+            BigDecimal error = getBigDecimal(dbo, "error");
+            return new ThresholdCheck()
+                    .withWarn(warn)
+                    .withError(error)
+                    .withId(id)
+                    .withName(name)
+                    .withDescription(description)
+                    .withGraphiteBaseUrl(graphiteBaseUrl)
+                    .withTarget(target)
+                    .withGraphiteBaseUrl(graphiteUrl)
+                    .withFrom(from)
+                    .withUntil(until)
+                    .withEnabled(enabled)
+                    .withLive(live)
+                    .withAllowNoData(allowNoData)
+                    .withState(state)
+                    .withLastCheck(lastCheck)
+                    .withSubscriptions(subscriptions)
+                    .withEnableConsecutiveChecks(enableConsecutiveChecks)
+                    .withConsecutiveChecks(consecutiveChecks)
+                    .withConsecutiveChecksTolerance(consecutiveChecksTolerance)
+                    .withConsecutiveChecksTriggered(consecutiveChecksTriggered);
+        }
+
+        else
+        {
+            BigDecimal absoluteDiff = getBigDecimal(dbo, "absoluteDiff");
+            Double relativeDiff = getDouble(dbo, "relativeDiff");
+            Integer minConsecutiveViolations = getInteger(dbo,"minConsecutiveViolations");
+            String asgName = getString(dbo,"asgName");
+            return new OutlierCheck()
+                    .withAbsoluteDiff(absoluteDiff)
+                    .withRelativeDiff(relativeDiff)
+                    .withMinConsecutiveViolations(minConsecutiveViolations)
+                    .withAsgName(asgName)
+                    .withId(id)
+                    .withName(name)
+                    .withDescription(description)
+                    .withGraphiteBaseUrl(graphiteBaseUrl)
+                    .withTarget(target)
+                    .withGraphiteBaseUrl(graphiteUrl)
+                    .withFrom(from)
+                    .withUntil(until)
+                    .withEnabled(enabled)
+                    .withLive(live)
+                    .withAllowNoData(allowNoData)
+                    .withState(state)
+                    .withLastCheck(lastCheck)
+                    .withSubscriptions(subscriptions)
+                    .withEnableConsecutiveChecks(enableConsecutiveChecks)
+                    .withConsecutiveChecks(consecutiveChecks)
+                    .withConsecutiveChecksTolerance(consecutiveChecksTolerance)
+                    .withConsecutiveChecksTriggered(consecutiveChecksTriggered);
+
+        }
+
     }
     
     public Subscription subscriptionFrom(DBObject dbo) {
@@ -120,22 +159,48 @@ public class MongoMapper {
         String checkId = getString(dbo, "checkId");
         BigDecimal value = getBigDecimal(dbo, "value");
         String target = getString(dbo, "target");
-        BigDecimal warn = getBigDecimal(dbo, "warn");
-        BigDecimal error = getBigDecimal(dbo, "error");
         AlertType fromType = AlertType.valueOf(getString(dbo, "fromType"));
         AlertType toType = AlertType.valueOf(getString(dbo, "toType"));
         DateTime timestamp = getDateTime(dbo, "timestamp");
-        
-        return new Alert()
-                .withId(id)
-                .withCheckId(checkId)
-                .withValue(value)
-                .withTarget(target)
-                .withWarn(warn)
-                .withError(error)
-                .withFromType(fromType)
-                .withToType(toType)
-                .withTimestamp(timestamp);
+
+        String alertType = getString(dbo, "alertType");
+        if (alertType.equalsIgnoreCase("threshold"))
+        {
+            BigDecimal warn = getBigDecimal(dbo, "warn");
+            BigDecimal error = getBigDecimal(dbo, "error");
+            return new ThresholdAlert()
+                    .withWarn(warn)
+                    .withError(error)
+                    .withId(id)
+                    .withCheckId(checkId)
+                    .withValue(value)
+                    .withTarget(target)
+                    .withFromType(fromType)
+                    .withToType(toType)
+                    .withTimestamp(timestamp);
+
+        }
+
+        else
+        {
+                BigDecimal absoluteDiff = getBigDecimal(dbo, "absoluteDiff");
+                Double relativeDiff = getDouble(dbo, "relativeDiff");
+                Integer consecutiveAlertCount = getInteger(dbo, "consecutiveAlertCount");
+
+            return new OutlierAlert()
+                    .withAbsoluteDiff(absoluteDiff)
+                    .withRelativeDiff(relativeDiff)
+                    .withConsecutiveAlertCount(consecutiveAlertCount)
+                    .withId(id)
+                    .withCheckId(checkId)
+                    .withValue(value)
+                    .withTarget(target)
+                    .withFromType(fromType)
+                    .withToType(toType)
+                    .withTimestamp(timestamp);
+
+        }
+
     }
 
     public SubscriptionPermissions permissionsFrom(DBObject dbo) {
@@ -189,11 +254,42 @@ public class MongoMapper {
         map.put("graphiteBaseUrl", check.getGraphiteBaseUrl());
         map.put("from", check.getFrom());
         map.put("until", check.getUntil());
-        if (check.getWarn() != null) {
-            map.put("warn", check.getWarn().toPlainString());
+
+        if(check instanceof ThresholdCheck)
+        {
+            map.put("checkType","threshold");
+            ThresholdCheck thresholdCheck = (ThresholdCheck)check;
+            if (thresholdCheck.getWarn() != null) {
+                map.put("warn", thresholdCheck.getWarn().toPlainString());
+            }
+            if (thresholdCheck.getError() != null) {
+                map.put("error", thresholdCheck.getError().toPlainString());
+            }
         }
-        if (check.getError() != null) {
-            map.put("error", check.getError().toPlainString());
+
+        else if(check instanceof OutlierCheck)
+        {
+            OutlierCheck outlierCheck = (OutlierCheck)check;
+            map.put("checkType","outlier");
+            if (outlierCheck.getAbsoluteDiff() != null) {
+                map.put("absoluteDiff", outlierCheck.getAbsoluteDiff().toPlainString());
+            }
+
+            if(outlierCheck.getRelativeDiff() !=null )
+            {
+                map.put("relativeDiff",outlierCheck.getRelativeDiff());
+            }
+
+            if(outlierCheck.getMinConsecutiveViolations()!=null)
+            {
+                map.put("minConsecutiveViolations",outlierCheck.getMinConsecutiveViolations());
+            }
+
+            if(outlierCheck.getAsgName()!=null)
+            {
+                map.put("asgName",outlierCheck.getAsgName());
+            }
+
         }
         map.put("enabled", check.isEnabled());
         map.put("live", check.isLive());
@@ -264,11 +360,34 @@ public class MongoMapper {
         if (alert.getValue() != null) {
             map.put("value", alert.getValue().toPlainString());
         }
-        if (alert.getWarn() != null) {
-            map.put("warn", alert.getWarn().toPlainString());
+        if(alert instanceof ThresholdAlert)
+        {
+            ThresholdAlert thresholdAlert = (ThresholdAlert)alert;
+
+            map.put("alertType","threshold");
+            if (thresholdAlert.getWarn() != null) {
+                map.put("warn", thresholdAlert.getWarn().toPlainString());
+            }
+            if (thresholdAlert.getError() != null) {
+                map.put("error", thresholdAlert.getError().toPlainString());
+            }
         }
-        if (alert.getError() != null) {
-            map.put("error", alert.getError().toPlainString());
+
+        else if(alert instanceof OutlierAlert)
+        {
+            OutlierAlert outlierAlert = (OutlierAlert)alert;
+            map.put("alertType","outlier");
+            if (outlierAlert.getAbsoluteDiff() != null) {
+                map.put("absoluteDiff", outlierAlert.getAbsoluteDiff().toPlainString());
+            }
+
+            if(outlierAlert.getRelativeDiff() !=null )
+            {
+                map.put("relativeDiff",outlierAlert.getRelativeDiff());
+            }
+
+            map.put("consecutiveAlertCount",outlierAlert.getConsecutiveAlertCount());
+
         }
         map.put("fromType", alert.getFromType().toString());
         map.put("toType", alert.getToType().toString());
@@ -353,5 +472,8 @@ public class MongoMapper {
     private SubscriptionType getSubscriptionType(String value) {
         return value == null ? null : SubscriptionType.valueOf(value);
     }
-    
+
+    private Double getDouble(DBObject dbo, String key) {
+        return (Double) dbo.get(key);
+    }
 }

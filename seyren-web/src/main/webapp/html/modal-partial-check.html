@@ -8,6 +8,63 @@
         <div class="modal-body">
             <form name="checkForm" class="form-horizontal" role="form" novalidate>
                 <fieldset>
+
+                    <div ng-class="{ 'form-group': true, 'has-error': checkForm['check.type'].$invalid }">
+                        <label class="col-sm-3 control-label" for="check.typeoutlier">Type</label>
+                        <div class="col-sm-9">
+                            <input type="radio" id="check.typeoutlier" name="check.type" value="outlier" checked onclick="set_view(this,value);" >Outlier<br>
+                            <input type="radio" id="check.typethreshold" name="check.type" value="threshold" onclick="set_view(this,value);">Threshold<br>
+                            <script>
+                                function set_view(obj, value){
+                                    if(value=='outlier')
+                                    {
+                                        var wl = document.getElementById('warnlevelmodaldiv');
+                                        wl.style.display = 'none';
+
+                                        wl = document.getElementById('errorlevelmodaldiv');
+                                        wl.style.display = 'none';
+
+                                        wl = document.getElementById('relativediffmodaldiv');
+                                        wl.style.display = 'block';
+
+                                        wl = document.getElementById('absolutediffmodaldiv');
+                                        wl.style.display = 'block';
+
+                                        wl = document.getElementById('minconsecutivecheckmodaldiv');
+                                        wl.style.display = 'block';
+
+                                        wl = document.getElementById('asgnamemodaldiv');
+                                        wl.style.display = 'block';
+                                    }
+
+                                    if(value=='threshold')
+                                    {
+                                        wl = document.getElementById('relativediffmodaldiv');
+                                        wl.style.display = 'none';
+
+                                        wl = document.getElementById('absolutediffmodaldiv');
+                                        wl.style.display = 'none';
+
+                                        wl = document.getElementById('minconsecutivecheckmodaldiv');
+                                        wl.style.display = 'none';
+
+                                        wl = document.getElementById('asgnamemodaldiv');
+                                        wl.style.display = 'none';
+
+                                        var wl = document.getElementById('warnlevelmodaldiv');
+                                        wl.style.display = 'block';
+
+                                        wl = document.getElementById('errorlevelmodaldiv');
+                                        wl.style.display = 'block';
+
+                                    }
+
+
+                                }
+                                </script>
+                        </div>
+                    </div>
+
                     <div ng-class="{ 'form-group': true, 'has-error': checkForm['check.name'].$invalid }">
                         <label class="col-sm-3 control-label" for="check.name">Name</label>
                         <div class="col-sm-9">
@@ -49,19 +106,49 @@
                             <input id="check.until" class="form-control" name="check.until" ng-model="check.until" type="text" />
                         </div>
                     </div>
-                    <div ng-class="{ 'form-group': true, 'has-error': checkForm['check.warn'].$invalid }">
+                    <div ng-class="{ 'form-group': true, 'has-error': checkForm['check.warn'].$invalid }" id="warnlevelmodaldiv" style="display:none">
                         <label class="col-sm-3 control-label" for="check.warn">Warn level <sup><span
                                 id="check.warn.hint" class="glyphicon glyphicon-question-sign glyphicon-blue"></span></sup></label>
                         <div class="col-sm-9">
                             <input id="check.warn" class="form-control" name="check.warn" ng-model="check.warn" type="text" ng-pattern="/^-?[0-9]+(.[0-9]+)?$/" required />
                         </div>
                     </div>
-                    <div ng-class="{ 'form-group': true, 'has-error': checkForm['check.error'].$invalid }">
+
+                    <div ng-class="{ 'form-group': true, 'has-error': checkForm['check.error'].$invalid }" id="errorlevelmodaldiv" style="display:none">
                         <label class="col-sm-3 control-label" for="check.error">Error level</label>
                         <div class="col-sm-9">
                             <input id="check.error" class="form-control" name="check.error" ng-model="check.error" type="text" ng-pattern="/^-?[0-9]+(.[0-9]+)?$/" required />
                         </div>
                     </div>
+
+                    <div ng-class="{ 'form-group': true, 'has-error': checkForm['check.absoluteDiff'].$invalid }" id="absolutediffmodaldiv">
+                        <label class="col-sm-3 control-label" for="check.error">Absolute Diff</label>
+                        <div class="col-sm-9">
+                            <input id="check.absoluteDiff" class="form-control" name="check.absoluteDiff" ng-model="check.absoluteDiff" type="text" ng-pattern="/^-?[0-9]+(.[0-9]+)?$/" required />
+                        </div>
+                    </div>
+
+                    <div ng-class="{ 'form-group': true, 'has-error': checkForm['check.relativeDiff'].$invalid }" id="relativediffmodaldiv">
+                        <label class="col-sm-3 control-label" for="check.error">Relative Diff</label>
+                        <div class="col-sm-9">
+                            <input id="check.relativeDiff" class="form-control" name="check.relativeDiff" ng-model="check.relativeDiff" type="text" ng-pattern="/^-?[0-9]+(.[0-9]+)?$/" required />
+                        </div>
+                    </div>
+
+                    <div ng-class="{ 'form-group': true, 'has-error': checkForm['check.minConsecutiveViolations'].$invalid }" id="minconsecutivecheckmodaldiv">
+                        <label class="col-sm-3 control-label" for="check.minConsecutiveViolations">Min Consecutive Violations</label>
+                        <div class="col-sm-9">
+                            <input id="check.minConsecutiveViolations" class="form-control" name="check.minConsecutiveViolations" ng-model="check.minConsecutiveViolations" type="text" ng-pattern="/^-?[0-9]+(.[0-9]+)?$/" required />
+                        </div>
+                    </div>
+
+                    <div ng-class="{ 'form-group': true, 'has-error': checkForm['check.asgName'].$invalid }" id="asgnamemodaldiv" >
+                        <label class="col-sm-3 control-label" for="check.asgName">ASG Name</label>
+                        <div class="col-sm-9">
+                            <input id="check.asgName" class="form-control" name="check.asgName" ng-model="check.asgName" type="text" required />
+                        </div>
+                    </div>
+
                     <div ng-class="{ 'form-group': true, 'has-error': checkForm['check.enabled'].$invalid }">
                         <label class="col-sm-3 control-label" for="check.enabled">Enabled</label>
                         <div class="col-sm-1">

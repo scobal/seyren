@@ -43,6 +43,7 @@
         <module>seyren-acceptance-tests</module>
         <module>seyren-integration-tests</module>
         <module>seyren-api</module>
+        <module>seyren-aws-manager</module>
         <module>seyren-mongo</module>
         <module>seyren-core</module>
         <module>seyren-web</module>
@@ -83,6 +84,9 @@
         <spring.security.version>4.0.0.RELEASE</spring.security.version>
         <javax.servlet-api.version>2.5</javax.servlet-api.version>
         <commons-dbcp.version>1.4</commons-dbcp.version>
+        <org.apache.httpcomponents.httpclient.version>4.5.2</org.apache.httpcomponents.httpclient.version>
+        <org.apache.httpcomponents.httpcore.version>4.4</org.apache.httpcomponents.httpcore.version>
+
     </properties>
 
     <prerequisites>
@@ -298,14 +302,20 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpclient</artifactId>
+                <artifactId>httpmime</artifactId>
                 <version>${org.apache.httpcomponents.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpmime</artifactId>
-                <version>${org.apache.httpcomponents.version}</version>
+                <artifactId>httpclient</artifactId>
+                <version>${org.apache.httpcomponents.httpclient.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpcore</artifactId>
+                <version>${org.apache.httpcomponents.httpcore.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>org.apache.velocity</groupId>
                 <artifactId>velocity</artifactId>

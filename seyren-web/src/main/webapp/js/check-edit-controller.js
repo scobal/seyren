@@ -15,7 +15,13 @@
             allowNoData: false,
             totalMetric: '-',
             graphiteBaseUrl: '',
-            enableConsecutiveChecks: false
+            enableConsecutiveChecks: false,
+            relativeDiff : null,
+            absoluteDiff : null,
+            minConsecutiveViolations : null,
+            asgName : null,
+            type : null
+
         };
 
         Config.query({}, function(config) {
@@ -41,6 +47,7 @@
                 ' documentation</a>. Only the most recent value of each series returned will be used.',
                 trigger: 'click'
             });
+
         });
 
         $scope.create = function () {

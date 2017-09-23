@@ -25,6 +25,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.seyren.core.domain.*;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -38,10 +39,6 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.seyren.core.domain.Alert;
-import com.seyren.core.domain.Check;
-import com.seyren.core.domain.Subscription;
-import com.seyren.core.domain.SubscriptionType;
 import com.seyren.core.exception.NotificationFailedException;
 import com.seyren.core.util.config.SeyrenConfig;
 
@@ -94,8 +91,19 @@ public class BigPandaNotificationService implements NotificationService {
             body.put("timestamp", tstamp);
             body.put("seyrenCheckUrl", checkUrl);
             body.put("currentValue", alert.getValue());
-            body.put("thresholdWarning", alert.getWarn());
-            body.put("thresholdCritical", alert.getError());
+            if(alert instanceof ThresholdAlert)
+            {
+                ThresholdAlert thresholdAlert = (ThresholdAlert)alert;
+                body.put("thresholdWarning", thresholdAlert.getWarn());
+                body.put("thresholdCritical", thresholdAlert.getError());
+            }
+
+            else
+            {
+                OutlierAlert outlierAlert = (OutlierAlert)alert;
+                body.put("absoluteDiff", outlierAlert.getAbsoluteDiff());
+                body.put("relativeDiff", outlierAlert.getRelativeDiff());
+            }
             body.put("previewGraph", getPreviewImageUrl(check));
 
             HttpClient client = HttpClientBuilder.create().useSystemProperties().build();
@@ -146,9 +154,20 @@ public class BigPandaNotificationService implements NotificationService {
 
     private String getPreviewImageUrl(Check check)
     {
-        return seyrenConfig.getGraphiteUrl() + "/render/?target=" + check.getTarget() + "&from=-1h" +
-                         "&target=alias(dashed(color(constantLine(" + check.getWarn().toString() + "),%22yellow%22)),%22warn%20level%22)&target=alias(dashed(color(constantLine(" + check.getError().toString()
-                        + "),%22red%22)),%22error%20level%22)&width=500&height=225";
+
+        if(check instanceof ThresholdCheck)
+        {
+            ThresholdCheck thresholdCheck = (ThresholdCheck)check;
+            return seyrenConfig.getGraphiteUrl() + "/render/?target=" + check.getTarget() + "&from=-1h" +
+                    "&target=alias(dashed(color(constantLine(" + thresholdCheck.getWarn().toString() + "),%22yellow%22)),%22warn%20level%22)&target=alias(dashed(color(constantLine(" + thresholdCheck.getError().toString()
+                    + "),%22red%22)),%22error%20level%22)&width=500&height=225";
+        }
+
+        else
+        {
+            OutlierCheck outlierCheck = (OutlierCheck) check;
+            return seyrenConfig.getGraphiteUrl() + "/render/?target=" + check.getTarget() + "&from=-1h" ;
+        }
 
     }
 

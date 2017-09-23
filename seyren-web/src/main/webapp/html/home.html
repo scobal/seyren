@@ -8,6 +8,10 @@
                 <th>State</th>
                 <th>Warn level</th>
                 <th>Error level</th>
+                <th>Absolute Diff</th>
+                <th>Relative Diff</th>
+                <th>Min consecutive violations</th>
+                <th>ASG Name</th>
                 <th>Enabled</th>
             </tr>
         </thead>
@@ -23,6 +27,10 @@
                 </td>
                 <td>{{ check.warn | number }}</td>
                 <td>{{ check.error | number }}</td>
+                <td>{{ check.absoluteDiff }}</td>
+                <td>{{ check.relativeDiff }}</td>
+                <td>{{ check.minConsecutiveViolations }}</td>
+                <td>{{ check.asgName }}</td>
                 <td><input type="checkbox" ng-checked="{{ check.enabled }}" ng-click="swapCheckEnabled(check); $event.stopPropagation();" /></td>
             </tr>
         </tbody>
@@ -41,6 +49,9 @@
                 <th>Value</th>
                 <th>Warn level</th>
                 <th>Error level</th>
+                <th>Absolute Diff</th>
+                <th>Relative Diff</th>
+                <th>Consecutive Alert Count</th>
                 <th>From</th>
                 <th>To</th>
             </tr>
@@ -55,6 +66,9 @@
                 <td>{{ alert.value | number }}</td>
                 <td>{{ alert.warn | number }}</td>
                 <td>{{ alert.error | number }}</td>
+                <td>{{ alert.absoluteDiff }}</td>
+                <td>{{ alert.relativeDiff }}</td>
+                <td>{{ alert.consecutiveAlertCount }}</td>
                 <td>
                     <span ng-show="alert.fromType == 'UNKNOWN'" class="label label-default">{{ alert.fromType }}</span>
                     <span ng-show="alert.fromType == 'OK'" class="label label-success">{{ alert.fromType }}</span>

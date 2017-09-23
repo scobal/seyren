@@ -20,6 +20,8 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import com.seyren.core.domain.OutlierCheck;
+import com.seyren.core.domain.ThresholdCheck;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,7 +57,17 @@ public class GraphiteTargetChecker implements TargetChecker {
                 try {
                     BigDecimal value = getLatestValue(metric);
                     targetValues.put(target, Optional.of(value));
-                    LOGGER.info("       Message='Value found - target={} using Check={}: {}, where WARN is '{}' and ERROR is '{}''", target, check.getId() ,value, check.getWarn(), check.getError());
+                    if(check instanceof ThresholdCheck)
+                    {
+                        ThresholdCheck thresholdCheck = (ThresholdCheck)check;
+                        LOGGER.info("       Message='Value found - target={} using Check={}: {}, where WARN is '{}' and ERROR is '{}''", target, check.getId() ,value, thresholdCheck.getWarn(), thresholdCheck.getError());
+                    }
+                    else
+                    {
+                        OutlierCheck outlierCheck = (OutlierCheck) check;
+                        LOGGER.info("       Message='Value found - target={} using Check={}: {}, where RELATIVEDIFF is '{}' and ABSOLUTEDIFF is '{}''", target, check.getId() ,value, outlierCheck.getRelativeDiff(), outlierCheck.getAbsoluteDiff());
+                    }
+
                 } catch (InvalidGraphiteValueException e) {
                     // Silence these - we don't know what's causing Graphite to return null values
                     LOGGER.warn("       Message=Warning - target={} using Check={}: {} Message=failed to read valid value from Graphite", check.getName(), e);

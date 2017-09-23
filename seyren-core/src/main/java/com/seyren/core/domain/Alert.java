@@ -40,8 +40,6 @@ public class Alert {
     private String checkId;
     private BigDecimal value;
     private String target;
-    private BigDecimal warn;
-    private BigDecimal error;
     private AlertType fromType;
     private AlertType toType;
     private DateTime timestamp;
@@ -101,33 +99,7 @@ public class Alert {
     public String getTargetHash() {
         return TargetHash.create(target);
     }
-    
-    public BigDecimal getWarn() {
-        return warn;
-    }
-    
-    public void setWarn(BigDecimal warn) {
-        this.warn = warn;
-    }
-    
-    public Alert withWarn(BigDecimal warn) {
-        setWarn(warn);
-        return this;
-    }
-    
-    public BigDecimal getError() {
-        return error;
-    }
-    
-    public void setError(BigDecimal error) {
-        this.error = error;
-    }
-    
-    public Alert withError(BigDecimal error) {
-        setError(error);
-        return this;
-    }
-    
+
     public AlertType getFromType() {
         return fromType;
     }

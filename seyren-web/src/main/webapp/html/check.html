@@ -24,6 +24,17 @@
             </div>
         </div>
         <form class="form-horizontal" role="form">
+
+            <div class="form-group detail-form">
+                <label class="col-lg-2 control-label">Type:</label>
+                <div class="col-lg-10">
+                    <p class="form-control-static">
+                    <span ng-show="check.type == 'outlier'" class="label label-outlier">{{ check.type }}</span>
+                    <span ng-show="check.type == 'threshold'" class="label label-threshold">{{ check.type }}</span>
+                    </p>
+                </div>
+            </div>
+
             <div class="form-group detail-form">
                 <label class="col-lg-2 control-label">Name:</label>
                 <div class="col-lg-10">
@@ -72,18 +83,47 @@
                     <p class="form-control-static">{{check.until}}</p>
                 </div>
             </div>
-            <div class="form-group detail-form">
+            <div class="form-group detail-form" id="warnleveldiv">
                 <label class="col-lg-2 control-label">Warn level:</label>
                 <div class="col-lg-10">
                     <p class="form-control-static">{{check.warn | number}}</p>
                 </div>
             </div>
-            <div class="form-group detail-form">
+            <div class="form-group detail-form" id="errorleveldiv">
                 <label class="col-lg-2 control-label">Error level:</label>
                 <div class="col-lg-10">
                     <p class="form-control-static">{{check.error | number}}</p>
                 </div>
             </div>
+
+            <div class="form-group detail-form" id="relativediffdiv">
+                <label class="col-lg-2 control-label">RelativeDiff:</label>
+                <div class="col-lg-10">
+                    <p class="form-control-static">{{check.relativeDiff | number}}</p>
+                </div>
+            </div>
+
+            <div class="form-group detail-form" id="absolutediffdiv">
+                <label class="col-lg-2 control-label">AbsoluteDiff:</label>
+                <div class="col-lg-10">
+                    <p class="form-control-static">{{check.absoluteDiff | number}}</p>
+                </div>
+            </div>
+
+            <div class="form-group detail-form" id="minconsecutivecheckdiv">
+                <label class="col-lg-2 control-label">MinConsecutiveViolations:</label>
+                <div class="col-lg-10">
+                    <p class="form-control-static">{{check.minConsecutiveViolations | number}}</p>
+                </div>
+            </div>
+
+            <div class="form-group detail-form">
+                <label class="col-lg-2 control-label">ASG Name:</label>
+                <div class="col-lg-10">
+                    <p class="form-control-static">{{check.asgName}}</p>
+                </div>
+            </div>
+
             <div class="form-group detail-form">
                 <label class="col-lg-2 control-label">Enabled:</label>
                 <div class="col-lg-10">
@@ -223,6 +263,9 @@
                 <th>Value</th>
                 <th>Warn level</th>
                 <th>Error level</th>
+                <th>Absolute Diff</th>
+                <th>Relative Diff</th>
+                <th>Consecutive Alert Count</th>
                 <th>From</th>
                 <th>To</th>
             </tr>
@@ -235,6 +278,9 @@
                 <td>{{ alert.value | number }}</td>
                 <td>{{ alert.warn | number }}</td>
                 <td>{{ alert.error | number }}</td>
+                <td>{{ alert.absoluteDiff | number }}</td>
+                <td>{{ alert.relativeDiff | number }}</td>
+                <td>{{ alert.consecutiveAlertCount | number }}</td>
                 <td>
                     <span ng-show="alert.fromType == 'UNKNOWN'" class="label label-default">{{ alert.fromType }}</span>
                     <span ng-show="alert.fromType == 'OK'" class="label label-success">{{ alert.fromType }}</span>

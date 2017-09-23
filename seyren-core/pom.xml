@@ -125,6 +125,11 @@
         	<groupId>com.opsgenie.integration</groupId>
         	<artifactId>sdk</artifactId>
     	</dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>seyren-aws-manager</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 	<repositories>
 	  <repository>

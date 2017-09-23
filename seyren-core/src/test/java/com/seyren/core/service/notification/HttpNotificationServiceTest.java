@@ -23,6 +23,7 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
+import com.seyren.core.domain.*;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Rule;
@@ -33,11 +34,6 @@ import com.github.restdriver.clientdriver.ClientDriverRequest.Method;
 import com.github.restdriver.clientdriver.ClientDriverRule;
 import com.github.restdriver.clientdriver.capture.BodyCapture;
 import com.github.restdriver.clientdriver.capture.JsonBodyCapture;
-import com.seyren.core.domain.Alert;
-import com.seyren.core.domain.AlertType;
-import com.seyren.core.domain.Check;
-import com.seyren.core.domain.Subscription;
-import com.seyren.core.domain.SubscriptionType;
 import com.seyren.core.util.config.SeyrenConfig;
 
 public class HttpNotificationServiceTest {
@@ -73,23 +69,24 @@ public class HttpNotificationServiceTest {
         when(mockSeyrenConfig.getGraphiteUrl()).thenReturn(clientDriver.getBaseUrl() + "/graphite");
         when(mockSeyrenConfig.getBaseUrl()).thenReturn(seyrenUrl);
         
-        Check check = new Check()
+        Check check = new ThresholdCheck()
+                .withWarn(BigDecimal.ONE)
+                .withError(BigDecimal.TEN)
                 .withEnabled(true)
                 .withName("check-name")
                 .withTarget("statsd.metric.name")
                 .withState(AlertType.ERROR)
-                .withWarn(BigDecimal.ONE)
-                .withError(BigDecimal.TEN);
+                ;
         
         Subscription subscription = new Subscription()
                 .withType(SubscriptionType.HTTP)
                 .withTarget(clientDriver.getBaseUrl() + "/myendpoint/thatdoesstuff");
         
-        Alert alert = new Alert()
-                .withTarget("the.target.name")
-                .withValue(BigDecimal.valueOf(12))
+        Alert alert = new ThresholdAlert()
                 .withWarn(BigDecimal.valueOf(5))
                 .withError(BigDecimal.valueOf(10))
+                .withTarget("the.target.name")
+                .withValue(BigDecimal.valueOf(12))
                 .withFromType(AlertType.WARN)
                 .withToType(AlertType.ERROR);
         

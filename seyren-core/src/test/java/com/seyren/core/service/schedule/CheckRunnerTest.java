@@ -23,17 +23,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.seyren.core.domain.*;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.google.common.base.Optional;
-import com.seyren.core.domain.Alert;
-import com.seyren.core.domain.AlertType;
-import com.seyren.core.domain.Check;
-import com.seyren.core.domain.Subscription;
-import com.seyren.core.domain.SubscriptionType;
 import com.seyren.core.exception.NotificationFailedException;
 import com.seyren.core.service.checker.TargetChecker;
 import com.seyren.core.service.checker.ValueChecker;
@@ -43,7 +39,7 @@ import com.seyren.core.store.ChecksStore;
 
 public class CheckRunnerTest {
     
-    private Check mockCheck;
+    private ThresholdCheck mockCheck;
     private AlertsStore mockAlertsStore;
     private ChecksStore mockChecksStore;
     private TargetChecker mockTargetChecker;
@@ -54,7 +50,7 @@ public class CheckRunnerTest {
     
     @Before
     public void before() {
-        mockCheck = mock(Check.class);
+        mockCheck = mock(ThresholdCheck.class);
         mockAlertsStore = mock(AlertsStore.class);
         mockChecksStore = mock(ChecksStore.class);
         mockTargetChecker = mock(TargetChecker.class);
@@ -121,15 +117,15 @@ public class CheckRunnerTest {
     public void cachesLastAlertByTarget() throws Exception {
     	BigDecimal warnLevel = new BigDecimal(0.6);
     	BigDecimal errorLevel = new BigDecimal(0.8);
-    	Alert initialAlert1 = new Alert()
-    		.withCheckId("check1")
-    		.withTarget("target1")
-    		.withValue(new BigDecimal(0.1))
-    		.withWarn(warnLevel)
-    		.withError(errorLevel)
-    		.withFromType(AlertType.WARN)
-    		.withToType(AlertType.OK)
-    		.withTimestamp(DateTime.now());
+    	Alert initialAlert1 = new ThresholdAlert()
+                .withWarn(warnLevel)
+                .withError(errorLevel)
+                .withCheckId("check1")
+    		    .withTarget("target1")
+    		    .withValue(new BigDecimal(0.1))
+    		    .withFromType(AlertType.WARN)
+    		    .withToType(AlertType.OK)
+    		    .withTimestamp(DateTime.now());
     	Alert initialAlert2 = null;
 
     	when(mockCheck.isEnabled()).thenReturn(true);
@@ -170,15 +166,15 @@ public class CheckRunnerTest {
     	Check mockUpdatedCheck = mock(Check.class);
     	BigDecimal warnLevel = new BigDecimal(0.6);
     	BigDecimal errorLevel = new BigDecimal(0.8);
-    	Alert initialAlert = new Alert()
-    		.withCheckId("check1")
-    		.withTarget("target1")
-    		.withValue(new BigDecimal(0.1))
-    		.withWarn(warnLevel)
-    		.withError(errorLevel)
-    		.withFromType(AlertType.WARN)
-    		.withToType(AlertType.OK)
-    		.withTimestamp(DateTime.now());
+    	Alert initialAlert = new ThresholdAlert()
+                .withWarn(warnLevel)
+                .withError(errorLevel)
+                .withCheckId("check1")
+    		    .withTarget("target1")
+    		    .withValue(new BigDecimal(0.1))
+    		    .withFromType(AlertType.WARN)
+    		    .withToType(AlertType.OK)
+    		    .withTimestamp(DateTime.now());
 
     	when(mockCheck.isEnabled()).thenReturn(true);
     	Map<String, Optional<BigDecimal>> targetValues = new HashMap<String, Optional<BigDecimal>>();

@@ -17,6 +17,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.seyren.core.domain.ThresholdCheck;
 import org.joda.time.DateTime;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -28,7 +29,8 @@ import com.seyren.core.domain.Check;
 import com.seyren.core.domain.Subscription;
 import com.seyren.core.util.math.BigDecimalSerializer;
 
-public class MockCheck extends Check {
+public class MockCheck extends Check
+{
 
 	private final Check check;
 	
@@ -151,40 +153,67 @@ public class MockCheck extends Check {
         return this;
     }
     
-	@Override
-    @JsonSerialize(using = BigDecimalSerializer.class)
+	@JsonSerialize(using = BigDecimalSerializer.class)
     public BigDecimal getWarn() {
-        return this.check.getWarn();
+        if(check instanceof ThresholdCheck)
+        {
+            ThresholdCheck thresholdCheck = (ThresholdCheck)check;
+            return thresholdCheck.getWarn();
+        }
+        else
+            return null;
     }
     
-	@Override
-    @JsonDeserialize(using = BigDecimalDeserializer.class)
+	@JsonDeserialize(using = BigDecimalDeserializer.class)
     public void setWarn(BigDecimal warn) {
-        this.check.setWarn(warn);
+        if(check instanceof ThresholdCheck)
+        {
+            ThresholdCheck thresholdCheck = (ThresholdCheck)check;
+            thresholdCheck.setWarn(warn);
+        }
     }
     
-	@Override
-    public Check withWarn(BigDecimal warn) {
-        this.check.setWarn(warn);
-        return this;
+	public Check withWarn(BigDecimal warn) {
+        if(check instanceof ThresholdCheck)
+        {
+            ThresholdCheck thresholdCheck = (ThresholdCheck)check;
+            thresholdCheck.setWarn(warn);
+            return thresholdCheck;
+        }
+        else
+            return check;
     }
     
-	@Override
-    @JsonSerialize(using = BigDecimalSerializer.class)
-    public BigDecimal getError() {
-        return this.check.getError();
+	@JsonSerialize(using = BigDecimalSerializer.class)
+    public BigDecimal getError()
+    {
+        if (check instanceof ThresholdCheck)
+        {
+            ThresholdCheck thresholdCheck = (ThresholdCheck) check;
+            return thresholdCheck.getError();
+        }
+        else
+            return null;
     }
-    
-	@Override
+
     @JsonDeserialize(using = BigDecimalDeserializer.class)
     public void setError(BigDecimal error) {
-        this.check.setError(error);
+        if(check instanceof ThresholdCheck)
+        {
+            ThresholdCheck thresholdCheck = (ThresholdCheck)check;
+            thresholdCheck.setWarn(error);
+        }
     }
     
-	@Override
-    public Check withError(BigDecimal error) {
-        this.check.setError(error);
-        return this;
+	public Check withError(BigDecimal error) {
+        if(check instanceof ThresholdCheck)
+        {
+            ThresholdCheck thresholdCheck = (ThresholdCheck)check;
+            thresholdCheck.setWarn(error);
+            return thresholdCheck;
+        }
+        else
+            return check;
     }
     
 	@Override

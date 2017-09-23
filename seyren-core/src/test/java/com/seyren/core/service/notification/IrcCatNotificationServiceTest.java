@@ -27,15 +27,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import com.seyren.core.domain.*;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.google.common.io.Closer;
-import com.seyren.core.domain.Alert;
-import com.seyren.core.domain.AlertType;
-import com.seyren.core.domain.Check;
-import com.seyren.core.domain.Subscription;
-import com.seyren.core.domain.SubscriptionType;
 import com.seyren.core.util.config.SeyrenConfig;
 
 public class IrcCatNotificationServiceTest {
@@ -78,10 +74,12 @@ public class IrcCatNotificationServiceTest {
         Subscription subscription = new Subscription().withType(
                 SubscriptionType.IRCCAT).withTarget("#mychannel");
         
-        Alert alert = new Alert().withTarget("the.target.name")
-                .withValue(BigDecimal.valueOf(12))
+        Alert alert = new ThresholdAlert()
                 .withWarn(BigDecimal.valueOf(5))
-                .withError(BigDecimal.valueOf(10)).withFromType(AlertType.WARN)
+                .withError(BigDecimal.valueOf(10))
+                .withTarget("the.target.name")
+                .withValue(BigDecimal.valueOf(12))
+                .withFromType(AlertType.WARN)
                 .withToType(AlertType.ERROR);
         
         List<Alert> alerts = Arrays.asList(alert);

@@ -44,8 +44,6 @@ public class Check {
     private String from;
     private String until;
     private String graphiteBaseUrl;
-    private BigDecimal warn;
-    private BigDecimal error;
     private boolean enabled;
     private boolean live;
     private boolean allowNoData;
@@ -135,36 +133,6 @@ public class Check {
 
     public Check withTarget(String target) {
         setTarget(target);
-        return this;
-    }
-
-    @JsonSerialize(using = BigDecimalSerializer.class)
-    public BigDecimal getWarn() {
-        return warn;
-    }
-
-    @JsonDeserialize(using = BigDecimalDeserializer.class)
-    public void setWarn(BigDecimal warn) {
-        this.warn = warn;
-    }
-
-    public Check withWarn(BigDecimal warn) {
-        setWarn(warn);
-        return this;
-    }
-
-    @JsonSerialize(using = BigDecimalSerializer.class)
-    public BigDecimal getError() {
-        return error;
-    }
-
-    @JsonDeserialize(using = BigDecimalDeserializer.class)
-    public void setError(BigDecimal error) {
-        this.error = error;
-    }
-
-    public Check withError(BigDecimal error) {
-        setError(error);
         return this;
     }
 

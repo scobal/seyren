@@ -26,7 +26,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ws.rs.core.Response;
 
-@Named
+
 public class AdminBean implements AdminResource {
     private final SeyrenConfig seyrenConfig;
     private final PermissionsStore permissionsStore;
@@ -35,7 +35,7 @@ public class AdminBean implements AdminResource {
     @Resource(name = "${authentication.service}")
     private UserDetailsService userDetailsService;
 
-    @Inject
+
     public AdminBean(SeyrenConfig seyrenConfig, PermissionsStore permissionsStore) {
         this.seyrenConfig = seyrenConfig;
         this.permissionsStore = permissionsStore;

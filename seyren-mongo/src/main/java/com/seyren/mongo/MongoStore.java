@@ -50,23 +50,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore, PermissionsStore, UserStore {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MongoStore.class);
-    private final String adminUsername;
-    private final String adminPassword;
-    private final String serviceProvider;
     private PasswordEncoder passwordEncoder;
     private SeyrenConfig seyrenConfig;
     private MongoMapper mapper = new MongoMapper();
     private DB mongo;
 
     @Inject
-    public MongoStore(PasswordEncoder passwordEncoder,
-                      @Value("${admin.username}") String adminUsername,
-                      @Value("${admin.password}") String adminPassword,
-                      @Value("${authentication.service}") String serviceProvider, SeyrenConfig seyrenConfig) {
-        this.passwordEncoder = passwordEncoder;
-        this.adminUsername = adminUsername;
-        this.adminPassword = adminPassword;
-        this.serviceProvider = serviceProvider;
+    public MongoStore(SeyrenConfig seyrenConfig) {
         this.seyrenConfig = seyrenConfig;
         try {
             String uri = seyrenConfig.getMongoUrl();
@@ -77,6 +67,7 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore,
             this.mongo = mongoDB;
             bootstrapMongo();
         } catch (Exception e) {
+            LOGGER.error("Exception while connecting to MongoDB" ,e);
             throw new RuntimeException(e);
         }
     }
@@ -88,9 +79,6 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore,
      */
 	protected MongoStore(DB mongo, SeyrenConfig seyrenConfig) {
 		this.seyrenConfig = seyrenConfig;
-		this.adminUsername = null;
-		this.adminPassword = null;
-		this.serviceProvider = null;
 		this.mongo = mongo;
 	}
 
@@ -100,7 +88,7 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore,
             createIndices();
             removeOldIndices();
             addTargetHashToAlerts();
-            createAdminUser();
+//            createAdminUser();
         } catch (MongoException e) {
             LOGGER.error("Failure while bootstrapping Mongo indexes.\n"
                     + "If you've hit this problem it's possible that you have two checks which are named the same and violate an index which we've tried to add.\n"
@@ -110,7 +98,7 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore,
         LOGGER.info("Done bootstrapping Mongo indexes.");
     }
 
-    private void createAdminUser() {
+    /*private void createAdminUser() {
         if (seyrenConfig.isSecurityEnabled() && serviceProvider.equals("mongo")) {
             if (getUser(adminUsername) == null) {
                 User admin = new User(adminUsername, passwordEncoder.encode(adminPassword));
@@ -118,7 +106,7 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore,
                 addUser(admin);
             }
         }
-    }
+    }*/
 
     private void createIndices() {
         LOGGER.info("Ensuring that we have all the indices we need");
@@ -196,7 +184,14 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore,
         }
         DBCursor dbc = getChecksCollection().find(query);
         while (dbc.hasNext()) {
-            checks.add(mapper.checkFrom(dbc.next()));
+            try
+            {
+                checks.add(mapper.checkFrom(dbc.next()));
+            }
+            catch (Exception e)
+            {
+                LOGGER.error("Exception while mapping check ",e);
+            }
         }
         return new SeyrenResponse<Check>()
                 .withValues(checks)
@@ -278,8 +273,6 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore,
                 .with("graphiteBaseUrl", check.getGraphiteBaseUrl())
                 .with("from", Strings.emptyToNull(check.getFrom()))
                 .with("until", Strings.emptyToNull(check.getUntil()))
-                .with("warn", check.getWarn().toPlainString())
-                .with("error", check.getError().toPlainString())
                 .with("enabled", check.isEnabled())
                 .with("live", check.isLive())
                 .with("allowNoData", check.isAllowNoData())
@@ -288,6 +281,23 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore,
                 .with("enableConsecutiveChecks", check.isEnableConsecutiveChecks())
                 .with("consecutiveChecks", check.getConsecutiveChecks())
                 .with("consecutiveChecksTolerance", check.getConsecutiveChecksTolerance());
+
+        if(check instanceof ThresholdCheck)
+        {
+            ThresholdCheck thresholdCheck = (ThresholdCheck)check;
+
+            partialObject = ((NiceDBObject)partialObject).with("warn", thresholdCheck.getWarn().toPlainString())
+                    .with("error", thresholdCheck.getError().toPlainString());
+        }
+        else
+        {
+            OutlierCheck outlierCheck = (OutlierCheck)check;
+            partialObject = ((NiceDBObject)partialObject).with("absoluteDiff", outlierCheck.getAbsoluteDiff().toPlainString())
+                    .with("relativeDiff", outlierCheck.getRelativeDiff())
+                    .with("minConsecutiveViolations",outlierCheck.getMinConsecutiveViolations())
+                    .with("asgName",outlierCheck.getAsgName());
+        }
+
         DBObject setObject = object("$set", partialObject);
 
         getChecksCollection().update(findObject, setObject);

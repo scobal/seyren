@@ -11,19 +11,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.seyren.core.domain;
+package com.seyren.core.detector;
 
-public enum SubscriptionType {
+import java.math.BigDecimal;
+import java.util.List;
 
-    EMAIL, PAGERDUTY, HIPCHAT, HUBOT, FLOWDOCK, HTTP, IRCCAT, PUSHOVER, LOGGER, SNMP, SLACK, TWILIO, VICTOROPS,
-    OPSGENIE, BIGPANDA, SCRIPT,AWS_UNHEALTHY_INSTANCE;
-
-    public static String[] names() {
-        SubscriptionType[] subscriptionTypes = values();
-        String[] names = new String[subscriptionTypes.length];
-        for (int i = 0; i < subscriptionTypes.length; i++) {
-            names[i] = subscriptionTypes[i].name();
-        }
-        return names;
-    }
+/**
+ * Created by akharbanda on 02/09/17.
+ */
+public interface OutlierDetectionAlgorithm
+{
+    public boolean isOutlier(BigDecimal instanceValue, List<BigDecimal> clusterValues, Double relativeDiff, BigDecimal absoluteDiff);
 }

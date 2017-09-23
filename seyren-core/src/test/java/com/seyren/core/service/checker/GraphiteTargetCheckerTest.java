@@ -20,6 +20,7 @@ import static org.mockito.Mockito.*;
 import java.math.BigDecimal;
 import java.util.Map;
 
+import com.seyren.core.domain.ThresholdCheck;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -137,12 +138,13 @@ public class GraphiteTargetCheckerTest {
     }
 
     private Check checkWithTarget(String target) {
-        return new Check()
+        return new ThresholdCheck()
+                .withWarn(new BigDecimal("0.15"))
+                .withError(new BigDecimal("0.20"))
                 .withId("id")
                 .withGraphiteBaseUrl(clientDriver.getBaseUrl())
                 .withTarget(target)
-                .withWarn(new BigDecimal("0.15"))
-                .withError(new BigDecimal("0.20"));
+                ;
     }
 
 }

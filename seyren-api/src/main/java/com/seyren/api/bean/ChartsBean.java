@@ -20,6 +20,8 @@ import javax.inject.Named;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import com.seyren.core.domain.OutlierCheck;
+import com.seyren.core.domain.ThresholdCheck;
 import org.springframework.util.StringUtils;
 
 import com.seyren.api.jaxrs.ChartsResource;
@@ -51,10 +53,11 @@ public class ChartsBean implements ChartsResource {
 
         String target = check.getTarget();
 
-        if (hideThresholds) {
+        if (hideThresholds || check instanceof OutlierCheck) {
             return getChart(check.getGraphiteBaseUrl(), target, width, height, from, to, null, null, hideLegend, hideAxes);
         } else {
-            return getChart(check.getGraphiteBaseUrl(), target, width, height, from, to, check.getWarn(), check.getError(), hideLegend, hideAxes);
+            ThresholdCheck thresholdCheck = (ThresholdCheck)check;
+            return getChart(check.getGraphiteBaseUrl(), target, width, height, from, to, thresholdCheck.getWarn(), thresholdCheck.getError(), hideLegend, hideAxes);
         }
 
     }

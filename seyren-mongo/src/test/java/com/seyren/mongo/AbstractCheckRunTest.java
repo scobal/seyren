@@ -17,6 +17,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.seyren.core.domain.*;
 import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
 import org.junit.After;
@@ -30,10 +31,6 @@ import org.mockito.stubbing.Answer;
 import com.mongodb.DB;
 import com.mongodb.Mongo;
 
-import com.seyren.core.domain.Alert;
-import com.seyren.core.domain.AlertType;
-import com.seyren.core.domain.Check;
-import com.seyren.core.domain.Subscription;
 import com.seyren.core.service.checker.DefaultValueChecker;
 import com.seyren.core.service.notification.NotificationService;
 import com.seyren.core.service.schedule.CheckRunner;
@@ -116,7 +113,7 @@ public abstract class AbstractCheckRunTest {
 	}
 	
 	protected Check getDefaultCheck(){
-		Check check = new Check();
+		ThresholdCheck check = new ThresholdCheck();
 	    check.setId("Check001");
 	    check.setName("Testing Check");
 	    check.setDescription("A check used simply for unit testing");
@@ -134,8 +131,8 @@ public abstract class AbstractCheckRunTest {
 		return check;
 	}
 	
-	protected Alert getDefaultAlert(){
-		Alert alert = new Alert();
+	protected ThresholdAlert getDefaultAlert(){
+		ThresholdAlert alert = new ThresholdAlert();
 		alert.setId("Alert001");
 		alert.setCheckId("Check001");
 		alert.setTarget("com.launch.check.machine1.target1");

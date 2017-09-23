@@ -25,6 +25,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kenai.jaffl.annotations.Out;
+import com.seyren.core.domain.*;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -38,10 +40,6 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.seyren.core.domain.Alert;
-import com.seyren.core.domain.Check;
-import com.seyren.core.domain.Subscription;
-import com.seyren.core.domain.SubscriptionType;
 import com.seyren.core.exception.NotificationFailedException;
 import com.seyren.core.util.config.SeyrenConfig;
 
@@ -106,9 +104,20 @@ public class HttpNotificationService implements NotificationService {
    
     private String getPreviewImage(Check check)
     {
-        return "<br /><img src=" + seyrenConfig.getGraphiteUrl() + "/render/?target=" + check.getTarget() + getTimeFromUntilString(new Date()) +
-                         "&target=alias(dashed(color(constantLine(" + check.getWarn().toString() + "),%22yellow%22)),%22warn%20level%22)&target=alias(dashed(color(constantLine(" + check.getError().toString() 
-                        + "),%22red%22)),%22error%20level%22)&width=500&height=225></img>"; 
+        if(check instanceof ThresholdCheck)
+        {
+            ThresholdCheck thresholdCheck = (ThresholdCheck)check;
+            return "<br /><img src=" + seyrenConfig.getGraphiteUrl() + "/render/?target=" + check.getTarget() + getTimeFromUntilString(new Date()) +
+                    "&target=alias(dashed(color(constantLine(" + thresholdCheck.getWarn().toString() + "),%22yellow%22)),%22warn%20level%22)&target=alias(dashed(color(constantLine(" + thresholdCheck.getError().toString()
+                    + "),%22red%22)),%22error%20level%22)&width=500&height=225></img>";
+        }
+
+        else
+        {
+            OutlierCheck outlierCheck = (OutlierCheck) check;
+            return "<br /><img src=" + seyrenConfig.getGraphiteUrl() + "/render/?target=" + check.getTarget() + getTimeFromUntilString(new Date())   ;
+        }
+
                 
     }
        

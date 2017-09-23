@@ -23,6 +23,10 @@
                     <th><a href="" ng-click="predicate=sortByState;reverse=!reverse">State</a></th>
                     <th><a href="" ng-click="predicate='warn';reverse=!reverse">Warn level</a></th>
                     <th><a href="" ng-click="predicate='error';reverse=!reverse">Error level</a></th>
+                    <th><a href="" ng-click="predicate='error';reverse=!reverse">RelativeDiff</a></th>
+                    <th><a href="" ng-click="predicate='error';reverse=!reverse">AbsoluteDiff</a></th>
+                    <th><a href="" ng-click="predicate='error';reverse=!reverse">MinConsecutiveViolations</a></th>
+                    <th><a href="" ng-click="predicate='error';reverse=!reverse">ASG Name</a></th>
                     <th><a href="" ng-click="predicate='EMAIL';reverse=!reverse">Enabled Subscription</a></th>
                     <th><a href="" ng-click="predicate='enabled';reverse=!reverse">Enabled</a></th>
                 </tr>
@@ -40,6 +44,10 @@
                     </td>
                     <td>{{ check.warn | number }}</td>
                     <td>{{ check.error | number }}</td>
+                    <td>{{ check.relativeDiff }}</td>
+                    <td>{{ check.absoluteDiff }}</td>
+                    <td>{{ check.minConsecutiveViolations }}</td>
+                    <td>{{ check.asgName }}</td>
                     <td>
                       <span ng-repeat="subscription in check.subscriptions" ng-show="subscription.enabled" class="label label-info" style="margin:.2%" align="center"> {{subscription.type}}</span>
                     </td>

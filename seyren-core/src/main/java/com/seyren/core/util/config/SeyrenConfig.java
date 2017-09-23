@@ -97,6 +97,9 @@ public class SeyrenConfig {
     private final String scriptType;
     private final String scriptResourceUrls;
     private final String graphiteRefreshRate;
+    private final String awsAccessKey;
+    private final String awsSecretKey;
+
     public SeyrenConfig() {
 
         // Base
@@ -198,6 +201,10 @@ public class SeyrenConfig {
         this.scriptPath = configOrDefault("SCRIPT_FILE_PATH", "/tmp");
         this.scriptType = configOrDefault("SCRIPT_TYPE", "python");
         this.scriptResourceUrls = configOrDefault("SCRIPT_RESOURCE_URLS", "ERROR: None Defined");
+
+        //Aws
+        this.awsAccessKey = configOrDefault("AWS_ACCESS_KEY","");
+        this.awsSecretKey = configOrDefault("AWS_SECRET_KEY","");
     }
 
     @PostConstruct
@@ -523,6 +530,18 @@ public class SeyrenConfig {
     @JsonIgnore
     public String getGraphiteRefreshRate() {
         return graphiteRefreshRate;
+    }
+
+    @JsonIgnore
+    public String getAwsAccessKey()
+    {
+        return awsAccessKey;
+    }
+
+    @JsonIgnore
+    public String getAwsSecretKey()
+    {
+        return awsSecretKey;
     }
 
     private static String configOrDefault(String propertyName, String defaultValue) {

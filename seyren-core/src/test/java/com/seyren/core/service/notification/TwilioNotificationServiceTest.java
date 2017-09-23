@@ -26,6 +26,7 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
+import com.seyren.core.domain.*;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -33,11 +34,6 @@ import com.github.restdriver.clientdriver.ClientDriverRequest.Method;
 import com.github.restdriver.clientdriver.ClientDriverRule;
 import com.github.restdriver.clientdriver.capture.BodyCapture;
 import com.github.restdriver.clientdriver.capture.StringBodyCapture;
-import com.seyren.core.domain.Alert;
-import com.seyren.core.domain.AlertType;
-import com.seyren.core.domain.Check;
-import com.seyren.core.domain.Subscription;
-import com.seyren.core.domain.SubscriptionType;
 import com.seyren.core.util.config.SeyrenConfig;
 
 public class TwilioNotificationServiceTest {
@@ -83,11 +79,11 @@ public class TwilioNotificationServiceTest {
                 .withType(SubscriptionType.TWILIO)
                 .withTarget("+10987654321");
         
-        Alert alert = new Alert()
-                .withTarget("the.target.name")
-                .withValue(BigDecimal.valueOf(12))
+        Alert alert = new ThresholdAlert()
                 .withWarn(BigDecimal.valueOf(5))
                 .withError(BigDecimal.valueOf(10))
+                .withTarget("the.target.name")
+                .withValue(BigDecimal.valueOf(12))
                 .withFromType(AlertType.WARN)
                 .withToType(AlertType.ERROR);
         

@@ -19,7 +19,12 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import com.seyren.awsmanager.AWSManager;
+import com.seyren.core.detector.AWSOutlierDetector;
+import com.seyren.core.detector.MeanValueOutlierDetectorAlgorithm;
+import com.seyren.core.detector.OutlierDetector;
 import com.seyren.core.domain.Check;
+import com.seyren.core.domain.ThresholdCheck;
 import com.seyren.core.service.checker.NoopTargetCheck;
 import com.seyren.core.service.checker.TargetChecker;
 import com.seyren.core.service.checker.ValueChecker;
@@ -37,24 +42,35 @@ public class CheckRunnerFactory {
     private final ValueChecker valueChecker;
     private final Iterable<NotificationService> notificationServices;
     private final SeyrenConfig seyrenConfig;
+    private final OutlierDetector outlierDetector;
     
     @Inject
     public CheckRunnerFactory(AlertsStore alertsStore, ChecksStore checksStore, TargetChecker targetChecker, ValueChecker valueChecker,
-            List<NotificationService> notificationServices, SeyrenConfig seyrenConfig) {
+            List<NotificationService> notificationServices, SeyrenConfig seyrenConfig,OutlierDetector outlierDetector) {
         this.alertsStore = alertsStore;
         this.checksStore = checksStore;
         this.targetChecker = targetChecker;
         this.valueChecker = valueChecker;
         this.notificationServices = notificationServices;
         this.seyrenConfig=seyrenConfig;
+        this.outlierDetector = outlierDetector;
     }
 
     public CheckRunner create(Check check) {
-        return new CheckRunner(check, alertsStore, checksStore, targetChecker, valueChecker, notificationServices, seyrenConfig.getGraphiteRefreshRate());
+        if(check instanceof ThresholdCheck)
+            return new CheckRunner(check, alertsStore, checksStore, targetChecker, valueChecker, notificationServices, seyrenConfig.getGraphiteRefreshRate());
+        else
+            return new OutlierCheckRunner(check,alertsStore,checksStore,targetChecker,valueChecker,notificationServices , outlierDetector,seyrenConfig.getGraphiteRefreshRate());
+                   // new AWSOutlierDetector(new AWSManager() , new MeanValueOutlierDetectorAlgorithm()),seyrenConfig.getGraphiteRefreshRate());
     }
 
+
     public CheckRunner create(Check check, BigDecimal value) {
-        return new CheckRunner(check, alertsStore, checksStore, new NoopTargetCheck(value), valueChecker, notificationServices, seyrenConfig.getGraphiteRefreshRate());
+        if(check instanceof ThresholdCheck)
+            return new CheckRunner(check, alertsStore, checksStore, new NoopTargetCheck(value), valueChecker, notificationServices, seyrenConfig.getGraphiteRefreshRate());
+        else
+            return new OutlierCheckRunner(check,alertsStore,checksStore,new NoopTargetCheck(value),valueChecker,notificationServices,outlierDetector,seyrenConfig.getGraphiteRefreshRate());
+                    //new AWSOutlierDetector(new AWSManager() , new MeanValueOutlierDetectorAlgorithm()),seyrenConfig.getGraphiteRefreshRate());
     }
 
 }
