@@ -28,7 +28,7 @@ import java.util.List;
 public class MeanValueOutlierDetectorAlgorithm implements OutlierDetectionAlgorithm
 {
 
-    private final static Integer MIN_DATA_POINTS = 0;
+    private final static Integer MIN_DATA_POINTS = 5;
 
     public MeanValueOutlierDetectorAlgorithm()
     {}
@@ -44,12 +44,12 @@ public class MeanValueOutlierDetectorAlgorithm implements OutlierDetectionAlgori
             {
                 if (relativeDiff != null)
                 {
-                    if (instanceValue.subtract(comparisonMeanValue).divide(comparisonMeanValue, 20, RoundingMode.HALF_EVEN).multiply(new BigDecimal(100)).abs().compareTo(new BigDecimal(relativeDiff)) > 0)
+                    if (instanceValue.subtract(comparisonMeanValue).divide(comparisonMeanValue, 20, RoundingMode.HALF_EVEN).multiply(new BigDecimal(100)).compareTo(new BigDecimal(relativeDiff)) > 0)
                         return true;
                 }
                 else if (absoluteDiff != null)
                 {
-                    if (instanceValue.subtract(comparisonMeanValue).abs().compareTo(absoluteDiff) > 0)
+                    if (instanceValue.subtract(comparisonMeanValue).compareTo(absoluteDiff) > 0)
                     {
                         return true;
                     }

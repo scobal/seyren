@@ -24,6 +24,7 @@ import com.seyren.core.domain.SubscriptionType;
 import com.seyren.core.exception.NotificationFailedException;
 import com.seyren.core.util.config.SeyrenConfig;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -62,12 +63,7 @@ public class AWSUnhealthyInstanceNotificationService implements NotificationServ
             if(CollectionUtils.isNotEmpty(convictedIPs))
             {
                 Map<String,AWSInstanceDetail> awsInstanceDetailMap = awsManager.getInstanceDetail(convictedIPs);//amazonEC2Client.describeAddresses(buildDescribeAddressesRequest(convictedIPs));
-                List<String> instanceIdList = new ArrayList<String>();
-                for(AWSInstanceDetail awsInstanceDetail : awsInstanceDetailMap.values())
-                {
-                    instanceIdList.add(awsInstanceDetail.getInstanceId());
-                }
-
+                List<String> instanceIdList = filterOnAsg(awsInstanceDetailMap,check);
                 if(CollectionUtils.isNotEmpty(instanceIdList))
                 {
                     awsManager.convictInstance(instanceIdList);
@@ -76,6 +72,25 @@ public class AWSUnhealthyInstanceNotificationService implements NotificationServ
             }
         }
 
+    }
+
+    private List<String> filterOnAsg(Map<String,AWSInstanceDetail> awsInstanceDetailMap , Check check)
+    {
+        List<String> instanceIdList = new ArrayList<String>();
+        if(MapUtils.isNotEmpty(awsInstanceDetailMap))
+        {
+            for(AWSInstanceDetail awsInstanceDetail : awsInstanceDetailMap.values())
+            {
+                if(awsInstanceDetail!=null && (
+                        (check.getAsgName()!=null && awsInstanceDetail.getAutoScalingGroup().contains(check.getAsgName()))
+                                || check.getAsgName() == null)
+                        )
+
+                    instanceIdList.add(awsInstanceDetail.getInstanceId());
+
+            }
+        }
+        return instanceIdList;
     }
 
     private List<String> getConvictedIPs(List<Alert> alerts)

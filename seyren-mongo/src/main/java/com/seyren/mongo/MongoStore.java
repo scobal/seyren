@@ -280,7 +280,8 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore,
                 .with("state", check.getState().toString())
                 .with("enableConsecutiveChecks", check.isEnableConsecutiveChecks())
                 .with("consecutiveChecks", check.getConsecutiveChecks())
-                .with("consecutiveChecksTolerance", check.getConsecutiveChecksTolerance());
+                .with("consecutiveChecksTolerance", check.getConsecutiveChecksTolerance())
+                .with("asgName",check.getAsgName());
 
         if(check instanceof ThresholdCheck)
         {
@@ -294,8 +295,8 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore,
             OutlierCheck outlierCheck = (OutlierCheck)check;
             partialObject = ((NiceDBObject)partialObject).with("absoluteDiff", outlierCheck.getAbsoluteDiff().toPlainString())
                     .with("relativeDiff", outlierCheck.getRelativeDiff())
-                    .with("minConsecutiveViolations",outlierCheck.getMinConsecutiveViolations())
-                    .with("asgName",outlierCheck.getAsgName());
+                    .with("minConsecutiveViolations",outlierCheck.getMinConsecutiveViolations());
+
         }
 
         DBObject setObject = object("$set", partialObject);

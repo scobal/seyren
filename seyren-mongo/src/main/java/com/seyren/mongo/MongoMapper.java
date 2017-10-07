@@ -51,7 +51,7 @@ public class MongoMapper {
         Integer consecutiveChecks = getInteger(dbo, "consecutiveChecks");
         Integer consecutiveChecksTolerance = getInteger(dbo, "consecutiveChecksTolerance");
         Boolean consecutiveChecksTriggered = getBooleanValue(dbo, "consecutiveChecksTriggered");
-
+        String asgName = getString(dbo,"asgName");
 
         String checkType = getString(dbo,"checkType");
         if(checkType.equalsIgnoreCase("threshold"))
@@ -63,6 +63,7 @@ public class MongoMapper {
                     .withError(error)
                     .withId(id)
                     .withName(name)
+                    .withAsgName(asgName)
                     .withDescription(description)
                     .withGraphiteBaseUrl(graphiteBaseUrl)
                     .withTarget(target)
@@ -86,7 +87,6 @@ public class MongoMapper {
             BigDecimal absoluteDiff = getBigDecimal(dbo, "absoluteDiff");
             Double relativeDiff = getDouble(dbo, "relativeDiff");
             Integer minConsecutiveViolations = getInteger(dbo,"minConsecutiveViolations");
-            String asgName = getString(dbo,"asgName");
             return new OutlierCheck()
                     .withAbsoluteDiff(absoluteDiff)
                     .withRelativeDiff(relativeDiff)
@@ -254,6 +254,11 @@ public class MongoMapper {
         map.put("graphiteBaseUrl", check.getGraphiteBaseUrl());
         map.put("from", check.getFrom());
         map.put("until", check.getUntil());
+        if(check.getAsgName()!=null)
+        {
+            map.put("asgName", check.getAsgName());
+        }
+
 
         if(check instanceof ThresholdCheck)
         {
@@ -283,11 +288,6 @@ public class MongoMapper {
             if(outlierCheck.getMinConsecutiveViolations()!=null)
             {
                 map.put("minConsecutiveViolations",outlierCheck.getMinConsecutiveViolations());
-            }
-
-            if(outlierCheck.getAsgName()!=null)
-            {
-                map.put("asgName",outlierCheck.getAsgName());
             }
 
         }

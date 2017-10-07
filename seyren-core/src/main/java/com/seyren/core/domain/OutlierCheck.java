@@ -73,20 +73,4 @@ public class OutlierCheck extends Check
         setMinConsecutiveViolations(minConsecutiveViolations);
         return this;
     }
-
-    public String getAsgName()
-    {
-        return asgName;
-    }
-
-    public void setAsgName(String asgName)
-    {
-        this.asgName = asgName;
-    }
-
-    public OutlierCheck withAsgName(String asgName)
-    {
-        setAsgName(asgName);
-        return this;
-    }
 }

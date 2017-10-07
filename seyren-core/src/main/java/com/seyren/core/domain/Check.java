@@ -54,6 +54,7 @@ public class Check {
     private Boolean enableConsecutiveChecks;
     private Integer consecutiveChecksTolerance;
     private Boolean consecutiveChecksTriggered;
+    private String asgName ;
     /** Flag which signifies that an exception occurred during a Graphite, etc. server read
      * in performing this specific check */
     private boolean remoteServerErrorOccurred = false;
@@ -285,4 +286,20 @@ public class Check {
         setConsecutiveChecksTriggered(consecutiveChecksTriggered);
         return this;
     }
+    public String getAsgName()
+    {
+        return asgName;
+    }
+
+    public void setAsgName(String asgName)
+    {
+        this.asgName = asgName;
+    }
+
+    public Check withAsgName(String asgName)
+    {
+        setAsgName(asgName);
+        return this;
+    }
+
 }
