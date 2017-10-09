@@ -191,26 +191,6 @@ public class AWSManager
         }
     }
 
-   /* private List<String> getConvictedIPs(List<Alert> alerts)
-    {
-        List<String> convictedIPList = new ArrayList<String>();
-        for(Alert alert : alerts)
-        {
-            if(alert!=null)
-            {
-                String target = alert.getTarget();
-                Matcher matcher = pattern.matcher(target);
-                if (matcher.find())
-                {
-                    String ip = matcher.group();
-                    ip = ip.replace("-",".");
-                    convictedIPList.add(ip);
-                }
-            }
-        }
-        return convictedIPList;
-    }*/
-
     private List<String> buildMapFromCache(Map<String,AWSInstanceDetail> awsInstanceDetailMap , List<String> ipAddressList)
     {
         List<String> ipAddressNotInCacheList = new ArrayList<String>();

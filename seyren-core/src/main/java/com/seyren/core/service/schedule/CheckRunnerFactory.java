@@ -61,7 +61,7 @@ public class CheckRunnerFactory {
             return new CheckRunner(check, alertsStore, checksStore, targetChecker, valueChecker, notificationServices, seyrenConfig.getGraphiteRefreshRate());
         else
             return new OutlierCheckRunner(check,alertsStore,checksStore,targetChecker,valueChecker,notificationServices , outlierDetector,seyrenConfig.getGraphiteRefreshRate());
-                   // new AWSOutlierDetector(new AWSManager() , new MeanValueOutlierDetectorAlgorithm()),seyrenConfig.getGraphiteRefreshRate());
+
     }
 
 
@@ -70,7 +70,7 @@ public class CheckRunnerFactory {
             return new CheckRunner(check, alertsStore, checksStore, new NoopTargetCheck(value), valueChecker, notificationServices, seyrenConfig.getGraphiteRefreshRate());
         else
             return new OutlierCheckRunner(check,alertsStore,checksStore,new NoopTargetCheck(value),valueChecker,notificationServices,outlierDetector,seyrenConfig.getGraphiteRefreshRate());
-                    //new AWSOutlierDetector(new AWSManager() , new MeanValueOutlierDetectorAlgorithm()),seyrenConfig.getGraphiteRefreshRate());
+
     }
 
 }

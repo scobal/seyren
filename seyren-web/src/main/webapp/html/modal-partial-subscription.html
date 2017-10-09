@@ -9,7 +9,7 @@
         <form name="checkSubscription" class="form-horizontal" role="form" novalidate>
             <div ng-show="error" class="alert alert-danger">{{error}}</div>
             <fieldset>
-                <div ng-class="{ 'form-group': true, 'has-error': checkSubscription['subscription.target'].$invalid }">
+                <div ng-class="{ 'form-group': true, 'has-error': checkSubscription['subscription.target'].$invalid }" ng-hide = "subscription.type=='AWS_UNHEALTHY_INSTANCE'">
                     <label class="col-sm-3 control-label" for="subscription.target">Target</label>
                     <div class="col-sm-7">
                         <input ng-if="subscription.type != 'SCRIPT'" id="subscription.target" class="form-control" name="subscription.target" ng-model="subscription.target" type="text" required />
@@ -36,7 +36,7 @@
                             <option value="TWILIO">TWILIO</option>
                             <option value="VICTOROPS">VictorOps</option>
                             <option value="SCRIPT">Script</option>
-                            <option value="AWS_UNHEALTHY_INSTANCE">AWS_ASG</option>
+                            <option value="AWS_UNHEALTHY_INSTANCE">AwsUnhealthyInstance</option>
                         </select>
                     </div>
                 </div>

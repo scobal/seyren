@@ -35,6 +35,7 @@ import com.seyren.core.util.math.BigDecimalSerializer;
  *
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
+
 public class Check {
 
     private String id;

@@ -27,8 +27,14 @@
                     <th>Timestamp</th>
 					<th>Target</th>
 					<th>Value</th>
+					#if ("$CHECK.Type" == "threshold")
 					<th>Warn</th>
 					<th>Error</th>
+					#else
+					<th>AbsoluteDiff</th>
+					<th>RelativeDiff</th>
+					<th>ConsecutiveAlertCount</th>
+					#end
 					<th>From</th>
 					<th>To</th>
 				</tr>
@@ -39,8 +45,14 @@
                     <td>$ALERT.Timestamp.toString("yyyy-MM-dd HH:mm:ss")</td>
 			    	<td>$ALERT.Target</td>
 			    	<td>$ALERT.Value</td>
+			    	#if ("$CHECK.Type" == "threshold")
                     <td>$CHECK.Warn</td>
                     <td>$CHECK.Error</td>
+                    #else
+                    <td>$CHECK.AbsoluteDiff</td>
+                    <td>$CHECK.RelativeDiff</td>
+                    <td>$ALERT.ConsecutiveAlertCount</td>
+                    #end
 			    	<td>$ALERT.FromType</td>
 			    	<td>$ALERT.ToType</td>
 			    </tr>

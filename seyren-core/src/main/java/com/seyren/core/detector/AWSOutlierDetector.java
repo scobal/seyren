@@ -1,16 +1,3 @@
-/**
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.seyren.core.detector;
 
 import com.google.common.base.Optional;
@@ -178,35 +165,4 @@ public class AWSOutlierDetector extends AbstractOutlierDetector
         }
         return ip;
     }
-/*
-    private Map<String,TargetDataPointsEntity> getASGDataPointEntityMap(Map<String, Optional<BigDecimal>> targetValues , Map<String,String> ipToTargetMap ,  Map<String,AWSInstanceDetail> ipToInstanceDetailMap )
-    {
-        Map<String,TargetDataPointsEntity> asgDataPointsEntityMap = new HashMap<String, TargetDataPointsEntity>();
-        if(MapUtils.isNotEmpty(targetValues) && MapUtils.isNotEmpty(ipToTargetMap) && MapUtils.isNotEmpty(ipToInstanceDetailMap) )
-        {
-
-            for(Map.Entry<String,AWSInstanceDetail> entry : ipToInstanceDetailMap.entrySet())
-            {
-                String ip = entry.getKey();
-                AWSInstanceDetail awsInstanceDetail = entry.getValue();
-                String target = ipToTargetMap.get(ip);
-                BigDecimal metric = targetValues.get(target).isPresent() ? targetValues.get(target).get() : null;
-                String asgName = awsInstanceDetail.getAutoScalingGroup();
-                if(asgName!=null && metric!=null)
-                {
-                    TargetDataPointsEntity asgDataPointsEntity = asgDataPointsEntityMap.get(asgName);
-                    if(asgDataPointsEntity!=null)
-                        asgDataPointsEntity.addDataPoint(metric);
-                    else
-                    {
-                        asgDataPointsEntity = new TargetDataPointsEntity();
-                        asgDataPointsEntity.addDataPoint(metric);
-                        asgDataPointsEntityMap.put(asgName,asgDataPointsEntity);
-                    }
-                }
-            }
-        }
-
-        return asgDataPointsEntityMap;
-    }*/
 }

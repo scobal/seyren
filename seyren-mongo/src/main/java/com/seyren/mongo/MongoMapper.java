@@ -54,65 +54,48 @@ public class MongoMapper {
         String asgName = getString(dbo,"asgName");
 
         String checkType = getString(dbo,"checkType");
+        Check check = null;
         if(checkType.equalsIgnoreCase("threshold"))
         {
             BigDecimal warn = getBigDecimal(dbo, "warn");
             BigDecimal error = getBigDecimal(dbo, "error");
-            return new ThresholdCheck()
+            check =  new ThresholdCheck()
                     .withWarn(warn)
-                    .withError(error)
-                    .withId(id)
-                    .withName(name)
-                    .withAsgName(asgName)
-                    .withDescription(description)
-                    .withGraphiteBaseUrl(graphiteBaseUrl)
-                    .withTarget(target)
-                    .withGraphiteBaseUrl(graphiteUrl)
-                    .withFrom(from)
-                    .withUntil(until)
-                    .withEnabled(enabled)
-                    .withLive(live)
-                    .withAllowNoData(allowNoData)
-                    .withState(state)
-                    .withLastCheck(lastCheck)
-                    .withSubscriptions(subscriptions)
-                    .withEnableConsecutiveChecks(enableConsecutiveChecks)
-                    .withConsecutiveChecks(consecutiveChecks)
-                    .withConsecutiveChecksTolerance(consecutiveChecksTolerance)
-                    .withConsecutiveChecksTriggered(consecutiveChecksTriggered);
+                    .withError(error);
+
         }
 
         else
         {
             BigDecimal absoluteDiff = getBigDecimal(dbo, "absoluteDiff");
             Double relativeDiff = getDouble(dbo, "relativeDiff");
-            Integer minConsecutiveViolations = getInteger(dbo,"minConsecutiveViolations");
-            return new OutlierCheck()
+            Integer minConsecutiveViolations = getInteger(dbo, "minConsecutiveViolations");
+            check = new OutlierCheck()
                     .withAbsoluteDiff(absoluteDiff)
                     .withRelativeDiff(relativeDiff)
-                    .withMinConsecutiveViolations(minConsecutiveViolations)
-                    .withAsgName(asgName)
-                    .withId(id)
-                    .withName(name)
-                    .withDescription(description)
-                    .withGraphiteBaseUrl(graphiteBaseUrl)
-                    .withTarget(target)
-                    .withGraphiteBaseUrl(graphiteUrl)
-                    .withFrom(from)
-                    .withUntil(until)
-                    .withEnabled(enabled)
-                    .withLive(live)
-                    .withAllowNoData(allowNoData)
-                    .withState(state)
-                    .withLastCheck(lastCheck)
-                    .withSubscriptions(subscriptions)
-                    .withEnableConsecutiveChecks(enableConsecutiveChecks)
-                    .withConsecutiveChecks(consecutiveChecks)
-                    .withConsecutiveChecksTolerance(consecutiveChecksTolerance)
-                    .withConsecutiveChecksTriggered(consecutiveChecksTriggered);
-
+                    .withMinConsecutiveViolations(minConsecutiveViolations);
         }
 
+        check = check.withId(id)
+                .withName(name)
+                .withAsgName(asgName)
+                .withDescription(description)
+                .withGraphiteBaseUrl(graphiteBaseUrl)
+                .withTarget(target)
+                .withGraphiteBaseUrl(graphiteUrl)
+                .withFrom(from)
+                .withUntil(until)
+                .withEnabled(enabled)
+                .withLive(live)
+                .withAllowNoData(allowNoData)
+                .withState(state)
+                .withLastCheck(lastCheck)
+                .withSubscriptions(subscriptions)
+                .withEnableConsecutiveChecks(enableConsecutiveChecks)
+                .withConsecutiveChecks(consecutiveChecks)
+                .withConsecutiveChecksTolerance(consecutiveChecksTolerance)
+                .withConsecutiveChecksTriggered(consecutiveChecksTriggered);
+        return check;
     }
     
     public Subscription subscriptionFrom(DBObject dbo) {
@@ -164,20 +147,15 @@ public class MongoMapper {
         DateTime timestamp = getDateTime(dbo, "timestamp");
 
         String alertType = getString(dbo, "alertType");
+        Alert alert = null;
         if (alertType.equalsIgnoreCase("threshold"))
         {
             BigDecimal warn = getBigDecimal(dbo, "warn");
             BigDecimal error = getBigDecimal(dbo, "error");
-            return new ThresholdAlert()
+            alert = new ThresholdAlert()
                     .withWarn(warn)
-                    .withError(error)
-                    .withId(id)
-                    .withCheckId(checkId)
-                    .withValue(value)
-                    .withTarget(target)
-                    .withFromType(fromType)
-                    .withToType(toType)
-                    .withTimestamp(timestamp);
+                    .withError(error);
+
 
         }
 
@@ -187,20 +165,21 @@ public class MongoMapper {
                 Double relativeDiff = getDouble(dbo, "relativeDiff");
                 Integer consecutiveAlertCount = getInteger(dbo, "consecutiveAlertCount");
 
-            return new OutlierAlert()
+            alert =  new OutlierAlert()
                     .withAbsoluteDiff(absoluteDiff)
                     .withRelativeDiff(relativeDiff)
-                    .withConsecutiveAlertCount(consecutiveAlertCount)
-                    .withId(id)
-                    .withCheckId(checkId)
-                    .withValue(value)
-                    .withTarget(target)
-                    .withFromType(fromType)
-                    .withToType(toType)
-                    .withTimestamp(timestamp);
+                    .withConsecutiveAlertCount(consecutiveAlertCount);
 
         }
 
+        alert = alert.withId(id)
+                .withCheckId(checkId)
+                .withValue(value)
+                .withTarget(target)
+                .withFromType(fromType)
+                .withToType(toType)
+                .withTimestamp(timestamp);
+        return alert;
     }
 
     public SubscriptionPermissions permissionsFrom(DBObject dbo) {

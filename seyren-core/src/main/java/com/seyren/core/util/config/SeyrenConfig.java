@@ -97,7 +97,6 @@ public class SeyrenConfig {
     private final String scriptType;
     private final String scriptResourceUrls;
     private final String graphiteRefreshRate;
-
     public SeyrenConfig() {
 
         // Base
@@ -199,7 +198,6 @@ public class SeyrenConfig {
         this.scriptPath = configOrDefault("SCRIPT_FILE_PATH", "/tmp");
         this.scriptType = configOrDefault("SCRIPT_TYPE", "python");
         this.scriptResourceUrls = configOrDefault("SCRIPT_RESOURCE_URLS", "ERROR: None Defined");
-
     }
 
     @PostConstruct

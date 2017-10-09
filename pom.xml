@@ -86,7 +86,9 @@
         <commons-dbcp.version>1.4</commons-dbcp.version>
         <org.apache.httpcomponents.httpclient.version>4.5.2</org.apache.httpcomponents.httpclient.version>
         <org.apache.httpcomponents.httpcore.version>4.4</org.apache.httpcomponents.httpcore.version>
-
+        <com.google.guava.version>23.0</com.google.guava.version>
+        <org.apache.commons-collection4.version>4.0</org.apache.commons-collection4.version>
+        <com.amazonaws-java-sdk.version>1.11.0</com.amazonaws-java-sdk.version>
     </properties>
 
     <prerequisites>
@@ -437,6 +439,21 @@
                 <artifactId>servlet-api</artifactId>
                 <version>${javax.servlet-api.version}</version>
                 <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${com.google.guava.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-collections4</artifactId>
+                <version>${org.apache.commons-collection4.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.amazonaws</groupId>
+                <artifactId>aws-java-sdk</artifactId>
+                <version>${com.amazonaws-java-sdk.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

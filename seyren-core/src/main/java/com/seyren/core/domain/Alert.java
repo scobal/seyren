@@ -15,6 +15,8 @@ package com.seyren.core.domain;
 
 import java.math.BigDecimal;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.joda.time.DateTime;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -34,6 +36,12 @@ import com.seyren.core.util.hashing.TargetHash;
  * 
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME,
+        property = "type")
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = ThresholdAlert.class, name = "threshold"),
+        @JsonSubTypes.Type(value = OutlierAlert.class, name = "outlier")
+})
 public class Alert {
     
     private String id;

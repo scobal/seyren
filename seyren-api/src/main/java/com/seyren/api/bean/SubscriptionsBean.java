@@ -107,25 +107,23 @@ public class SubscriptionsBean implements SubscriptionsResource {
             ThresholdCheck thresholdCheck = (ThresholdCheck)check;
             alert = new ThresholdAlert()
                     .withWarn(thresholdCheck.getWarn())
-                    .withError(thresholdCheck.getError())
-                    .withTarget(check.getTarget())
-                    .withValue(BigDecimal.valueOf(0.0))
-                    .withFromType(AlertType.OK)
-                    .withToType(AlertType.ERROR)
-                    .withTimestamp(new DateTime());
+                    .withError(thresholdCheck.getError());
+
         }
         else
         {
-            OutlierCheck thresholdCheck = (OutlierCheck) check;
+            OutlierCheck outlierCheck = (OutlierCheck) check;
             alert = new OutlierAlert()
-                    .withRelativeDiff(thresholdCheck.getRelativeDiff())
-                    .withAbsoluteDiff(thresholdCheck.getAbsoluteDiff())
-                    .withTarget(check.getTarget())
-                    .withValue(BigDecimal.valueOf(0.0))
-                    .withFromType(AlertType.OK)
-                    .withToType(AlertType.ERROR)
-                    .withTimestamp(new DateTime());
+                    .withRelativeDiff(outlierCheck.getRelativeDiff())
+                    .withAbsoluteDiff(outlierCheck.getAbsoluteDiff());
         }
+
+        alert = alert.withTarget(check.getTarget())
+                .withValue(BigDecimal.valueOf(0.0))
+                .withFromType(AlertType.OK)
+                .withToType(AlertType.ERROR)
+                .withTimestamp(new DateTime());
+
         interestingAlerts.add(alert);
         for (NotificationService notificationService : notificationServices) {
             if (notificationService.canHandle(subscription.getType())) {

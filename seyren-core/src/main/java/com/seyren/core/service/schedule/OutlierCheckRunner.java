@@ -1,16 +1,3 @@
-/**
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.seyren.core.service.schedule;
 
 import com.google.common.base.Optional;
@@ -181,48 +168,6 @@ public class OutlierCheckRunner extends CheckRunner
         return filteredValues;
     }
 
-   /* private BigDecimal calculateMeanValue(Map<String, Optional<BigDecimal>> targetValues)
-    {
-        Integer actualTargets = 0;
-        BigDecimal sumOfValues = new BigDecimal(0);
-        BigDecimal comparisonValue = new BigDecimal(0);
-
-        for (Map.Entry<String, Optional<BigDecimal>> entry : targetValues.entrySet()) {
-            Optional<BigDecimal> value = entry.getValue();
-
-            if (value.isPresent()) {
-                actualTargets++;
-                sumOfValues = sumOfValues.add(value.get());
-            }
-        }
-        if(actualTargets>0)
-        {
-            comparisonValue = sumOfValues.divide(new BigDecimal(actualTargets),20, RoundingMode.HALF_EVEN);
-        }
-        return comparisonValue;
-    }
-
-    private Map<String,BigDecimal> calculateMeanValue(Map<String, Optional<BigDecimal>> targetValues)
-    {
-        Integer actualTargets = 0;
-        BigDecimal sumOfValues = new BigDecimal(0);
-        BigDecimal comparisonValue = new BigDecimal(0);
-
-        for (Map.Entry<String, Optional<BigDecimal>> entry : targetValues.entrySet()) {
-            Optional<BigDecimal> value = entry.getValue();
-
-            if (value.isPresent()) {
-                actualTargets++;
-                sumOfValues = sumOfValues.add(value.get());
-            }
-        }
-        if(actualTargets>0)
-        {
-            comparisonValue = sumOfValues.divide(new BigDecimal(actualTargets),20, RoundingMode.HALF_EVEN);
-        }
-        return comparisonValue;
-    }
-*/
     private Alert createAlert(String target, BigDecimal value, Integer consecutiveAlertCount , BigDecimal absoluteDiff, Double relativeDiff, AlertType from, AlertType to,DateTime now ) {
         return new OutlierAlert()
                 .withAbsoluteDiff(absoluteDiff)

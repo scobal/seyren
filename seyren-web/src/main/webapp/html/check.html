@@ -261,11 +261,11 @@
                 <th>Time ago</th>
                 <th>Target</th>
                 <th>Value</th>
-                <th>Warn level</th>
-                <th>Error level</th>
-                <th>Absolute Diff</th>
-                <th>Relative Diff</th>
-                <th>Consecutive Alert Count</th>
+                <th ng-show="check.type=='threshold'">Warn level</th>
+                <th ng-show="check.type=='threshold'">Error level</th>
+                <th ng-show="check.type=='outlier'">Absolute Diff</th>
+                <th ng-show="check.type=='outlier'">Relative Diff</th>
+                <th ng-show="check.type=='outlier'">Consecutive Alert Count</th>
                 <th>From</th>
                 <th>To</th>
             </tr>
@@ -276,11 +276,11 @@
                 <td><span am-time-ago="alert.timestamp"></span></td>
                 <td>{{ alert.target }}</td>
                 <td>{{ alert.value | number }}</td>
-                <td>{{ alert.warn | number }}</td>
-                <td>{{ alert.error | number }}</td>
-                <td>{{ alert.absoluteDiff | number }}</td>
-                <td>{{ alert.relativeDiff | number }}</td>
-                <td>{{ alert.consecutiveAlertCount | number }}</td>
+                <td ng-show="check.type=='threshold'">{{ alert.warn | number }}</td>
+                <td ng-show="check.type=='threshold'">{{ alert.error | number }}</td>
+                <td ng-show="check.type=='outlier'">{{ alert.absoluteDiff | number }}</td>
+                <td ng-show="check.type=='outlier'">{{ alert.relativeDiff | number }}</td>
+                <td ng-show="check.type=='outlier'">{{ alert.consecutiveAlertCount | number }}</td>
                 <td>
                     <span ng-show="alert.fromType == 'UNKNOWN'" class="label label-default">{{ alert.fromType }}</span>
                     <span ng-show="alert.fromType == 'OK'" class="label label-success">{{ alert.fromType }}</span>
