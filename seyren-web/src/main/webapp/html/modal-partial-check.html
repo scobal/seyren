@@ -12,9 +12,9 @@
                     <div ng-class="{ 'form-group': true, 'has-error': checkForm['check.type'].$invalid }">
                         <label class="col-sm-3 control-label" for="check.typeoutlier">Type</label>
                         <div class="col-sm-9">
-                            <input type="radio" id="check.typeoutlier" name="check.type" value="outlier" ng-checked="check.type=='outlier'" onclick="set_view(this,value);" >Outlier<br>
-                            <input type="radio" id="check.typethreshold" name="check.type" value="threshold" ng-checked="check.type=='threshold'" onclick="set_view(this,value);">Threshold<br>
-                         
+                            <input type="radio" id="check.typeoutlier" name="check.type" ng-model="check.type" value="outlier" ng-checked="check.type=='outlier'"  >Outlier<br>
+                            <input type="radio" id="check.typethreshold" name="check.type" ng-model="check.type" value="threshold" ng-checked="check.type=='threshold'">Threshold<br>
+
                         </div>
                     </div>
 

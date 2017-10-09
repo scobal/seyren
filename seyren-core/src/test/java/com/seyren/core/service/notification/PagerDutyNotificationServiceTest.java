@@ -112,8 +112,8 @@ public class PagerDutyNotificationServiceTest {
         assertThat(node, hasJsonPath("$.description", is("Check 'test-check' has exceeded its threshold.")));
         assertThat(node, hasJsonPath("$.client", is("Seyren")));
         assertThat(node, hasJsonPath("$.client_url", containsString("/#/checks/123")));
-        assertThat(node, hasJsonPath("$.details.CHECK", containsString("{\"id\":\"123\",\"name\":\"test-check\",")));
-        assertThat(node, hasJsonPath("$.details.ALERTS", containsString("{\"id\":\"890\",")));
+        assertThat(node, hasJsonPath("$.details.CHECK", containsString("\"id\":\"123\",\"name\":\"test-check\",")));
+        assertThat(node, hasJsonPath("$.details.ALERTS", containsString("\"id\":\"890\",")));
         assertThat(node, hasJsonPath("$.details.SEYREN_URL", containsString("/pagerduty")));
     }
 
@@ -147,7 +147,7 @@ public class PagerDutyNotificationServiceTest {
         assertThat(node, hasJsonPath("$.incident_key", is("MonitoringAlerts_123")));
         assertThat(node, hasJsonPath("$.event_type", is("resolve")));
         assertThat(node, hasJsonPath("$.description", is("Check 'test-check' has been resolved.")));
-        assertThat(node, hasJsonPath("$.details.CHECK", containsString("{\"id\":\"123\",\"name\":\"test-check\",")));
+        assertThat(node, hasJsonPath("$.details.CHECK", containsString("\"id\":\"123\",\"name\":\"test-check\",")));
         assertThat(node, hasJsonPath("$.details.SEYREN_URL", containsString("/pagerduty")));
     }
 }

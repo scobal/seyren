@@ -17,6 +17,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.joda.time.DateTime;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -35,7 +37,12 @@ import com.seyren.core.util.math.BigDecimalSerializer;
  *
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME,
+        property = "type")
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = ThresholdCheck.class, name = "threshold"),
+        @JsonSubTypes.Type(value = OutlierCheck.class, name = "outlier")
+})
 public class Check {
 
     private String id;
