@@ -12,5 +12,5 @@ import java.util.Map;
  */
 public interface OutlierDetector
 {
-    List<String> getUnhealthyTargets(Map<String, Optional<BigDecimal>> targetValues, Double relativeDiff, BigDecimal absoluteDiff, OutlierCheck check);
+    List<String> getUnhealthyTargets(Map<String, Optional<BigDecimal>> targetValues,OutlierCheck check);
 }

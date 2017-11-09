@@ -66,7 +66,7 @@ public class OutlierCheckRunner extends CheckRunner
 
             filteredTargetValues = filterTargetValues(targetValues);
 
-            List<String> unhealthyTargets = outlierDetector.getUnhealthyTargets(filteredTargetValues,relativeDiff,absoluteDiff,outlierCheck);
+            List<String> unhealthyTargets = outlierDetector.getUnhealthyTargets(filteredTargetValues,outlierCheck);
 
             for(String target : targetValues.keySet())
             {

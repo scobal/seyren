@@ -23,31 +23,34 @@ public class MeanValueOutlierDetectorAlgorithm implements OutlierDetectionAlgori
     @Override
     public boolean isOutlier(BigDecimal instanceValue , List<BigDecimal> clusterValues , Double relativeDiff , BigDecimal absoluteDiff)
     {
-        if(clusterValues.size() > MIN_DATA_POINTS)
+        Boolean isOutlier = false;
+
+        if(clusterValues.size() >= MIN_DATA_POINTS)
         {
             BigDecimal comparisonMeanValue = computeMeanValue(clusterValues);
 
-            if(comparisonMeanValue.compareTo(BigDecimal.ZERO)!=0)
+            if (relativeDiff != null && comparisonMeanValue.compareTo(BigDecimal.ZERO) != 0)
             {
-                if (relativeDiff != null)
-                {
-                    if (instanceValue.subtract(comparisonMeanValue).divide(comparisonMeanValue, 20, RoundingMode.HALF_EVEN).multiply(new BigDecimal(100)).compareTo(new BigDecimal(relativeDiff)) > 0)
-                        return true;
-                }
-                else if (absoluteDiff != null)
-                {
-                    if (instanceValue.subtract(comparisonMeanValue).compareTo(absoluteDiff) > 0)
-                    {
-                        return true;
-                    }
-                }
-            }
-            return false;
+                BigDecimal computedRelativeDiff = instanceValue.subtract(comparisonMeanValue).divide(comparisonMeanValue, 20, RoundingMode.HALF_EVEN).multiply(new BigDecimal(100));
 
+                if(relativeDiff > 0 && computedRelativeDiff.compareTo(new BigDecimal(relativeDiff)) > 0)
+                    isOutlier = true;
+
+                else if (relativeDiff < 0 && computedRelativeDiff.compareTo(new BigDecimal(relativeDiff)) < 0)
+                    isOutlier = true;
+            }
+            if (absoluteDiff != null)
+            {
+                BigDecimal computedAbsoluteDiff = instanceValue.subtract(comparisonMeanValue);
+                if (absoluteDiff.compareTo(BigDecimal.ZERO) > 0 && computedAbsoluteDiff.compareTo(absoluteDiff) > 0)
+                    isOutlier = true;
+                else if (absoluteDiff.compareTo(BigDecimal.ZERO) < 0 && computedAbsoluteDiff.compareTo(absoluteDiff) < 0)
+                    isOutlier = true;
+
+            }
         }
 
-        else
-            return false;
+        return isOutlier;
     }
 
    private BigDecimal computeMeanValue(List<BigDecimal> clusterValues)
