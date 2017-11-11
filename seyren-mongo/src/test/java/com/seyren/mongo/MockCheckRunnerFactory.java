@@ -16,6 +16,9 @@ package com.seyren.mongo;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
+import com.amazonaws.services.autoscaling.AmazonAutoScalingClient;
+import com.amazonaws.services.ec2.AmazonEC2Client;
 import com.seyren.awsmanager.AWSManager;
 import com.seyren.core.detector.AWSOutlierDetector;
 import com.seyren.core.detector.MeanValueOutlierDetectorAlgorithm;
@@ -34,7 +37,7 @@ public class MockCheckRunnerFactory extends CheckRunnerFactory {
 								  TargetChecker targetChecker,
 								  ValueChecker valueChecker,
 								  List<NotificationService>  notificationServices, SeyrenConfig seyrenConfig) {
-		super(mongoStore, mongoStore, targetChecker, valueChecker, notificationServices, seyrenConfig,new AWSOutlierDetector(new AWSManager() , new MeanValueOutlierDetectorAlgorithm()));
+		super(mongoStore, mongoStore, targetChecker, valueChecker, notificationServices, seyrenConfig,new AWSOutlierDetector(new AWSManager( new AmazonEC2Client(new DefaultAWSCredentialsProviderChain()) , new AmazonAutoScalingClient(new DefaultAWSCredentialsProviderChain())) , new MeanValueOutlierDetectorAlgorithm()));
 	}
 
 }

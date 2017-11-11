@@ -62,10 +62,11 @@ public class AWSManager
     private static final int MAX_FILTER_LIST_SIZE = 200 ; //AWS throws error for larger lists
 
 
-    public AWSManager()
+    @Inject
+    public AWSManager(AmazonEC2Client amazonEC2Client , AmazonAutoScalingClient amazonAutoScalingClient)
     {
-        this.amazonEC2Client = new AmazonEC2Client(new DefaultAWSCredentialsProviderChain());
-        this.amazonAutoScalingClient = new AmazonAutoScalingClient(new DefaultAWSCredentialsProviderChain());
+        this.amazonEC2Client = amazonEC2Client;
+        this.amazonAutoScalingClient = amazonAutoScalingClient;
         Region region = Region.getRegion(Regions.fromName("us-west-2"));
         amazonEC2Client.setEndpoint(region.getServiceEndpoint("ec2"));
         amazonAutoScalingClient.setEndpoint(region.getServiceEndpoint("autoscaling"));
@@ -106,43 +107,45 @@ public class AWSManager
 
 
                     List<String> ipAddressNotInCacheBatch = ipAddressNotInCacheList.subList(startIndex,endIndex);
-                    DescribeInstancesResult describeInstancesResult = amazonEC2Client.describeInstances(buildDescribeInstanceRequest(ipAddressNotInCacheBatch));
-                    if(describeInstancesResult!=null)
+                    if(CollectionUtils.isNotEmpty(ipAddressNotInCacheBatch))
                     {
-                        List<Reservation> reservationList = describeInstancesResult.getReservations();
-
-                        if(CollectionUtils.isNotEmpty(reservationList))
+                        DescribeInstancesResult describeInstancesResult = amazonEC2Client.describeInstances(buildDescribeInstanceRequest(ipAddressNotInCacheBatch));
+                        if (describeInstancesResult != null)
                         {
-                            for(String ipAddress : ipAddressNotInCacheBatch)
+                            List<Reservation> reservationList = describeInstancesResult.getReservations();
+
+                            if (CollectionUtils.isNotEmpty(reservationList))
                             {
-                                boolean found = false;
-                                for(Reservation reservation : reservationList)
+                                for (String ipAddress : ipAddressNotInCacheBatch)
                                 {
-                                    if(reservation!=null && CollectionUtils.isNotEmpty(reservation.getInstances()))
+                                    boolean found = false;
+                                    for (Reservation reservation : reservationList)
                                     {
-                                        List<Instance> instances = reservation.getInstances();
-                                        for(Instance instance : instances)
+                                        if (reservation != null && CollectionUtils.isNotEmpty(reservation.getInstances()))
                                         {
-                                            if(instance!=null)
+                                            List<Instance> instances = reservation.getInstances();
+                                            for (Instance instance : instances)
                                             {
-                                                if(instance.getPrivateIpAddress().equals(ipAddress))
+                                                if (instance != null)
                                                 {
-                                                    instanceIdToIPAddressMap.put(instance.getInstanceId(),ipAddress);
-                                                    found = true;
-                                                    break;
+                                                    if (instance.getPrivateIpAddress().equals(ipAddress))
+                                                    {
+                                                        instanceIdToIPAddressMap.put(instance.getInstanceId(), ipAddress);
+                                                        found = true;
+                                                        break;
+                                                    }
                                                 }
                                             }
+                                            if (found)
+                                                break;
                                         }
-                                        if (found)
-                                            break;
+
                                     }
-
                                 }
-                            }
 
+                            }
                         }
                     }
-
 
                 }
 

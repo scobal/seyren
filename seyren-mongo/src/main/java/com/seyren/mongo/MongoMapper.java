@@ -55,7 +55,7 @@ public class MongoMapper {
 
         String checkType = getString(dbo,"checkType");
         Check check = null;
-        if(checkType.equalsIgnoreCase("threshold"))
+        if(checkType == null || checkType.equalsIgnoreCase("threshold"))
         {
             BigDecimal warn = getBigDecimal(dbo, "warn");
             BigDecimal error = getBigDecimal(dbo, "error");
@@ -148,15 +148,13 @@ public class MongoMapper {
 
         String alertType = getString(dbo, "alertType");
         Alert alert = null;
-        if (alertType.equalsIgnoreCase("threshold"))
+        if (alertType == null || alertType.equalsIgnoreCase("threshold"))
         {
             BigDecimal warn = getBigDecimal(dbo, "warn");
             BigDecimal error = getBigDecimal(dbo, "error");
             alert = new ThresholdAlert()
                     .withWarn(warn)
                     .withError(error);
-
-
         }
 
         else

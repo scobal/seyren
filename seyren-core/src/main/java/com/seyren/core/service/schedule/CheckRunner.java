@@ -285,7 +285,7 @@ public class CheckRunner implements Runnable {
         return last == AlertType.OK && current == AlertType.OK;
     }
 
-    private boolean stateIsTheSame(AlertType last, AlertType current) {
+    protected boolean stateIsTheSame(AlertType last, AlertType current) {
         return last == current;
     }
 
