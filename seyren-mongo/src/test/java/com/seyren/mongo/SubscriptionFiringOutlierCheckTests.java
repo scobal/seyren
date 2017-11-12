@@ -90,21 +90,6 @@ public class SubscriptionFiringOutlierCheckTests extends AbstractCheckRunTest
         OutlierCheckRunner.flushLastAlerts();
     }
 
-  /*  protected void setOKValues(){
-        values.clear();
-        values.add(new BigDecimal(50.0));
-    }
-
-    protected void setWarnValues(){
-        values.clear();
-        values.add(new BigDecimal(85.0));
-    }
-
-    protected void setErrorValues(){
-        values.clear();
-        values.add(new BigDecimal(100.0));
-    }
-*/
     protected void setDefaultValues(){
         values.clear();
         values.add(new BigDecimal(80.0));
@@ -129,14 +114,6 @@ public class SubscriptionFiringOutlierCheckTests extends AbstractCheckRunTest
         assertTrue(!((MockSubscription)subscription).notificationSent());
     }
 
- /*   @Test
-    public void testNewWarnAlert(){
-        setWarnValues();
-        initialize();
-        runner.run();
-        assertTrue(((MockSubscription)subscription).notificationSent());
-    }
-*/
     @Test
     public void testNewErrorAlert(){
         setDefaultValues();
@@ -156,15 +133,6 @@ public class SubscriptionFiringOutlierCheckTests extends AbstractCheckRunTest
         assertTrue(!((MockSubscription)subscription).notificationSent());
     }
 
-  /*  @Test
-    public void testWarnAfterOKAlert(){
-        setWarnValues();
-        this.previousAlert = this.getDefaultOKAlert();
-        initialize();
-        runner.run();
-        assertTrue(((MockSubscription)subscription).notificationSent());
-    }
-*/
     @Test
     public void testErrorAfterOKAlert(){
         setDefaultValues();
@@ -175,34 +143,6 @@ public class SubscriptionFiringOutlierCheckTests extends AbstractCheckRunTest
         assertTrue(((MockSubscription)subscription).notificationSent());
     }
 
- /*   @Test
-    public void testOKAfterWarnAlert(){
-        setOKValues();
-        this.previousAlert = this.getDefaultWarnAlert();
-        initialize();
-        runner.run();
-        assertTrue(((MockSubscription)subscription).notificationSent());
-    }
-
-    @Test
-    public void testWarnAfterWarnAlert(){
-        setWarnValues();
-        this.previousAlert = this.getDefaultWarnAlert();
-        initialize();
-        runner.run();
-        assertTrue(!((MockSubscription)subscription).notificationSent());
-    }
-
-    @Test
-    public void testErrorAfterWarnAlert(){
-        setErrorValues();
-        this.previousAlert = this.getDefaultWarnAlert();
-        initialize();
-        runner.run();
-        assertTrue(((MockSubscription)subscription).notificationSent());
-    }
-
-*/
     @Test
     public void testOKAfterErrorAlert(){
         setDefaultValues();
@@ -212,15 +152,6 @@ public class SubscriptionFiringOutlierCheckTests extends AbstractCheckRunTest
         runner.run();
         assertTrue(((MockSubscription)subscription).notificationSent());
     }
-
-  /*  @Test
-    public void testWarnAfterErrorAlert(){
-        setWarnValues();
-        this.previousAlert = this.getDefaultErrorAlert();
-        initialize();
-        runner.run();
-        assertTrue(((MockSubscription)subscription).notificationSent());
-    }*/
 
     @Test
     public void testErrorAfterErrorAlert(){
