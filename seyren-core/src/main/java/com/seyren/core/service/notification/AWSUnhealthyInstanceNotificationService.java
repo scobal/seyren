@@ -22,6 +22,7 @@ import com.seyren.core.exception.NotificationFailedException;
 import com.seyren.core.util.config.SeyrenConfig;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang.StringUtils;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -57,6 +58,7 @@ public class AWSUnhealthyInstanceNotificationService implements NotificationServ
     {
         if(CollectionUtils.isNotEmpty(alerts))
         {
+            String asgName = subscription.getTarget();
             Iterator<Alert> iter = alerts.iterator();
             while (iter.hasNext()) {
                 if (iter.next().getToType() != AlertType.ERROR) {
@@ -67,7 +69,7 @@ public class AWSUnhealthyInstanceNotificationService implements NotificationServ
             if(CollectionUtils.isNotEmpty(convictedIPs))
             {
                 Map<String,AWSInstanceDetail> awsInstanceDetailMap = awsManager.getInstanceDetail(convictedIPs);
-                List<String> instanceIdList = filterOnAsg(awsInstanceDetailMap,check);
+                List<String> instanceIdList = filterOnAsg(awsInstanceDetailMap,asgName);
                 if(CollectionUtils.isNotEmpty(instanceIdList))
                 {
                     awsManager.convictInstance(instanceIdList);
@@ -78,18 +80,14 @@ public class AWSUnhealthyInstanceNotificationService implements NotificationServ
 
     }
 
-    private List<String> filterOnAsg(Map<String,AWSInstanceDetail> awsInstanceDetailMap , Check check)
+    private List<String> filterOnAsg(Map<String,AWSInstanceDetail> awsInstanceDetailMap , String asgName)
     {
         List<String> instanceIdList = new ArrayList<String>();
         if(MapUtils.isNotEmpty(awsInstanceDetailMap))
         {
             for(AWSInstanceDetail awsInstanceDetail : awsInstanceDetailMap.values())
             {
-                if(awsInstanceDetail!=null && (
-                        (check.getAsgName()!=null && awsInstanceDetail.getAutoScalingGroup().contains(check.getAsgName()))
-                                || check.getAsgName() == null)
-                        )
-
+                if(awsInstanceDetail!=null && StringUtils.isNotEmpty(asgName) && awsInstanceDetail.getAutoScalingGroup().contains(asgName))
                     instanceIdList.add(awsInstanceDetail.getInstanceId());
 
             }

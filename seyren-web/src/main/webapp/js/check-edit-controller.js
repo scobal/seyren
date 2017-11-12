@@ -38,6 +38,11 @@
                 placement: 'right',
                 title: 'Setting your warn level higher than your error level will result in Seyren generating alerts when the target value goes below the threshold.'
             });
+            $('#check\\.typeoutlier\\.hint').tooltip({
+                            placement: 'right',
+                            title: ' Outlier check detects if any instance in a cluster is running in a degraded state as compared to rest of cluster. AVAILABLE ONLY FOR AWS EC2 CLOUD-FORMATIONS.'
+                        });
+
             $('#check\\.from\\.hint').tooltip({
                 placement: 'right',
                 html: true,

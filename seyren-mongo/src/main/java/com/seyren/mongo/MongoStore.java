@@ -292,22 +292,27 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore,
                 .with("state", check.getState().toString())
                 .with("enableConsecutiveChecks", check.isEnableConsecutiveChecks())
                 .with("consecutiveChecks", check.getConsecutiveChecks())
-                .with("consecutiveChecksTolerance", check.getConsecutiveChecksTolerance())
-                .with("asgName",check.getAsgName());
+                .with("consecutiveChecksTolerance", check.getConsecutiveChecksTolerance());
+
 
         if(check instanceof ThresholdCheck)
         {
             ThresholdCheck thresholdCheck = (ThresholdCheck)check;
 
-            partialObject = ((NiceDBObject)partialObject).with("warn", thresholdCheck.getWarn().toPlainString())
+            partialObject = ((NiceDBObject)partialObject)
+                    .with("checkType","threshold")
+                    .with("warn", thresholdCheck.getWarn().toPlainString())
                     .with("error", thresholdCheck.getError().toPlainString());
         }
         else
         {
             OutlierCheck outlierCheck = (OutlierCheck)check;
-            partialObject = ((NiceDBObject)partialObject).with("absoluteDiff", outlierCheck.getAbsoluteDiff().toPlainString())
+            partialObject = ((NiceDBObject)partialObject)
+                    .with("checkType","outlier")
+                    .with("absoluteDiff", outlierCheck.getAbsoluteDiff().toPlainString())
                     .with("relativeDiff", outlierCheck.getRelativeDiff())
-                    .with("minConsecutiveViolations",outlierCheck.getMinConsecutiveViolations());
+                    .with("minConsecutiveViolations",outlierCheck.getMinConsecutiveViolations())
+                    .with("asgName",outlierCheck.getAsgName());
 
         }
 

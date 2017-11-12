@@ -12,7 +12,8 @@
                     <div ng-class="{ 'form-group': true, 'has-error': checkForm['check.type'].$invalid }">
                         <label class="col-sm-3 control-label" for="check.typeoutlier">Type</label>
                         <div class="col-sm-9">
-                            <input type="radio" id="check.typeoutlier" name="check.type" ng-model="check.type" value="outlier" ng-checked="check.type=='outlier'"  >Outlier<br>
+                            <input type="radio" id="check.typeoutlier" name="check.type" ng-model="check.type" value="outlier" ng-checked="check.type=='outlier'"  >Outlier <sup><span
+                                id="check.typeoutlier.hint" class="glyphicon glyphicon-question-sign glyphicon-blue"></span></sup><br>
                             <input type="radio" id="check.typethreshold" name="check.type" ng-model="check.type" value="threshold" ng-checked="check.type=='threshold'">Threshold<br>
 
                         </div>
@@ -95,7 +96,7 @@
                         </div>
                     </div>
 
-                    <div ng-class="{ 'form-group': true, 'has-error': checkForm['check.asgName'].$invalid }" id="asgnamemodaldiv" >
+                    <div ng-class="{ 'form-group': true, 'has-error': checkForm['check.asgName'].$invalid }" id="asgnamemodaldiv" ng-hide = "check.type=='threshold'" >
                         <label class="col-sm-3 control-label" for="check.asgName">ASG Name</label>
                         <div class="col-sm-9">
                             <input id="check.asgName" class="form-control" name="check.asgName" ng-model="check.asgName" type="text" ng-required = "check.type=='outlier'" />

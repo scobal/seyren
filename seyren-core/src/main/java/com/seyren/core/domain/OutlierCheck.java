@@ -15,6 +15,7 @@ public class OutlierCheck extends Check
     private BigDecimal absoluteDiff ;
     private Double relativeDiff;
     private Integer minConsecutiveViolations ;
+    private String asgName ;
     private static final String TYPE = "outlier";
 
     @JsonSerialize(using = BigDecimalSerializer.class)
@@ -65,4 +66,21 @@ public class OutlierCheck extends Check
     {
         return OutlierCheck.TYPE;
     }
+
+    public String getAsgName()
+    {
+        return asgName;
+    }
+
+    public void setAsgName(String asgName)
+    {
+        this.asgName = asgName;
+    }
+
+    public Check withAsgName(String asgName)
+    {
+        setAsgName(asgName);
+        return this;
+    }
+
 }

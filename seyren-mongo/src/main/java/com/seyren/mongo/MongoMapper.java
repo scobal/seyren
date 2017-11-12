@@ -73,12 +73,12 @@ public class MongoMapper {
             check = new OutlierCheck()
                     .withAbsoluteDiff(absoluteDiff)
                     .withRelativeDiff(relativeDiff)
-                    .withMinConsecutiveViolations(minConsecutiveViolations);
+                    .withMinConsecutiveViolations(minConsecutiveViolations)
+                    .withAsgName(asgName);
         }
 
         check = check.withId(id)
                 .withName(name)
-                .withAsgName(asgName)
                 .withDescription(description)
                 .withGraphiteBaseUrl(graphiteBaseUrl)
                 .withTarget(target)
@@ -231,11 +231,6 @@ public class MongoMapper {
         map.put("graphiteBaseUrl", check.getGraphiteBaseUrl());
         map.put("from", check.getFrom());
         map.put("until", check.getUntil());
-        if(check.getAsgName()!=null)
-        {
-            map.put("asgName", check.getAsgName());
-        }
-
 
         if(check instanceof ThresholdCheck)
         {
@@ -265,6 +260,11 @@ public class MongoMapper {
             if(outlierCheck.getMinConsecutiveViolations()!=null)
             {
                 map.put("minConsecutiveViolations",outlierCheck.getMinConsecutiveViolations());
+            }
+
+            if(outlierCheck.getAsgName()!=null)
+            {
+                map.put("asgName", outlierCheck.getAsgName());
             }
 
         }
