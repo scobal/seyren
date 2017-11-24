@@ -60,13 +60,13 @@ public class AWSManager
     private final static Long CACHE_EXPIRY_IN_MILLIS = 10 * 60 * 1000l ; //10 mins
     private static final Logger LOGGER = LoggerFactory.getLogger(AWSManager.class);
     private static final int MAX_FILTER_LIST_SIZE = 200 ; //AWS throws error for larger lists
-
+    private static final String DEFAULT_AWS_REGION = "us-west-2";
 
     public AWSManager()
     {
         this.amazonEC2Client = new AmazonEC2Client(new DefaultAWSCredentialsProviderChain());
         this.amazonAutoScalingClient = new AmazonAutoScalingClient(new DefaultAWSCredentialsProviderChain());
-        Region region = Region.getRegion(Regions.fromName("us-west-2"));
+        Region region = Region.getRegion(Regions.fromName(DEFAULT_AWS_REGION));
         amazonEC2Client.setEndpoint(region.getServiceEndpoint("ec2"));
         amazonAutoScalingClient.setEndpoint(region.getServiceEndpoint("autoscaling"));
         CacheLoader cacheLoader = new CacheLoader<String,AWSInstanceDetail>()
@@ -102,7 +102,9 @@ public class AWSManager
                     int endIndex = startIndex + MAX_FILTER_LIST_SIZE;
 
                     if(i==batches)
+                    {
                         endIndex = size;
+                    }
 
 
                     List<String> ipAddressNotInCacheBatch = ipAddressNotInCacheList.subList(startIndex,endIndex);
