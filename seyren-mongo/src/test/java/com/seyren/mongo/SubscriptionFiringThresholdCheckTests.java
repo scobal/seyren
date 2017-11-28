@@ -19,6 +19,10 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.seyren.core.service.checker.DefaultValueChecker;
+import com.seyren.core.service.checker.TargetChecker;
+import com.seyren.core.service.notification.NotificationService;
+import com.seyren.core.service.schedule.CheckRunner;
 import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
 import org.junit.Test;
@@ -28,31 +32,38 @@ import com.seyren.core.domain.AlertType;
 import com.seyren.core.domain.Check;
 import com.seyren.core.domain.Subscription;
 
-public class SubscriptionFiringTests extends AbstractCheckRunTest{
+public class SubscriptionFiringThresholdCheckTests extends AbstractCheckRunTest{
 	/** The values to be used for the target checker */
 	ArrayList<BigDecimal> values = new ArrayList<BigDecimal>();
 	
 	@Override
 	protected Check getCheck() {
-		return this.getDefaultCheck();
+		return this.getDefaultThresholdCheck();
 	}
 	
 	protected Alert getDefaultErrorAlert(){
-		Alert alert = this.getDefaultAlert();
+		Alert alert = this.getDefaultThresholdAlert();
 		alert.setToType(AlertType.ERROR);
 		return alert;
 	}
 	
 	protected Alert getDefaultWarnAlert(){
-		Alert alert = this.getDefaultAlert();
+		Alert alert = this.getDefaultThresholdAlert();
 		alert.setToType(AlertType.WARN);
 		return alert;
 	}
 	
 	protected Alert getDefaultOKAlert(){
-		Alert alert = this.getDefaultAlert();
+		Alert alert = this.getDefaultThresholdAlert();
 		alert.setToType(AlertType.OK);
 		return alert;
+	}
+
+	@Override
+	protected CheckRunner getCheckRunner(List<NotificationService> notificationServices , TargetChecker checker)
+	{
+		return new CheckRunner(this.check, mongoStore, mongoStore, checker,  new DefaultValueChecker(),
+				notificationServices, "60000");
 	}
 
 	@Override
@@ -69,7 +80,13 @@ public class SubscriptionFiringTests extends AbstractCheckRunTest{
 	protected List<BigDecimal> getValues() {
 		return values;
 	}
-	
+
+	@Override
+	protected void additionalSetup()
+	{
+		CheckRunner.flushLastAlerts();
+	}
+
 	protected void setOKValues(){
 		values.clear();
 		values.add(new BigDecimal(50.0));

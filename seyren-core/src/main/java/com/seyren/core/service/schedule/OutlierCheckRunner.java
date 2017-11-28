@@ -1,3 +1,16 @@
+/**
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.seyren.core.service.schedule;
 
 import com.google.common.base.Optional;
@@ -23,7 +36,7 @@ public class OutlierCheckRunner extends CheckRunner
     private static final Logger LOGGER = LoggerFactory.getLogger(OutlierCheckRunner.class);
     private static final BigDecimal IGNORE_THRESHOLD = BigDecimal.ZERO;
     private final OutlierDetector outlierDetector ;
-    private static final HashMap<String, Alert> lastAlerts = new HashMap<String, Alert>();
+    private static final HashMap<String, Alert> lastOutlierAlerts = new HashMap<String, Alert>();
 
     public OutlierCheckRunner(Check check, AlertsStore alertsStore, ChecksStore checksStore, TargetChecker targetChecker, ValueChecker valueChecker,
                               Iterable<NotificationService> notificationServices , OutlierDetector outlierDetector , String graphiteRefreshRate) {
@@ -66,7 +79,7 @@ public class OutlierCheckRunner extends CheckRunner
 
             filteredTargetValues = filterTargetValues(targetValues);
 
-            List<String> unhealthyTargets = outlierDetector.getUnhealthyTargets(filteredTargetValues,relativeDiff,absoluteDiff,outlierCheck);
+            List<String> unhealthyTargets = outlierDetector.getUnhealthyTargets(filteredTargetValues,outlierCheck);
 
             for(String target : targetValues.keySet())
             {
@@ -79,7 +92,7 @@ public class OutlierCheckRunner extends CheckRunner
                 OutlierAlert lastAlert = null;
                 try
                 {
-                    lastAlert =  (OutlierAlert)getLastAlertForTarget(target,check,lastAlerts,alertsStore);
+                    lastAlert =  (OutlierAlert)getLastAlertForTarget(target,check,lastOutlierAlerts,alertsStore);
                 }
                 catch (Exception e)
                 {
@@ -118,9 +131,11 @@ public class OutlierCheckRunner extends CheckRunner
                 else if (currentState == AlertType.OK) {
                     alert = createAlert(target, targetValues.get(target).get(), 0, absoluteDiff, relativeDiff,lastState,currentState, now);
                     LOGGER.info("        Check={}, Target={} :: Message='Current state worse than worse state CurrentState:{}, WorstState:{}'", outlierCheck.getId(), target, currentState, worstState);
+                    if(!stateIsTheSame(lastState,currentState))
+                        interestingAlerts.add(alert);
                 }
 
-                saveAlert(alert,check,lastAlerts,alertsStore);
+                saveAlert(alert,check,lastOutlierAlerts,alertsStore);
 
             }
 
@@ -153,6 +168,10 @@ public class OutlierCheckRunner extends CheckRunner
             // Notify the Check Governor that the check has been completed
             CheckConcurrencyGovernor.instance().notifyCheckIsComplete(this.check);
         }
+    }
+
+    public static void flushLastAlerts() {
+        lastOutlierAlerts.clear();
     }
 
     private Map<String,Optional<BigDecimal>> filterTargetValues(Map<String,Optional<BigDecimal>> targetValues)

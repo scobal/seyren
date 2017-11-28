@@ -1,3 +1,16 @@
+/**
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.seyren.core.detector;
 
 import com.google.common.base.Optional;
@@ -9,6 +22,7 @@ import com.seyren.core.detector.entity.TargetDataPointsEntity;
 import com.seyren.core.domain.OutlierCheck;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang.StringUtils;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -43,7 +57,7 @@ public class AWSOutlierDetector extends AbstractOutlierDetector
     }
 
     @Override
-    public List<String> getUnhealthyTargets(Map<String, Optional<BigDecimal>> targetValues, Double relativeDiff , BigDecimal absoluteDiff , OutlierCheck check)
+    public List<String> getUnhealthyTargets(Map<String, Optional<BigDecimal>> targetValues, OutlierCheck check)
     {
         List<String> unHealthyTargets = new ArrayList<String>();
 
@@ -52,17 +66,19 @@ public class AWSOutlierDetector extends AbstractOutlierDetector
         {
             for(Map.Entry<String,TargetDataPointsEntity> entry : targetDataPointsEntityMap.entrySet())
             {
-                if(entry.getValue()!=null && outlierDetectionAlgorithm.isOutlier(entry.getValue().getCurrentValue(),entry.getValue().getDataPoints(),relativeDiff , absoluteDiff))
+                if(entry.getValue()!=null && outlierDetectionAlgorithm.isOutlier(entry.getValue().getCurrentValue(),entry.getValue().getDataPoints(),check.getRelativeDiff() , check.getAbsoluteDiff()))
                     unHealthyTargets.add(entry.getKey());
             }
         }
 
-        return unHealthyTargets;
+         return unHealthyTargets;
     }
 
-
+    //Returns target name to TargetDataPointsEntity Map
+    //TargetDataPointsEntity has the Metric value for the instance and list of Metrics for all the other instances in its ASG
     private Map<String,TargetDataPointsEntity> buildTargetDataPointsEntityMap(Map<String, Optional<BigDecimal>> targetValues, OutlierCheck outlierCheck)
     {
+        //Map contains the ASG name and all the ASGDataPoint in that ASG
         Map<String,ASGDataPoints> asgNameToDataPointsMap = new HashMap<String, ASGDataPoints>();
         Map<String,String> targetToAsgNameMap = buildTargetToAsgNameMap(new ArrayList<String>(targetValues.keySet()),outlierCheck);
 
@@ -87,6 +103,7 @@ public class AWSOutlierDetector extends AbstractOutlierDetector
 
     }
 
+    // Map contains the target name and the corresponding ASG name
     private Map<String,String> buildTargetToAsgNameMap(List<String> targetNames , OutlierCheck outlierCheck )
     {
         Map<String,String> targetAsgNameMap = new HashMap<String, String>();
@@ -105,7 +122,7 @@ public class AWSOutlierDetector extends AbstractOutlierDetector
             Map<String,AWSInstanceDetail> awsInstanceDetailMap = awsManager.getInstanceDetail(new ArrayList<String>(targetNameToIpAddressMap.values()));
 
             String targetAsgName = outlierCheck.getAsgName();
-            if(targetAsgName!=null)
+            if(StringUtils.isNotEmpty(targetAsgName))
             {
                 for (String targetName : targetNames)
                 {

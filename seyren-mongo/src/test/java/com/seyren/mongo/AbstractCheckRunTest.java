@@ -15,9 +15,11 @@ package com.seyren.mongo;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.seyren.core.domain.*;
+import com.seyren.core.service.checker.TargetChecker;
 import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
 import org.junit.After;
@@ -66,8 +68,11 @@ public abstract class AbstractCheckRunTest {
 	protected abstract Subscription getSubscription();
 	
 	protected abstract List<BigDecimal> getValues();
+
+	protected abstract CheckRunner getCheckRunner(List<NotificationService> notificationServices , TargetChecker checker);
 	
-	
+	protected abstract void additionalSetup();
+
 	@Before
 	public void setUp() throws Exception {
 		
@@ -85,7 +90,8 @@ public abstract class AbstractCheckRunTest {
 
 		
 		this.subscription = this.getSubscription();
-		this.check = new MockCheck(this.getCheck(), this.subscription);
+		this.check = this.getCheck();
+		this.check.setSubscriptions(Arrays.asList(new Subscription[]{this.subscription}));
 
 		mongoStore = Mockito.mock(MongoStore.class);
 		
@@ -104,6 +110,7 @@ public abstract class AbstractCheckRunTest {
 		
 		
 		mongoStore.setConfig(config);
+		additionalSetup();
 	}
 
 
@@ -112,7 +119,7 @@ public abstract class AbstractCheckRunTest {
 		
 	}
 	
-	protected Check getDefaultCheck(){
+	protected ThresholdCheck getDefaultThresholdCheck(){
 		ThresholdCheck check = new ThresholdCheck();
 	    check.setId("Check001");
 	    check.setName("Testing Check");
@@ -130,14 +137,47 @@ public abstract class AbstractCheckRunTest {
 	    check.setLastCheck(new DateTime());
 		return check;
 	}
+
+	protected OutlierCheck getDefaultOutlierCheck(){
+		OutlierCheck check = new OutlierCheck();
+		check.setId("Check001");
+		check.setName("Testing Check");
+		check.setDescription("A check used simply for unit testing");
+		check.setTarget("com.launch.check.machine1.target1");
+		check.setFrom("");
+		check.setUntil("");
+		check.setGraphiteBaseUrl("http://mygraphite.launch.com:2003");
+		check.setAbsoluteDiff(new BigDecimal(10.0));
+		check.setRelativeDiff(30.0);
+		check.setMinConsecutiveViolations(1);
+		check.setAsgName("sample-asg");
+		check.setEnabled(true);
+		check.setLive(false);
+		check.setAllowNoData(false);
+		check.setState(AlertType.UNKNOWN);
+		check.setLastCheck(new DateTime());
+		return check;
+	}
 	
-	protected ThresholdAlert getDefaultAlert(){
+	protected ThresholdAlert getDefaultThresholdAlert(){
 		ThresholdAlert alert = new ThresholdAlert();
 		alert.setId("Alert001");
 		alert.setCheckId("Check001");
 		alert.setTarget("com.launch.check.machine1.target1");
 		alert.setWarn(new BigDecimal(80.0));
 		alert.setError(new BigDecimal(90.0));
+		alert.setTimestamp(new DateTime());
+		return alert;
+	}
+
+	protected OutlierAlert getDefaultOutlierAlert(){
+		OutlierAlert alert = new OutlierAlert();
+		alert.setId("Alert001");
+		alert.setCheckId("Check001");
+		alert.setTarget("com.launch.check.machine1.target1");
+		alert.setAbsoluteDiff(new BigDecimal(10.0));
+		alert.setRelativeDiff(30.0);
+		alert.setConsecutiveAlertCount(1);
 		alert.setTimestamp(new DateTime());
 		return alert;
 	}
@@ -167,7 +207,6 @@ public abstract class AbstractCheckRunTest {
 		this.notificationService = new MockNotificationService();
 		List<NotificationService> notificationServices = new ArrayList<NotificationService>();
 		notificationServices.add(this.notificationService);
-		runner = new CheckRunner(this.check, mongoStore, mongoStore, checker,  new DefaultValueChecker(),
-	            notificationServices, "60000");
+		runner =getCheckRunner(notificationServices,checker);
 	}
 }

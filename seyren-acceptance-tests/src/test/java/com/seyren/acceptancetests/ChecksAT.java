@@ -38,7 +38,7 @@ public class ChecksAT {
     
     @Test
     public void testGetChecksReturnsResultsOk() {
-        Response createResponse = createCheck("{ }");
+        Response createResponse = createCheck("{\"type\": \"threshold\" }");
         Response response = get(checks());
         assertThat(response, hasStatusCode(200));
         assertThat(response.asJson(), hasJsonPath("$.values", hasSize(1)));
@@ -47,7 +47,7 @@ public class ChecksAT {
     
     @Test
     public void testGetChecksByErrorStateReturnsOk() {
-        Response createResponse = createCheck("{ \"state\" : \"ERROR\" }");
+        Response createResponse = createCheck("{ \"type\": \"threshold\",\"state\" : \"ERROR\" }");
         Response response = get(checks().withParam("state", "ERROR"));
         assertThat(response, hasStatusCode(200));
         assertThat(response.asJson(), hasJsonPath("$.values", hasSize(1)));
@@ -56,7 +56,7 @@ public class ChecksAT {
     
     @Test
     public void testGetChecksByWarnStateReturnsOk() {
-        Response createResponse = createCheck("{ \"state\" : \"WARN\" }");
+        Response createResponse = createCheck("{\"type\": \"threshold\", \"state\" : \"WARN\" }");
         Response response = get(checks().withParam("state", "WARN"));
         assertThat(response, hasStatusCode(200));
         assertThat(response.asJson(), hasJsonPath("$.values", hasSize(1)));
@@ -65,14 +65,14 @@ public class ChecksAT {
     
     @Test
     public void testCreateCheckReturnsCreated() {
-        Response response = createCheck("{ }");
+        Response response = createCheck("{\"type\": \"threshold\" }");
         assertThat(response, hasStatusCode(201));
         deleteLocation(response.getHeader("Location").getValue());
     }
     
     @Test
     public void testCreateCheckWithErrorState() {
-        Response response = createCheck("{ \"state\" : \"ERROR\" }");
+        Response response = createCheck("{ \"type\": \"threshold\", \"state\" : \"ERROR\" }");
         assertThat(response, hasStatusCode(201));
         String location = response.getHeader("Location").getValue();
         assertThat(get(location).asJson(), hasJsonPath("$.state", is("ERROR")));
@@ -81,7 +81,7 @@ public class ChecksAT {
 
     @Test
     public void testCreateCheckWithSubscriptionIncluded() {
-        Response response = createCheck("{ \"name\": \"test\", \"warn\": 1.0, \"error\": 0, " +
+        Response response = createCheck("{ \"type\": \"threshold\",\"name\": \"test\", \"warn\": 1.0, \"error\": 0, " +
                 "\"subscriptions\": [ { \"target\": \"nobody@test.com\", \"type\":\"EMAIL\" } ] }");
         assertThat(response, hasStatusCode(201));
         String location = response.getHeader("Location").getValue();
@@ -91,7 +91,7 @@ public class ChecksAT {
     
     @Test
     public void testUpdateHandlesNullLastCheckDate() {
-        Response response = createCheck("{ \"name\": \"test\", \"warn\": 1.0, \"error\": 2.0 }");
+        Response response = createCheck("{ \"type\": \"threshold\", \"name\": \"test\", \"warn\": 1.0, \"error\": 2.0 }");
         assertThat(response, hasStatusCode(201));
         String location = response.getHeader("Location").getValue();
         assertThat(put(location, body(get(location).asText(), "application/json")), hasStatusCode(200));

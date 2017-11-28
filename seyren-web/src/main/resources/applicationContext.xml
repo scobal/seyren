@@ -11,4 +11,14 @@
 
     <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider" />
 
+    <bean name="amazonEC2Client" class="com.amazonaws.services.ec2.AmazonEC2Client">
+        <constructor-arg name="awsCredentialsProvider" ref="defaultAwsCredentialsProviderChain" />
+    </bean>
+
+    <bean name="amazonAutoScalingClient" class="com.amazonaws.services.autoscaling.AmazonAutoScalingClient">
+        <constructor-arg name="awsCredentialsProvider" ref="defaultAwsCredentialsProviderChain" />
+    </bean>
+
+    <bean name="defaultAwsCredentialsProviderChain" class="com.amazonaws.auth.DefaultAWSCredentialsProviderChain">
+    </bean>
 </beans>

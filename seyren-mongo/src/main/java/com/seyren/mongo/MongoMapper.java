@@ -55,7 +55,7 @@ public class MongoMapper {
 
         String checkType = getString(dbo,"checkType");
         Check check = null;
-        if(checkType.equalsIgnoreCase("threshold"))
+        if(checkType == null || checkType.equalsIgnoreCase("threshold"))
         {
             BigDecimal warn = getBigDecimal(dbo, "warn");
             BigDecimal error = getBigDecimal(dbo, "error");
@@ -73,12 +73,12 @@ public class MongoMapper {
             check = new OutlierCheck()
                     .withAbsoluteDiff(absoluteDiff)
                     .withRelativeDiff(relativeDiff)
-                    .withMinConsecutiveViolations(minConsecutiveViolations);
+                    .withMinConsecutiveViolations(minConsecutiveViolations)
+                    .withAsgName(asgName);
         }
 
         check = check.withId(id)
                 .withName(name)
-                .withAsgName(asgName)
                 .withDescription(description)
                 .withGraphiteBaseUrl(graphiteBaseUrl)
                 .withTarget(target)
@@ -148,15 +148,13 @@ public class MongoMapper {
 
         String alertType = getString(dbo, "alertType");
         Alert alert = null;
-        if (alertType.equalsIgnoreCase("threshold"))
+        if (alertType == null || alertType.equalsIgnoreCase("threshold"))
         {
             BigDecimal warn = getBigDecimal(dbo, "warn");
             BigDecimal error = getBigDecimal(dbo, "error");
             alert = new ThresholdAlert()
                     .withWarn(warn)
                     .withError(error);
-
-
         }
 
         else
@@ -233,11 +231,6 @@ public class MongoMapper {
         map.put("graphiteBaseUrl", check.getGraphiteBaseUrl());
         map.put("from", check.getFrom());
         map.put("until", check.getUntil());
-        if(check.getAsgName()!=null)
-        {
-            map.put("asgName", check.getAsgName());
-        }
-
 
         if(check instanceof ThresholdCheck)
         {
@@ -267,6 +260,11 @@ public class MongoMapper {
             if(outlierCheck.getMinConsecutiveViolations()!=null)
             {
                 map.put("minConsecutiveViolations",outlierCheck.getMinConsecutiveViolations());
+            }
+
+            if(outlierCheck.getAsgName()!=null)
+            {
+                map.put("asgName", outlierCheck.getAsgName());
             }
 
         }

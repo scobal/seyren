@@ -1,21 +1,33 @@
+/**
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.seyren.core.service.notification;
 
 import com.amazonaws.services.ec2.model.DescribeAddressesRequest;
 import com.amazonaws.services.ec2.model.Filter;
 import com.seyren.awsmanager.AWSManager;
 import com.seyren.awsmanager.entity.AWSInstanceDetail;
-import com.seyren.core.domain.Alert;
-import com.seyren.core.domain.Check;
-import com.seyren.core.domain.Subscription;
-import com.seyren.core.domain.SubscriptionType;
+import com.seyren.core.domain.*;
 import com.seyren.core.exception.NotificationFailedException;
 import com.seyren.core.util.config.SeyrenConfig;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang.StringUtils;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -46,11 +58,18 @@ public class AWSUnhealthyInstanceNotificationService implements NotificationServ
     {
         if(CollectionUtils.isNotEmpty(alerts))
         {
+            String asgName = subscription.getTarget();
+            Iterator<Alert> iter = alerts.iterator();
+            while (iter.hasNext()) {
+                if (iter.next().getToType() != AlertType.ERROR) {
+                    iter.remove();
+                }
+            }
             List<String> convictedIPs = getConvictedIPs(alerts);
             if(CollectionUtils.isNotEmpty(convictedIPs))
             {
-                Map<String,AWSInstanceDetail> awsInstanceDetailMap = awsManager.getInstanceDetail(convictedIPs);//amazonEC2Client.describeAddresses(buildDescribeAddressesRequest(convictedIPs));
-                List<String> instanceIdList = filterOnAsg(awsInstanceDetailMap,check);
+                Map<String,AWSInstanceDetail> awsInstanceDetailMap = awsManager.getInstanceDetail(convictedIPs);
+                List<String> instanceIdList = filterOnAsg(awsInstanceDetailMap,asgName);
                 if(CollectionUtils.isNotEmpty(instanceIdList))
                 {
                     awsManager.convictInstance(instanceIdList);
@@ -61,18 +80,14 @@ public class AWSUnhealthyInstanceNotificationService implements NotificationServ
 
     }
 
-    private List<String> filterOnAsg(Map<String,AWSInstanceDetail> awsInstanceDetailMap , Check check)
+    private List<String> filterOnAsg(Map<String,AWSInstanceDetail> awsInstanceDetailMap , String asgName)
     {
         List<String> instanceIdList = new ArrayList<String>();
         if(MapUtils.isNotEmpty(awsInstanceDetailMap))
         {
             for(AWSInstanceDetail awsInstanceDetail : awsInstanceDetailMap.values())
             {
-                if(awsInstanceDetail!=null && (
-                        (check.getAsgName()!=null && awsInstanceDetail.getAutoScalingGroup().contains(check.getAsgName()))
-                                || check.getAsgName() == null)
-                        )
-
+                if(awsInstanceDetail!=null && StringUtils.isNotEmpty(asgName) && awsInstanceDetail.getAutoScalingGroup().contains(asgName))
                     instanceIdList.add(awsInstanceDetail.getInstanceId());
 
             }

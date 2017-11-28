@@ -130,6 +130,14 @@
             <artifactId>seyren-aws-manager</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.powermock/powermock-reflect -->
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-reflect</artifactId>
+            <scope>test</scope>
+            <version>1.7.3</version>
+        </dependency>
+
     </dependencies>
 	<repositories>
 	  <repository>

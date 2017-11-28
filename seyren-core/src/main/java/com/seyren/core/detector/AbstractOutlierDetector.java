@@ -21,6 +21,6 @@ public abstract class AbstractOutlierDetector implements OutlierDetector
     }
 
     @Override
-    public abstract List<String> getUnhealthyTargets(Map<String, Optional<BigDecimal>> targetValues , Double relativeDiff , BigDecimal absoluteDiff , OutlierCheck check);
+    public abstract List<String> getUnhealthyTargets(Map<String, Optional<BigDecimal>> targetValues ,OutlierCheck check);
 
 }
