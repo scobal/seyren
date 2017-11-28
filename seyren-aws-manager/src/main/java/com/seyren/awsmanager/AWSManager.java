@@ -49,28 +49,28 @@ import java.util.regex.Pattern;
 @Named
 public class AWSManager
 {
-    private final AmazonEC2Client amazonEC2Client ;
+    private final AmazonEC2Client amazonEC2Client;
     private final AmazonAutoScalingClient amazonAutoScalingClient;
     private static final String IPADDRESS_PATTERN =
             "(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\-){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)";
 
     private final Pattern pattern = Pattern.compile(IPADDRESS_PATTERN);
-    private final AWSInstanceDetailsCache awsInstanceDetailsCache ;
+    private final AWSInstanceDetailsCache awsInstanceDetailsCache;
     private final static Long CACHE_MAX_SIZE = 1000l;
-    private final static Long CACHE_EXPIRY_IN_MILLIS = 10 * 60 * 1000l ; //10 mins
+    private final static Long CACHE_EXPIRY_IN_MILLIS = 10 * 60 * 1000l; //10 mins
     private static final Logger LOGGER = LoggerFactory.getLogger(AWSManager.class);
-    private static final int MAX_FILTER_LIST_SIZE = 200 ; //AWS throws error for larger lists
+    private static final int MAX_FILTER_LIST_SIZE = 200; //AWS throws error for larger lists
     private static final String DEFAULT_AWS_REGION = "us-west-2";
 
     @Inject
-    public AWSManager(AmazonEC2Client amazonEC2Client , AmazonAutoScalingClient amazonAutoScalingClient)
+    public AWSManager(AmazonEC2Client amazonEC2Client, AmazonAutoScalingClient amazonAutoScalingClient)
     {
         this.amazonEC2Client = amazonEC2Client;
         this.amazonAutoScalingClient = amazonAutoScalingClient;
         Region region = Region.getRegion(Regions.fromName(DEFAULT_AWS_REGION));
         amazonEC2Client.setEndpoint(region.getServiceEndpoint("ec2"));
         amazonAutoScalingClient.setEndpoint(region.getServiceEndpoint("autoscaling"));
-        CacheLoader cacheLoader = new CacheLoader<String,AWSInstanceDetail>()
+        CacheLoader cacheLoader = new CacheLoader<String, AWSInstanceDetail>()
         {
             @Override
             public AWSInstanceDetail load(String key) throws Exception
@@ -78,38 +78,38 @@ public class AWSManager
                 throw new Exception("No entry in cache"); // throw exception because we want to send one batch request to AWS for instance details
             }
         };
-        awsInstanceDetailsCache = new AWSInstanceDetailsCache(cacheLoader, CACHE_MAX_SIZE,CACHE_EXPIRY_IN_MILLIS);
+        awsInstanceDetailsCache = new AWSInstanceDetailsCache(cacheLoader, CACHE_MAX_SIZE, CACHE_EXPIRY_IN_MILLIS);
     }
 
-    public Map<String,AWSInstanceDetail> getInstanceDetail(List<String> ipAddressList)
+    public Map<String, AWSInstanceDetail> getInstanceDetail(List<String> ipAddressList)
     {
-        Map<String,AWSInstanceDetail> awsInstanceDetailMap = new HashMap<String, AWSInstanceDetail>();
+        Map<String, AWSInstanceDetail> awsInstanceDetailMap = new HashMap<String, AWSInstanceDetail>();
 
-        if(CollectionUtils.isNotEmpty(ipAddressList))
+        if (CollectionUtils.isNotEmpty(ipAddressList))
         {
-            Map<String,String> instanceIdToIPAddressMap = new HashMap<String, String>();
-            List<String> ipAddressNotInCacheList = buildMapFromCache(awsInstanceDetailMap,ipAddressList);
+            Map<String, String> instanceIdToIPAddressMap = new HashMap<String, String>();
+            List<String> ipAddressNotInCacheList = buildMapFromCache(awsInstanceDetailMap, ipAddressList);
 
-            if(CollectionUtils.isNotEmpty(ipAddressNotInCacheList))
+            if (CollectionUtils.isNotEmpty(ipAddressNotInCacheList))
             {
                 int size = ipAddressNotInCacheList.size();
 
-                int batches = size/MAX_FILTER_LIST_SIZE;
+                int batches = size / MAX_FILTER_LIST_SIZE;
 
-                for(int i =0 ; i <= batches ; i++)
+                for (int i = 0; i <= batches; i++)
                 {
 
                     int startIndex = i * MAX_FILTER_LIST_SIZE;
                     int endIndex = startIndex + MAX_FILTER_LIST_SIZE;
 
-                    if(i==batches)
+                    if (i == batches)
                     {
                         endIndex = size;
                     }
 
 
-                    List<String> ipAddressNotInCacheBatch = ipAddressNotInCacheList.subList(startIndex,endIndex);
-                    if(CollectionUtils.isNotEmpty(ipAddressNotInCacheBatch))
+                    List<String> ipAddressNotInCacheBatch = ipAddressNotInCacheList.subList(startIndex, endIndex);
+                    if (CollectionUtils.isNotEmpty(ipAddressNotInCacheBatch))
                     {
                         DescribeInstancesResult describeInstancesResult = amazonEC2Client.describeInstances(buildDescribeInstanceRequest(ipAddressNotInCacheBatch));
                         if (describeInstancesResult != null)
@@ -139,7 +139,9 @@ public class AWSManager
                                                 }
                                             }
                                             if (found)
+                                            {
                                                 break;
+                                            }
                                         }
 
                                     }
@@ -151,20 +153,20 @@ public class AWSManager
 
                 }
 
-                if(MapUtils.isNotEmpty(instanceIdToIPAddressMap))
+                if (MapUtils.isNotEmpty(instanceIdToIPAddressMap))
                 {
                     DescribeAutoScalingInstancesResult describeAutoScalingInstancesResult = amazonAutoScalingClient.describeAutoScalingInstances(buildDescribeAutoScalingInstancesRequest(new ArrayList<String>(instanceIdToIPAddressMap.keySet())));
-                    if(describeAutoScalingInstancesResult!=null && CollectionUtils.isNotEmpty(describeAutoScalingInstancesResult.getAutoScalingInstances()))
+                    if (describeAutoScalingInstancesResult != null && CollectionUtils.isNotEmpty(describeAutoScalingInstancesResult.getAutoScalingInstances()))
                     {
-                        for(AutoScalingInstanceDetails autoScalingInstanceDetails : describeAutoScalingInstancesResult.getAutoScalingInstances())
+                        for (AutoScalingInstanceDetails autoScalingInstanceDetails : describeAutoScalingInstancesResult.getAutoScalingInstances())
                         {
-                            if(autoScalingInstanceDetails!=null && autoScalingInstanceDetails.getInstanceId()!=null)
+                            if (autoScalingInstanceDetails != null && autoScalingInstanceDetails.getInstanceId() != null)
                             {
                                 String privateIp = instanceIdToIPAddressMap.get(autoScalingInstanceDetails.getInstanceId());
-                                if(privateIp!=null)
+                                if (privateIp != null)
                                 {
-                                    AWSInstanceDetail awsInstanceDetail = new AWSInstanceDetail(privateIp,autoScalingInstanceDetails.getInstanceId(),autoScalingInstanceDetails.getAutoScalingGroupName());
-                                    awsInstanceDetailMap.put(privateIp,awsInstanceDetail);
+                                    AWSInstanceDetail awsInstanceDetail = new AWSInstanceDetail(privateIp, autoScalingInstanceDetails.getInstanceId(), autoScalingInstanceDetails.getAutoScalingGroupName());
+                                    awsInstanceDetailMap.put(privateIp, awsInstanceDetail);
                                 }
 
                             }
@@ -179,9 +181,9 @@ public class AWSManager
 
     public void convictInstance(List<String> instanceIdList)
     {
-        if(CollectionUtils.isNotEmpty(instanceIdList))
+        if (CollectionUtils.isNotEmpty(instanceIdList))
         {
-            for(String instanceId : instanceIdList)
+            for (String instanceId : instanceIdList)
             {
                 try
                 {
@@ -190,38 +192,42 @@ public class AWSManager
 
                 catch (Exception e)
                 {
-                    LOGGER.error(String.format("Error while setting instance state for %s to unhealthy",instanceId),e);
+                    LOGGER.error(String.format("Error while setting instance state for %s to unhealthy", instanceId), e);
                 }
-                }
+            }
         }
     }
 
-    private List<String> buildMapFromCache(Map<String,AWSInstanceDetail> awsInstanceDetailMap , List<String> ipAddressList)
+    private List<String> buildMapFromCache(Map<String, AWSInstanceDetail> awsInstanceDetailMap, List<String> ipAddressList)
     {
         List<String> ipAddressNotInCacheList = new ArrayList<String>();
-        for(String ipAddress : ipAddressList)
+        for (String ipAddress : ipAddressList)
         {
             AWSInstanceDetail awsInstanceDetail = awsInstanceDetailsCache.getAWSInstanceDetails(ipAddress);
-            if(awsInstanceDetail !=null)
-                awsInstanceDetailMap.put(ipAddress,awsInstanceDetail);
+            if (awsInstanceDetail != null)
+            {
+                awsInstanceDetailMap.put(ipAddress, awsInstanceDetail);
+            }
             else
+            {
                 ipAddressNotInCacheList.add(ipAddress);
+            }
         }
         return ipAddressNotInCacheList;
     }
 
-    private void updateCacheFromMap(Map<String,AWSInstanceDetail> awsInstanceDetailMap)
+    private void updateCacheFromMap(Map<String, AWSInstanceDetail> awsInstanceDetailMap)
     {
-        for(Map.Entry<String,AWSInstanceDetail> entry : awsInstanceDetailMap.entrySet())
+        for (Map.Entry<String, AWSInstanceDetail> entry : awsInstanceDetailMap.entrySet())
         {
-            awsInstanceDetailsCache.putAWSInstanceDetails(entry.getKey(),entry.getValue());
+            awsInstanceDetailsCache.putAWSInstanceDetails(entry.getKey(), entry.getValue());
         }
     }
 
     private DescribeInstancesRequest buildDescribeInstanceRequest(List<String> ipAddress)
     {
         DescribeInstancesRequest describeInstancesRequest = new DescribeInstancesRequest();
-        describeInstancesRequest = describeInstancesRequest.withFilters(new Filter("private-ip-address",ipAddress));
+        describeInstancesRequest = describeInstancesRequest.withFilters(new Filter("private-ip-address", ipAddress));
 
         return describeInstancesRequest;
     }
@@ -229,7 +235,7 @@ public class AWSManager
     private DescribeAutoScalingInstancesRequest buildDescribeAutoScalingInstancesRequest(List<String> instanceIdList)
     {
         DescribeAutoScalingInstancesRequest describeAutoScalingInstancesRequest = null;
-        if(CollectionUtils.isNotEmpty(instanceIdList))
+        if (CollectionUtils.isNotEmpty(instanceIdList))
         {
             describeAutoScalingInstancesRequest = new DescribeAutoScalingInstancesRequest();
             describeAutoScalingInstancesRequest.setInstanceIds(instanceIdList);

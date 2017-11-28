@@ -42,7 +42,7 @@ import java.util.regex.Pattern;
 public class AWSOutlierDetector extends AbstractOutlierDetector
 {
 
-    private final AWSManager awsManager ;
+    private final AWSManager awsManager;
 
     private static final String IPADDRESS_PATTERN =
             "(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\-){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)";
@@ -50,7 +50,7 @@ public class AWSOutlierDetector extends AbstractOutlierDetector
     private final Pattern pattern = Pattern.compile(IPADDRESS_PATTERN);
 
     @Inject
-    public AWSOutlierDetector(AWSManager awsManager , OutlierDetectionAlgorithm outlierDetectionAlgorithm)
+    public AWSOutlierDetector(AWSManager awsManager, OutlierDetectionAlgorithm outlierDetectionAlgorithm)
     {
         super(outlierDetectionAlgorithm);
         this.awsManager = awsManager;
@@ -61,40 +61,45 @@ public class AWSOutlierDetector extends AbstractOutlierDetector
     {
         List<String> unHealthyTargets = new ArrayList<String>();
 
-        Map<String,TargetDataPointsEntity> targetDataPointsEntityMap = buildTargetDataPointsEntityMap(targetValues,check);
-        if(MapUtils.isNotEmpty(targetDataPointsEntityMap))
+        Map<String, TargetDataPointsEntity> targetDataPointsEntityMap = buildTargetDataPointsEntityMap(targetValues, check);
+        if (MapUtils.isNotEmpty(targetDataPointsEntityMap))
         {
-            for(Map.Entry<String,TargetDataPointsEntity> entry : targetDataPointsEntityMap.entrySet())
+            for (Map.Entry<String, TargetDataPointsEntity> entry : targetDataPointsEntityMap.entrySet())
             {
-                if(entry.getValue()!=null && outlierDetectionAlgorithm.isOutlier(entry.getValue().getCurrentValue(),entry.getValue().getDataPoints(),check.getRelativeDiff() , check.getAbsoluteDiff()))
+                if (entry.getValue() != null && outlierDetectionAlgorithm.isOutlier(entry.getValue().getCurrentValue(), entry.getValue().getDataPoints(), check.getRelativeDiff(), check.getAbsoluteDiff()))
+                {
                     unHealthyTargets.add(entry.getKey());
+                }
             }
         }
 
-         return unHealthyTargets;
+        return unHealthyTargets;
     }
 
     //Returns target name to TargetDataPointsEntity Map
     //TargetDataPointsEntity has the Metric value for the instance and list of Metrics for all the other instances in its ASG
-    private Map<String,TargetDataPointsEntity> buildTargetDataPointsEntityMap(Map<String, Optional<BigDecimal>> targetValues, OutlierCheck outlierCheck)
+    private Map<String, TargetDataPointsEntity> buildTargetDataPointsEntityMap(Map<String, Optional<BigDecimal>> targetValues, OutlierCheck outlierCheck)
     {
         //Map contains the ASG name and all the ASGDataPoint in that ASG
-        Map<String,ASGDataPoints> asgNameToDataPointsMap = new HashMap<String, ASGDataPoints>();
-        Map<String,String> targetToAsgNameMap = buildTargetToAsgNameMap(new ArrayList<String>(targetValues.keySet()),outlierCheck);
+        Map<String, ASGDataPoints> asgNameToDataPointsMap = new HashMap<String, ASGDataPoints>();
+        Map<String, String> targetToAsgNameMap = buildTargetToAsgNameMap(new ArrayList<String>(targetValues.keySet()), outlierCheck);
 
 
-        if(MapUtils.isNotEmpty(targetToAsgNameMap))
+        if (MapUtils.isNotEmpty(targetToAsgNameMap))
         {
-            for(Map.Entry<String,String> entry : targetToAsgNameMap.entrySet())
+            for (Map.Entry<String, String> entry : targetToAsgNameMap.entrySet())
             {
                 ASGDataPoints asgDataPoints = asgNameToDataPointsMap.get(entry.getValue());
-                if(asgDataPoints!=null)
+                if (asgDataPoints != null)
+                {
                     asgDataPoints.addDataPoint(entry.getKey(), targetValues.get(entry.getKey()) != null ? targetValues.get(entry.getKey()).get() : null);
+                }
+
                 else
                 {
                     asgDataPoints = new ASGDataPoints();
                     asgDataPoints.addDataPoint(entry.getKey(), targetValues.get(entry.getKey()) != null ? targetValues.get(entry.getKey()).get() : null);
-                    asgNameToDataPointsMap.put(entry.getValue(),asgDataPoints);
+                    asgNameToDataPointsMap.put(entry.getValue(), asgDataPoints);
                 }
             }
         }
@@ -104,25 +109,25 @@ public class AWSOutlierDetector extends AbstractOutlierDetector
     }
 
     // Map contains the target name and the corresponding ASG name
-    private Map<String,String> buildTargetToAsgNameMap(List<String> targetNames , OutlierCheck outlierCheck )
+    private Map<String, String> buildTargetToAsgNameMap(List<String> targetNames, OutlierCheck outlierCheck)
     {
-        Map<String,String> targetAsgNameMap = new HashMap<String, String>();
-        Map<String,String> targetNameToIpAddressMap = new HashMap<String, String>();
-        if(CollectionUtils.isNotEmpty(targetNames))
+        Map<String, String> targetAsgNameMap = new HashMap<String, String>();
+        Map<String, String> targetNameToIpAddressMap = new HashMap<String, String>();
+        if (CollectionUtils.isNotEmpty(targetNames))
         {
-            for(String targetName : targetNames)
+            for (String targetName : targetNames)
             {
-               String ipAddress = parseIp(targetName);
-                if(ipAddress!=null)
+                String ipAddress = parseIp(targetName);
+                if (ipAddress != null)
                 {
-                    targetNameToIpAddressMap.put(targetName,ipAddress);
+                    targetNameToIpAddressMap.put(targetName, ipAddress);
                 }
             }
 
-            Map<String,AWSInstanceDetail> awsInstanceDetailMap = awsManager.getInstanceDetail(new ArrayList<String>(targetNameToIpAddressMap.values()));
+            Map<String, AWSInstanceDetail> awsInstanceDetailMap = awsManager.getInstanceDetail(new ArrayList<String>(targetNameToIpAddressMap.values()));
 
             String targetAsgName = outlierCheck.getAsgName();
-            if(StringUtils.isNotEmpty(targetAsgName))
+            if (StringUtils.isNotEmpty(targetAsgName))
             {
                 for (String targetName : targetNames)
                 {
@@ -132,7 +137,9 @@ public class AWSOutlierDetector extends AbstractOutlierDetector
                         AWSInstanceDetail awsInstanceDetail = awsInstanceDetailMap.get(ipAddress);
 
                         if (awsInstanceDetail != null && awsInstanceDetail.getAutoScalingGroup() != null && awsInstanceDetail.getAutoScalingGroup().contains(targetAsgName))
+                        {
                             targetAsgNameMap.put(targetName, awsInstanceDetail.getAutoScalingGroup());
+                        }
                     }
                 }
             }
@@ -140,28 +147,30 @@ public class AWSOutlierDetector extends AbstractOutlierDetector
         return targetAsgNameMap;
     }
 
-    private Map<String,TargetDataPointsEntity> buildTargetDataPointsEntityMapFromAsgDataPointMap(Map<String, ASGDataPoints> asgNameToDataPointsMap)
+    private Map<String, TargetDataPointsEntity> buildTargetDataPointsEntityMapFromAsgDataPointMap(Map<String, ASGDataPoints> asgNameToDataPointsMap)
     {
-        Map<String,TargetDataPointsEntity> targetNameToDataPointsEntityMap = new HashMap<String, TargetDataPointsEntity>();
+        Map<String, TargetDataPointsEntity> targetNameToDataPointsEntityMap = new HashMap<String, TargetDataPointsEntity>();
 
-        if(MapUtils.isNotEmpty(asgNameToDataPointsMap))
+        if (MapUtils.isNotEmpty(asgNameToDataPointsMap))
         {
-            for(Map.Entry<String,ASGDataPoints> entry : asgNameToDataPointsMap.entrySet())
+            for (Map.Entry<String, ASGDataPoints> entry : asgNameToDataPointsMap.entrySet())
             {
-                if(entry.getValue()!=null && CollectionUtils.isNotEmpty(entry.getValue().getAsgDataPointList()))
+                if (entry.getValue() != null && CollectionUtils.isNotEmpty(entry.getValue().getAsgDataPointList()))
                 {
                     List<ASGDataPoint> asgDataPointList = entry.getValue().getAsgDataPointList();
 
-                    for(Integer index =0 ; index < asgDataPointList.size() ;index++ )
+                    for (Integer index = 0; index < asgDataPointList.size(); index++)
                     {
                         TargetDataPointsEntity targetDataPointsEntity = new TargetDataPointsEntity();
                         targetDataPointsEntity.setCurrentValue(asgDataPointList.get(index).getValue());
-                        targetNameToDataPointsEntityMap.put(asgDataPointList.get(index).getTargetName(),targetDataPointsEntity);
+                        targetNameToDataPointsEntityMap.put(asgDataPointList.get(index).getTargetName(), targetDataPointsEntity);
 
-                        for(Integer innerIndex =0 ; innerIndex < asgDataPointList.size() ;innerIndex++ )
+                        for (Integer innerIndex = 0; innerIndex < asgDataPointList.size(); innerIndex++)
                         {
-                            if(innerIndex!=index)
+                            if (innerIndex != index)
+                            {
                                 targetDataPointsEntity.addDataPoint(asgDataPointList.get(innerIndex).getValue());
+                            }
                         }
                     }
                 }
@@ -177,7 +186,7 @@ public class AWSOutlierDetector extends AbstractOutlierDetector
         if (matcher.find())
         {
             ip = matcher.group();
-            ip = ip.replace("-",".");
+            ip = ip.replace("-", ".");
 
         }
         return ip;

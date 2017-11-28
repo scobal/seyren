@@ -56,21 +56,23 @@ public class AWSUnhealthyInstanceNotificationService implements NotificationServ
     @Override
     public void sendNotification(Check check, Subscription subscription, List<Alert> alerts) throws NotificationFailedException
     {
-        if(CollectionUtils.isNotEmpty(alerts))
+        if (CollectionUtils.isNotEmpty(alerts))
         {
             String asgName = subscription.getTarget();
             Iterator<Alert> iter = alerts.iterator();
-            while (iter.hasNext()) {
-                if (iter.next().getToType() != AlertType.ERROR) {
+            while (iter.hasNext())
+            {
+                if (iter.next().getToType() != AlertType.ERROR)
+                {
                     iter.remove();
                 }
             }
             List<String> convictedIPs = getConvictedIPs(alerts);
-            if(CollectionUtils.isNotEmpty(convictedIPs))
+            if (CollectionUtils.isNotEmpty(convictedIPs))
             {
-                Map<String,AWSInstanceDetail> awsInstanceDetailMap = awsManager.getInstanceDetail(convictedIPs);
-                List<String> instanceIdList = filterOnAsg(awsInstanceDetailMap,asgName);
-                if(CollectionUtils.isNotEmpty(instanceIdList))
+                Map<String, AWSInstanceDetail> awsInstanceDetailMap = awsManager.getInstanceDetail(convictedIPs);
+                List<String> instanceIdList = filterOnAsg(awsInstanceDetailMap, asgName);
+                if (CollectionUtils.isNotEmpty(instanceIdList))
                 {
                     awsManager.convictInstance(instanceIdList);
                 }
@@ -80,15 +82,17 @@ public class AWSUnhealthyInstanceNotificationService implements NotificationServ
 
     }
 
-    private List<String> filterOnAsg(Map<String,AWSInstanceDetail> awsInstanceDetailMap , String asgName)
+    private List<String> filterOnAsg(Map<String, AWSInstanceDetail> awsInstanceDetailMap, String asgName)
     {
         List<String> instanceIdList = new ArrayList<String>();
-        if(MapUtils.isNotEmpty(awsInstanceDetailMap))
+        if (MapUtils.isNotEmpty(awsInstanceDetailMap))
         {
-            for(AWSInstanceDetail awsInstanceDetail : awsInstanceDetailMap.values())
+            for (AWSInstanceDetail awsInstanceDetail : awsInstanceDetailMap.values())
             {
-                if(awsInstanceDetail!=null && StringUtils.isNotEmpty(asgName) && awsInstanceDetail.getAutoScalingGroup().contains(asgName))
+                if (awsInstanceDetail != null && StringUtils.isNotEmpty(asgName) && awsInstanceDetail.getAutoScalingGroup().contains(asgName))
+                {
                     instanceIdList.add(awsInstanceDetail.getInstanceId());
+                }
 
             }
         }
@@ -98,27 +102,27 @@ public class AWSUnhealthyInstanceNotificationService implements NotificationServ
     private List<String> getConvictedIPs(List<Alert> alerts)
     {
         List<String> convictedIPList = new ArrayList<String>();
-        for(Alert alert : alerts)
+        for (Alert alert : alerts)
         {
-            if(alert!=null)
+            if (alert != null)
             {
                 String target = alert.getTarget();
                 Matcher matcher = pattern.matcher(target);
                 if (matcher.find())
                 {
                     String ip = matcher.group();
-                    ip = ip.replace("-",".");
+                    ip = ip.replace("-", ".");
                     convictedIPList.add(ip);
                 }
             }
         }
-            return convictedIPList;
+        return convictedIPList;
     }
 
     private DescribeAddressesRequest buildDescribeAddressesRequest(List<String> ipAddress)
     {
         DescribeAddressesRequest describeAddressesRequest = new DescribeAddressesRequest();
-         describeAddressesRequest = describeAddressesRequest.withFilters(new Filter("private-ip-address",ipAddress));
+        describeAddressesRequest = describeAddressesRequest.withFilters(new Filter("private-ip-address", ipAddress));
 
         return describeAddressesRequest;
     }

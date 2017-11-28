@@ -18,14 +18,15 @@ public class MeanValueOutlierDetectorAlgorithm implements OutlierDetectionAlgori
     private final static Integer MIN_DATA_POINTS = 5;
 
     public MeanValueOutlierDetectorAlgorithm()
-    {}
+    {
+    }
 
     @Override
-    public boolean isOutlier(BigDecimal instanceValue , List<BigDecimal> clusterValues , Double relativeDiff , BigDecimal absoluteDiff)
+    public boolean isOutlier(BigDecimal instanceValue, List<BigDecimal> clusterValues, Double relativeDiff, BigDecimal absoluteDiff)
     {
         Boolean isOutlier = false;
 
-        if(clusterValues.size() >= MIN_DATA_POINTS)
+        if (clusterValues.size() >= MIN_DATA_POINTS)
         {
             BigDecimal comparisonMeanValue = computeMeanValue(clusterValues);
 
@@ -33,40 +34,47 @@ public class MeanValueOutlierDetectorAlgorithm implements OutlierDetectionAlgori
             {
                 BigDecimal computedRelativeDiff = instanceValue.subtract(comparisonMeanValue).divide(comparisonMeanValue, 20, RoundingMode.HALF_EVEN).multiply(new BigDecimal(100));
 
-                if(relativeDiff > 0 && computedRelativeDiff.compareTo(new BigDecimal(relativeDiff)) > 0)
+                if (relativeDiff > 0 && computedRelativeDiff.compareTo(new BigDecimal(relativeDiff)) > 0)
+                {
                     isOutlier = true;
+                }
 
                 else if (relativeDiff < 0 && computedRelativeDiff.compareTo(new BigDecimal(relativeDiff)) < 0)
+                {
                     isOutlier = true;
+                }
             }
             if (absoluteDiff != null)
             {
                 BigDecimal computedAbsoluteDiff = instanceValue.subtract(comparisonMeanValue);
                 if (absoluteDiff.compareTo(BigDecimal.ZERO) > 0 && computedAbsoluteDiff.compareTo(absoluteDiff) > 0)
+                {
                     isOutlier = true;
+                }
                 else if (absoluteDiff.compareTo(BigDecimal.ZERO) < 0 && computedAbsoluteDiff.compareTo(absoluteDiff) < 0)
+                {
                     isOutlier = true;
-
+                }
             }
         }
 
         return isOutlier;
     }
 
-   private BigDecimal computeMeanValue(List<BigDecimal> clusterValues)
-   {
-       BigDecimal meanValue = new BigDecimal(0);
-        if(CollectionUtils.isNotEmpty(clusterValues))
+    private BigDecimal computeMeanValue(List<BigDecimal> clusterValues)
+    {
+        BigDecimal meanValue = new BigDecimal(0);
+        if (CollectionUtils.isNotEmpty(clusterValues))
         {
             BigDecimal sum = new BigDecimal(0);
 
-            for(BigDecimal value : clusterValues)
+            for (BigDecimal value : clusterValues)
             {
                 sum = sum.add(value);
             }
 
-            meanValue = sum.divide(new BigDecimal(clusterValues.size()),20, RoundingMode.HALF_EVEN);
+            meanValue = sum.divide(new BigDecimal(clusterValues.size()), 20, RoundingMode.HALF_EVEN);
         }
-       return meanValue;
-   }
+        return meanValue;
+    }
 }
