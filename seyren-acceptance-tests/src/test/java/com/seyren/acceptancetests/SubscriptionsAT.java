@@ -27,7 +27,7 @@ public class SubscriptionsAT {
     
     @Test
     public void testCreateSubscriptionReturnsCreated() {
-        Header checkLocation = createCheck("{ }").getHeader("Location");
+        Header checkLocation = createCheck("{\"type\": \"threshold\"}").getHeader("Location");
         Response response = createSubscription(checkLocation, "{ }");
         assertThat(response, hasStatusCode(201));
         deleteLocation(checkLocation.getValue());

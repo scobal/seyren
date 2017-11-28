@@ -150,15 +150,15 @@ public class ChecksAT {
         Set<String> locations = new HashSet<String>();
 
         locations.add(
-                createCheck("{ \"name\": \"patternName1\", \"warn\": 1.0, \"error\": 2.0 }").
+                createCheck("{\"type\": \"threshold\", \"name\": \"patternName1\", \"warn\": 1.0, \"error\": 2.0 }").
                         getHeader("Location").getValue());
 
         locations.add(
-                createCheck("{ \"name\": \"patternName2\", \"warn\": 1.0, \"error\": 2.0 }").
+                createCheck("{\"type\": \"threshold\", \"name\": \"patternName2\", \"warn\": 1.0, \"error\": 2.0 }").
                         getHeader("Location").getValue());
 
         locations.add(
-                createCheck("{ \"name\": \"patternNameA\", \"warn\": 1.0, \"error\": 2.0 }").
+                createCheck("{\"type\": \"threshold\", \"name\": \"patternNameA\", \"warn\": 1.0, \"error\": 2.0 }").
                         getHeader("Location").getValue());
 
         return locations;
