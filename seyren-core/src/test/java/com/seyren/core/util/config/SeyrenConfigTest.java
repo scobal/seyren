@@ -132,7 +132,7 @@ public class SeyrenConfigTest {
     public void defaultHipChatUsernameIsCorrect() {
         assertThat(config.getHipChatUsername(), is("Seyren Alert"));
     }
-    
+
     @Test
     public void defaultHubotUrlIsCorrect() {
         assertThat(config.getHubotUrl(), is(""));

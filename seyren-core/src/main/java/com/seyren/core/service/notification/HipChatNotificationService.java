@@ -84,15 +84,25 @@ public class HipChatNotificationService implements NotificationService {
     }
     
     private void sendMessage(String message, MessageColor color, String[] roomIds, String from, String authToken, boolean notify) {
+        boolean useV1Api = seyrenConfig.getHipChatUseV1Api();
         for (String roomId : roomIds) {
             LOGGER.info("Posting: {} to {}: {} {}", from, roomId, message, color);
             HttpClient client = HttpClientBuilder.create().useSystemProperties().build();
             HttpPost post = new HttpPost();
 
             try {
-                String url = baseUrl + "/v2/room/" + URLEncoder.encode(roomId, "UTF-8").replaceAll("\\+", "%20") + "/notification?auth_token=" + authToken;
+                String url;
+                if (useV1Api) {
+                    url = baseUrl + "/v1/rooms/message?auth_token=" + authToken;
+                } else {
+                    url = baseUrl + "/v2/room/" + URLEncoder.encode(roomId, "UTF-8").replaceAll("\\+", "%20") + "/notification?auth_token=" + authToken;
+                }
                 post = new HttpPost(url);
                 List<BasicNameValuePair> parameters = new ArrayList<BasicNameValuePair>();
+                if (useV1Api) {
+                    parameters.add(new BasicNameValuePair("room_id", roomId));
+                    parameters.add(new BasicNameValuePair("from", from));
+                }
                 parameters.add(new BasicNameValuePair("message", message));
                 parameters.add(new BasicNameValuePair("color", color.name().toLowerCase()));
                 parameters.add(new BasicNameValuePair("message_format", "html"));
