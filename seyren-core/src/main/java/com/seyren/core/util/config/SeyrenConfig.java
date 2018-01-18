@@ -56,6 +56,7 @@ public class SeyrenConfig {
     private final String hipChatBaseUrl;
     private final String hipChatAuthToken;
     private final String hipChatUsername;
+    private final String hipChatUseV1Api;
     private final String hubotUrl;
     private final String smtpFrom;
     private final String smtpUsername;
@@ -122,6 +123,7 @@ public class SeyrenConfig {
         this.hipChatBaseUrl = configOrDefault(list("HIPCHAT_BASEURL", "HIPCHAT_BASE_URL"), "https://api.hipchat.com");
         this.hipChatAuthToken = configOrDefault(list("HIPCHAT_AUTHTOKEN", "HIPCHAT_AUTH_TOKEN"), "");
         this.hipChatUsername = configOrDefault(list("HIPCHAT_USERNAME", "HIPCHAT_USER_NAME"), "Seyren Alert");
+        this.hipChatUseV1Api = configOrDefault(list("HIPCHAT_USE_V1_API", "HIPCHAT_USE_OLD_API", "HIPCHAT_USE_V1"), "false");
         
         // PagerDuty
 
@@ -235,6 +237,11 @@ public class SeyrenConfig {
     @JsonIgnore
     public String getHipChatUsername() {
         return hipChatUsername;
+    }
+
+    @JsonIgnore
+    public boolean getHipChatUseV1Api() {
+        return Boolean.valueOf(hipChatUseV1Api);
     }
     
     @JsonIgnore

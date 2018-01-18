@@ -59,17 +59,18 @@ public class HipChatNotificationService implements NotificationService {
     public void sendNotification(Check check, Subscription subscription, List<Alert> alerts) throws NotificationFailedException {
         String token = seyrenConfig.getHipChatAuthToken();
         String from = seyrenConfig.getHipChatUsername();
+        boolean useV1Api = seyrenConfig.getHipChatUseV1Api();
         String[] roomIds = subscription.getTarget().split(",");
         try {
             if (check.getState() == AlertType.ERROR) {
                 String message = getHipChatMessage(check);
-                sendMessage(message, MessageColor.RED, roomIds, from, token, true);
+                sendMessage(message, MessageColor.RED, roomIds, from, token, useV1Api, true);
             } else if (check.getState() == AlertType.WARN) {
                 String message = getHipChatMessage(check);
-                sendMessage(message, MessageColor.YELLOW, roomIds, from, token, true);
+                sendMessage(message, MessageColor.YELLOW, roomIds, from, token, useV1Api, true);
             } else if (check.getState() == AlertType.OK) {
                 String message = getHipChatMessage(check);
-                sendMessage(message, MessageColor.GREEN, roomIds, from, token, true);
+                sendMessage(message, MessageColor.GREEN, roomIds, from, token, useV1Api, true);
             } else {
                 LOGGER.warn("Did not send notification to HipChat for check in state: {}", check.getState());
             }
@@ -83,16 +84,25 @@ public class HipChatNotificationService implements NotificationService {
         return message;
     }
     
-    private void sendMessage(String message, MessageColor color, String[] roomIds, String from, String authToken, boolean notify) {
+    private void sendMessage(String message, MessageColor color, String[] roomIds, String from, String authToken, boolean useV1Api, boolean notify) {
         for (String roomId : roomIds) {
             LOGGER.info("Posting: {} to {}: {} {}", from, roomId, message, color);
             HttpClient client = HttpClientBuilder.create().useSystemProperties().build();
             HttpPost post = new HttpPost();
 
             try {
-                String url = baseUrl + "/v2/room/" + URLEncoder.encode(roomId, "UTF-8").replaceAll("\\+", "%20") + "/notification?auth_token=" + authToken;
+                String url;
+                if (useV1Api) {
+                    url = baseUrl + "/v1/rooms/message?auth_token=" + authToken;
+                } else {
+                    url = baseUrl + "/v2/room/" + URLEncoder.encode(roomId, "UTF-8").replaceAll("\\+", "%20") + "/notification?auth_token=" + authToken;
+                }
                 post = new HttpPost(url);
                 List<BasicNameValuePair> parameters = new ArrayList<BasicNameValuePair>();
+                if (useV1Api) {
+                    parameters.add(new BasicNameValuePair("room_id", roomId));
+                    parameters.add(new BasicNameValuePair("from", from));
+                }
                 parameters.add(new BasicNameValuePair("message", message));
                 parameters.add(new BasicNameValuePair("color", color.name().toLowerCase()));
                 parameters.add(new BasicNameValuePair("message_format", "html"));
