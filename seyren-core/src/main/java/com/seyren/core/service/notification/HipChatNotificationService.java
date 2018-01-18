@@ -59,18 +59,17 @@ public class HipChatNotificationService implements NotificationService {
     public void sendNotification(Check check, Subscription subscription, List<Alert> alerts) throws NotificationFailedException {
         String token = seyrenConfig.getHipChatAuthToken();
         String from = seyrenConfig.getHipChatUsername();
-        boolean useV1Api = seyrenConfig.getHipChatUseV1Api();
         String[] roomIds = subscription.getTarget().split(",");
         try {
             if (check.getState() == AlertType.ERROR) {
                 String message = getHipChatMessage(check);
-                sendMessage(message, MessageColor.RED, roomIds, from, token, useV1Api, true);
+                sendMessage(message, MessageColor.RED, roomIds, from, token, true);
             } else if (check.getState() == AlertType.WARN) {
                 String message = getHipChatMessage(check);
-                sendMessage(message, MessageColor.YELLOW, roomIds, from, token, useV1Api, true);
+                sendMessage(message, MessageColor.YELLOW, roomIds, from, token, true);
             } else if (check.getState() == AlertType.OK) {
                 String message = getHipChatMessage(check);
-                sendMessage(message, MessageColor.GREEN, roomIds, from, token, useV1Api, true);
+                sendMessage(message, MessageColor.GREEN, roomIds, from, token, true);
             } else {
                 LOGGER.warn("Did not send notification to HipChat for check in state: {}", check.getState());
             }
@@ -84,7 +83,8 @@ public class HipChatNotificationService implements NotificationService {
         return message;
     }
     
-    private void sendMessage(String message, MessageColor color, String[] roomIds, String from, String authToken, boolean useV1Api, boolean notify) {
+    private void sendMessage(String message, MessageColor color, String[] roomIds, String from, String authToken, boolean notify) {
+        boolean useV1Api = seyrenConfig.getHipChatUseV1Api();
         for (String roomId : roomIds) {
             LOGGER.info("Posting: {} to {}: {} {}", from, roomId, message, color);
             HttpClient client = HttpClientBuilder.create().useSystemProperties().build();
