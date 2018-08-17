@@ -24,7 +24,7 @@ Seyren ([/ˈsaɪ.rʌn/](http://en.wikipedia.org/wiki/Wikipedia:IPA_for_English#K
 ### Prerequisites
 
 * An instance of Graphite
-* MongoDB ([Install instructions](http://docs.mongodb.org/manual/installation/#installation-guides Installing MongoDB))
+* MongoDB [Install instructions](http://docs.mongodb.org/manual/installation/#installation-guides)
 
 ### Run
 
