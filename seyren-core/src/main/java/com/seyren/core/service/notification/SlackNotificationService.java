@@ -124,7 +124,7 @@ public class SlackNotificationService implements NotificationService {
 
         String description;
         if (StringUtils.isNotBlank(check.getDescription())) {
-            description = String.format("\n>%s", check.getDescription().replaceAll("<br/","\n").replaceAll("<b>","*").replaceAll("</b>","*"));
+            description = String.format("\n>%s", check.getDescription().replaceAll("<br/><br/>Last synced by iWatchman.*$","").replaceAll("<br/>","\n").replaceAll("<b>","*").replaceAll("</b>","*"));
         } else {
             description = "";
         }
