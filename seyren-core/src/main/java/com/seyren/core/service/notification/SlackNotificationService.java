@@ -124,18 +124,19 @@ public class SlackNotificationService implements NotificationService {
 
         String description;
         if (StringUtils.isNotBlank(check.getDescription())) {
-            description = String.format("\n> %s", check.getDescription());
+            description = String.format("\n>%s", check.getDescription().replaceAll("<br/","\n").replaceAll("<b>","*").replaceAll("</b>","*"));
         } else {
             description = "";
         }
 
         final String state = check.getState().toString();
 
-        return String.format("%s Check %s [%s] has enterered its %s state %s",
+        return String.format("%s Check %s [%s] has entered its %s state %s %s",
                 Iterables.get(emojis, check.getState().ordinal(), ""),
                 check.getName(),
                 url,
 		state,
+		description,
                 channel
         );
     }
