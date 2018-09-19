@@ -123,22 +123,20 @@ public class SlackNotificationService implements NotificationService {
         String channel = subscription.getTarget().contains("!") ? "<!channel>" : "";
 
         String description;
-        if (StringUtils.isNotBlank(check.getDescription())) {
-            description = String.format("\n> %s", check.getDescription());
+        if (StringUtils.isNotBlank(check.getDescription()) && check.getState().ordinal() != 1) {
+            description = String.format("\n>%s", check.getDescription().replaceAll("<br/><br/>Last synced by iWatchman.*$","").replaceAll("<br/><br/>Created by iWatchman.*$","").replaceAll("<br/>","\n>").replaceAll("<b>","*").replaceAll("</b>","*"));
         } else {
             description = "";
         }
 
         final String state = check.getState().toString();
 
-        return String.format("%s*%s* %s [%s]%s\n```\n%s\n```\n#%s %s",
+        return String.format("%s Check %s [%s] has entered its %s state %s %s",
                 Iterables.get(emojis, check.getState().ordinal(), ""),
-                state,
                 check.getName(),
                 url,
-                description,
-                alertsString,
-                state.toLowerCase(Locale.getDefault()),
+		state,
+		description,
                 channel
         );
     }
