@@ -124,17 +124,17 @@ public class SlackNotificationService implements NotificationService {
 
         String description;
         if (StringUtils.isNotBlank(check.getDescription()) && check.getState().ordinal() != 1) {
-            description = String.format("\n>%s", check.getDescription().replaceAll("<br/><br/>Last synced by iWatchman.*$","").replaceAll("<br/><br/>Created by iWatchman.*$","").replaceAll("<br/>","\n>").replaceAll("<b>","*").replaceAll("</b>","*"));
+            description = String.format("\n>%s", check.getDescription().replaceAll("<br/><br/>Last synced by iWatchman.*$","").replaceAll("<br/><br/>Created by iWatchman.*$","").replaceAll("<br/>","\n").replaceAll("\n",">\n").replaceAll("<b>","*").replaceAll("</b>","*"));
         } else {
             description = "";
         }
 
         final String state = check.getState().toString();
 
-        return String.format("%s Check %s [%s] has entered its %s state %s %s",
+        return String.format("%s Check <%s|*%s*> has entered its %s state %s %s",
                 Iterables.get(emojis, check.getState().ordinal(), ""),
-                check.getName(),
                 url,
+                check.getName(),
 		state,
 		description,
                 channel
