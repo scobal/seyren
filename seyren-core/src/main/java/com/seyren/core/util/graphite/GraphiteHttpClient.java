@@ -126,6 +126,9 @@ public class GraphiteHttpClient {
                 .addParameter("until", until)
                 .addParameter("uniq", String.valueOf(new DateTime().getMillis()))
                 .addParameter("format", "json")
+                .addParameter("fgcolor", "white")
+                .addParameter("bgcolor", "black")
+                .addParameter("colorList", "blue,green,red,purple,brown,yellow,aqua,grey,magenta,pink,gold,rose")
                 .addParameter("target", target).build();
 
         HttpGet get = new HttpGet(uri);
