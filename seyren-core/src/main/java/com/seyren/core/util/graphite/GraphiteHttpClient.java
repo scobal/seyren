@@ -152,6 +152,9 @@ public class GraphiteHttpClient {
                 .addParameter("width", String.valueOf(width))
                 .addParameter("height", String.valueOf(height))
                 .addParameter("uniq", String.valueOf(new DateTime().getMillis()))
+                .addParameter("fgcolor", "white")
+                .addParameter("bgcolor", "black")
+                .addParameter("colorList", "blue,green,red,purple,brown,yellow,aqua,grey,magenta,pink,gold,rose")
                 .addParameter("hideLegend", legendState == LegendState.HIDE ? "true" : "false")
                 .addParameter("hideAxes", axesState == AxesState.HIDE ? "true" : "false");
         
