@@ -83,10 +83,10 @@ public class SlackNotificationService implements NotificationService {
         List<BasicNameValuePair> parameters = new ArrayList<BasicNameValuePair>();
         parameters.add(new BasicNameValuePair("token", token));
         parameters.add(new BasicNameValuePair("channel", StringUtils.removeEnd(channel, "!")));
-        parameters.add(new BasicNameValuePair("text", formatContent(emojis, check, subscription, alerts)));
+        parameters.add(new BasicNameValuePair("text", " "));
         parameters.add(new BasicNameValuePair("username", username));
         parameters.add(new BasicNameValuePair("icon_url", iconUrl));
-        parameters.add(new BasicNameValuePair("attachment", attachmentJson));
+        parameters.add(new BasicNameValuePair("attachment", formatAttachment(check, alerts)));
 
         try {
             post.setEntity(new UrlEncodedFormEntity(parameters));
@@ -112,6 +112,46 @@ public class SlackNotificationService implements NotificationService {
         return subscriptionType == SubscriptionType.SLACK;
     }
 
+    private String formatAttachment(Check check, List<Alert> alerts){
+        String name = check.getName();
+        String state = check.getState().toString();
+        String url = String.format("%s/#/checks/%s", seyrenConfig.getBaseUrl(), check.getId());
+        String color;
+        String titletext = String.format("*Check <%s|*%s*> has entered its %s state.*", name, url, state);
+        String message = " ";
+        if (!state.equals("OK")) {
+            message = String.format("\n>%s", check.getDescription()
+                .replaceAll("<br/><br/>Last synced by iWatchman.*$","")
+                .replaceAll("<br/><br/>Created by iWatchman.*$","")
+                .replaceAll("<br/>","\n")
+                .replaceAll("\n",">\n")
+                .replaceAll("<b>","*")
+                .replaceAll("</b>","*"));
+        }
+        String text = String.format("\"text\":\"%s\"", message);
+        //Slack colors can be good, warning, danger
+        //Seyren gives us OK, WARN, ERROR
+        //I'd use switch but it's only good for Java 1.7 and above
+
+        if (state.equals("OK")) {
+            color = "good";
+        } else if (state.equals("WARN")) {
+            color = "warning";
+        } else if (state.equals("DANGER")) {
+            color = "danger";
+        } else {
+            color = "";
+        }
+
+        String fallback = String.format("\"fallback\":\"%s\"", titletext);
+        String title = String.format("\"title\":\"%s\"", titletext);
+        String fields = String.format("\"fields\": [{\"title\": \"Level\",\"value\": \"%s\",\"short\": false}]", state);
+        String attachment = String.format("[{%s, %s, %s, %s, %s}]", fallback, text, color, title, fields );
+        return attachment;
+    }
+
+
+    //If all of the info is to be in the attachment the below function is redundant
     private String formatContent(List<String> emojis, Check check, Subscription subscription, List<Alert> alerts) {
         String url = String.format("%s/#/checks/%s", seyrenConfig.getBaseUrl(), check.getId());
         String alertsString = Joiner.on("\n").join(transform(alerts, new Function<Alert, String>() {
