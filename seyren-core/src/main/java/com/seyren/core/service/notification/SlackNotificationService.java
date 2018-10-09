@@ -134,11 +134,11 @@ public class SlackNotificationService implements NotificationService {
         //I'd use switch but it's only good for Java 1.7 and above
 
         if (state.equals("OK")) {
-            color = "good";
+            color = "\"color\": \"good\"";
         } else if (state.equals("WARN")) {
-            color = "warning";
+            color = "\"color\": \"warning\"";
         } else if (state.equals("ERROR")) {
-            color = "danger";
+            color = "\"color\": \"danger\"";
         } else {
             color = "";
         }
