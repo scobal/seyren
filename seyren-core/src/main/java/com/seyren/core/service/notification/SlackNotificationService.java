@@ -124,7 +124,7 @@ public class SlackNotificationService implements NotificationService {
                 .replaceAll("<br/><br/>Last synced by iWatchman.*$","")
                 .replaceAll("<br/><br/>Created by iWatchman.*$","")
                 .replaceAll("<br/>","\n")
-                .replaceAll("\n",">\n")
+                .replaceAll("\n","\n")
                 .replaceAll("<b>","*")
                 .replaceAll("</b>","*"));
         }
