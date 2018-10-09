@@ -141,6 +141,7 @@ public class SlackNotificationService implements NotificationService {
                     dashUrl = part;
                 }
             }
+            message = message.replace(dashUrl, "");
         }
 
         if (!dashUrl.isEmpty()){
