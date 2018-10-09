@@ -18,6 +18,7 @@ import static com.google.common.collect.Iterables.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -117,6 +118,11 @@ public class SlackNotificationService implements NotificationService {
         String state = check.getState().toString();
         String url = String.format("%s/#/checks/%s", seyrenConfig.getBaseUrl(), check.getId());
         String color;
+        String actions = "";
+        String dashUrl = "";
+        String dashText = "";
+        String runText = "";
+        String runUrl = "";
         String titletext = String.format("Check <%s|*%s*> has entered its %s state.", url, name, state);
         String message = " ";
         if (!state.equals("OK")) {
@@ -127,6 +133,21 @@ public class SlackNotificationService implements NotificationService {
                 .replaceAll("<b>","*")
                 .replaceAll("</b>","*"));
         }
+
+        if (message.contains("http://grafana.je-labs.com")){
+            dashUrl = "http://grafana.je-labs.com" + StringUtils.substringBetween(message, "http://grafana.je-labs.com", " ");
+        }
+
+        if (!dashUrl.isEmpty()){
+            dashText = String.format("{\"type\": \"button\", \"text\": \"Dashboard :chart_with_downwards_trend:\", \"url\": \"%s\" }", dashUrl);
+        }
+        if (!runUrl.isEmpty()){
+            runText = String.format("{\"type\": \"button\", \"text\": \"Runbook :book:\", \"url\": \"%s\" }", runUrl);
+        }
+        if (!dashText.isEmpty() || !runText.isEmpty()){
+            actions = String.format("\"actions\": %s, %s", dashText, runText);
+        }
+
         String text = String.format("\"text\":\"%s\"", message);
         //Slack colors can be good, warning, danger
         //Seyren gives us OK, WARN, ERROR
@@ -144,7 +165,7 @@ public class SlackNotificationService implements NotificationService {
 
         String fallback = String.format("\"fallback\":\"%s\"", titletext);
         String title = String.format("\"title\":\"%s\"", titletext);
-        String attachment = String.format("[{%s, %s, %s, %s}]", fallback, text, color, title );
+        String attachment = String.format("[{%s, %s, %s, %s, %s}]", fallback, text, color, title, actions );
         return attachment;
     }
 
