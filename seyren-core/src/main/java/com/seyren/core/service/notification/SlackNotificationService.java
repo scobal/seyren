@@ -83,7 +83,7 @@ public class SlackNotificationService implements NotificationService {
         List<BasicNameValuePair> parameters = new ArrayList<BasicNameValuePair>();
         parameters.add(new BasicNameValuePair("token", token));
         parameters.add(new BasicNameValuePair("channel", StringUtils.removeEnd(channel, "!")));
-        parameters.add(new BasicNameValuePair("text", formatAttachment(check, alerts)));
+        parameters.add(new BasicNameValuePair("text", " "));
         parameters.add(new BasicNameValuePair("username", username));
         parameters.add(new BasicNameValuePair("icon_url", iconUrl));
         parameters.add(new BasicNameValuePair("attachments", formatAttachment(check, alerts)));
@@ -117,7 +117,7 @@ public class SlackNotificationService implements NotificationService {
         String state = check.getState().toString();
         String url = String.format("%s/#/checks/%s", seyrenConfig.getBaseUrl(), check.getId());
         String color;
-        String titletext = String.format("*Check <%s|*%s*> has entered its %s state.*", name, url, state);
+        String titletext = String.format("Check <%s|*%s*> has entered its %s state.", name, url, state);
         String message = " ";
         if (!state.equals("OK")) {
             message = String.format("\n>%s", check.getDescription()
