@@ -86,7 +86,7 @@ public class SlackNotificationService implements NotificationService {
         parameters.add(new BasicNameValuePair("text", formatAttachment(check, alerts)));
         parameters.add(new BasicNameValuePair("username", username));
         parameters.add(new BasicNameValuePair("icon_url", iconUrl));
-        parameters.add(new BasicNameValuePair("attachment", formatAttachment(check, alerts)));
+        parameters.add(new BasicNameValuePair("attachments", formatAttachment(check, alerts)));
 
         try {
             post.setEntity(new UrlEncodedFormEntity(parameters));
