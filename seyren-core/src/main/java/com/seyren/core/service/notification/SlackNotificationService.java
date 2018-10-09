@@ -117,7 +117,7 @@ public class SlackNotificationService implements NotificationService {
         String state = check.getState().toString();
         String url = String.format("%s/#/checks/%s", seyrenConfig.getBaseUrl(), check.getId());
         String color;
-        String titletext = String.format("Check <%s|*%s*> has entered its %s state.", name, url, state);
+        String titletext = String.format("Check <%s|*%s*> has entered its %s state.", url, name, state);
         String message = " ";
         if (!state.equals("OK")) {
             message = String.format("\n>%s", check.getDescription()
