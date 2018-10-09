@@ -145,7 +145,7 @@ public class SlackNotificationService implements NotificationService {
             runText = String.format("{\"type\": \"button\", \"text\": \"Runbook :book:\", \"url\": \"%s\" }", runUrl);
         }
         if (!dashText.isEmpty() || !runText.isEmpty()){
-            actions = String.format("\"actions\": %s, %s", dashText, runText);
+            actions = String.format("\"actions\": [ %s, %s ]", dashText, runText);
         }
 
         String text = String.format("\"text\":\"%s\"", message);
