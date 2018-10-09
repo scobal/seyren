@@ -142,6 +142,18 @@ public class SlackNotificationService implements NotificationService {
                 }
             }
             message = message.replace(dashUrl, "");
+            message = message.replace("Dashboard: ", "");
+        }
+
+        if (message.contains("runbook.md")) {
+            String[] parts = message.split("\\s+");
+            for (String part: parts){
+                if (part.contains("runbook.md")){
+                    runUrl = part;
+                }
+            }
+            message = message.replace(runUrl, "");
+            message = message.replace("Runbook: ", "");           
         }
 
         if (!dashUrl.isEmpty()){
