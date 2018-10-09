@@ -144,8 +144,7 @@ public class SlackNotificationService implements NotificationService {
 
         String fallback = String.format("\"fallback\":\"%s\"", titletext);
         String title = String.format("\"title\":\"%s\"", titletext);
-        String fields = String.format("\"fields\": [{\"title\": \"Level\",\"value\": \"%s\",\"short\": false}]", state);
-        String attachment = String.format("[{%s, %s, %s, %s, %s}]", fallback, text, color, title, fields );
+        String attachment = String.format("[{%s, %s, %s, %s}]", fallback, text, color, title );
         return attachment;
     }
 
