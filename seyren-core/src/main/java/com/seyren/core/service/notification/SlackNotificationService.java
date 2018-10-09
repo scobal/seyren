@@ -126,7 +126,7 @@ public class SlackNotificationService implements NotificationService {
         String titletext = String.format("Check <%s|*%s*> has entered its %s state.", url, name, state);
         String message = " ";
         if (!state.equals("OK")) {
-            message = String.format("\n>%s", check.getDescription()
+            message = String.format("%s", check.getDescription()
                 .replaceAll("<br/><br/>Last synced by iWatchman.*$","")
                 .replaceAll("<br/><br/>Created by iWatchman.*$","")
                 .replaceAll("<br/>","\n")
