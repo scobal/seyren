@@ -137,7 +137,7 @@ public class SlackNotificationService implements NotificationService {
             color = "good";
         } else if (state.equals("WARN")) {
             color = "warning";
-        } else if (state.equals("DANGER")) {
+        } else if (state.equals("ERROR")) {
             color = "danger";
         } else {
             color = "";
