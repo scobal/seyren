@@ -135,7 +135,12 @@ public class SlackNotificationService implements NotificationService {
         }
 
         if (message.contains("http://grafana.je-labs.com")){
-            dashUrl = "http://grafana.je-labs.com" + StringUtils.substringBetween(message, "http://grafana.je-labs.com", " ");
+            String[] parts = message.split(" ");
+            for (String part: parts){
+                if (part.contains("http://grafana.je-labs.com")){
+                    dashUrl = part;
+                }
+            }
         }
 
         if (!dashUrl.isEmpty()){
