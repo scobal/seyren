@@ -84,8 +84,8 @@ public class SlackNotificationService implements NotificationService {
         List<BasicNameValuePair> parameters = new ArrayList<BasicNameValuePair>();
         parameters.add(new BasicNameValuePair("token", token));
         parameters.add(new BasicNameValuePair("channel", StringUtils.removeEnd(channel, "!")));
-        parameters.add(new BasicNameValuePair("text", " "));
-        parameters.add(new BasicNameValuePair("username", username));
+        parameters.add(new BasicNameValuePair("text", check.getState().toString()));
+        parameters.add(new BasicNameValuePair("username", check.getName()));
         parameters.add(new BasicNameValuePair("icon_url", iconUrl));
         parameters.add(new BasicNameValuePair("attachments", formatAttachment(check, alerts)));
 
@@ -142,7 +142,8 @@ public class SlackNotificationService implements NotificationService {
                 }
             }
             message = message.replace(dashUrl, "");
-            message = message.replace("Dashboard: ", "");
+            message = message.replace("Dashboard:", "");
+            message = message.replace("Dashboards:", "");
         }
 
         if (message.contains("runbook.md")) {
@@ -153,7 +154,7 @@ public class SlackNotificationService implements NotificationService {
                 }
             }
             message = message.replace(runUrl, "");
-            message = message.replace("Runbook: ", "");           
+            message = message.replace("Runbook:", "");           
         }
 
         if (!dashUrl.isEmpty()){
@@ -178,7 +179,7 @@ public class SlackNotificationService implements NotificationService {
         } else if (state.equals("ERROR")) {
             color = "\"color\": \"danger\"";
         } else {
-            color = "";
+            color = "\"color\": \"#000088\"";
         }
 
         String fallback = String.format("\"fallback\":\"%s\"", titletext);
@@ -213,8 +214,8 @@ public class SlackNotificationService implements NotificationService {
                 Iterables.get(emojis, check.getState().ordinal(), ""),
                 url,
                 check.getName(),
-		state,
-		description,
+		        state,
+		        description,
                 channel
         );
     }
