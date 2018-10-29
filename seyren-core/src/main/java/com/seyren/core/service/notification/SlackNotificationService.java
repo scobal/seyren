@@ -131,7 +131,8 @@ public class SlackNotificationService implements NotificationService {
                 .replaceAll("<br/><br/>Created by iWatchman.*$","")
                 .replaceAll("<br/>","\n")
                 .replaceAll("<b>","*")
-                .replaceAll("</b>","*"));
+                .replaceAll("</b>","*")
+                .replaceAll("<.*>",""));
         }
 
         if (message.contains("http://grafana.je-labs.com")){
