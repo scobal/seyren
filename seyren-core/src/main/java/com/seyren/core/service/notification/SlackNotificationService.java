@@ -132,7 +132,9 @@ public class SlackNotificationService implements NotificationService {
                 .replaceAll("<br/>","\n")
                 .replaceAll("<b>","*")
                 .replaceAll("</b>","*")
-                .replaceAll("<.*>",""));
+                .replaceAll("<.*>","")
+                .replaceAll("Please fully define the feature '.*' in Platform Metadata.","")
+                .replaceAll("Please fully define the feature '.*' in .",""));
         }
 
         if (message.contains("http://grafana.je-labs.com")){
@@ -147,7 +149,7 @@ public class SlackNotificationService implements NotificationService {
             message = message.replace("Dashboards:", "");
         }
 
-        if (message.contains("runbook.md")) {
+        if (message.toLowerCase().contains("runbook.md".toLowerCase())) {
             String[] parts = message.split("\\s+");
             for (String part: parts){
                 if (part.contains("runbook.md")){
