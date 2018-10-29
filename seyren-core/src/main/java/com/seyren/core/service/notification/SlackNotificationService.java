@@ -149,10 +149,10 @@ public class SlackNotificationService implements NotificationService {
             message = message.replace("Dashboards:", "");
         }
 
-        if (message.toLowerCase().contains("runbook.md".toLowerCase())) {
+        if (message.toLowerCase().contains("runbook.md")) {
             String[] parts = message.split("\\s+");
             for (String part: parts){
-                if (part.contains("runbook.md".toLowerCase())){
+                if (part.toLowerCase().contains("runbook.md")){
                     runUrl = part;
                 }
             }
