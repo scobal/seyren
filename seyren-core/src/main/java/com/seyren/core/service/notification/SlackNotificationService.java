@@ -215,8 +215,8 @@ public class SlackNotificationService implements NotificationService {
                 Iterables.get(emojis, check.getState().ordinal(), ""),
                 url,
                 check.getName(),
-		    state,
-		    description,
+		state,
+		description,
                 channel
         );
     }
