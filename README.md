@@ -62,7 +62,7 @@ The following options can be supplied as system properties or environment variab
 * `GRAPHITE_KEYSTORE` - The HTTP KeyStore path for the https Graphite server. Default: ``
 * `GRAPHITE_KEYSTORE_PASSWORD` - The HTTP KeyStore password for the HTTPS Graphite server. Default: ``
 * `GRAPHITE_TRUSTSTORE` - The HTTP TrustStore path for the https Graphite server. Default: ``
-* `GRAPHITE_CONNECTION_REQUEST_TIMEOUT` - The number of millisconds to wait to obtain a connection from the pool. Default: `0` (infinite)
+* `GRAPHITE_CONNECTION_REQUEST_TIMEOUT` - The number of milliseconds to wait to obtain a connection from the pool. Default: `0` (infinite)
 * `GRAPHITE_CONNECT_TIMEOUT` - The number of milliseconds to wait to establish a connection. Default: `0` (infinite)
 * `GRAPHITE_SOCKET_TIMEOUT` - The number of milliseconds to wait for request data. Default: `0` (infinite)
 
