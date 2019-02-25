@@ -59,7 +59,7 @@
         <com.fasterxml.jackson.jaxrs.version>2.5.0</com.fasterxml.jackson.jaxrs.version>
         <com.github.rest-driver.version>1.1.42</com.github.rest-driver.version>
         <com.google.guava.version>18.0</com.google.guava.version>
-        <com.opsgenie.integration.sdk.version>2.0.7</com.opsgenie.integration.sdk.version>
+        <com.opsgenie.integration.sdk.version>[2.0.0,)</com.opsgenie.integration.sdk.version>
         <com.squareup.pagerduty.version>1.0.1</com.squareup.pagerduty.version>
         <commons.io.version>2.4</commons.io.version>
         <commons-lang.version>2.6</commons-lang.version>
