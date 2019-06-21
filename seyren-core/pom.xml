@@ -109,12 +109,4 @@
         	<artifactId>sdk</artifactId>
     	</dependency>
     </dependencies>
-	<repositories>
-	  <repository>
-	      <id>opsgenie-repo</id>
-	      <name>OpsGenie Maven Repository</name>
-	      <url>http://repo.opsgenie.com:9393/content/groups/public</url>
-	      <layout>default</layout>
-	  </repository>
-	</repositories>
 </project>
