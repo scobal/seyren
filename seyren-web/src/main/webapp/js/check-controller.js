@@ -27,9 +27,6 @@
                 }, {
                     description : "1 day",
                     minutes : -1440
-                }, {
-                    description : "1 week",
-                    minutes : -10080
                 }];
             } else {
                 $scope.graphs = [];
