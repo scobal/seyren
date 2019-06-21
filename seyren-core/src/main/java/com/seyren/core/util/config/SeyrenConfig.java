@@ -48,6 +48,8 @@ public class SeyrenConfig {
     private final int graphiteConnectionRequestTimeout;
     private final int graphiteConnectTimeout;
     private final int graphiteSocketTimeout;
+    private final int graphiteMaxConnPerRoute;
+    private final int graphiteMaxConnTotal;
     private final String twilioUrl;
     private final String twilioAccountSid;
     private final String twilioAuthToken;
@@ -105,6 +107,8 @@ public class SeyrenConfig {
         this.graphiteConnectionRequestTimeout = Integer.parseInt(configOrDefault("GRAPHITE_CONNECTION_REQUEST_TIMEOUT", "0"));
         this.graphiteConnectTimeout = Integer.parseInt(configOrDefault("GRAPHITE_CONNECT_TIMEOUT", "0"));
         this.graphiteSocketTimeout = Integer.parseInt(configOrDefault("GRAPHITE_SOCKET_TIMEOUT", "0"));
+        this.graphiteMaxConnPerRoute = Integer.parseInt(configOrDefault("GRAPHITE_MAX_CONNECTIONS_PER_ROUTE", "2"));
+        this.graphiteMaxConnTotal = Integer.parseInt(configOrDefault("GRAPHITE_MAX_CONNECTIONS_TOTAL", "20"));
 
         // HTTP
 
@@ -395,6 +399,16 @@ public class SeyrenConfig {
     @JsonIgnore
     public int getGraphiteSocketTimeout() {
         return graphiteSocketTimeout;
+    }
+
+    @JsonIgnore
+    public int getGraphiteMaxConnPerRoute() {
+        return graphiteMaxConnPerRoute;
+    }
+
+    @JsonIgnore
+    public int getGraphiteMaxConnTotal() {
+        return graphiteMaxConnTotal;
     }
 
     @JsonIgnore

@@ -68,7 +68,6 @@ public class GraphiteHttpClient {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(GraphiteHttpClient.class);
     private static final String THRESHOLD_TARGET = "alias(dashed(color(constantLine(%s),\"%s\")),\"%s\")";
-    private static final int MAX_CONNECTIONS_PER_ROUTE = 20;
     
     private final JsonNodeResponseHandler jsonNodeHandler = new JsonNodeResponseHandler();
     private final ByteArrayResponseHandler chartBytesHandler = new ByteArrayResponseHandler();
@@ -83,6 +82,8 @@ public class GraphiteHttpClient {
     private final int graphiteConnectionRequestTimeout;
     private final int graphiteConnectTimeout;
     private final int graphiteSocketTimeout;
+    private final int graphiteMaxConnPerRoute;
+    private final int graphiteMaxConnTotal;
     private final HttpClient client;
     private final HttpContext context;
     
@@ -99,6 +100,8 @@ public class GraphiteHttpClient {
         this.graphiteConnectionRequestTimeout = seyrenConfig.getGraphiteConnectionRequestTimeout();
         this.graphiteConnectTimeout = seyrenConfig.getGraphiteConnectTimeout();
         this.graphiteSocketTimeout = seyrenConfig.getGraphiteSocketTimeout();
+        this.graphiteMaxConnPerRoute = seyrenConfig.getGraphiteMaxConnPerRoute();
+        this.graphiteMaxConnTotal = seyrenConfig.getGraphiteMaxConnTotal();
         this.context = new BasicHttpContext();
         this.client = createHttpClient();
     }
@@ -252,7 +255,8 @@ public class GraphiteHttpClient {
             manager = new PoolingHttpClientConnectionManager();
         }
         
-        manager.setDefaultMaxPerRoute(MAX_CONNECTIONS_PER_ROUTE);
+        manager.setDefaultMaxPerRoute(graphiteMaxConnPerRoute);
+        manager.setMaxTotal(graphiteMaxConnTotal);
         return manager;
     }
     
