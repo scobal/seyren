@@ -49,7 +49,7 @@
     </modules>
 
     <properties>
-        <mongo.version>3.2.6</mongo.version>
+        <mongo.version>3.6.4</mongo.version>
         
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -59,7 +59,7 @@
         <com.fasterxml.jackson.jaxrs.version>2.5.0</com.fasterxml.jackson.jaxrs.version>
         <com.github.rest-driver.version>1.1.42</com.github.rest-driver.version>
         <com.google.guava.version>18.0</com.google.guava.version>
-        <com.opsgenie.integration.sdk.version>2.0.7</com.opsgenie.integration.sdk.version>
+        <com.opsgenie.integration.sdk.version>[2.0.0,)</com.opsgenie.integration.sdk.version>
         <com.squareup.pagerduty.version>1.0.1</com.squareup.pagerduty.version>
         <commons.io.version>2.4</commons.io.version>
         <commons-lang.version>2.6</commons-lang.version>
@@ -74,10 +74,10 @@
         <org.hamcrest.version>1.3</org.hamcrest.version>
         <org.jboss.resteasy.version>3.0.10.Final</org.jboss.resteasy.version>
         <org.mockito.version>1.9.5</org.mockito.version>
-        <org.mongodb.version>3.2.2</org.mongodb.version>
+        <org.mongodb.version>3.6.4</org.mongodb.version>
         <org.python.version>2.5.3</org.python.version>
         <org.slf4j.version>1.7.9</org.slf4j.version>
-        <org.snmp4j.version>2.3.3</org.snmp4j.version>
+        <org.snmp4j.version>3.2.1</org.snmp4j.version>
         <org.springframework.version>4.1.4.RELEASE</org.springframework.version>
     </properties>
     
