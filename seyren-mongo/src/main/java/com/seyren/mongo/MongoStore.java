@@ -114,7 +114,6 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
     private void addTargetHashToAlerts() {
         LOGGER.info("Adding targetHash field to any alerts which don't have it");
         DBCursor alerts = getAlertsCollection().find(new BasicDBObject("targetHash", new BasicDBObject("$exists", false)));
-        alerts.addOption(Bytes.QUERYOPTION_NOTIMEOUT);
         int alertCount = alerts.count();
         if (alertCount > 0) {
             LOGGER.info("Found {} alert(s) which need updating", alertCount);
