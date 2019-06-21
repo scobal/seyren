@@ -7,7 +7,7 @@
         <file>${SEYREN_LOG_PATH}seyren.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>${SEYREN_LOG_PATH}seyren.%d{yyyy-MM-dd}.log.zip</fileNamePattern>
-            <maxHistory>28</maxHistory>
+            <maxHistory>2</maxHistory>
         </rollingPolicy>
         <encoder>
             <pattern>%d{dd/MM/yyyy HH:mm:ss.SSS} [%thread] %-5level %X{logItemId} %logger{36} - %msg%n %X{stack}</pattern>
