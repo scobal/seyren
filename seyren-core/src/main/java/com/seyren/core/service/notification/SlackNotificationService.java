@@ -157,7 +157,7 @@ public class SlackNotificationService implements NotificationService {
                 }
             }
             message = message.replace(runUrl, "");
-            message = message.replace("Runbook:", "");
+            message = message.replace("Runbook:", "");           
         }
 
         if (!dashUrl.isEmpty()){
@@ -189,5 +189,37 @@ public class SlackNotificationService implements NotificationService {
         String title = String.format("\"title\":\"%s\"", titletext);
         String attachment = String.format("[{%s, %s, %s, %s, %s}]", fallback, text, color, title, actions );
         return attachment;
+    }
+
+
+    //If all of the info is to be in the attachment the below function is redundant
+    private String formatContent(List<String> emojis, Check check, Subscription subscription, List<Alert> alerts) {
+        String url = String.format("%s/#/checks/%s", seyrenConfig.getBaseUrl(), check.getId());
+        String alertsString = Joiner.on("\n").join(transform(alerts, new Function<Alert, String>() {
+            @Override
+            public String apply(Alert input) {
+                return String.format("%s = %s (%s to %s)", input.getTarget(), input.getValue().toString(), input.getFromType(), input.getToType());
+            }
+        }));
+
+        String channel = subscription.getTarget().contains("!") ? "<!channel>" : "";
+
+        String description;
+        if (StringUtils.isNotBlank(check.getDescription()) && check.getState().ordinal() != 1) {
+            description = String.format("\n>%s", check.getDescription().replaceAll("<br/><br/>Last synced by iWatchman.*$","").replaceAll("<br/><br/>Created by iWatchman.*$","").replaceAll("<br/>","\n").replaceAll("\n",">\n").replaceAll("<b>","*").replaceAll("</b>","*"));
+        } else {
+            description = "";
+        }
+
+        final String state = check.getState().toString();
+
+        return String.format("%s Check <%s|*%s*> has entered its %s state %s %s",
+                Iterables.get(emojis, check.getState().ordinal(), ""),
+                url,
+                check.getName(),
+		state,
+		description,
+                channel
+        );
     }
 }
