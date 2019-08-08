@@ -82,6 +82,8 @@ public class SeyrenConfig {
     private final String victorOpsRestAPIEndpoint;
     private final String emailTemplateFileName;
     private final String emailSubjectTemplateFileName;
+    private final String bigPandaNotificationUrl;
+    private final String bigPandaAuthBearer;
     private final int noOfThreads;
     private final String httpNotificationUrl;
     public SeyrenConfig() {
@@ -161,6 +163,10 @@ public class SeyrenConfig {
 
         //VictorOps
         this.victorOpsRestAPIEndpoint = configOrDefault("VICTOROPS_REST_ENDPOINT", "");
+
+        //BigPanda
+        this.bigPandaNotificationUrl = configOrDefault("BIGPANDA_NOTIFICATION_URL", "");
+        this.bigPandaAuthBearer = configOrDefault("BIGPANDA_AUTH_BEARER", "");
 
         // Template
         this.emailTemplateFileName = configOrDefault("TEMPLATE_EMAIL_FILE_PATH","com/seyren/core/service/notification/email-template.vm");
@@ -412,6 +418,16 @@ public class SeyrenConfig {
     }
 
     @JsonIgnore
+    public String getBigPandaNotificationUrl() {
+        return bigPandaNotificationUrl;
+    }
+
+    @JsonIgnore
+    public String getBigPandaAuthBearer() {
+        return bigPandaAuthBearer;
+    }
+
+    @JsonIgnore
     public int getNoOfThreads() {
         return noOfThreads;
     }
@@ -462,9 +478,9 @@ public class SeyrenConfig {
     private static String[] splitBaseUrl(String baseUrl) {
         String[] baseParts = new String[4];
         
-        if (baseUrl.toString().contains("://")) {
-            baseParts[0] = baseUrl.toString().split("://")[0];
-            baseUrl = baseUrl.toString().split("://")[1];
+        if (baseUrl.contains("://")) {
+            baseParts[0] = baseUrl.split("://")[0];
+            baseUrl = baseUrl.split("://")[1];
         } else {
             baseParts[0] = "http";
         }

@@ -13,7 +13,9 @@
         </thead>
         <tbody>
             <tr ng-repeat="check in unhealthyChecks.values" ng-click="selectCheck(check.id)" style="cursor: pointer;">
-                <td title="{{ check.target }}">{{ check.name }}</td>
+                <td title="{{ check.target }}">
+                    <a href='#/checks/{{ check.id }}'>{{ check.name }}</a>
+                </td>
                 <td>
                     <span ng-show="check.state == 'UNKNOWN'" class="label label-default">{{ check.state }}</span>
                     <span ng-show="check.state == 'OK'" class="label label-success">{{ check.state }}</span>
@@ -23,7 +25,7 @@
                 </td>
                 <td>{{ check.warn }}</td>
                 <td>{{ check.error }}</td>
-                <td><input type="checkbox" ng-checked="{{ check.enabled }}" ng-click="swapEnabled(check); $event.stopPropagation();" /></td>
+                <td><input type="checkbox" ng-checked="{{ check.enabled }}" ng-click="swapCheckEnabled(check); $event.stopPropagation();" /></td>
             </tr>
         </tbody>
     </table>
@@ -49,7 +51,9 @@
             <tr ng-repeat="alert in alertStream.values" ng-click="selectCheck(alert.checkId)" style="cursor: pointer;">
                 <td>{{ alert.timestamp | date: 'yyyy-MM-dd HH:mm:ss' }}</td>
                 <td><span am-time-ago="alert.timestamp"></span></td>
-                <td title="{{ alert.target }}">{{ checkNames[alert.checkId] }}</span></td>
+                <td title="{{ alert.target }}">
+                    <a href='#/checks/{{ alert.checkId }}'>{{ checkNames[alert.checkId] }}</a>
+                </td>
                 <td>{{ alert.value }}</td>
                 <td>{{ alert.warn }}</td>
                 <td>{{ alert.error }}</td>

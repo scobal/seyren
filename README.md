@@ -21,17 +21,17 @@ Seyren ([/ˈsaɪ.rʌn/](http://en.wikipedia.org/wiki/Wikipedia:IPA_for_English#K
 [![Build Status](https://travis-ci.org/scobal/seyren.svg?branch=master)](https://travis-ci.org/scobal/seyren)
 [![Gitter chat](https://badges.gitter.im/scobal/seyren.png)](https://gitter.im/scobal/seyren)
 
-###Prerequisites
+### Prerequisites
 
 * An instance of Graphite
 * MongoDB ([Install instructions](http://docs.mongodb.org/manual/installation/#installation-guides Installing MongoDB))
 
-###Run
+### Run
 
 ```
-wget https://github.com/scobal/seyren/releases/download/1.3.0/seyren-1.3.0.jar
+wget https://github.com/scobal/seyren/releases/download/1.5.0/seyren-1.5.0.jar
 export GRAPHITE_URL=http://graphite.foohost.com:80
-java -jar seyren-1.3.0.jar
+java -jar seyren-1.5.0.jar
 open http://localhost:8080
 ```
 
@@ -39,10 +39,10 @@ To run seyren on another port:
 
 ```
 export SEYREN_URL="http://localhost:8081/seyren"
-java -jar seyren-1.3.0.jar -httpPort=8081
+java -jar seyren-1.5.0.jar -httpPort=8081
 ```
 
-###Config
+### Config
 
 The following options can be supplied as system properties or environment variables.
 
@@ -76,6 +76,13 @@ The following options can be supplied as system properties or environment variab
 
 ##### [HTTP]
 * `HTTP_NOTIFICATION_URL` - The url for a resource that contains a POST HTTP Method. Default: ``
+
+##### [BigPanda.io](https://bigpanda.io)
+
+Use a [Big Panda App Key](https://a.bigpanda.io/#/app/integrations/alertsapi/instructions/alertsapi) as Target when adding a new subscription.
+
+* `BIGPANDA_NOTIFICATION_URL` - The url for a resource that contains a POST HTTP Method. Default: ``
+* `BIGPANDA_AUTH_BEARER` - The Authorization Bearer header that is assigned to each customer by BigPanda. See [Alerts API integration](https://a.bigpanda.io/#/app/integrations/alertsapi/instructions/alertsapi) Default: ``
 
 ##### [Flowdock](https://www.flowdock.com)
 
@@ -139,18 +146,18 @@ The target for a Slack subscription will be the channel name (including the `#`,
 The Proxy settings are changed by using JAVA_OPTS. It important that you exclude your graphite server or you will proxy these requests also.
 * `JAVA_OPTS Example` JAVA_OPTS="-server -Dhttps.proxyHost=`PROXYSERVER` -Dhttps.proxyPort=`PROXYPORT` -Dhttp.proxyHost=`PROXYSERVER` -Dhttp.proxyPort=`PROXYPORT` -Dhttp.nonProxyHosts=`GRAPHITESERVER|*YOURDOMAIN.COM|INTERNALHIPCHAT`"
 
-##Seyren API
+## Seyren API
 
 See [Seyren API](API.md)
 
-##Chef
+## Chef
 
 You can use [Seyren Cookbook](https://github.com/obazoud/chef-seyren) to deploy Seyren with [Chef](http://www.getchef.com/).
 
-##Docker
+## Docker
 You can use the [Docker Seyren Image](https://registry.hub.docker.com/u/usman/docker-seyren/) to deploy a seyren instance in a [docker](https://docker.com) container.
 
-##Docker compose
+## Docker compose
 You can use `docker-compose` to create containers and hack seyren.
 First, you need to install [Docker and Docker Compose](https://docs.docker.com/compose/#installation-and-set-up).
 Then, you just need to start Docker Compose:
@@ -160,11 +167,11 @@ docker-compose up
 and open [http://localhost:8080/seyren](http://localhost:8080/seyren).
 Graphite is available on [http://localhost:8081/](http://localhost:8081/) with Basic Auth guest/guest.
 
-##Init script
+## Init script
 
 [Seyren-Init](https://github.com/wingZero21/Seyren-Init) is an init.d script which allows you to start the service.
 
-##Development
+## Development
 
 [![Build Status](https://secure.travis-ci.org/scobal/seyren.png?branch=master)](http://travis-ci.org/scobal/seyren)
 
@@ -194,3 +201,7 @@ mvn package -DskipTests
 # Set environment variables as needed.
 java -jar seyren-web/target/seyren-web-*-war-exec.jar
 ```
+
+## Related projects
+
+* [Cerebro](https://github.com/voyages-sncf-technologies/cerebro) - Open alerting platform over Graphite (timeseries) and Seyren (scheduling)

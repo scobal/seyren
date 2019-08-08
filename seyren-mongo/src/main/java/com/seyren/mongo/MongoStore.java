@@ -33,13 +33,13 @@ import org.slf4j.LoggerFactory;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.Bytes;
-import com.mongodb.CommandFailureException;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
+import com.mongodb.MongoCommandException;
 import com.mongodb.MongoException;
 import com.mongodb.WriteConcern;
 import com.seyren.core.domain.Alert;
@@ -67,9 +67,9 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
             String uri = seyrenConfig.getMongoUrl();
             MongoClientURI mongoClientUri = new MongoClientURI(uri);
             MongoClient mongoClient = new MongoClient(mongoClientUri);
-            DB mongo = mongoClient.getDB(mongoClientUri.getDatabase());
-            mongo.setWriteConcern(WriteConcern.ACKNOWLEDGED);
-            this.mongo = mongo;
+            DB mongoDB = mongoClient.getDB(mongoClientUri.getDatabase());
+            mongoDB.setWriteConcern(WriteConcern.ACKNOWLEDGED);
+            this.mongo = mongoDB;
             bootstrapMongo();
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -103,9 +103,9 @@ public class MongoStore implements ChecksStore, AlertsStore, SubscriptionsStore 
         LOGGER.info("Dropping old indices");
         try {
             getAlertsCollection().dropIndex(new BasicDBObject("checkId", 1).append("target", 1));
-        } catch (CommandFailureException e) {
-            if (e.getCode() != -5) {
-                // -5 is the code which appears when the index doesn't exist (which we're happy with, anything else is bad news) 
+        } catch (MongoCommandException e) {
+            if (e.getCode() != 27) {
+                // 27 is the code which appears when the index doesn't exist (which we're happy with, anything else is bad news)
                 throw e;
             }
         }

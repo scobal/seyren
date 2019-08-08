@@ -23,7 +23,7 @@ describe('home page', function () {
         expect(element('table:eq(0) thead tr th:eq(4)').text()).toBe('Enabled');
 
         expect(element('table:eq(0) tbody tr').count()).toBe(1);
-        expect(element('table:eq(0) tbody tr td:eq(0)').text()).toBe('load longterm usage');
+        expect(element('table:eq(0) tbody tr td:eq(0) a').text()).toBe('load longterm usage');
         expect(element('table:eq(0) tbody tr td:eq(1) span:visible').text()).toBe('WARN');
         expect(element('table:eq(0) tbody tr td:eq(2)').text()).toBe('0.5');
         expect(element('table:eq(0) tbody tr td:eq(3)').text()).toBe('2.0');
@@ -48,7 +48,7 @@ describe('home page', function () {
         expect(element('table:eq(1) tbody tr').count()).toBe(1);
         expect(element('table:eq(1) tbody tr td:eq(0)').text()).toMatch('[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}');
         expect(element('table:eq(1) tbody tr td:eq(1)').text()).toMatch('^.*ago$');
-        expect(element('table:eq(1) tbody tr td:eq(2)').text()).toBe('load longterm usage');
+        expect(element('table:eq(1) tbody tr td:eq(2) a').text()).toBe('load longterm usage');
         expect(element('table:eq(1) tbody tr td:eq(3)').text()).toBe('0.8');
         expect(element('table:eq(1) tbody tr td:eq(4)').text()).toBe('0.5');
         expect(element('table:eq(1) tbody tr td:eq(5)').text()).toBe('2');
@@ -99,7 +99,7 @@ describe('checks page', function () {
         expect(element('table thead tr th:eq(4)').text()).toBe('Enabled');
 
         expect(element('table tbody tr').count()).toBe(1);
-        expect(element('table tbody tr td:eq(0)').text()).toBe('load longterm usage');
+        expect(element('table tbody tr td:eq(0) a').text()).toBe('load longterm usage');
         expect(element('table tbody tr td:eq(1) span:visible').text()).toBe('WARN');
         expect(element('table tbody tr td:eq(2)').text()).toBe('0.5');
         expect(element('table tbody tr td:eq(3)').text()).toBe('2.0');
