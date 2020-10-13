@@ -67,7 +67,7 @@
         <javax.inject.version>1</javax.inject.version>
         <javax.mail.version>1.4.7</javax.mail.version>
         <joda-time.version>2.6</joda-time.version>
-        <junit.version>4.12</junit.version>
+        <junit.version>4.13.1</junit.version>
         <org.apache.httpcomponents.version>4.3.6</org.apache.httpcomponents.version>
         <org.apache.velocity.version>1.7</org.apache.velocity.version>
         <org.eclipse.jetty.version>9.2.2.v20140723</org.eclipse.jetty.version>
