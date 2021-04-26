@@ -61,7 +61,7 @@
         <com.google.guava.version>18.0</com.google.guava.version>
         <com.opsgenie.integration.sdk.version>2.0.7</com.opsgenie.integration.sdk.version>
         <com.squareup.pagerduty.version>1.0.1</com.squareup.pagerduty.version>
-        <commons.io.version>2.4</commons.io.version>
+        <commons.io.version>2.7</commons.io.version>
         <commons-lang.version>2.6</commons-lang.version>
         <commons-logging.version>1.2</commons-logging.version>
         <javax.inject.version>1</javax.inject.version>
