@@ -53,7 +53,7 @@
         
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <ch.qos.logback.version>1.1.2</ch.qos.logback.version>
+        <ch.qos.logback.version>1.2.0</ch.qos.logback.version>
         <com.fasterxml.jackson.databind.version>2.5.0</com.fasterxml.jackson.databind.version>
         <com.fasterxml.jackson.datatype.version>2.5.0</com.fasterxml.jackson.datatype.version>
         <com.fasterxml.jackson.jaxrs.version>2.5.0</com.fasterxml.jackson.jaxrs.version>
