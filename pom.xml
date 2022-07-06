@@ -75,7 +75,7 @@
         <org.jboss.resteasy.version>3.0.10.Final</org.jboss.resteasy.version>
         <org.mockito.version>1.9.5</org.mockito.version>
         <org.mongodb.version>3.2.2</org.mongodb.version>
-        <org.python.version>2.5.3</org.python.version>
+        <org.python.version>2.7.1</org.python.version>
         <org.slf4j.version>1.7.9</org.slf4j.version>
         <org.snmp4j.version>2.3.3</org.snmp4j.version>
         <org.springframework.version>4.1.4.RELEASE</org.springframework.version>
